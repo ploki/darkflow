@@ -18,7 +18,8 @@ public:
         UserTypeInput,
         UserTypeOutput,
         UserTypeConnection,
-        UserTypeButton
+        UserTypeButton,
+        UserTypeProgress,
     };
 
     explicit ProcessScene(QWidget *parent = 0);

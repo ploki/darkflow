@@ -32,6 +32,12 @@ signals:
 
 private slots:
     void operatorStateChanged();
+    void closeButtonClicked();
+    void passThroughClicked();
+    void viewImageClicked();
+    void viewParametersClicked();
+    void playClicked();
+    void abortClicked();
 
 private:
     Operator *m_operator;

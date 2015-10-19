@@ -5,6 +5,7 @@
 
 #include "process.h"
 #include "processnode.h"
+#include "processbutton.h"
 #include "operator.h"
 
 ProcessNode::ProcessNode(qreal x, qreal y,
@@ -18,8 +19,8 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     m_caption(NULL)
 {
     QPainterPath pp;
-    int w = 200, h = 100;
-    int xradius=3, yradius=3;
+    qreal w = 200, h = 100;
+    qreal xradius=3, yradius=3;
     setPen(QPen(Qt::black));
 
     pp.addRoundedRect(x, y, w, h, xradius, yradius);
@@ -32,6 +33,37 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     setPath(pp);
 
     connect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
+
+    const qreal margin=2;
+    qreal offset=margin;
+    ProcessButton *buttClose = new ProcessButton(x+w-offset,y,"❌",m_process, this, Qt::red, Qt::darkRed);
+    connect(buttClose, SIGNAL(buttonClicked()), this, SLOT(closeButtonClicked()));
+    offset+=margin+buttClose->boundingRect().width();
+
+    ProcessButton *buttPassThrough= new ProcessButton(x+w-offset,y,"●",m_process, this);
+    connect(buttPassThrough, SIGNAL(buttonClicked()), this, SLOT(passThroughClicked()));
+    offset+=margin+buttPassThrough->boundingRect().width();
+
+    ProcessButton *buttViewImage= new ProcessButton(x+w-offset,y,"⚉",m_process, this);
+    connect(buttViewImage, SIGNAL(buttonClicked()), this, SLOT(viewImageClicked()));
+    offset+=margin+buttViewImage->boundingRect().width();
+
+    ProcessButton *buttViewParameters= new ProcessButton(x+w-offset,y,"☷",m_process, this);
+    connect(buttViewParameters, SIGNAL(buttonClicked()), this, SLOT(viewParametersClicked()));
+
+
+    offset=margin;
+    ProcessButton *buttPlay= new ProcessButton(x,y+h,"▶",m_process, this);
+    connect(buttPlay, SIGNAL(buttonClicked()), this, SLOT(playClicked()));
+    offset+=margin+buttPlay->boundingRect().width();
+    buttPlay->setPos(10+offset,
+                     -20-buttPlay->boundingRect().height());
+
+    ProcessButton *buttAbort= new ProcessButton(x,y+h,"■",m_process, this, Qt::magenta, Qt::darkMagenta);
+    connect(buttAbort, SIGNAL(buttonClicked()), this, SLOT(playClicked()));
+    offset+=margin+buttAbort->boundingRect().width();
+    buttAbort->setPos(10+offset,
+                     -20-buttAbort->boundingRect().height());
 }
 
 ProcessNode::~ProcessNode()
@@ -46,6 +78,7 @@ void ProcessNode::paint(QPainter *painter,
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+    painter->setRenderHint(QPainter::Antialiasing);
     painter->setBrush(QBrush(Qt::darkGray));
     painter->drawPath(path());
 }
@@ -53,6 +86,36 @@ void ProcessNode::paint(QPainter *painter,
 int ProcessNode::type() const { return Type; }
 
 void ProcessNode::operatorStateChanged()
+{
+
+}
+
+void ProcessNode::closeButtonClicked()
+{
+    deleteLater();
+}
+
+void ProcessNode::passThroughClicked()
+{
+
+}
+
+void ProcessNode::viewImageClicked()
+{
+
+}
+
+void ProcessNode::viewParametersClicked()
+{
+
+}
+
+void ProcessNode::playClicked()
+{
+
+}
+
+void ProcessNode::abortClicked()
 {
 
 }

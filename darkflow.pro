@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     operatorinput.cpp \
     image.cpp \
     operatorexnihilo.cpp \
-    operatorpaththrough.cpp
+    operatorpaththrough.cpp \
+    processbutton.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -38,7 +39,8 @@ HEADERS  += \
     operatorinput.h \
     image.h \
     operatorexnihilo.h \
-    operatorpaththrough.h
+    operatorpaththrough.h \
+    processbutton.h
 
 FORMS    += mainwindow.ui \
     projectproperties.ui \

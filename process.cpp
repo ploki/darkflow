@@ -5,10 +5,12 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QGraphicsItem>
 
 #include "process.h"
 #include "processscene.h"
 #include "processnode.h"
+#include "processbutton.h"
 
 #include "operatorexnihilo.h"
 #include "operatorpaththrough.h"
@@ -164,6 +166,24 @@ void Process::open(const QString& filename)
     setTemporaryDirectory(obj["temporaryDirectory"].toString());
     setDirty(false);
 }
+QGraphicsItem* Process::findItem(const QPointF &pos, int type)
+{
+    QList<QGraphicsItem*> items = m_scene->items(QRectF(pos - QPointF(1,1), QSize(3,3)));
+
+    foreach(QGraphicsItem *item, items)
+        if (item->type() == type)
+            return item;
+    return 0;
+}
+
+void Process::resetAllButtonsBut(QGraphicsItem *exepted)
+{
+    QList<QGraphicsItem*> items = m_scene->items();
+    foreach(QGraphicsItem *item, items)
+        if (item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeButton &&
+                item != exepted)
+            dynamic_cast<ProcessButton*>(item)->resetMouse();
+}
 
 bool Process::eventFilter(QObject *obj, QEvent *event)
 {
@@ -174,6 +194,28 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         return QObject::eventFilter(obj, event);
     }
     m_lastMousePosition = me->scenePos();
+    QEvent::Type type = event->type();
+    QGraphicsItem *button = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeButton);
+    switch (type)
+    {
+    case QEvent::GraphicsSceneMousePress:
+        if (button) {
+            dynamic_cast<ProcessButton*>(button)->mousePress();
+            button->update();
+        }
+        break;
+    case QEvent::GraphicsSceneMouseRelease:
+        if (button) {
+            dynamic_cast<ProcessButton*>(button)->mouseRelease();
+            resetAllButtonsBut(button);
+            button->update();
+            return true;
+        }
+        resetAllButtonsBut();
+        break;
+    default:(void)0;
+    }
+
 /*
  *     qWarning("it's a mouse event");
     m_scene->addRect(me->scenePos().x()-5,

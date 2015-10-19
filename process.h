@@ -12,6 +12,7 @@ class QGraphicsSceneContextMenuEvent;
 class QEvent;
 class Operator;
 class ProcessNode;
+class QGraphicsItem;
 
 class Process : public QObject
 {
@@ -65,7 +66,8 @@ private:
     QVector<Operator*> m_availableOperators;
     QPointF m_lastMousePosition;
     QSet<ProcessNode*> m_nodes;
-
+    QGraphicsItem* findItem(const QPointF &pos, int type);
+    void resetAllButtonsBut(QGraphicsItem*item=0);
     bool eventFilter(QObject *obj, QEvent *event);
 };
 

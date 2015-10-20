@@ -15,8 +15,7 @@ public:
 
     enum {
         UserTypeNode = 1,
-        UserTypeInput,
-        UserTypeOutput,
+        UserTypePort,
         UserTypeConnection,
         UserTypeButton,
         UserTypeProgress,

@@ -6,6 +6,7 @@
 #include "process.h"
 #include "processnode.h"
 #include "processbutton.h"
+#include "processport.h"
 #include "operator.h"
 
 ProcessNode::ProcessNode(qreal x, qreal y,
@@ -64,6 +65,12 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     offset+=margin+buttAbort->boundingRect().width();
     buttAbort->setPos(10+offset,
                      -20-buttAbort->boundingRect().height());
+
+    ProcessPort *port1 = new ProcessPort(x,y+30,"In", ProcessPort::InputPort, m_process, this);
+    offset=margin+port1->boundingRect().height();
+    ProcessPort *port2 = new ProcessPort(x,y+30+offset,"sub", ProcessPort::InputOnePort, m_process, this);
+
+    ProcessPort *out = new ProcessPort(x+w,y+30,"Out", ProcessPort::OutputPort, m_process, this);
 }
 
 ProcessNode::~ProcessNode()

@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QSet>
 #include <QPointF>
+#include <QPoint>
 
 class ProcessScene;
 class QGraphicsSceneContextMenuEvent;
@@ -13,6 +14,7 @@ class QEvent;
 class Operator;
 class ProcessNode;
 class QGraphicsItem;
+
 
 class Process : public QObject
 {
@@ -45,6 +47,7 @@ public:
     void setDirty(bool dirty);
 
     void addOperator(Operator *op);
+    void spawnContextMenu(const QPoint& pos);
 
 signals:
     void stateChanged();

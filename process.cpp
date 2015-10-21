@@ -213,7 +213,10 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         }
         resetAllButtonsBut();
         break;
-    default:(void)0;
+    case QEvent::GraphicsSceneMouseDoubleClick:
+        spawnContextMenu(me->screenPos());
+        break;
+    default:break;
     }
 
 /*
@@ -237,12 +240,16 @@ void Process::reset()
     m_scene->clear();
     setDirty(true);
 }
-
-void Process::contextMenuSignal(QGraphicsSceneContextMenuEvent *event)
+void Process::spawnContextMenu(const QPoint& pos)
 {
-    QMenu menu(event->widget());
+    QMenu menu;
     foreach(Operator *op, m_availableOperators) {
         menu.addAction(QIcon(), op->getClassIdentifier(),op,SLOT(clone()));
     }
-    menu.exec(event->screenPos());
+    menu.exec(pos);
+}
+
+void Process::contextMenuSignal(QGraphicsSceneContextMenuEvent *event)
+{
+    spawnContextMenu(event->screenPos());
 }

@@ -23,7 +23,9 @@ public:
     void updateConnectedPath();
 
     void setInputPort(ProcessPort *port);
+    void unsetInputPort();
     int type() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private slots:
     void portChanged();

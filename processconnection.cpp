@@ -1,5 +1,7 @@
+#include <QPainter>
 #include <QPainterPath>
 #include <QGraphicsItem>
+#include <QCursor>
 
 #include "processconnection.h"
 #include "processnode.h"
@@ -17,6 +19,12 @@ ProcessConnection::ProcessConnection(ProcessPort *port,
     setZValue(-1);
     connect(m_outPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_outPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
+    /*
+     * if move from anywhere:
+     * if this flag is not set, scene move instead of connection when detached from inPort
+     */
+    //setFlag(QGraphicsItem::ItemIsSelectable, true);
+    //setCursor(QCursor(Qt::ArrowCursor));
 }
 
 ProcessConnection::~ProcessConnection()
@@ -27,6 +35,15 @@ ProcessConnection::~ProcessConnection()
 int ProcessConnection::type() const
 {
     return ProcessConnection::Type;
+}
+
+void ProcessConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+    painter->setBrush(brush());
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->drawPath(path());
 }
 
 void ProcessConnection::portChanged()
@@ -42,7 +59,7 @@ void ProcessConnection::portDestroyed(QObject *)
 void ProcessConnection::updatePath(QPointF outPos, QPointF inPos)
 {
     qreal dx;
-    dx = qMin(500., qMax(100.,(outPos-inPos).manhattanLength()/2));
+    dx = qMin(500., qMax(50.,(outPos-inPos).manhattanLength()/2));
     QPainterPath pp;
     pp.moveTo(outPos);
     QPointF ctrl1(outPos.x() + dx, outPos.y());
@@ -70,5 +87,12 @@ void ProcessConnection::setInputPort(ProcessPort *port)
     connect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
     updateConnectedPath();
+}
+
+void ProcessConnection::unsetInputPort()
+{
+    disconnect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
+    disconnect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
+    m_inPort = NULL;
 }
 

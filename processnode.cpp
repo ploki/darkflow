@@ -33,6 +33,7 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     m_caption->setPos(x, y);
     pp.addRect(x,y+m_caption->boundingRect().height(),w,0);
     setPath(pp);
+    setCursor(QCursor(Qt::ArrowCursor));
 
     connect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
 
@@ -72,7 +73,6 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     ProcessPort *port2 = new ProcessPort(x,y+30+offset,"sub", ProcessPort::InputOnePort, m_process, this);
 
     ProcessPort *out = new ProcessPort(x+w,y+30,"Out", ProcessPort::OutputPort, m_process, this);
-    setCursor(QCursor(Qt::ArrowCursor));
 }
 
 ProcessNode::~ProcessNode()

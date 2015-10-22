@@ -202,12 +202,15 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     QEvent::Type type = event->type();
     QGraphicsItem *button = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeButton);
     QGraphicsItem *portItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypePort);
+    QGraphicsItem *connItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeConnection);
     switch (type)
     {
     case QEvent::GraphicsSceneMousePress:
         if (button) {
             dynamic_cast<ProcessButton*>(button)->mousePress();
             button->update();
+            event->accept();
+            return true;
         }
         if (portItem && NULL == m_conn) {
             ProcessPort *port = dynamic_cast<ProcessPort*>(portItem);
@@ -216,24 +219,34 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
                 m_scene->addItem(m_conn);
             }
         }
+        //portItem in the cond permit to move conn only from inPort
+        if (connItem && portItem && NULL == m_conn) {
+            m_conn = dynamic_cast<ProcessConnection*>(connItem);
+            m_conn->unsetInputPort();
+            m_conn->updateDanglingPath(me->scenePos());
+        }
         break;
     case QEvent::GraphicsSceneMouseRelease:
         if (button) {
             dynamic_cast<ProcessButton*>(button)->mouseRelease();
             resetAllButtonsBut(button);
             button->update();
+            event->accept();
             return true;
         }
         if (m_conn) {
             if ( portItem ) {
                 ProcessPort *port = dynamic_cast<ProcessPort*>(portItem);
-                m_conn->setInputPort(port);
-                m_conn = NULL;
+                if ( ProcessPort::InputOnePort == port->portType() ||
+                     ProcessPort::InputPort == port->portType() )
+                    m_conn->setInputPort(port);
+                else
+                    delete m_conn;
             }
             else {
                 delete m_conn;
-                m_conn = NULL;
             }
+            m_conn = NULL;
         }
         resetAllButtonsBut();
         break;

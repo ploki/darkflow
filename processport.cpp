@@ -22,6 +22,7 @@ ProcessPort::ProcessPort(qreal x, qreal y,
     m_portType(portType),
     m_h(0)
 {
+    const qreal flange=2.;
     qreal w,h;
     setPen(QPen(Qt::black));
     QGraphicsTextItem *textItem = new QGraphicsTextItem(this);
@@ -36,6 +37,7 @@ ProcessPort::ProcessPort(qreal x, qreal y,
     switch (portType) {
     case ProcessPort::InputPort:
     case ProcessPort::InputOnePort:
+        x-=flange;
         textItem->setPos(x+h,y-h*.25);
         points.push_back(QPoint(x+0,y+0));
         points.push_back(QPoint(x+h/2,y+0));
@@ -45,6 +47,7 @@ ProcessPort::ProcessPort(qreal x, qreal y,
         points.push_back(QPoint(x+0,y+0));
         break;
     case ProcessPort::OutputPort:
+        x+=flange;
         textItem->setPos(x-h-w,y-h*.25);
         points.push_back(QPoint(x-0,y+0));
         points.push_back(QPoint(x-h/2,y+0));

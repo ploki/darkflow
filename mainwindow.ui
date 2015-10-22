@@ -19,7 +19,17 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="frameShape">
+       <enum>QFrame::WinPanel</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -34,11 +44,11 @@
    </property>
    <widget class="QMenu" name="menuProject">
     <property name="title">
-     <string>PROJECT</string>
+     <string>P&amp;ROJECT</string>
     </property>
     <widget class="QMenu" name="menuHistory">
      <property name="title">
-      <string>History</string>
+      <string>&amp;History</string>
      </property>
      <addaction name="actionClear"/>
      <addaction name="separator"/>
@@ -66,7 +76,7 @@
    </widget>
    <widget class="QMenu" name="menuHELP">
     <property name="title">
-     <string>HELP</string>
+     <string>&amp;HELP</string>
     </property>
     <addaction name="actionAbout"/>
    </widget>
@@ -86,7 +96,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
    <property name="text">
-    <string>New...</string>
+    <string>&amp;New...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -94,7 +104,7 @@
   </action>
   <action name="actionOpen_Project">
    <property name="text">
-    <string>Open...</string>
+    <string>&amp;Open...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -102,7 +112,7 @@
   </action>
   <action name="actionSave_Project">
    <property name="text">
-    <string>Save</string>
+    <string>Sa&amp;ve</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -110,17 +120,17 @@
   </action>
   <action name="actionSavAs">
    <property name="text">
-    <string>Save as...</string>
+    <string>&amp;Save as...</string>
    </property>
   </action>
   <action name="actionClear">
    <property name="text">
-    <string>Clear</string>
+    <string>&amp;Clear</string>
    </property>
   </action>
   <action name="actionRUN">
    <property name="text">
-    <string>Run</string>
+    <string>&amp;Run</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -128,7 +138,7 @@
   </action>
   <action name="actionI">
    <property name="text">
-    <string>Pause</string>
+    <string>&amp;Pause</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -136,7 +146,7 @@
   </action>
   <action name="actionInterrupt">
    <property name="text">
-    <string>Abort</string>
+    <string>&amp;Abort</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -144,7 +154,7 @@
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
@@ -152,12 +162,12 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About...</string>
+    <string>&amp;About...</string>
    </property>
   </action>
   <action name="actionProperties">
    <property name="text">
-    <string>Properties...</string>
+    <string>&amp;Properties...</string>
    </property>
   </action>
  </widget>

@@ -1,5 +1,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QScrollBar>
+
+#include <cmath>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -98,11 +101,18 @@ MainWindow::MainWindow(QWidget *parent) :
     aboutDialog(new AboutDialog(this)),
     projectProperties(new ProjectProperties(this)),
     scene(new ProcessScene(this)),
-    process(new Process(scene, this))
+    process(new Process(scene, this)),
+    zoom(0)
 {
     ui->setupUi(this);
     scene->setBackgroundBrush(QColor(0x2e,0x34,0x36));
     ui->graphicsView->setScene(scene);
+    ui->graphicsView->installEventFilter(this);
+    /* viewport receives first wheel events, it must ignore it to prevent scrolls */
+    ui->graphicsView->viewport()->installEventFilter(this);
+    ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     newProcess();
 }
 
@@ -113,6 +123,28 @@ MainWindow::~MainWindow()
     delete projectProperties;
     delete aboutDialog;
     delete ui;
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if ( event->type() == QEvent::Wheel )
+    {
+        int delta = dynamic_cast<QWheelEvent*>(event)->delta();
+        const int min = -5;
+        const int max = 5;
+        if(delta > 0)
+            zoom+=1;
+        else
+            zoom-=1;
+        zoom=qMax(qMin(zoom,max),min);
+        qreal factor = pow(3.,zoom/5.);
+        ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
+        event->accept();
+        return true;
+    }
+    return QMainWindow::eventFilter(obj, event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

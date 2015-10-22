@@ -2,6 +2,7 @@
 #define PROCESSPORT_H
 
 #include <QGraphicsPathItem>
+#include <QVariant>
 
 #include "processscene.h"
 
@@ -27,10 +28,22 @@ public:
                          ProcessNode *node);
     ~ProcessPort();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    int type() const;
+
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
+    QPointF anchorScenePos();
+    PortType portType() const;
+
+signals:
+    void positionChanged();
+
 private:
     Process *m_process;
     QString m_portName;
     PortType m_portType;
+    qreal m_h;
 };
 
 #endif // PROCESSPORT_H

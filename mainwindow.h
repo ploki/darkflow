@@ -21,6 +21,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    bool eventFilter(QObject *, QEvent *);
+
 public slots:
     void showAboutDialog();
     void actionExit();
@@ -39,6 +41,7 @@ private:
     ProjectProperties *projectProperties;
     ProcessScene *scene;
     Process *process;
+    int zoom;
 
     void closeEvent(QCloseEvent *event);
     void newProcess();

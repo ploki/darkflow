@@ -3,7 +3,7 @@
 #include <QString>
 #include <QGraphicsTextItem>
 #include <QEvent>
-
+#include <QCursor>
 #include "processbutton.h"
 #include "process.h"
 #include "processnode.h"
@@ -38,6 +38,7 @@ ProcessButton::ProcessButton(qreal x,
     setPath(pp);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setAcceptHoverEvents(true);
+    setCursor(QCursor(Qt::ArrowCursor));
 }
 
 ProcessButton::~ProcessButton()

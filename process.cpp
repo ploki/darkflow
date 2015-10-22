@@ -3,6 +3,8 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneWheelEvent>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QGraphicsItem>
@@ -11,6 +13,8 @@
 #include "processscene.h"
 #include "processnode.h"
 #include "processbutton.h"
+#include "processport.h"
+#include "processconnection.h"
 
 #include "operatorexnihilo.h"
 #include "operatorpaththrough.h"
@@ -24,7 +28,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_scene(scene),
     m_dirty(false),
     m_availableOperators(),
-    m_lastMousePosition()
+    m_lastMousePosition(),
+    m_conn(NULL)
 {
     reset();
     connect(m_scene, SIGNAL(contextMenuSignal(QGraphicsSceneContextMenuEvent*)),
@@ -196,12 +201,20 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     m_lastMousePosition = me->scenePos();
     QEvent::Type type = event->type();
     QGraphicsItem *button = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeButton);
+    QGraphicsItem *portItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypePort);
     switch (type)
     {
     case QEvent::GraphicsSceneMousePress:
         if (button) {
             dynamic_cast<ProcessButton*>(button)->mousePress();
             button->update();
+        }
+        if (portItem && NULL == m_conn) {
+            ProcessPort *port = dynamic_cast<ProcessPort*>(portItem);
+            if ( ProcessPort::OutputPort == port->portType()) {
+                m_conn = new ProcessConnection(port, this);
+                m_scene->addItem(m_conn);
+            }
         }
         break;
     case QEvent::GraphicsSceneMouseRelease:
@@ -211,11 +224,31 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
             button->update();
             return true;
         }
+        if (m_conn) {
+            if ( portItem ) {
+                ProcessPort *port = dynamic_cast<ProcessPort*>(portItem);
+                m_conn->setInputPort(port);
+                m_conn = NULL;
+            }
+            else {
+                delete m_conn;
+                m_conn = NULL;
+            }
+        }
         resetAllButtonsBut();
         break;
     case QEvent::GraphicsSceneMouseDoubleClick:
         spawnContextMenu(me->screenPos());
         break;
+    case QEvent::GraphicsSceneMouseMove: {
+        QGraphicsSceneMouseEvent *me = dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+        if (m_conn)
+        {
+            m_conn->updateDanglingPath(me->scenePos());
+            return true;
+        }
+        break;
+    }
     default:break;
     }
 

@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QString>
 #include <QGraphicsTextItem>
+#include <QCursor>
 
 #include "process.h"
 #include "processnode.h"
@@ -71,6 +72,7 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     ProcessPort *port2 = new ProcessPort(x,y+30+offset,"sub", ProcessPort::InputOnePort, m_process, this);
 
     ProcessPort *out = new ProcessPort(x+w,y+30,"Out", ProcessPort::OutputPort, m_process, this);
+    setCursor(QCursor(Qt::ArrowCursor));
 }
 
 ProcessNode::~ProcessNode()

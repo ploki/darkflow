@@ -8,8 +8,15 @@
 #include "processnode.h"
 #include "processbutton.h"
 #include "processport.h"
+#include "processprogressbar.h"
 #include "operator.h"
 #include "operatorinput.h"
+
+#include "operatorparameterdropdown.h"
+#include "processdropdown.h"
+
+#include "operatorparameterfilescollection.h"
+#include "processfilescollection.h"
 
 #define PEN_WIDTH 2
 
@@ -58,9 +65,27 @@ ProcessNode::ProcessNode(QPointF pos,
 
     addPorts(inputs, barHeight);
     addButtons(barHeight);
-
+    addParameters(parameters, barHeight, (1+portRowsCount)*barHeight);
 
     connect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
+}
+
+void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal size, qreal offset)
+{
+    qreal x = boundingRect().x();
+    qreal y = boundingRect().y();
+    qreal w = boundingRect().width();
+
+    for (int i=0 ; i < parameters.count() ; ++i ) {
+        if ( OperatorParameterDropDown *dropdown = dynamic_cast<OperatorParameterDropDown*>(parameters[i]) )
+        {
+            new ProcessDropDown(QRectF(x,y+size*i+offset, w, size),dropdown, m_process, this);
+        }
+        else if ( OperatorParameterFilesCollection *filesCollection = dynamic_cast<OperatorParameterFilesCollection*>(parameters[i]) )
+        {
+            new ProcessFilesCollection(QRectF(x,y+size*i+offset, w, size),filesCollection, m_process, this);
+        }
+    }
 }
 
 void ProcessNode::addButtons(qreal size)
@@ -88,10 +113,12 @@ void ProcessNode::addButtons(qreal size)
 
     ProcessButton *buttAbort= new ProcessButton(QRectF(x+size,y+h-size,size,size),
                                                 ProcessButton::Abort,m_process, this);
-    connect(buttAbort, SIGNAL(buttonClicked()), this, SLOT(playClicked()));
+    connect(buttAbort, SIGNAL(buttonClicked()), this, SLOT(abortClicked()));
 
+    ProcessProgressBar *progress = new ProcessProgressBar(QRectF(x+size*2, y+h-size, w-size*2, size), m_process, this);
+    connect(m_operator, SIGNAL(progress(int,int)), progress, SLOT(progress(int,int)));
 }
-void ProcessNode::addPorts(QVector<OperatorInput*> inputs, qreal size)
+void ProcessNode::addPorts(QVector<OperatorInput*>& inputs, qreal size)
 {
     qreal x = boundingRect().x();
     qreal y = boundingRect().y();
@@ -152,10 +179,10 @@ void ProcessNode::viewParametersClicked()
 
 void ProcessNode::playClicked()
 {
-
+    m_operator->play();
 }
 
 void ProcessNode::abortClicked()
 {
-
+    m_operator->abort();
 }

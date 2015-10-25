@@ -15,10 +15,12 @@
 #include "processbutton.h"
 #include "processport.h"
 #include "processconnection.h"
+#include "processdropdown.h"
+#include "processfilescollection.h"
 
 #include "operatorloadraw.h"
 #include "operatorexnihilo.h"
-#include "operatorpaththrough.h"
+#include "operatorpassthrough.h"
 
 Process::Process(ProcessScene *scene, QObject *parent) :
     QObject(parent),
@@ -39,7 +41,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OperatorLoadRaw(this));
     m_availableOperators.push_back(new OperatorExNihilo(this));
-    m_availableOperators.push_back(new OperatorPathThrough(this));
+    m_availableOperators.push_back(new OperatorPassThrough(this));
 }
 
 
@@ -177,7 +179,9 @@ QGraphicsItem* Process::findItem(const QPointF &pos, int type)
     QList<QGraphicsItem*> items = m_scene->items(QRectF(pos - QPointF(1,1), QSize(3,3)));
 
     foreach(QGraphicsItem *item, items)
-        if (item->type() == type)
+        if (item->type() == type &&
+                ( !item->isObscured(QRectF(pos,QSize(1,1))) ||
+                  QGraphicsItem::UserType + ProcessScene::UserTypeConnection == type ))
             return item;
     return 0;
 }
@@ -204,6 +208,8 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     QGraphicsItem *button = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeButton);
     QGraphicsItem *portItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypePort);
     QGraphicsItem *connItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeConnection);
+    QGraphicsItem *dropdownItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeDropDown);
+    QGraphicsItem *filesCollectionItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeFilesCollection);
     switch (type)
     {
     case QEvent::GraphicsSceneMousePress:
@@ -225,6 +231,16 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
             m_conn = dynamic_cast<ProcessConnection*>(connItem);
             m_conn->unsetInputPort();
             m_conn->updateDanglingPath(me->scenePos());
+        }
+        if (dropdownItem) {
+            dynamic_cast<ProcessDropDown*>(dropdownItem)->clicked(me->screenPos());
+            event->accept();
+            return true;
+        }
+        if (filesCollectionItem) {
+            dynamic_cast<ProcessFilesCollection*>(filesCollectionItem)->clicked(me->screenPos());
+            event->accept();
+            return true;
         }
         break;
     case QEvent::GraphicsSceneMouseRelease:

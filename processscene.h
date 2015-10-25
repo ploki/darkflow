@@ -18,7 +18,9 @@ public:
         UserTypePort,
         UserTypeConnection,
         UserTypeButton,
-        UserTypeProgress,
+        UserTypeProgressBar,
+        UserTypeDropDown,
+        UserTypeFilesCollection,
     };
 
     explicit ProcessScene(QWidget *parent = 0);

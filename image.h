@@ -30,7 +30,7 @@ public:
     static QString NewRandomName();
     static int ColorSpaceComponents(ColorSpace colorspace);
 
-    Image(const QString& filename);
+    Image(const QString& filename, bool owner=true);
     bool open();
     void close();
     bool remove();
@@ -60,12 +60,15 @@ public:
         if (getColorSpace() < LinearRGB ) return NULL;
         return reinterpret_cast<Triplet<T>*>(getRawPixels());
     }
+    QString getFilename() const;
+
 private:
     Q_DISABLE_COPY(Image);
     ImageImpl *m_impl;
     QFile *m_file;
     QString m_filename;
     bool m_notbacked;
+    bool m_owner;
 };
 
 #endif // IMAGE_H

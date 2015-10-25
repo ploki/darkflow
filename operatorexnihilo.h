@@ -15,11 +15,8 @@ public:
     OperatorExNihilo *newInstance();
     QString getClassIdentifier();
 
-public slots:
-    void play();
 
-protected:
-    Image *process(const Image *);
+    OperatorWorker* newWorker();
 
 };
 

@@ -29,10 +29,11 @@ int Image::ColorSpaceComponents(ColorSpace colorspace)
     }
 }
 
-Image::Image(const QString& filename) :
+Image::Image(const QString& filename, bool owner) :
     m_impl(0),
-    m_file(0),
-    m_filename(filename)
+    m_file(new QFile(filename)),
+    m_filename(filename),
+    m_owner(owner)
 {
 
 }
@@ -132,8 +133,15 @@ Image::ColorSpace Image::getColorSpace()
 {
     return m_impl->colorSpace;
 }
+QString Image::getFilename() const
+{
+    return m_filename;
+}
+
 
 bool Image::remove()
 {
-    return m_file->remove();
+    if (m_owner)
+        return m_file->remove();
+    return true;
 }

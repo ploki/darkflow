@@ -24,14 +24,18 @@ SOURCES += main.cpp\
     operatorinput.cpp \
     image.cpp \
     operatorexnihilo.cpp \
-    operatorpaththrough.cpp \
     processbutton.cpp \
     processport.cpp \
     processconnection.cpp \
     filesselection.cpp \
     operatorparameterfilescollection.cpp \
     operatorparameterdropdown.cpp \
-    operatorloadraw.cpp
+    operatorloadraw.cpp \
+    processdropdown.cpp \
+    processfilescollection.cpp \
+    processprogressbar.cpp \
+    operatorworker.cpp \
+    operatorpassthrough.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -45,14 +49,18 @@ HEADERS  += \
     operatorinput.h \
     image.h \
     operatorexnihilo.h \
-    operatorpaththrough.h \
     processbutton.h \
     processport.h \
     processconnection.h \
     filesselection.h \
     operatorparameterfilescollection.h \
     operatorparameterdropdown.h \
-    operatorloadraw.h
+    operatorloadraw.h \
+    processdropdown.h \
+    processfilescollection.h \
+    processprogressbar.h \
+    operatorworker.h \
+    operatorpassthrough.h
 
 FORMS    += mainwindow.ui \
     projectproperties.ui \

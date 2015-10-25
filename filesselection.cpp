@@ -20,6 +20,33 @@ FilesSelection::~FilesSelection()
     delete ui;
 }
 
+QStringList FilesSelection::getSelection() const
+{
+    QStringList selection;
+    int s = m_list->rowCount();
+    for (int i = 0 ; i < s ; ++i )
+    {
+        selection.push_back(m_list->index(i,0).data().toString());
+    }
+    return selection;
+}
+
+void FilesSelection::setSelection(const QStringList &selection)
+{
+    foreach(QString file, selection) {
+        int pos = m_list->rowCount();
+        QStandardItem *item = new QStandardItem(file);
+        m_list->insertRow(pos);
+        m_list->setItem(pos,item);
+    }
+
+}
+
+void FilesSelection::clearSelection()
+{
+    m_list->clear();
+}
+
 void FilesSelection::addClicked()
 {
     QStringList list = QFileDialog::getOpenFileNames(this,
@@ -30,12 +57,7 @@ void FilesSelection::addClicked()
                                                      "TIFF Images (*.tif *.tiff);;"
                                                      "All Files (*.*)",
                                                      0, 0);
-    foreach(QString file, list) {
-        int pos = m_list->rowCount();
-        QStandardItem *item = new QStandardItem(file);
-        m_list->insertRow(pos);
-        m_list->setItem(pos,item);
-    }
+    setSelection(list);
 }
 
 void FilesSelection::removeClicked()

@@ -10,6 +10,8 @@ class OperatorParameter;
 class OperatorInput;
 class Process;
 class Image;
+class QThread;
+class OperatorWorker;
 
 class Operator : public QObject
 {
@@ -29,7 +31,6 @@ public:
      * @return input descriptions
      */
     QVector<OperatorInput*> getInputs();
-    double getCompletion();
 
     void addSource(const QString &inputName, Operator *op);
     void clearSource(const QString &inputName);
@@ -44,25 +45,38 @@ public:
     virtual QString getClassIdentifier() = 0;
     virtual Operator* newInstance() = 0;
 
+
 signals:
+    void progress(int ,int );
+    void upToDate();
+public:
+    virtual OperatorWorker* newWorker() = 0;
 
 public slots:
-    virtual void play();
+    void play();
     void abort();
     void clone();
-protected:
+    void workerProgress(int p, int c);
+    void workerSuccess();
+    void workerFailure();
+
+//protected:
+public:
     Process *m_process;
     bool m_enabled;
     bool m_upToDate;
-    long m_complete;
-    long m_progress;
     QVector<OperatorParameter*> m_parameters;
     QVector<OperatorInput*> m_inputs;
     QMap<QString, Operator*> m_sources;
     QSet<Operator*> m_sinks;
     QVector<Image*> m_result;
 
-    virtual Image * process(const Image *) = 0;
+    QThread *m_thread;
+    OperatorWorker *m_worker;
+
 };
+
+
+
 
 #endif // OPERATOR_H

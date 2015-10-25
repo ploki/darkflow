@@ -44,10 +44,10 @@ public slots:
 
     void filesCollectionChanged();
 
-    void play();
+    OperatorWorker *newWorker() { return NULL;}
 
 protected:
-    Image *process(const Image *);
+
 
 private:
     OperatorParameterFilesCollection *m_filesCollection;

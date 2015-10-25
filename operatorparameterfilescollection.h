@@ -9,23 +9,24 @@ class OperatorParameterFilesCollection : public OperatorParameter
 {
 public:
     OperatorParameterFilesCollection(QString caption,
+                                     QString windowCaption,
                                      QString dir,
                                      QString filter,
                                      QObject *parent = 0);
     QString caption() const;
-    void setCaption(const QString &caption);
+    QString windowCaption() const;
 
     QString dir() const;
-    void setDir(const QString &dir);
 
     QString filter() const;
-    void setFilter(const QString &filter);
 
     QStringList collection() const;
     void setCollection(const QStringList &collection);
+    QString currentValue() const;
 
 private:
     QString m_caption;
+    QString m_windowCaption;
     QString m_dir;
     QString m_filter;
     QStringList m_collection;

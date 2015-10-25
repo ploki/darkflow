@@ -12,6 +12,7 @@ class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
 class OperatorInput;
+class OperatorParameter;
 
 class ProcessNode : public QObject, public QGraphicsPathItem
 {
@@ -49,7 +50,8 @@ private:
     QGraphicsTextItem *m_caption;
 
     void addButtons(qreal size);
-    void addPorts(QVector<OperatorInput*> inputs, qreal size);
+    void addPorts(QVector<OperatorInput*>& inputs, qreal size);
+    void addParameters(QVector<OperatorParameter*>& parameters, qreal size, qreal offset);
 };
 
 #endif // PROCESSNODE_H

@@ -8,34 +8,64 @@
 #include "process.h"
 #include "processnode.h"
 
-ProcessButton::ProcessButton(qreal x,
-                             qreal y,
-                             const QString &text,
+#define PEN_WIDTH 2
+
+static QString buttonText(ProcessButton::ButtonType type)
+{
+    switch(type) {
+    case ProcessButton::Play: return "▶";
+    case ProcessButton::Abort:return "■";
+    case ProcessButton::Display: return "☷";
+    case ProcessButton::Close: return "❌";
+    case ProcessButton::Ghost: return "⚉";
+    }
+}
+
+static QPen buttonPen(ProcessButton::ButtonType type)
+{
+    switch(type) {
+    case ProcessButton::Play: return QPen(Qt::darkGreen, PEN_WIDTH);
+    case ProcessButton::Abort: return QPen(Qt::darkMagenta, PEN_WIDTH);
+    case ProcessButton::Display: return QPen(Qt::darkYellow, PEN_WIDTH);
+    case ProcessButton::Close: return QPen(Qt::darkRed, PEN_WIDTH);
+    case ProcessButton::Ghost: return QPen(Qt::darkBlue, PEN_WIDTH);
+    }
+}
+
+static QBrush buttonBrush(ProcessButton::ButtonType type)
+{
+    switch(type) {
+    case ProcessButton::Play: return QBrush(Qt::green);
+    case ProcessButton::Abort: return QBrush(Qt::magenta);
+    case ProcessButton::Display: return QBrush(Qt::yellow);
+    case ProcessButton::Close: return QBrush(Qt::red);
+    case ProcessButton::Ghost: return QBrush(Qt::blue);
+    }
+}
+
+ProcessButton::ProcessButton(QRectF rect,
+                             ProcessButton::ButtonType type,
                              Process *process,
-                             ProcessNode *node,
-                             Qt::GlobalColor vividColor,
-                             Qt::GlobalColor color) :
+                             ProcessNode *node) :
     QObject(NULL),
-    QGraphicsPathItem(node),
+    QGraphicsRectItem(QRectF(rect.x()+PEN_WIDTH,rect.y()+PEN_WIDTH,
+                             rect.width()-PEN_WIDTH*2,rect.height()-PEN_WIDTH*2),node),
     m_process(process),
     m_node(node),
-    m_text(text),
+    m_type(type),
     m_mouseHover(false),
-    m_mousePress(false),
-    m_vividColor(vividColor),
-    m_color(color)
+    m_mousePress(false)
 {
-    qreal w,h;
-    qreal radius=3;
-    setPen(QPen(Qt::darkBlue));
+    //qreal radius=3;
+
+    setPen(QPen(Qt::black,PEN_WIDTH));
+    setBrush(QBrush(Qt::darkGray));
+
     QGraphicsTextItem *textItem = new QGraphicsTextItem(this);
-    textItem->setPlainText(m_text);
-    w = textItem->boundingRect().width();
-    h = textItem->boundingRect().height();
-    textItem->setPos(x-w,y);
-    QPainterPath pp;
-    pp.addRoundedRect(x-w+2, y+2, w-4, h-4, radius, radius);
-    setPath(pp);
+    textItem->setPlainText(buttonText(m_type));
+    QPointF textCenter = textItem->boundingRect().center();
+    QPointF boxCenter = boundingRect().center();
+    textItem->setPos(boxCenter-textCenter);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setAcceptHoverEvents(true);
     setCursor(QCursor(Qt::ArrowCursor));
@@ -51,15 +81,17 @@ void ProcessButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
     if (m_mouseHover)
-        painter->setPen(m_color);
+        painter->setPen(buttonPen(m_type));
     else
-        painter->setPen(Qt::darkBlue);
+        painter->setPen(pen());
     if (m_mousePress)
-        painter->setBrush(m_vividColor);
+        painter->setBrush(buttonBrush(m_type));
     else
-        painter->setBrush(Qt::transparent);
+        painter->setBrush(brush());
+//        painter->setBrush(Qt::transparent);
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->drawPath(path());
+    //painter->drawPath(path());
+    painter->drawRect(boundingRect());
 }
 
 

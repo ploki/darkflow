@@ -11,7 +11,7 @@
 #include "process.h"
 #include "processnode.h"
 
-ProcessPort::ProcessPort(qreal x, qreal y,
+ProcessPort::ProcessPort(QRectF rect,
                          const QString &portName,
                          ProcessPort::PortType portType,
                          Process *process, ProcessNode *node) :
@@ -19,41 +19,47 @@ ProcessPort::ProcessPort(qreal x, qreal y,
     QGraphicsPathItem(node),
     m_process(process),
     m_portName(portName),
-    m_portType(portType),
-    m_h(0)
+    m_portType(portType)
 {
     const qreal flange=2.;
-    qreal w,h;
     setPen(QPen(Qt::black));
     QGraphicsTextItem *textItem = new QGraphicsTextItem(this);
     textItem->setPlainText(m_portName);
-    w = textItem->boundingRect().width();
-    h = textItem->boundingRect().height();
-    m_h=h;
+    qreal textW = textItem->boundingRect().width();
+    qreal textH = textItem->boundingRect().height();
+
+    qreal unit = textH/4;
+    QPointF center = rect.center();
+    qreal x = rect.x();
+    qreal y = rect.y();
+    qreal w = rect.width();
+    qreal h = rect.height();
+    y+= (h-unit*2)/2;
     setPen(QPen(Qt::darkYellow));
     setBrush(QBrush(Qt::yellow));
+
     QVector<QPoint> points;
 
     switch (portType) {
     case ProcessPort::InputPort:
     case ProcessPort::InputOnePort:
         x-=flange;
-        textItem->setPos(x+h,y-h*.25);
+        textItem->setPos(x+unit*4,y-unit);
         points.push_back(QPoint(x+0,y+0));
-        points.push_back(QPoint(x+h/2,y+0));
-        points.push_back(QPoint(x+h,y+h*.25));
-        points.push_back(QPoint(x+h/2,y+h*.5));
-        points.push_back(QPoint(x+0,y+h*.5));
+        points.push_back(QPoint(x+unit*2,y+0));
+        points.push_back(QPoint(x+unit*4,y+unit));
+        points.push_back(QPoint(x+unit*2,y+unit*2));
+        points.push_back(QPoint(x+0,y+unit*2));
         points.push_back(QPoint(x+0,y+0));
         break;
     case ProcessPort::OutputPort:
-        x+=flange;
-        textItem->setPos(x-h-w,y-h*.25);
+        x+=flange+w;
+        textItem->setPos(x-unit*4-textW,y-unit);
         points.push_back(QPoint(x-0,y+0));
-        points.push_back(QPoint(x-h/2,y+0));
-        points.push_back(QPoint(x-h,y+h*.25));
-        points.push_back(QPoint(x-h/2,y+h*.5));
-        points.push_back(QPoint(x-0,y+h*.5));
+        points.push_back(QPoint(x-unit*2,y+0));
+        points.push_back(QPoint(x-unit*4,y+unit));
+        points.push_back(QPoint(x-unit*2,y+unit*2));
+        points.push_back(QPoint(x-0,y+unit*2));
         points.push_back(QPoint(x-0,y+0));
     }
 

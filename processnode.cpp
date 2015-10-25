@@ -9,8 +9,11 @@
 #include "processbutton.h"
 #include "processport.h"
 #include "operator.h"
+#include "operatorinput.h"
 
-ProcessNode::ProcessNode(qreal x, qreal y,
+#define PEN_WIDTH 2
+
+ProcessNode::ProcessNode(QPointF pos,
                          Operator *op,
                          Process *process,
                          QGraphicsItem *parent) :
@@ -20,59 +23,86 @@ ProcessNode::ProcessNode(qreal x, qreal y,
     m_process(process),
     m_caption(NULL)
 {
+    qreal barHeight;
+    qreal x = pos.x();
+    qreal y = pos.y();
     QPainterPath pp;
-    qreal w = 200, h = 100;
+    qreal w = 200, h;
     qreal xradius=3, yradius=3;
-    setPen(QPen(Qt::black));
 
-    pp.addRoundedRect(x, y, w, h, xradius, yradius);
-    setFlag(QGraphicsItem::ItemIsMovable);
+    QVector<OperatorInput*> inputs = op->getInputs();
+    QVector<OperatorParameter*> parameters = op->getParameters();
+
+    int portRowsCount = inputs.count();
+    int parameterRowsCount = parameters.count();
+    if (0 == portRowsCount)
+        portRowsCount = 1; //always an output
 
     m_caption = new QGraphicsTextItem(this);
     m_caption->setPlainText(op->getClassIdentifier());
     m_caption->setPos(x, y);
-    pp.addRect(x,y+m_caption->boundingRect().height(),w,0);
+    barHeight = m_caption->boundingRect().height();
+    h = barHeight*(2+portRowsCount+parameterRowsCount);
+
+    setPen(QPen(Qt::black,PEN_WIDTH));
+    setBrush(QBrush(Qt::darkGray));
+    pp.addRoundedRect(x, y, w, h, xradius, yradius);
+
+    setFlag(QGraphicsItem::ItemIsMovable);
+
+
+    pp.addRect(x,y+barHeight-PEN_WIDTH,w,0);
     setPath(pp);
     setCursor(QCursor(Qt::ArrowCursor));
 
+
+    addPorts(inputs, barHeight);
+    addButtons(barHeight);
+
+
     connect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
+}
 
-    const qreal margin=2;
-    qreal offset=margin;
-    ProcessButton *buttClose = new ProcessButton(x+w-offset,y,"❌",m_process, this, Qt::red, Qt::darkRed);
+void ProcessNode::addButtons(qreal size)
+{
+    qreal x = boundingRect().x();
+    qreal y = boundingRect().y();
+    qreal w = boundingRect().width();
+    qreal h = boundingRect().height();
+
+    ProcessButton *buttClose = new ProcessButton(QRectF(x+w-size,y,size,size),
+                                                 ProcessButton::Close,m_process, this);
     connect(buttClose, SIGNAL(buttonClicked()), this, SLOT(closeButtonClicked()));
-    offset+=margin+buttClose->boundingRect().width();
 
-    ProcessButton *buttPassThrough= new ProcessButton(x+w-offset,y,"●",m_process, this);
+    ProcessButton *buttPassThrough= new ProcessButton(QRectF(x+w-size*2,y,size,size),
+                                                      ProcessButton::Ghost,m_process, this);
     connect(buttPassThrough, SIGNAL(buttonClicked()), this, SLOT(passThroughClicked()));
-    offset+=margin+buttPassThrough->boundingRect().width();
 
-    ProcessButton *buttViewImage= new ProcessButton(x+w-offset,y,"⚉",m_process, this);
+    ProcessButton *buttViewImage= new ProcessButton(QRectF(x+w-size*3,y,size,size),
+                                                    ProcessButton::Display,m_process, this);
     connect(buttViewImage, SIGNAL(buttonClicked()), this, SLOT(viewImageClicked()));
-    offset+=margin+buttViewImage->boundingRect().width();
 
-    ProcessButton *buttViewParameters= new ProcessButton(x+w-offset,y,"☷",m_process, this);
-    connect(buttViewParameters, SIGNAL(buttonClicked()), this, SLOT(viewParametersClicked()));
-
-
-    offset=margin;
-    ProcessButton *buttPlay= new ProcessButton(x,y+h,"▶",m_process, this);
+    ProcessButton *buttPlay= new ProcessButton(QRectF(x,y+h-size,size,size),
+                                               ProcessButton::Play,m_process, this);
     connect(buttPlay, SIGNAL(buttonClicked()), this, SLOT(playClicked()));
-    offset+=margin+buttPlay->boundingRect().width();
-    buttPlay->setPos(10+offset,
-                     -20-buttPlay->boundingRect().height());
 
-    ProcessButton *buttAbort= new ProcessButton(x,y+h,"■",m_process, this, Qt::magenta, Qt::darkMagenta);
+    ProcessButton *buttAbort= new ProcessButton(QRectF(x+size,y+h-size,size,size),
+                                                ProcessButton::Abort,m_process, this);
     connect(buttAbort, SIGNAL(buttonClicked()), this, SLOT(playClicked()));
-    offset+=margin+buttAbort->boundingRect().width();
-    buttAbort->setPos(10+offset,
-                     -20-buttAbort->boundingRect().height());
 
-    ProcessPort *port1 = new ProcessPort(x,y+30,"In", ProcessPort::InputPort, m_process, this);
-    offset=margin+port1->boundingRect().height();
-    ProcessPort *port2 = new ProcessPort(x,y+30+offset,"sub", ProcessPort::InputOnePort, m_process, this);
+}
+void ProcessNode::addPorts(QVector<OperatorInput*> inputs, qreal size)
+{
+    qreal x = boundingRect().x();
+    qreal y = boundingRect().y();
+    qreal w = boundingRect().width();
 
-    ProcessPort *out = new ProcessPort(x+w,y+30,"Out", ProcessPort::OutputPort, m_process, this);
+    for (int i=0 ; i < inputs.count(); ++i)
+    {
+        new ProcessPort(QRectF(x,y+size*(i+1),w,size),inputs[i]->name(),
+                        ProcessPort::InputPort, m_process, this);
+    }
+    new ProcessPort(QRectF(x,y+size,w,size),"Out", ProcessPort::OutputPort, m_process, this);
 }
 
 ProcessNode::~ProcessNode()
@@ -88,7 +118,8 @@ void ProcessNode::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->setBrush(QBrush(Qt::darkGray));
+    painter->setBrush(brush());
+    painter->setPen(pen());
     painter->drawPath(path());
 }
 
@@ -128,4 +159,3 @@ void ProcessNode::abortClicked()
 {
 
 }
-

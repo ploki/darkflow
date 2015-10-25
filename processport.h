@@ -3,6 +3,7 @@
 
 #include <QGraphicsPathItem>
 #include <QVariant>
+#include <QRectF>
 
 #include "processscene.h"
 
@@ -21,7 +22,7 @@ public:
                    OutputPort } PortType;
     enum { Type = QGraphicsItem::UserType + ProcessScene::UserTypePort };
 
-    explicit ProcessPort(qreal x, qreal y,
+    explicit ProcessPort(QRectF rect,
                          const QString& portName,
                          PortType portType,
                          Process *process,
@@ -43,7 +44,6 @@ private:
     Process *m_process;
     QString m_portName;
     PortType m_portType;
-    qreal m_h;
 };
 
 #endif // PROCESSPORT_H

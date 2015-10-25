@@ -1,8 +1,12 @@
 #include "operatorpaththrough.h"
+#include "operatorinput.h"
 
 OperatorPathThrough::OperatorPathThrough(Process *parent) :
     Operator(parent)
 {
+    m_inputs.push_back(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set));
+    m_inputs.push_back(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set));
+    m_inputs.push_back(new OperatorInput("Images set 3","Images set # three",OperatorInput::Set));
 }
 
 OperatorPathThrough::~OperatorPathThrough()

@@ -5,12 +5,12 @@
 
 class OperatorInput
 {
+public:
     typedef enum {
         Image,
         Set,
     } OperatorInputCompatibility;
 
-public:
     OperatorInput(const QString& name,
                   const QString& description,
                   OperatorInputCompatibility compatibility);

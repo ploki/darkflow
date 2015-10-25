@@ -2,6 +2,7 @@
 #define PROCESSNODE_H
 
 #include <QGraphicsPathItem>
+#include <QPointF>
 
 #include "processscene.h"
 
@@ -10,6 +11,7 @@ class Operator;
 class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
+class OperatorInput;
 
 class ProcessNode : public QObject, public QGraphicsPathItem
 {
@@ -18,7 +20,7 @@ public:
 
     enum { Type = QGraphicsItem::UserType + ProcessScene::UserTypeNode };
 
-    explicit ProcessNode(qreal x, qreal y,
+    explicit ProcessNode(QPointF pos,
                          Operator *op,
                          Process *process,
                          QGraphicsItem *parent = 0);
@@ -46,6 +48,8 @@ private:
     bool m_enabled;
     QGraphicsTextItem *m_caption;
 
+    void addButtons(qreal size);
+    void addPorts(QVector<OperatorInput*> inputs, qreal size);
 };
 
 #endif // PROCESSNODE_H

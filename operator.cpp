@@ -29,6 +29,16 @@ Operator::~Operator()
         delete im;
 }
 
+QVector<OperatorParameter *> Operator::getParameters()
+{
+    return m_parameters;
+}
+
+QVector<OperatorInput *> Operator::getInputs()
+{
+    return m_inputs;
+}
+
 double Operator::getCompletion()
 {
     return double(m_progress)/m_complete;

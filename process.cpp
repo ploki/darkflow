@@ -118,8 +118,7 @@ void Process::setDirty(bool dirty)
 
 void Process::addOperator(Operator *op)
 {
-    ProcessNode *node = new ProcessNode(m_lastMousePosition.x(),
-                                        m_lastMousePosition.y(),
+    ProcessNode *node = new ProcessNode(m_lastMousePosition,
                                         op, this);
     this->m_nodes.insert(node);
     m_scene->addItem(node);

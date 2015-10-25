@@ -42,7 +42,10 @@ void ProcessConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     Q_UNUSED(option);
     Q_UNUSED(widget);
     painter->setBrush(brush());
-    painter->setPen(pen());
+    if ( m_inPort )
+        painter->setPen(pen());
+    else
+        painter->setPen(QPen(Qt::darkRed,4));
     painter->setRenderHint(QPainter::Antialiasing);
     painter->drawPath(path());
 }

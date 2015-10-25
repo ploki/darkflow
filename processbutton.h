@@ -1,25 +1,29 @@
 #ifndef PROCESSBUTTON_H
 #define PROCESSBUTTON_H
 
-#include <QGraphicsPathItem>
+#include <QGraphicsRectItem>
 #include "processscene.h"
 
 class Process;
 class ProcessNode;
 
-class ProcessButton : public QObject, public QGraphicsPathItem
+class ProcessButton : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 public:
 
     enum { Type = QGraphicsItem::UserType + ProcessScene::UserTypeButton };
 
-    explicit ProcessButton(qreal x, qreal y,
-                           const QString& text,
+    typedef enum { Play,
+                   Abort,
+                   Display,
+                   Close,
+                   Ghost } ButtonType;
+
+    explicit ProcessButton(QRectF rect,
+                           ButtonType type,
                            Process *process,
-                           ProcessNode *node,
-                           Qt::GlobalColor vividColor=Qt::green,
-                           Qt::GlobalColor color=Qt::darkGreen);
+                           ProcessNode *node);
     ~ProcessButton();
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
@@ -38,11 +42,10 @@ public slots:
 private:
     Process *m_process;
     ProcessNode *m_node;
-    QString m_text;
     bool m_mouseHover;
     bool m_mousePress;
-    Qt::GlobalColor m_vividColor;
-    Qt::GlobalColor m_color;
+
+    ButtonType m_type;
 };
 
 #endif // PROCESSBUTTON_H

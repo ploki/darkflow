@@ -27,7 +27,11 @@ SOURCES += main.cpp\
     operatorpaththrough.cpp \
     processbutton.cpp \
     processport.cpp \
-    processconnection.cpp
+    processconnection.cpp \
+    filesselection.cpp \
+    operatorparameterfilescollection.cpp \
+    operatorparameterdropdown.cpp \
+    operatorloadraw.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -44,8 +48,13 @@ HEADERS  += \
     operatorpaththrough.h \
     processbutton.h \
     processport.h \
-    processconnection.h
+    processconnection.h \
+    filesselection.h \
+    operatorparameterfilescollection.h \
+    operatorparameterdropdown.h \
+    operatorloadraw.h
 
 FORMS    += mainwindow.ui \
     projectproperties.ui \
-    aboutdialog.ui
+    aboutdialog.ui \
+    filesselection.ui

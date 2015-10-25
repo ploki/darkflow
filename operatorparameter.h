@@ -10,6 +10,7 @@ public:
     explicit OperatorParameter(QObject *parent = 0);
 
 signals:
+    void parameterChanged();
 
 public slots:
 };

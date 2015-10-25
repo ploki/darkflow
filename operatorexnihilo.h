@@ -5,7 +5,6 @@
 #include <QObject>
 
 class Process;
-class Operator;
 
 class OperatorExNihilo : public Operator
 {

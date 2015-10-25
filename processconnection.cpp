@@ -14,7 +14,7 @@ ProcessConnection::ProcessConnection(ProcessPort *port,
     m_outPort(port)
 {
     //setPos(port->anchorScenePos());
-    setPen(QPen(Qt::black, 2));
+    setPen(QPen(Qt::black,4));
     setBrush(Qt::NoBrush);
     setZValue(-1);
     connect(m_outPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
@@ -42,6 +42,7 @@ void ProcessConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     Q_UNUSED(option);
     Q_UNUSED(widget);
     painter->setBrush(brush());
+    painter->setPen(pen());
     painter->setRenderHint(QPainter::Antialiasing);
     painter->drawPath(path());
 }

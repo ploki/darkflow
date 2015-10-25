@@ -79,6 +79,8 @@ bool Operator::isUpToDate() const
 
 void Operator::setUpToDate(bool upToDate)
 {
+    m_complete = 1;
+    m_progress = 0;
     m_upToDate = upToDate;
     if (!upToDate) {
         foreach(Operator *op, m_sinks)

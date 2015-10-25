@@ -16,6 +16,7 @@
 #include "processport.h"
 #include "processconnection.h"
 
+#include "operatorloadraw.h"
 #include "operatorexnihilo.h"
 #include "operatorpaththrough.h"
 
@@ -36,6 +37,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
             this, SLOT(contextMenuSignal(QGraphicsSceneContextMenuEvent*)));
     m_scene->installEventFilter(this);
 
+    m_availableOperators.push_back(new OperatorLoadRaw(this));
     m_availableOperators.push_back(new OperatorExNihilo(this));
     m_availableOperators.push_back(new OperatorPathThrough(this));
 }

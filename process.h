@@ -50,6 +50,8 @@ public:
     void addOperator(Operator *op);
     void spawnContextMenu(const QPoint& pos);
 
+    ProcessScene *scene() const;
+
 signals:
     void stateChanged();
 

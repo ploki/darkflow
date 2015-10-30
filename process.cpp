@@ -316,3 +316,8 @@ void Process::contextMenuSignal(QGraphicsSceneContextMenuEvent *event)
 {
     spawnContextMenu(event->screenPos());
 }
+ProcessScene *Process::scene() const
+{
+    return m_scene;
+}
+

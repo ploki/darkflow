@@ -9,8 +9,10 @@
 #include "processbutton.h"
 #include "processport.h"
 #include "processprogressbar.h"
+#include "processconnection.h"
 #include "operator.h"
 #include "operatorinput.h"
+#include "operatoroutput.h"
 
 #include "operatorparameterdropdown.h"
 #include "processdropdown.h"
@@ -28,7 +30,8 @@ ProcessNode::ProcessNode(QPointF pos,
     QGraphicsPathItem(parent),
     m_operator(op),
     m_process(process),
-    m_caption(NULL)
+    m_caption(NULL),
+    m_connections()
 {
     qreal barHeight;
     qreal x = pos.x();
@@ -38,12 +41,11 @@ ProcessNode::ProcessNode(QPointF pos,
     qreal xradius=3, yradius=3;
 
     QVector<OperatorInput*> inputs = op->getInputs();
+    QVector<OperatorOutput*> outputs = op->getOutputs();
     QVector<OperatorParameter*> parameters = op->getParameters();
 
-    int portRowsCount = inputs.count();
+    int portRowsCount = inputs.count() + outputs.count();
     int parameterRowsCount = parameters.count();
-    if (0 == portRowsCount)
-        portRowsCount = 1; //always an output
 
     m_caption = new QGraphicsTextItem(this);
     m_caption->setPlainText(op->getClassIdentifier());
@@ -63,7 +65,7 @@ ProcessNode::ProcessNode(QPointF pos,
     setCursor(QCursor(Qt::ArrowCursor));
 
 
-    addPorts(inputs, barHeight);
+    addPorts(outputs, inputs, barHeight);
     addButtons(barHeight);
     addParameters(parameters, barHeight, (1+portRowsCount)*barHeight);
 
@@ -118,23 +120,32 @@ void ProcessNode::addButtons(qreal size)
     ProcessProgressBar *progress = new ProcessProgressBar(QRectF(x+size*2, y+h-size, w-size*2, size), m_process, this);
     connect(m_operator, SIGNAL(progress(int,int)), progress, SLOT(progress(int,int)));
 }
-void ProcessNode::addPorts(QVector<OperatorInput*>& inputs, qreal size)
+void ProcessNode::addPorts(QVector<OperatorOutput*>& outputs, QVector<OperatorInput*>& inputs, qreal size)
 {
     qreal x = boundingRect().x();
     qreal y = boundingRect().y();
     qreal w = boundingRect().width();
 
-    for (int i=0 ; i < inputs.count(); ++i)
-    {
-        new ProcessPort(QRectF(x,y+size*(i+1),w,size),inputs[i]->name(),
+    for (int i=0 ; i < outputs.count(); ++i) {
+        new ProcessPort(QRectF(x,y+size*(i+1),w,size),
+                        outputs[i]->name(),
+                        i,
+                        ProcessPort::OutputPort, m_process, this);
+    }
+    for (int i=0 ; i < inputs.count(); ++i) {
+        new ProcessPort(QRectF(x,y+size*(i+1+outputs.count()),w,size),
+                        inputs[i]->name(),
+                        i,
                         ProcessPort::InputPort, m_process, this);
     }
-    new ProcessPort(QRectF(x,y+size,w,size),"Out", ProcessPort::OutputPort, m_process, this);
+
 }
 
 ProcessNode::~ProcessNode()
 {
     //disconnect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
+    foreach(ProcessConnection *connection, m_connections)
+        connection->detach();
     delete m_operator;
 }
 
@@ -151,6 +162,16 @@ void ProcessNode::paint(QPainter *painter,
 }
 
 int ProcessNode::type() const { return Type; }
+
+void ProcessNode::addConnection(ProcessConnection *connection)
+{
+    m_connections.insert(connection);
+}
+
+void ProcessNode::removeConnection(ProcessConnection *connection)
+{
+    m_connections.remove(connection);
+}
 
 void ProcessNode::operatorStateChanged()
 {
@@ -186,3 +207,4 @@ void ProcessNode::abortClicked()
 {
     m_operator->abort();
 }
+

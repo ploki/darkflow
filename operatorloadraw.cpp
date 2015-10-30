@@ -2,6 +2,7 @@
 #include "operatorparameterfilescollection.h"
 #include "operatorparameterdropdown.h"
 #include "operatorloadraw.h"
+#include "operatoroutput.h"
 
 
 static const char *DebayerStr[] = {
@@ -41,7 +42,7 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     m_parameters.push_back(m_debayer);
     m_parameters.push_back(m_whiteBalance);
 
-
+    m_outputs.push_back(new OperatorOutput("RAWs","RAW files colelction",this));
 }
 
 OperatorLoadRaw::~OperatorLoadRaw()

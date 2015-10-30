@@ -2,6 +2,8 @@
 
 #include "operatorworker.h"
 #include "operator.h"
+#include "operatorinput.h"
+#include "operatoroutput.h"
 #include "image.h"
 
 
@@ -24,33 +26,48 @@ void OperatorWorker::play()
 {
     bool parentDirty = false;
     qWarning("OperatorWorker::play()");
-    foreach(Operator *op, m_operator->m_sources ) {
-        qWarning("OperatorWorker::play():one source!");
-        if ( !op->isUpToDate() ) {
-            parentDirty = true;
-            op->play();
-            connect(op, SIGNAL(upToDate()), this, SLOT(play()));
-        }
-    }
-    if ( parentDirty )
-        //will be signaled later
+    if ( 0 == m_operator->m_inputs.size() ) {
+        qWarning("OperatorWorker::play() not overloaded for no input");
+        emitFailure();
         return;
+    }
+    if ( 0 == m_operator->m_outputs.size() ) {
+        qWarning("OperatorWorker::play() not overloaded for #output != 1");
+        emitFailure();
+        return;
+    }
+
+    foreach(OperatorInput *input, m_operator->m_inputs)
+        foreach(OperatorOutput *remoteOutput, input->sources()) {
+            if ( !remoteOutput->m_operator->isUpToDate() ) {
+                parentDirty = true;
+                remoteOutput->m_operator->play();
+                m_operator->m_waitingForParentUpToDate = true;
+            }
+
+        }
+
+    if ( parentDirty ) {
+        //will be signaled later
+        emitFailure();
+        return;
+    }
 
     if ( !parentDirty && m_operator->isUpToDate())
     {
-        emit success();
+        emitSuccess();
         return;
     }
 
     m_operator->setUpToDate(false);
-    foreach(Operator *op, m_operator->m_sources ) {
-        const QVector<Image*> source = op->getResult();
+    foreach(OperatorOutput *remoteOutput, m_operator->m_inputs[0]->sources()) {
+        const QVector<Image*> source = remoteOutput->m_result;
         foreach(const Image *image, source) {
             Image *newResult = process(image);
-            m_operator->m_result.push_back(newResult);
+            m_operator->m_outputs[0]->m_result.push_back(newResult);
         }
     }
-
+    emitSuccess();
 }
 
 bool OperatorWorker::aborted() {
@@ -59,4 +76,9 @@ bool OperatorWorker::aborted() {
 
 void OperatorWorker::emitFailure() {
     emit progress(0, 1); emit failure();
+}
+
+void OperatorWorker::emitSuccess()
+{
+    emit progress(1, 1); emit success();
 }

@@ -24,6 +24,7 @@ public:
 
     void setInputPort(ProcessPort *port);
     void unsetInputPort();
+    void detach();
     int type() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

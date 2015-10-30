@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     processfilescollection.cpp \
     processprogressbar.cpp \
     operatorworker.cpp \
-    operatorpassthrough.cpp
+    operatorpassthrough.cpp \
+    operatoroutput.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -60,7 +61,8 @@ HEADERS  += \
     processfilescollection.h \
     processprogressbar.h \
     operatorworker.h \
-    operatorpassthrough.h
+    operatorpassthrough.h \
+    operatoroutput.h
 
 FORMS    += mainwindow.ui \
     projectproperties.ui \

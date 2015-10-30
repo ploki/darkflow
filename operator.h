@@ -8,6 +8,7 @@
 
 class OperatorParameter;
 class OperatorInput;
+class OperatorOutput;
 class Process;
 class Image;
 class QThread;
@@ -30,7 +31,9 @@ public:
      * @brief getInputs
      * @return input descriptions
      */
-    QVector<OperatorInput*> getInputs();
+    QVector<OperatorInput*> getInputs() const;
+
+    QVector<OperatorOutput *> getOutputs() const;
 
     void addSource(const QString &inputName, Operator *op);
     void clearSource(const QString &inputName);
@@ -41,10 +44,12 @@ public:
     bool isUpToDate() const;
     void setUpToDate(bool upToDate);
 
-    QVector<Image *> getResult() const;
+
     virtual QString getClassIdentifier() = 0;
     virtual Operator* newInstance() = 0;
 
+    static void operator_connect(OperatorOutput *output, OperatorInput *input);
+    static void operator_disconnect(OperatorOutput *output, OperatorInput *input);
 
 signals:
     void progress(int ,int );
@@ -59,6 +64,7 @@ public slots:
     void workerProgress(int p, int c);
     void workerSuccess();
     void workerFailure();
+    void parentUpToDate();
 
 //protected:
 public:
@@ -67,15 +73,13 @@ public:
     bool m_upToDate;
     QVector<OperatorParameter*> m_parameters;
     QVector<OperatorInput*> m_inputs;
-    QMap<QString, Operator*> m_sources;
-    QSet<Operator*> m_sinks;
-    QVector<Image*> m_result;
+    QVector<OperatorOutput*> m_outputs;
+    bool m_waitingForParentUpToDate;
 
     QThread *m_thread;
     OperatorWorker *m_worker;
 
 };
-
 
 
 

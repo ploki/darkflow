@@ -13,13 +13,16 @@
 
 ProcessPort::ProcessPort(QRectF rect,
                          const QString &portName,
+                         int portIdx,
                          ProcessPort::PortType portType,
                          Process *process, ProcessNode *node) :
     QObject(NULL),
     QGraphicsPathItem(node),
+    m_node(node),
     m_process(process),
     m_portName(portName),
-    m_portType(portType)
+    m_portType(portType),
+    m_portIdx(portIdx)
 {
     const qreal flange=2.;
     setPen(QPen(Qt::black));
@@ -29,7 +32,6 @@ ProcessPort::ProcessPort(QRectF rect,
     qreal textH = textItem->boundingRect().height();
 
     qreal unit = textH/4;
-    QPointF center = rect.center();
     qreal x = rect.x();
     qreal y = rect.y();
     qreal w = rect.width();
@@ -110,3 +112,8 @@ ProcessPort::PortType ProcessPort::portType() const
 {
     return m_portType;
 }
+int ProcessPort::portIdx() const
+{
+    return m_portIdx;
+}
+

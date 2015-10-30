@@ -5,6 +5,7 @@
 #include "image.h"
 #include "operatorparameter.h"
 #include "operatorinput.h"
+#include "operatoroutput.h"
 #include "operatorworker.h"
 
 Operator::Operator(Process *parent) :
@@ -14,8 +15,8 @@ Operator::Operator(Process *parent) :
     m_upToDate(false),
     m_parameters(),
     m_inputs(),
-    m_sources(),
-    m_sinks(),
+    m_outputs(),
+    m_waitingForParentUpToDate(false),
     m_thread(new QThread(this)),
     m_worker(NULL)
 {
@@ -28,8 +29,6 @@ Operator::~Operator()
         delete p;
     foreach(OperatorInput *i, m_inputs)
         delete i;
-    foreach(Image *im, m_result)
-        delete im;
 }
 
 QVector<OperatorParameter *> Operator::getParameters()
@@ -37,9 +36,14 @@ QVector<OperatorParameter *> Operator::getParameters()
     return m_parameters;
 }
 
-QVector<OperatorInput *> Operator::getInputs()
+QVector<OperatorInput *> Operator::getInputs() const
 {
     return m_inputs;
+}
+
+QVector<OperatorOutput *> Operator::getOutputs() const
+{
+    return m_outputs;
 }
 
 void Operator::abort()
@@ -63,7 +67,6 @@ void Operator::workerSuccess()
     setUpToDate(true);
     m_thread->quit();
     m_worker=NULL;
-    emit upToDate();
 }
 
 void Operator::workerFailure()
@@ -73,9 +76,12 @@ void Operator::workerFailure()
     m_worker=NULL;
 }
 
-QVector<Image *> Operator::getResult() const
+void Operator::parentUpToDate()
 {
-    return m_result;
+    if ( !m_waitingForParentUpToDate )
+        return;
+    m_waitingForParentUpToDate=false;
+    play();
 }
 
 void Operator::play() {
@@ -90,17 +96,24 @@ bool Operator::isUpToDate() const
     return m_upToDate;
 }
 
-void Operator::setUpToDate(bool upToDate)
+void Operator::setUpToDate(bool b)
 {
-    m_upToDate = upToDate;
-    if (!upToDate) {
-        foreach(Operator *op, m_sinks)
-            op->setUpToDate(false);
-        foreach(Image *image, m_result) {
-            image->remove();
-            delete image;
+    m_upToDate = b;
+    if (!m_upToDate) {
+        foreach(OperatorOutput *output, m_outputs) {
+            foreach(OperatorInput *remoteInput, output->sinks())
+                remoteInput->m_operator->setUpToDate(false);
+            foreach(Image *image, output->m_result) {
+                image->remove();
+                delete image;
+            }
+            output->m_result.clear();
         }
-        m_result.clear();
+        emit progress(0, 1);
+    }
+    else {
+        emit progress(1, 1);
+        emit upToDate();
     }
 }
 
@@ -112,5 +125,21 @@ bool Operator::isEnabled() const
 void Operator::setEnabled(bool enabled)
 {
     m_enabled = enabled;
+}
+
+void Operator::operator_connect(OperatorOutput *output, OperatorInput *input)
+{
+    output->addSink(input);
+    input->addSource(output);
+    connect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
+    input->m_operator->setUpToDate(false);
+}
+
+void Operator::operator_disconnect(OperatorOutput *output, OperatorInput *input)
+{
+    disconnect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
+    output->removeSink(input);
+    input->removeSource(output);
+    input->m_operator->setUpToDate(false);
 }
 

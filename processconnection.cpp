@@ -7,11 +7,16 @@
 #include "processnode.h"
 #include "processport.h"
 
+#include "operator.h"
+#include "operatorinput.h"
+#include "operatoroutput.h"
+
 ProcessConnection::ProcessConnection(ProcessPort *port,
                                      Process *process) :
     QObject(NULL),
     QGraphicsPathItem(NULL),
-    m_outPort(port)
+    m_outPort(port),
+    m_inPort(NULL)
 {
     //setPos(port->anchorScenePos());
     setPen(QPen(Qt::black,4));
@@ -19,6 +24,7 @@ ProcessConnection::ProcessConnection(ProcessPort *port,
     setZValue(-1);
     connect(m_outPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_outPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
+    m_outPort->m_node->addConnection(this);
     /*
      * if move from anywhere:
      * if this flag is not set, scene move instead of connection when detached from inPort
@@ -29,7 +35,10 @@ ProcessConnection::ProcessConnection(ProcessPort *port,
 
 ProcessConnection::~ProcessConnection()
 {
-
+    m_outPort->m_node->removeConnection(this);
+    if (m_inPort)
+        Operator::operator_disconnect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
+                m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
 }
 
 int ProcessConnection::type() const
@@ -90,6 +99,10 @@ void ProcessConnection::setInputPort(ProcessPort *port)
     m_inPort = port;
     connect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
+
+    Operator::operator_connect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
+            m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
+    m_inPort->m_node->addConnection(this);
     updateConnectedPath();
 }
 
@@ -97,6 +110,15 @@ void ProcessConnection::unsetInputPort()
 {
     disconnect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     disconnect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
+    Operator::operator_disconnect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
+            m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
+    m_inPort->m_node->removeConnection(this);
     m_inPort = NULL;
+}
+
+void ProcessConnection::detach()
+{
+    unsetInputPort();
+    deleteLater();
 }
 

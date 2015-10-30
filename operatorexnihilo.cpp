@@ -1,3 +1,5 @@
+#include <QVector>
+#include "operatoroutput.h"
 #include "operatorexnihilo.h"
 #include "operatorworker.h"
 #include "process.h"
@@ -14,8 +16,8 @@ private slots:
     void play() {
         Image *image = process(NULL);
         if (image) {
-            m_operator->m_result.push_back(image);
-            emit success();
+            m_operator->m_outputs[0]->m_result.push_back(image);
+            emitSuccess();
         }
 
     }
@@ -47,6 +49,7 @@ private slots:
 OperatorExNihilo::OperatorExNihilo(Process *parent) :
     Operator(parent)
 {
+    m_outputs.push_back(new OperatorOutput("Random image", "Random Image", this));
 }
 
 OperatorExNihilo::~OperatorExNihilo()

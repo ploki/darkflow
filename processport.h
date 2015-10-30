@@ -24,6 +24,7 @@ public:
 
     explicit ProcessPort(QRectF rect,
                          const QString& portName,
+                         int portIdx,
                          PortType portType,
                          Process *process,
                          ProcessNode *node);
@@ -40,10 +41,15 @@ public:
 signals:
     void positionChanged();
 
+public:
+    ProcessNode *m_node;
+    int portIdx() const;
+
 private:
     Process *m_process;
     QString m_portName;
     PortType m_portType;
+    int m_portIdx;
 };
 
 #endif // PROCESSPORT_H

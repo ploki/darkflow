@@ -3,15 +3,18 @@
 
 #include <QGraphicsPathItem>
 #include <QPointF>
+#include <QSet>
 
 #include "processscene.h"
 
 class Process;
+class ProcessConnection;
 class Operator;
 class QPainter;
 class QStyleOptionGraphicsItem;
 class QWidget;
 class OperatorInput;
+class OperatorOutput;
 class OperatorParameter;
 
 class ProcessNode : public QObject, public QGraphicsPathItem
@@ -30,6 +33,8 @@ public:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget);
     int type() const;
+    void addConnection(ProcessConnection *connection);
+    void removeConnection(ProcessConnection *connection);
 
 signals:
 
@@ -42,15 +47,19 @@ private slots:
     void playClicked();
     void abortClicked();
 
-private:
+public:
     Operator *m_operator;
+private:
     Process *m_process;
     double m_completion;
     bool m_enabled;
     QGraphicsTextItem *m_caption;
+    QSet<ProcessConnection*> m_connections;
 
     void addButtons(qreal size);
-    void addPorts(QVector<OperatorInput*>& inputs, qreal size);
+    void addPorts(QVector<OperatorOutput*>& outputs,
+                  QVector<OperatorInput*>& inputs,
+                  qreal size);
     void addParameters(QVector<OperatorParameter*>& parameters, qreal size, qreal offset);
 };
 

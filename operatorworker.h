@@ -28,6 +28,7 @@ protected:
 
     bool aborted();
     void emitFailure();
+    void emitSuccess();
 };
 
 #endif // OPERATORWORKER_H

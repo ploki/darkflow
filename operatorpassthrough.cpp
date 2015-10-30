@@ -1,6 +1,7 @@
 #include "operatorworker.h"
 #include "operatorpassthrough.h"
 #include "operatorinput.h"
+#include "operatoroutput.h"
 #include "image.h"
 
 
@@ -19,9 +20,10 @@ public:
 OperatorPassThrough::OperatorPassThrough(Process *parent) :
     Operator(parent)
 {
-    m_inputs.push_back(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set));
-    m_inputs.push_back(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set));
-    m_inputs.push_back(new OperatorInput("Images set 3","Images set # three",OperatorInput::Set));
+    m_inputs.push_back(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set, this));
+    m_inputs.push_back(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set, this));
+    m_inputs.push_back(new OperatorInput("Images set 3","Images set # three",OperatorInput::Set, this));
+    m_outputs.push_back(new OperatorOutput("merge", "merge", this));
 }
 
 OperatorPassThrough::~OperatorPassThrough()

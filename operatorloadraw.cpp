@@ -4,7 +4,9 @@
 #include "operatorloadraw.h"
 #include "operatoroutput.h"
 
-
+static const char *ColorSpaceStr[] = {
+  "Linear", "sRGB", "IUT BT.709"
+};
 static const char *DebayerStr[] = {
     "None", "Half Size", "Low", "VNG", "PPG", "AHD"
 };
@@ -22,11 +24,17 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
                           "FITS Images (*.fits *.fit);;"
                           "TIFF Images (*.tif *.tiff);;"
                           "All Files (*.*)", this)),
+    m_colorSpace(new OperatorParameterDropDown("Color Space", ColorSpaceStr[Linear], this)),
     m_debayer(new OperatorParameterDropDown("Debayer", DebayerStr[NoDebayer], this)),
     m_whiteBalance(new OperatorParameterDropDown("White Balance", WhiteBalanceStr[Daylight], this)),
+    m_colorSpaceValue(Linear),
     m_debayerValue(PPG),
     m_whiteBalanceValue(Daylight)
 {
+    m_colorSpace->addOption(ColorSpaceStr[Linear], this, SLOT(setColorSpaceLinear()));
+    m_colorSpace->addOption(ColorSpaceStr[sRGB], this, SLOT(setColorSpacesRGB()));
+    m_colorSpace->addOption(ColorSpaceStr[IUT_BT_709], this, SLOT(setColorSpaceIUT_BT_709()));
+
     m_debayer->addOption(DebayerStr[NoDebayer], this, SLOT(setDebayerNone()));
     m_debayer->addOption(DebayerStr[HalfSize], this, SLOT(setDebayerHalfSize()));
     m_debayer->addOption(DebayerStr[Low], this, SLOT(setDebayerLow()));
@@ -39,6 +47,7 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     m_whiteBalance->addOption(WhiteBalanceStr[Daylight], this, SLOT(setWhiteBalanceDaylight()));
 
     m_parameters.push_back(m_filesCollection);
+    m_parameters.push_back(m_colorSpace);
     m_parameters.push_back(m_debayer);
     m_parameters.push_back(m_whiteBalance);
 
@@ -57,6 +66,24 @@ OperatorLoadRaw *OperatorLoadRaw::newInstance()
 QString OperatorLoadRaw::getClassIdentifier()
 {
     return "Load Raw";
+}
+
+void OperatorLoadRaw::setColorSpaceLinear()
+{
+    m_colorSpaceValue = Linear;
+    setUpToDate(false);
+}
+
+void OperatorLoadRaw::setColorSpacesRGB()
+{
+    m_colorSpaceValue = sRGB;
+    setUpToDate(false);
+}
+
+void OperatorLoadRaw::setColorSpaceIUT_BT_709()
+{
+    m_colorSpaceValue = IUT_BT_709;
+    setUpToDate(false);
 }
 
 void OperatorLoadRaw::setDebayerNone()

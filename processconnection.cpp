@@ -24,7 +24,7 @@ ProcessConnection::ProcessConnection(ProcessPort *port,
     setZValue(-1);
     connect(m_outPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_outPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
-    m_outPort->m_node->addConnection(this);
+    //m_outPort->m_node->addConnection(this);
     /*
      * if move from anywhere:
      * if this flag is not set, scene move instead of connection when detached from inPort
@@ -35,7 +35,7 @@ ProcessConnection::ProcessConnection(ProcessPort *port,
 
 ProcessConnection::~ProcessConnection()
 {
-    m_outPort->m_node->removeConnection(this);
+    //m_outPort->m_node->removeConnection(this);
     if (m_inPort)
         Operator::operator_disconnect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
                 m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
@@ -103,6 +103,7 @@ void ProcessConnection::setInputPort(ProcessPort *port)
     Operator::operator_connect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
             m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
     m_inPort->m_node->addConnection(this);
+    m_outPort->m_node->addConnection(this);
     updateConnectedPath();
 }
 
@@ -113,6 +114,7 @@ void ProcessConnection::unsetInputPort()
     Operator::operator_disconnect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
             m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
     m_inPort->m_node->removeConnection(this);
+    m_outPort->m_node->removeConnection(this);
     m_inPort = NULL;
 }
 

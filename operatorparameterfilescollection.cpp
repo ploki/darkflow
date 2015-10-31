@@ -1,10 +1,10 @@
 #include "operatorparameterfilescollection.h"
 
 OperatorParameterFilesCollection::OperatorParameterFilesCollection(
-        QString caption,
-        QString windowCaption,
-        QString dir,
-        QString filter,
+        const QString& caption,
+        const QString& windowCaption,
+        const QString& dir,
+        const QString& filter,
         QObject *parent) :
     OperatorParameter(parent),
     m_caption(caption),

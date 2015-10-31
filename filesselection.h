@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QStringList>
+#include <QString>
 
 namespace Ui {
 class FilesSelection;
@@ -14,7 +15,10 @@ class FilesSelection : public QDialog
 {
     Q_OBJECT
 public:
-    explicit FilesSelection(QWidget *parent = 0);
+    explicit FilesSelection(const QString& windowCaption,
+                            const QString& dir,
+                            const QString& filter,
+                            QWidget *parent = 0);
     ~FilesSelection();
 
     QStringList getSelection() const;
@@ -29,6 +33,9 @@ public slots:
 private:
     Ui::FilesSelection *ui;
     QStandardItemModel *m_list;
+    QString m_windowCaption;
+    QString m_dir;
+    QString m_filter;
 };
 
 #endif // FILESSELECTION_H

@@ -1,3 +1,4 @@
+#include <QString>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QFileDialog>
@@ -5,10 +6,16 @@
 #include "filesselection.h"
 #include "ui_filesselection.h"
 
-FilesSelection::FilesSelection(QWidget *parent) :
+FilesSelection::FilesSelection(const QString& windowCaption,
+                               const QString& dir,
+                               const QString& filter,
+                               QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FilesSelection),
-    m_list(new QStandardItemModel)
+    m_list(new QStandardItemModel),
+    m_windowCaption(windowCaption),
+    m_dir(dir),
+    m_filter(filter)
 {
     ui->setupUi(this);
     ui->selectedFiles->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -50,12 +57,9 @@ void FilesSelection::clearSelection()
 void FilesSelection::addClicked()
 {
     QStringList list = QFileDialog::getOpenFileNames(this,
-                                                     tr("Select files to insert"),
-                                                     "/home/guigui",
-                                                     "RAW Images (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;"
-                                                     "FITS Images (*.fits *.fit);;"
-                                                     "TIFF Images (*.tif *.tiff);;"
-                                                     "All Files (*.*)",
+                                                     m_windowCaption,
+                                                     m_dir,
+                                                     m_filter,
                                                      0, 0);
     setSelection(list);
 }

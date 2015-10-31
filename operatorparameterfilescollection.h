@@ -8,10 +8,10 @@
 class OperatorParameterFilesCollection : public OperatorParameter
 {
 public:
-    OperatorParameterFilesCollection(QString caption,
-                                     QString windowCaption,
-                                     QString dir,
-                                     QString filter,
+    OperatorParameterFilesCollection(const QString& caption,
+                                     const QString& windowCaption,
+                                     const QString& dir,
+                                     const QString& filter,
                                      QObject *parent = 0);
     QString caption() const;
     QString windowCaption() const;

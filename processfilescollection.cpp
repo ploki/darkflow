@@ -23,7 +23,10 @@ ProcessFilesCollection::ProcessFilesCollection(QRectF rect,
     m_caption(NULL),
     m_currentValue(NULL),
     m_mouseHover(false),
-    m_selectionDialog(new FilesSelection(NULL))
+    m_selectionDialog(new FilesSelection(filesCollection->windowCaption(),
+                                         filesCollection->dir(),
+                                         filesCollection->filter(),
+                                         NULL))
 {
     setPen(QPen(Qt::black, PEN_WIDTH));
     setBrush(QBrush(Qt::gray));

@@ -18,11 +18,11 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     Operator(parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "RAW files",
-                          tr("Select files to insert"),
+                          tr("Select RAW files to insert"),
                           m_process->outputDirectory(),
                           "RAW Images (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;"
-                          "FITS Images (*.fits *.fit);;"
-                          "TIFF Images (*.tif *.tiff);;"
+                          /*"FITS Images (*.fits *.fit);;"*/
+                          /*"TIFF Images (*.tif *.tiff);;"*/
                           "All Files (*.*)", this)),
     m_colorSpace(new OperatorParameterDropDown("Color Space", ColorSpaceStr[Linear], this)),
     m_debayer(new OperatorParameterDropDown("Debayer", DebayerStr[NoDebayer], this)),

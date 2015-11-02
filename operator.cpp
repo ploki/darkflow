@@ -1,4 +1,5 @@
 #include <QThread>
+#include <QJsonArray>
 
 #include "operator.h"
 #include "process.h"
@@ -18,7 +19,8 @@ Operator::Operator(Process *parent) :
     m_outputs(),
     m_waitingForParentUpToDate(false),
     m_thread(new QThread(this)),
-    m_worker(NULL)
+    m_worker(NULL),
+    m_uuid(Process::uuid())
 {
 
 }
@@ -83,6 +85,16 @@ void Operator::parentUpToDate()
     m_waitingForParentUpToDate=false;
     play();
 }
+QString Operator::getUuid() const
+{
+    return m_uuid;
+}
+
+void Operator::setUuid(const QString &uuid)
+{
+    m_uuid = uuid;
+}
+
 
 void Operator::play() {
     setUpToDate(false);
@@ -141,5 +153,29 @@ void Operator::operator_disconnect(OperatorOutput *output, OperatorInput *input)
     output->removeSink(input);
     input->removeSource(output);
     input->m_operator->setUpToDate(false);
+}
+
+void Operator::save(QJsonObject &obj)
+{
+    QJsonArray parameters;
+    obj["enabled"] = m_enabled;
+    obj["uuid"] = m_uuid;
+    obj["classIdentifier"] = getClassIdentifier();
+    foreach(OperatorParameter *parameter, m_parameters) {
+        qWarning("saving a parameter");
+        parameters.push_back(parameter->save());
+    }
+    obj["parameters"] = parameters;
+}
+
+void Operator::load(QJsonObject &obj)
+{
+    QJsonArray array = obj["parameters"].toArray();
+    m_enabled = obj["enabled"].toBool();
+    m_uuid = obj["uuid"].toString();
+    for (int i = 0 ; i < m_parameters.count(); ++i ) {
+        QJsonObject obj = array[i].toObject();
+        m_parameters[i]->load(obj);
+    }
 }
 

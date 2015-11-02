@@ -26,13 +26,13 @@ public:
     int type() const;
 
     void clicked(QPoint pos);
-    void updateValue();
 
 public slots:
     void selectionAccepted();
     void selectionRejected();
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void updateValue();
 
 private:
     Process *m_process;

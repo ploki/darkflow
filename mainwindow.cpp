@@ -69,7 +69,7 @@ void MainWindow::actionLoad()
                                                         "Darkflow Project (*.dflow)",
                                                         0, 0);
         if ( !filename.isEmpty())
-            process->open(filename);
+            process->load(filename);
     }
 
 }

@@ -1,6 +1,7 @@
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QFile>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
@@ -8,6 +9,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QGraphicsItem>
+#include <QUuid>
 
 #include "process.h"
 #include "processscene.h"
@@ -21,6 +23,13 @@
 #include "operatorloadraw.h"
 #include "operatorexnihilo.h"
 #include "operatorpassthrough.h"
+
+QString Process::uuid()
+{
+    QUuid uuid = uuid.createUuid();
+    return uuid.toString();
+
+}
 
 Process::Process(ProcessScene *scene, QObject *parent) :
     QObject(parent),
@@ -122,10 +131,16 @@ void Process::addOperator(Operator *op)
 {
     ProcessNode *node = new ProcessNode(m_lastMousePosition,
                                         op, this);
-    this->m_nodes.insert(node);
+    m_nodes.insert(node);
     m_scene->addItem(node);
     setDirty(true);
 }
+
+void Process::removeNode(ProcessNode *node)
+{
+    m_nodes.remove(node);
+}
+
 
 QString Process::projectFile() const
 {
@@ -140,11 +155,18 @@ void Process::setProjectFile(const QString &projectFile)
 void Process::save()
 {
     QJsonObject obj;
+    QJsonArray nodes;
     QJsonDocument doc;
     obj["projectName"]=projectName();
     obj["notes"]=notes();
     obj["outputDirectory"]=outputDirectory();
     obj["temporaryDirectory"]=temporaryDirectory();
+    foreach (ProcessNode *node, m_nodes) {
+        qWarning("saving a node");
+        nodes.push_back(node->save());
+    }
+    obj["nodes"] = nodes;
+
     doc.setObject(obj);
     QFile saveFile(projectFile());
     if (!saveFile.open(QIODevice::WriteOnly)) {
@@ -152,11 +174,12 @@ void Process::save()
        return;
     }
 
-    saveFile.write(doc.toBinaryData());
+    //saveFile.write(doc.toBinaryData());
+    saveFile.write(doc.toJson());
     setDirty(false);
 }
 
-void Process::open(const QString& filename)
+void Process::load(const QString& filename)
 {
     QFile loadFile(filename);
     if (!loadFile.open(QIODevice::ReadOnly))
@@ -165,13 +188,36 @@ void Process::open(const QString& filename)
             return;
     }
     QByteArray data = loadFile.readAll();
-    QJsonDocument doc(QJsonDocument::fromBinaryData(data));
+    //QJsonDocument doc(QJsonDocument::fromBinaryData(data));
+    QJsonDocument doc(QJsonDocument::fromJson(data));
     QJsonObject obj = doc.object();
     setProjectFile(filename);
     setProjectName(obj["projectName"].toString());
     setNotes(obj["notes"].toString());
     setOutputDirectory(obj["outputDirectory"].toString());
     setTemporaryDirectory(obj["temporaryDirectory"].toString());
+
+    foreach(QJsonValue val, obj["nodes"].toArray()) {
+        QJsonObject obj = val.toObject();
+        bool operatorFound = false;
+        foreach(Operator *op, m_availableOperators) {
+            if ( op->getClassIdentifier() == obj["classIdentifier"].toString()) {
+                operatorFound = true;
+                m_lastMousePosition.setX(obj["x"].toDouble());
+                m_lastMousePosition.setY(obj["y"].toDouble());
+                Operator *newOp = op->newInstance();
+                addOperator(newOp);
+                newOp->load(obj);
+                break;
+            }
+        }
+        if (!operatorFound) {
+            qWarning("Unknown operator");
+        }
+    }
+
+
+
     setDirty(false);
 }
 QGraphicsItem* Process::findItem(const QPointF &pos, int type)

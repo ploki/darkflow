@@ -17,6 +17,7 @@ static const char *WhiteBalanceStr[] = {
 OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     Operator(parent),
     m_filesCollection(new OperatorParameterFilesCollection(
+                          "rawCollection",
                           "RAW files",
                           tr("Select RAW files to insert"),
                           m_process->outputDirectory(),
@@ -24,9 +25,9 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
                           /*"FITS Images (*.fits *.fit);;"*/
                           /*"TIFF Images (*.tif *.tiff);;"*/
                           "All Files (*.*)", this)),
-    m_colorSpace(new OperatorParameterDropDown("Color Space", ColorSpaceStr[Linear], this)),
-    m_debayer(new OperatorParameterDropDown("Debayer", DebayerStr[NoDebayer], this)),
-    m_whiteBalance(new OperatorParameterDropDown("White Balance", WhiteBalanceStr[Daylight], this)),
+    m_colorSpace(new OperatorParameterDropDown("colorSpace", "Color Space", ColorSpaceStr[Linear], this)),
+    m_debayer(new OperatorParameterDropDown("debayer", "Debayer", DebayerStr[NoDebayer], this)),
+    m_whiteBalance(new OperatorParameterDropDown("whiteBalance", "White Balance", WhiteBalanceStr[Daylight], this)),
     m_colorSpaceValue(Linear),
     m_debayerValue(PPG),
     m_whiteBalanceValue(Daylight)

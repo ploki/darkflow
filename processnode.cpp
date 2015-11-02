@@ -173,6 +173,15 @@ void ProcessNode::removeConnection(ProcessConnection *connection)
     m_connections.remove(connection);
 }
 
+QJsonObject ProcessNode::save()
+{
+    QJsonObject obj;
+    obj["x"] = boundingRect().x();
+    obj["y"] = boundingRect().y();
+    m_operator->save(obj);
+    return obj;
+}
+
 void ProcessNode::operatorStateChanged()
 {
 
@@ -180,6 +189,7 @@ void ProcessNode::operatorStateChanged()
 
 void ProcessNode::closeButtonClicked()
 {
+    m_process->removeNode(this);
     deleteLater();
 }
 

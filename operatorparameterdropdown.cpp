@@ -1,12 +1,13 @@
 #include <QMenu>
 #include "operatorparameterdropdown.h"
 
-OperatorParameterDropDown::OperatorParameterDropDown(const QString& caption,
-                                                     const QString& currentValue,
-                                                     QObject *parent) :
-    OperatorParameter(parent),
+OperatorParameterDropDown::OperatorParameterDropDown(
+        const QString& name,
+        const QString& caption,
+        const QString& currentValue,
+        QObject *parent) :
+    OperatorParameter(name, caption, parent),
     m_menu(new QMenu),
-    m_caption(caption),
     m_currentValue(currentValue)
 {
     connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
@@ -35,14 +36,41 @@ void OperatorParameterDropDown::actionTriggered(QAction *action)
     emit valueChanged(m_currentValue);
 }
 
-QString OperatorParameterDropDown::caption() const
-{
-    return m_caption;
-}
-
 QString OperatorParameterDropDown::currentValue() const
 {
     return m_currentValue;
+}
+
+QJsonObject OperatorParameterDropDown::save()
+{
+    QJsonObject obj;
+    obj["type"] = "dropdown";
+    obj["name"] = m_name;
+    obj["currentValue"] = m_currentValue;
+    return obj;
+}
+
+void OperatorParameterDropDown::load(const QJsonObject &obj)
+{
+    if ( obj["type"].toString() != "dropdown" ) {
+        qWarning("invalid parameter type");
+        return;
+    }
+    if ( obj["name"].toString() != m_name ) {
+        qWarning("invalid parameter name");
+        return;
+    }
+    bool actionFound = false;
+    QString currentValue = obj["currentValue"].toString();
+    foreach(QAction *action, m_menu->actions()) {
+        if ( action->text() == currentValue ) {
+            actionFound = true;
+            action->trigger();
+            break;
+        }
+    }
+    if (!actionFound)
+        qWarning("unknown value for dropdown");
 }
 
 

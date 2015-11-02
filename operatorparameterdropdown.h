@@ -14,16 +14,20 @@ class OperatorParameterDropDown : public OperatorParameter
 {
     Q_OBJECT
 public:
-    OperatorParameterDropDown(const QString& caption,
-                              const QString& currentValue,
-                              QObject *parent = 0);
+    OperatorParameterDropDown(
+            const QString& name,
+            const QString& caption,
+            const QString& currentValue,
+            QObject *parent = 0);
     ~OperatorParameterDropDown();
 
     void addOption(const QString& option, QObject *obj, const char *slot);
     void dropDown(const QPoint& pos);
 
-    QString caption() const;
     QString currentValue() const;
+
+    QJsonObject save();
+    void load(const QJsonObject &obj);
 
 signals:
     void valueChanged(const QString& value);
@@ -33,7 +37,6 @@ private slots:
 
 private:
     QMenu *m_menu;
-    QString m_caption;
     QString m_currentValue;
 };
 

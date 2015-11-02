@@ -7,13 +7,15 @@
 
 class OperatorParameterFilesCollection : public OperatorParameter
 {
+    Q_OBJECT
 public:
-    OperatorParameterFilesCollection(const QString& caption,
-                                     const QString& windowCaption,
-                                     const QString& dir,
-                                     const QString& filter,
-                                     QObject *parent = 0);
-    QString caption() const;
+    OperatorParameterFilesCollection(
+            const QString& name,
+            const QString& caption,
+            const QString& windowCaption,
+            const QString& dir,
+            const QString& filter,
+            QObject *parent = 0);
     QString windowCaption() const;
 
     QString dir() const;
@@ -24,8 +26,13 @@ public:
     void setCollection(const QStringList &collection);
     QString currentValue() const;
 
+    QJsonObject save();
+    void load(const QJsonObject &obj);
+
+signals:
+    void updated();
+
 private:
-    QString m_caption;
     QString m_windowCaption;
     QString m_dir;
     QString m_filter;

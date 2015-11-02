@@ -4,6 +4,7 @@
 #include <QGraphicsPathItem>
 #include <QPointF>
 #include <QSet>
+#include <QJsonObject>
 
 #include "processscene.h"
 
@@ -35,6 +36,7 @@ public:
     int type() const;
     void addConnection(ProcessConnection *connection);
     void removeConnection(ProcessConnection *connection);
+    QJsonObject save();
 
 signals:
 

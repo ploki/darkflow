@@ -21,6 +21,10 @@ class Process : public QObject
 {
     Q_OBJECT
 public:
+
+    static QString uuid();
+
+
     explicit Process(ProcessScene *scene, QObject *parent = 0);
     ~Process();
 
@@ -41,7 +45,7 @@ public:
 
     void reset();
     void save();
-    void open(const QString& filename);
+    void load(const QString& filename);
 
 
     bool dirty() const;
@@ -49,6 +53,7 @@ public:
 
     void addOperator(Operator *op);
     void spawnContextMenu(const QPoint& pos);
+    void removeNode(ProcessNode* node);
 
     ProcessScene *scene() const;
 

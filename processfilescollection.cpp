@@ -47,6 +47,7 @@ ProcessFilesCollection::ProcessFilesCollection(QRectF rect,
 
     connect(m_selectionDialog, SIGNAL(accepted()), this, SLOT(selectionAccepted()));
     connect(m_selectionDialog, SIGNAL(rejected()), this, SLOT(selectionRejected()));
+    connect(m_filesCollection, SIGNAL(updated()), this, SLOT(updateValue()));
 }
 
 ProcessFilesCollection::~ProcessFilesCollection()

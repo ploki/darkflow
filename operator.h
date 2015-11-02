@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QMap>
 #include <QSet>
+#include <QString>
+#include <QJsonObject>
 
 class OperatorParameter;
 class OperatorInput;
@@ -44,12 +46,17 @@ public:
     bool isUpToDate() const;
     void setUpToDate(bool upToDate);
 
+    QString getUuid() const;
+    void setUuid(const QString &uuid);
 
     virtual QString getClassIdentifier() = 0;
     virtual Operator* newInstance() = 0;
 
     static void operator_connect(OperatorOutput *output, OperatorInput *input);
     static void operator_disconnect(OperatorOutput *output, OperatorInput *input);
+
+    virtual void save(QJsonObject& obj);
+    virtual void load(QJsonObject& obj);
 
 signals:
     void progress(int ,int );
@@ -75,6 +82,7 @@ public:
     QVector<OperatorInput*> m_inputs;
     QVector<OperatorOutput*> m_outputs;
     bool m_waitingForParentUpToDate;
+    QString m_uuid;
 
     QThread *m_thread;
     OperatorWorker *m_worker;

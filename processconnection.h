@@ -2,6 +2,8 @@
 #define PROCESSCONNECTION_H
 
 #include <QGraphicsPathItem>
+#include <QJsonObject>
+
 #include "processscene.h"
 
 class Process;
@@ -27,6 +29,8 @@ public:
     void detach();
     int type() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    QJsonObject save();
 
 private slots:
     void portChanged();

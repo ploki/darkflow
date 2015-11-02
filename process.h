@@ -53,7 +53,8 @@ public:
 
     void addOperator(Operator *op);
     void spawnContextMenu(const QPoint& pos);
-    void removeNode(ProcessNode* node);
+
+    ProcessNode *findNode(const QString& uuid);
 
     ProcessScene *scene() const;
 
@@ -76,7 +77,6 @@ private:
     bool m_dirty;
     QVector<Operator*> m_availableOperators;
     QPointF m_lastMousePosition;
-    QSet<ProcessNode*> m_nodes;
     ProcessConnection *m_conn;
 
 

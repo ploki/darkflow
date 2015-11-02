@@ -31,7 +31,9 @@ ProcessNode::ProcessNode(QPointF pos,
     m_operator(op),
     m_process(process),
     m_caption(NULL),
-    m_connections()
+    m_connections(),
+    m_inPorts(),
+    m_outPorts()
 {
     qreal barHeight;
     qreal x = pos.x();
@@ -127,16 +129,20 @@ void ProcessNode::addPorts(QVector<OperatorOutput*>& outputs, QVector<OperatorIn
     qreal w = boundingRect().width();
 
     for (int i=0 ; i < outputs.count(); ++i) {
-        new ProcessPort(QRectF(x,y+size*(i+1),w,size),
-                        outputs[i]->name(),
-                        i,
-                        ProcessPort::OutputPort, m_process, this);
+        ProcessPort *port =
+                new ProcessPort(QRectF(x,y+size*(i+1),w,size),
+                                outputs[i]->name(),
+                                i,
+                                ProcessPort::OutputPort, m_process, this);
+        m_outPorts.push_back(port);
     }
     for (int i=0 ; i < inputs.count(); ++i) {
-        new ProcessPort(QRectF(x,y+size*(i+1+outputs.count()),w,size),
-                        inputs[i]->name(),
-                        i,
-                        ProcessPort::InputPort, m_process, this);
+        ProcessPort *port =
+                new ProcessPort(QRectF(x,y+size*(i+1+outputs.count()),w,size),
+                                inputs[i]->name(),
+                                i,
+                                ProcessPort::InputPort, m_process, this);
+        m_inPorts.push_back(port);
     }
 
 }
@@ -176,10 +182,21 @@ void ProcessNode::removeConnection(ProcessConnection *connection)
 QJsonObject ProcessNode::save()
 {
     QJsonObject obj;
-    obj["x"] = boundingRect().x();
-    obj["y"] = boundingRect().y();
+    QPointF p = scenePos() + QPointF(boundingRect().x(), boundingRect().y());
+    obj["x"] = p.x();
+    obj["y"] = p.y();
     m_operator->save(obj);
     return obj;
+}
+
+ProcessPort *ProcessNode::inPort(int idx)
+{
+    return m_inPorts[idx];
+}
+
+ProcessPort *ProcessNode::outPort(int idx)
+{
+    return m_outPorts[idx];
 }
 
 void ProcessNode::operatorStateChanged()
@@ -189,7 +206,6 @@ void ProcessNode::operatorStateChanged()
 
 void ProcessNode::closeButtonClicked()
 {
-    m_process->removeNode(this);
     deleteLater();
 }
 

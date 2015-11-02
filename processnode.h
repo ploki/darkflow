@@ -5,11 +5,13 @@
 #include <QPointF>
 #include <QSet>
 #include <QJsonObject>
+#include <QVector>
 
 #include "processscene.h"
 
 class Process;
 class ProcessConnection;
+class ProcessPort;
 class Operator;
 class QPainter;
 class QStyleOptionGraphicsItem;
@@ -38,6 +40,9 @@ public:
     void removeConnection(ProcessConnection *connection);
     QJsonObject save();
 
+    ProcessPort *inPort(int idx);
+    ProcessPort *outPort(int idx);
+
 signals:
 
 private slots:
@@ -57,6 +62,8 @@ private:
     bool m_enabled;
     QGraphicsTextItem *m_caption;
     QSet<ProcessConnection*> m_connections;
+    QVector<ProcessPort*> m_inPorts;
+    QVector<ProcessPort*> m_outPorts;
 
     void addButtons(qreal size);
     void addPorts(QVector<OperatorOutput*>& outputs,

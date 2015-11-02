@@ -59,6 +59,16 @@ void ProcessConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->drawPath(path());
 }
 
+QJsonObject ProcessConnection::save()
+{
+    QJsonObject obj;
+    obj["outPortUuid"] = m_outPort->m_node->m_operator->getUuid();
+    obj["outPortIdx"] = m_outPort->portIdx();
+    obj["inPortUuid"] = m_inPort->m_node->m_operator->getUuid();
+    obj["inPortIdx"] = m_inPort->portIdx();
+    return obj;
+}
+
 void ProcessConnection::portChanged()
 {
     updateConnectedPath();

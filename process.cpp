@@ -131,16 +131,9 @@ void Process::addOperator(Operator *op)
 {
     ProcessNode *node = new ProcessNode(m_lastMousePosition,
                                         op, this);
-    m_nodes.insert(node);
     m_scene->addItem(node);
     setDirty(true);
 }
-
-void Process::removeNode(ProcessNode *node)
-{
-    m_nodes.remove(node);
-}
-
 
 QString Process::projectFile() const
 {
@@ -156,16 +149,25 @@ void Process::save()
 {
     QJsonObject obj;
     QJsonArray nodes;
+    QJsonArray connections;
     QJsonDocument doc;
     obj["projectName"]=projectName();
     obj["notes"]=notes();
     obj["outputDirectory"]=outputDirectory();
     obj["temporaryDirectory"]=temporaryDirectory();
-    foreach (ProcessNode *node, m_nodes) {
-        qWarning("saving a node");
-        nodes.push_back(node->save());
+    foreach (QGraphicsItem *item, m_scene->items()) {
+        if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
+            ProcessNode *node = dynamic_cast<ProcessNode *>(item);
+            qWarning("saving a node");
+            nodes.push_back(node->save());
+        }
+        else if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeConnection ) {
+            ProcessConnection *conn = dynamic_cast<ProcessConnection *>(item);
+            connections.push_back(conn->save());
+        }
     }
     obj["nodes"] = nodes;
+    obj["connections"] = connections;
 
     doc.setObject(obj);
     QFile saveFile(projectFile());
@@ -203,8 +205,10 @@ void Process::load(const QString& filename)
         foreach(Operator *op, m_availableOperators) {
             if ( op->getClassIdentifier() == obj["classIdentifier"].toString()) {
                 operatorFound = true;
-                m_lastMousePosition.setX(obj["x"].toDouble());
-                m_lastMousePosition.setY(obj["y"].toDouble());
+                qreal x = obj["x"].toDouble();
+                qreal y = obj["y"].toDouble();
+                m_lastMousePosition.setX(x);
+                m_lastMousePosition.setY(y);
                 Operator *newOp = op->newInstance();
                 addOperator(newOp);
                 newOp->load(obj);
@@ -215,11 +219,44 @@ void Process::load(const QString& filename)
             qWarning("Unknown operator");
         }
     }
+    foreach(QJsonValue val, obj["connections"].toArray()) {
+        QJsonObject obj = val.toObject();
+        ProcessNode *outNode = findNode(obj["outPortUuid"].toString());
+        if ( NULL == outNode ) {
+            qWarning("unknown output node");
+            continue;
+        }
+        int outIdx = obj["outPortIdx"].toInt();
+        ProcessNode *inNode = findNode(obj["inPortUuid"].toString());
+        if ( NULL == inNode ) {
+            qWarning("unknown input node");
+            continue;
+        }
+        int inIdx = obj["inPortIdx"].toInt();
+
+        ProcessConnection *conn = new ProcessConnection(outNode->outPort(outIdx), this);
+        conn->setInputPort(inNode->inPort(inIdx));
+        m_scene->addItem(conn);
+    }
 
 
 
     setDirty(false);
 }
+
+ProcessNode *Process::findNode(const QString &uuid)
+{
+    QList<QGraphicsItem*> items = m_scene->items();
+    foreach(QGraphicsItem *item, items) {
+        if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
+            ProcessNode *node = dynamic_cast<ProcessNode *>(item);
+            if ( node->m_operator->getUuid() == uuid )
+                return node;
+        }
+    }
+    return NULL;
+}
+
 QGraphicsItem* Process::findItem(const QPointF &pos, int type)
 {
     QList<QGraphicsItem*> items = m_scene->items(QRectF(pos - QPointF(1,1), QSize(3,3)));

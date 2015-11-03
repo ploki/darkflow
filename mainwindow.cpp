@@ -62,14 +62,15 @@ void MainWindow::actionLoad()
                                         QMessageBox::Yes,
                                         QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
-        newProcess();
         QString filename = QFileDialog::getOpenFileName(this,
                                                         tr("Select a project file"),
                                                         process->projectFile(),
                                                         "Darkflow Project (*.dflow)",
                                                         0, 0);
-        if ( !filename.isEmpty())
+        if ( !filename.isEmpty()) {
+            newProcess();
             process->load(filename);
+        }
     }
 
 }

@@ -6,6 +6,11 @@
 
 QT       += core gui
 
+*-g++* {
+    QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
+    QMAKE_CXXFLAGS_RELEASE += -O9
+    QMAKE_CXXFLAGS_DEBUG += -ggdb3
+}
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = darkflow
@@ -68,3 +73,6 @@ FORMS    += mainwindow.ui \
     projectproperties.ui \
     aboutdialog.ui \
     filesselection.ui
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += Magick++

@@ -18,6 +18,8 @@ static QString buttonText(ProcessButton::ButtonType type)
     case ProcessButton::Display: return "☷";
     case ProcessButton::Close: return "❌";
     case ProcessButton::Ghost: return "⚉";
+    default:
+        return "0";
     }
 }
 
@@ -29,6 +31,8 @@ static QPen buttonPen(ProcessButton::ButtonType type)
     case ProcessButton::Display: return QPen(Qt::darkYellow, PEN_WIDTH);
     case ProcessButton::Close: return QPen(Qt::darkRed, PEN_WIDTH);
     case ProcessButton::Ghost: return QPen(Qt::darkCyan, PEN_WIDTH);
+    default:
+        return QPen(Qt::red, PEN_WIDTH);
     }
 }
 
@@ -40,6 +44,8 @@ static QBrush buttonBrush(ProcessButton::ButtonType type)
     case ProcessButton::Display: return QBrush(Qt::yellow);
     case ProcessButton::Close: return QBrush(Qt::red);
     case ProcessButton::Ghost: return QBrush(Qt::cyan);
+    default:
+        return QBrush(Qt::red);
     }
 }
 

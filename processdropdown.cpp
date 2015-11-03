@@ -73,12 +73,14 @@ void ProcessDropDown::clicked(QPoint pos)
 
 void ProcessDropDown::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     m_mouseHover=true;
     update();
 }
 
 void ProcessDropDown::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     m_mouseHover=false;
     update();
 }

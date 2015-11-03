@@ -11,8 +11,7 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 
-ProcessConnection::ProcessConnection(ProcessPort *port,
-                                     Process *process) :
+ProcessConnection::ProcessConnection(ProcessPort *port) :
     QObject(NULL),
     QGraphicsPathItem(NULL),
     m_outPort(port),

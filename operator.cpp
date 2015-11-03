@@ -18,9 +18,9 @@ Operator::Operator(Process *parent) :
     m_inputs(),
     m_outputs(),
     m_waitingForParentUpToDate(false),
+    m_uuid(Process::uuid()),
     m_thread(new QThread(this)),
-    m_worker(NULL),
-    m_uuid(Process::uuid())
+    m_worker(NULL)
 {
 
 }

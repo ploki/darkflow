@@ -14,7 +14,8 @@ public:
 
     enum { Type = QGraphicsItem::UserType + ProcessScene::UserTypeButton };
 
-    typedef enum { Play,
+    typedef enum { Undef,
+                   Play,
                    Abort,
                    Display,
                    Close,
@@ -42,10 +43,10 @@ public slots:
 private:
     Process *m_process;
     ProcessNode *m_node;
+    ButtonType m_type;
     bool m_mouseHover;
     bool m_mousePress;
 
-    ButtonType m_type;
 };
 
 #endif // PROCESSBUTTON_H

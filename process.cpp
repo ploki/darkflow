@@ -234,7 +234,7 @@ void Process::load(const QString& filename)
         }
         int inIdx = obj["inPortIdx"].toInt();
 
-        ProcessConnection *conn = new ProcessConnection(outNode->outPort(outIdx), this);
+        ProcessConnection *conn = new ProcessConnection(outNode->outPort(outIdx));
         conn->setInputPort(inNode->inPort(inIdx));
         m_scene->addItem(conn);
     }
@@ -305,7 +305,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         if (portItem && NULL == m_conn) {
             ProcessPort *port = dynamic_cast<ProcessPort*>(portItem);
             if ( ProcessPort::OutputPort == port->portType()) {
-                m_conn = new ProcessConnection(port, this);
+                m_conn = new ProcessConnection(port);
                 m_scene->addItem(m_conn);
             }
         }

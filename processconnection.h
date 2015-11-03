@@ -17,8 +17,7 @@ public:
 
     enum { Type = QGraphicsItem::UserType + ProcessScene::UserTypeConnection };
 
-    explicit ProcessConnection(ProcessPort *port,
-                      Process *process);
+    explicit ProcessConnection(ProcessPort *port);
     ~ProcessConnection();
 
     void updateDanglingPath(QPointF danglingPos);

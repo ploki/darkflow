@@ -76,6 +76,7 @@ int ProcessFilesCollection::type() const
 
 void ProcessFilesCollection::clicked(QPoint pos)
 {
+    Q_UNUSED(pos);
     m_selectionDialog->setSelection(m_filesCollection->collection());
     m_selectionDialog->show();
 }
@@ -95,12 +96,14 @@ void ProcessFilesCollection::selectionRejected()
 
 void ProcessFilesCollection::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     m_mouseHover=true;
     update();
 }
 
 void ProcessFilesCollection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
     m_mouseHover=false;
     update();
 }

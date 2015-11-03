@@ -10,9 +10,9 @@ ProcessProgressBar::ProcessProgressBar(QRectF rect, Process *process, ProcessNod
     QObject(NULL),
     QGraphicsRectItem(QRectF(rect.x()+PEN_WIDTH,rect.y()+PEN_WIDTH,
                              rect.width()-PEN_WIDTH*2,rect.height()-PEN_WIDTH*2),node),
+    m_overlay(NULL),
     m_process(process),
     m_node(node),
-    m_overlay(NULL),
     m_progress(0),
     m_complete(1)
 {

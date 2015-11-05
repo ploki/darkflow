@@ -2,6 +2,10 @@
 #define IMAGE_H
 #include <QObject>
 
+
+Q_STATIC_ASSERT(MAGICKCORE_HDRI_ENABLE == 0);
+Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
+
 struct ImageImpl;
 class QFile;
 

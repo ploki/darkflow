@@ -10,6 +10,7 @@ QT       += core gui
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
     QMAKE_CXXFLAGS_RELEASE += -O9
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
+    QMAKE_LFLAGS +=  -fopenmp
 }
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -41,7 +42,9 @@ SOURCES += main.cpp\
     processprogressbar.cpp \
     operatorworker.cpp \
     operatorpassthrough.cpp \
-    operatoroutput.cpp
+    operatoroutput.cpp \
+    rawinfo.cpp \
+    rawconvert.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -67,7 +70,9 @@ HEADERS  += \
     processprogressbar.h \
     operatorworker.h \
     operatorpassthrough.h \
-    operatoroutput.h
+    operatoroutput.h \
+    rawinfo.h \
+    rawconvert.h
 
 FORMS    += mainwindow.ui \
     projectproperties.ui \

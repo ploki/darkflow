@@ -3,6 +3,7 @@
 #include "operatorparameterdropdown.h"
 #include "operatorloadraw.h"
 #include "operatoroutput.h"
+#include "rawconvert.h"
 
 static const char *ColorSpaceStr[] = {
   "Linear", "sRGB", "IUT BT.709"
@@ -11,17 +12,17 @@ static const char *DebayerStr[] = {
     "None", "Half Size", "Low", "VNG", "PPG", "AHD"
 };
 static const char *WhiteBalanceStr[] = {
-    "None", "Camera", "Daylight"
+    "None", "Raw colors", "Camera", "Daylight"
 };
 
 OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     Operator(parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "rawCollection",
-                          "RAW files",
-                          tr("Select RAW files to insert"),
+                          "RAW photos",
+                          tr("Select RAW photos to add to the collection"),
                           m_process->outputDirectory(),
-                          "RAW Images (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;"
+                          "RAW photos (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;"
                           /*"FITS Images (*.fits *.fit);;"*/
                           /*"TIFF Images (*.tif *.tiff);;"*/
                           "All Files (*.*)", this)),
@@ -44,6 +45,7 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     m_debayer->addOption(DebayerStr[AHD], this, SLOT(setDebayerAHD()));
 
     m_whiteBalance->addOption(WhiteBalanceStr[NoWhiteBalance], this, SLOT(setWhiteBalanceNone()));
+    m_whiteBalance->addOption(WhiteBalanceStr[RawColors], this, SLOT(setWhiteBalanceRawColors()));
     m_whiteBalance->addOption(WhiteBalanceStr[Camera], this, SLOT(setWhiteBalanceCamera()));
     m_whiteBalance->addOption(WhiteBalanceStr[Daylight], this, SLOT(setWhiteBalanceDaylight()));
 
@@ -52,7 +54,7 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     m_parameters.push_back(m_debayer);
     m_parameters.push_back(m_whiteBalance);
 
-    m_outputs.push_back(new OperatorOutput("RAWs","RAW files colelction",this));
+    m_outputs.push_back(new OperatorOutput("RAWs","RAW photos collection",this));
 }
 
 OperatorLoadRaw::~OperatorLoadRaw()
@@ -66,7 +68,12 @@ OperatorLoadRaw *OperatorLoadRaw::newInstance()
 
 QString OperatorLoadRaw::getClassIdentifier()
 {
-    return "Load Raw";
+    return "Raw photos";
+}
+
+QStringList OperatorLoadRaw::getCollection() const
+{
+    return m_filesCollection->collection();
 }
 
 void OperatorLoadRaw::setColorSpaceLinear()
@@ -129,6 +136,12 @@ void OperatorLoadRaw::setWhiteBalanceNone()
     setUpToDate(false);
 }
 
+void OperatorLoadRaw::setWhiteBalanceRawColors()
+{
+    m_whiteBalanceValue = RawColors;
+    setUpToDate(false);
+}
+
 void OperatorLoadRaw::setWhiteBalanceCamera()
 {
     m_whiteBalanceValue = Camera;
@@ -144,4 +157,8 @@ void OperatorLoadRaw::setWhiteBalanceDaylight()
 void OperatorLoadRaw::filesCollectionChanged()
 {
     setUpToDate(false);
+}
+
+OperatorWorker *OperatorLoadRaw::newWorker() {
+    return new RawConvert(m_thread, this);
 }

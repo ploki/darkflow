@@ -31,9 +31,12 @@ public:
     } Debayer;
     typedef enum {
         NoWhiteBalance,
+        RawColors,
         Camera,
         Daylight,
     } WhiteBalance;
+
+    QStringList getCollection() const;
 
 public slots:
     void setColorSpaceLinear();
@@ -47,17 +50,19 @@ public slots:
     void setDebayerAHD();
 
     void setWhiteBalanceNone();
+    void setWhiteBalanceRawColors();
     void setWhiteBalanceCamera();
     void setWhiteBalanceDaylight();
 
     void filesCollectionChanged();
 
-    OperatorWorker *newWorker() { return NULL;}
+    OperatorWorker *newWorker();
 
 protected:
 
 
 private:
+    friend class RawConvert;
     OperatorParameterFilesCollection *m_filesCollection;
     OperatorParameterDropDown *m_colorSpace;
     OperatorParameterDropDown *m_debayer;

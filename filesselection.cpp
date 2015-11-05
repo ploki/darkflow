@@ -25,6 +25,7 @@ FilesSelection::FilesSelection(const QString& windowCaption,
 FilesSelection::~FilesSelection()
 {
     delete ui;
+    delete m_list;
 }
 
 QStringList FilesSelection::getSelection() const

@@ -3,7 +3,7 @@
 
 #include "operator.h"
 #include "process.h"
-#include "image.h"
+#include "photo.h"
 #include "operatorparameter.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
@@ -115,10 +115,6 @@ void Operator::setUpToDate(bool b)
         foreach(OperatorOutput *output, m_outputs) {
             foreach(OperatorInput *remoteInput, output->sinks())
                 remoteInput->m_operator->setUpToDate(false);
-            foreach(Image *image, output->m_result) {
-                image->remove();
-                delete image;
-            }
             output->m_result.clear();
         }
         emit progress(0, 1);

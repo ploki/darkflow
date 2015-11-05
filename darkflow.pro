@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     operator.cpp \
     operatorparameter.cpp \
     operatorinput.cpp \
-    image.cpp \
     operatorexnihilo.cpp \
     processbutton.cpp \
     processport.cpp \
@@ -44,7 +43,8 @@ SOURCES += main.cpp\
     operatorpassthrough.cpp \
     operatoroutput.cpp \
     rawinfo.cpp \
-    rawconvert.cpp
+    rawconvert.cpp \
+    photo.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -56,7 +56,6 @@ HEADERS  += \
     operator.h \
     operatorparameter.h \
     operatorinput.h \
-    image.h \
     operatorexnihilo.h \
     processbutton.h \
     processport.h \
@@ -72,7 +71,8 @@ HEADERS  += \
     operatorpassthrough.h \
     operatoroutput.h \
     rawinfo.h \
-    rawconvert.h
+    rawconvert.h \
+    photo.h
 
 FORMS    += mainwindow.ui \
     projectproperties.ui \

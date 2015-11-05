@@ -3,8 +3,10 @@
 #include "operatorexnihilo.h"
 #include "operatorworker.h"
 #include "process.h"
-#include "image.h"
+#include "photo.h"
 #include <unistd.h>
+
+#include <Magick++.h>
 
 class ExNihilo : public OperatorWorker
 {
@@ -14,35 +16,35 @@ public:
     {}
 private slots:
     void play() {
-        Image *image = process(NULL);
-        if (image) {
-            m_operator->m_outputs[0]->m_result.push_back(image);
+        Photo photo;
+        photo.create(1000,1000);
+        if (!photo.error()) {
+            Magick::Image *image = photo.image();
+            image->modifyImage();
+            Magick::Pixels cache(*image);
+            size_t w = image->columns();
+            size_t h = image->rows();
+            for (size_t y = 0 ; y < h ; ++y) {
+                emit progress(y, h);
+                if ( aborted() ) {
+                    emitFailure();
+                    return;
+                }
+                usleep(1000);
+                Magick::PixelPacket *pixels = cache.get(0,y,w,1);
+                for (size_t x = 0 ; x < w ; ++x ) {
+                    pixels[x].red = 12;
+                    pixels[x].green = 128;
+                    pixels[x].blue = 250;
+                }
+            }
+            cache.sync();
+            m_operator->m_outputs[0]->m_result.push_back(photo);
             emitSuccess();
         }
-
-    }
-    Image *process(const Image *image) {
-        Q_UNUSED(image);
-        QString filename = m_operator->m_process->temporaryDirectory() + "/";
-        filename += Image::NewRandomName();
-        Image *newImage = new Image(filename);
-        newImage->create(1000,1000,Image::sRGB, Image::Pixel_u16);
-        Image::Triplet<Image::u16> *pixels =
-                newImage->getPixelsTriplet<Image::u16>();
-        for (int y = 0 ; y < newImage->height() ; ++y) {
-            emit progress(y, newImage->height());
-            if ( aborted() ) {
-                emitFailure();
-                return NULL;
-            }
-            usleep(1000);
-            for (int x = 0 ; x < newImage->width() ; ++x ) {
-                pixels[y*newImage->width()+x] = Image::Triplet<Image::u16>(12,128,250);
-            }
+        else {
+            emitFailure();
         }
-        newImage->save();
-        return newImage;
-
     }
 };
 

@@ -4,7 +4,7 @@
 #include "operator.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "image.h"
+#include "photo.h"
 
 
 OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
@@ -61,9 +61,9 @@ void OperatorWorker::play()
 
     m_operator->setUpToDate(false);
     foreach(OperatorOutput *remoteOutput, m_operator->m_inputs[0]->sources()) {
-        const QVector<Image*> source = remoteOutput->m_result;
-        foreach(const Image *image, source) {
-            Image *newResult = process(image);
+        const QVector<Photo> source = remoteOutput->m_result;
+        foreach(const Photo &photo, source) {
+            Photo newResult = process(&photo);
             m_operator->m_outputs[0]->m_result.push_back(newResult);
         }
     }

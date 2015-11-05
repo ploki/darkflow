@@ -6,9 +6,10 @@
 #include <QString>
 #include <QSet>
 
+#include "photo.h"
+
 class Operator;
 class OperatorInput;
-class Image;
 
 class OperatorOutput : public QObject
 {
@@ -26,7 +27,7 @@ public:
     QSet<OperatorInput *> sinks() const;
     void addSink(OperatorInput *input);
     void removeSink(OperatorInput *input);
-    QVector<Image *> getResult() const;
+    QVector<Photo> getResult() const;
 
 public:
     Operator *m_operator;
@@ -35,7 +36,7 @@ private:
     QString m_description;
     QSet<OperatorInput*> m_sinks;
 public:
-    QVector<Image*> m_result;
+    QVector<Photo> m_result;
 
 public slots:
 };

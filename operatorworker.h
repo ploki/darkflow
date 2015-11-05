@@ -3,9 +3,11 @@
 
 #include <QObject>
 
+#include "photo.h"
+
 class QThread;
 class Operator;
-class Image;
+
 
 class OperatorWorker : public QObject
 {
@@ -14,7 +16,8 @@ public:
     explicit OperatorWorker(QThread *thread, Operator* op);
 private slots:
     virtual void play();
-    virtual Image *process(const Image *image) = 0;
+    virtual Photo process(const Photo *photo)
+    { Q_UNUSED(photo); Q_ASSERT(!"Not Implemented");}
 
 signals:
     void progress(int ,int);

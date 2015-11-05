@@ -3,13 +3,14 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QByteArray>
+#include <QThread>
 
 #include <Magick++.h>
 
 #include "rawconvert.h"
 #include "operatoroutput.h"
 #include "operatorloadraw.h"
-#include "image.h"
+#include "photo.h"
 
 RawConvert::RawConvert(QThread *thread, OperatorLoadRaw *op) :
     OperatorWorker(thread, op),
@@ -22,27 +23,30 @@ void RawConvert::play()
     QVector<QString> collection = m_loadraw->getCollection().toVector();
     int s = collection.count();
     int p = 0;
-#pragma omp parallel for shared(mutex)
+    bool failure = false;
+    QThread *mainThread = QThread::currentThread();
+#pragma omp parallel for shared(mutex, failure)
     for (int i = 0 ; i < s ; ++i) {
+        if ( failure || mainThread->isInterruptionRequested() ) {
+            failure = true;
+            continue;
+        }
         QByteArray data = convert(collection[i]);
-        QMutexLocker lock(&mutex);
         Magick::Blob blob(data.data(),data.length());
-        try {
-            Magick::Image *image = new Magick::Image(blob);
-            delete image;
-        } catch (std::exception& e) {
-            qWarning(e.what());
-            throw;
+        Photo photo(blob);
+        if ( photo.error() ) {
+            failure = true;
+            continue;
         }
         emit progress(++p, s);
-        /*
-        if ( NULL != image )
-            m_operator->m_outputs[0]->m_result.push_back(image);
-            */
+        QMutexLocker lock(&mutex);
+        m_operator->m_outputs[0]->m_result.push_back(photo);
     }
 #pragma omp barrier
-    qWarning("Success!");
-    emitSuccess();
+    if ( failure )
+        emitFailure();
+    else
+        emitSuccess();
 
 }
 

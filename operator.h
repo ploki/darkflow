@@ -8,11 +8,12 @@
 #include <QString>
 #include <QJsonObject>
 
+#include "photo.h"
+
 class OperatorParameter;
 class OperatorInput;
 class OperatorOutput;
 class Process;
-class Image;
 class QThread;
 class OperatorWorker;
 

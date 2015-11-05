@@ -1,7 +1,7 @@
 #include "operator.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "image.h"
+#include "photo.h"
 
 OperatorOutput::OperatorOutput(const QString &name,
                                const QString &description,
@@ -18,8 +18,6 @@ OperatorOutput::OperatorOutput(const QString &name,
 
 OperatorOutput::~OperatorOutput()
 {
-    foreach(Image *im, m_result)
-        delete im;
 }
 
 QString OperatorOutput::name() const
@@ -46,7 +44,7 @@ void OperatorOutput::removeSink(OperatorInput *input)
     m_sinks.remove(input);
 }
 
-QVector<Image *> OperatorOutput::getResult() const
+QVector<Photo> OperatorOutput::getResult() const
 {
     return m_result;
 }

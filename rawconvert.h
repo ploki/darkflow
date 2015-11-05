@@ -14,7 +14,6 @@ public:
 private slots:
     void play();
 
-    Image *process(const Image *image) { Q_UNUSED(image); return NULL; }
 private:
     QByteArray convert(const QString& filename);
 

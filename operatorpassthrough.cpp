@@ -2,7 +2,7 @@
 #include "operatorpassthrough.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "image.h"
+#include "photo.h"
 
 
 class PassThrough : public OperatorWorker {
@@ -10,8 +10,8 @@ public:
     PassThrough(QThread *thread, Operator *op) :
     OperatorWorker(thread, op) {}
 
-    Image *process(const Image *image) {
-        return new Image(image->getFilename(), false);
+    Photo process(const Photo* photo) {
+        return Photo(*photo);
     }
 };
 

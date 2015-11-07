@@ -14,70 +14,74 @@ QT       += core gui
 }
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QMAKE_INCDIR += core operators scene ui
+
 TARGET = darkflow
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-    mainwindow.cpp \
-    aboutdialog.cpp \
-    projectproperties.cpp \
-    process.cpp \
-    processscene.cpp \
-    processnode.cpp \
-    operator.cpp \
-    operatorparameter.cpp \
-    operatorinput.cpp \
-    operatorexnihilo.cpp \
-    processbutton.cpp \
-    processport.cpp \
-    processconnection.cpp \
-    filesselection.cpp \
-    operatorparameterfilescollection.cpp \
-    operatorparameterdropdown.cpp \
-    operatorloadraw.cpp \
-    processdropdown.cpp \
-    processfilescollection.cpp \
-    processprogressbar.cpp \
-    operatorworker.cpp \
-    operatorpassthrough.cpp \
-    operatoroutput.cpp \
-    rawinfo.cpp \
-    rawconvert.cpp \
-    photo.cpp
+SOURCES +=\
+    ui/aboutdialog.cpp \
+    ui/filesselection.cpp \
+    ui/mainwindow.cpp \
+    scene/processbutton.cpp \
+    scene/processconnection.cpp \
+    scene/processdropdown.cpp \
+    scene/processfilescollection.cpp \
+    scene/processnode.cpp \
+    scene/processport.cpp \
+    scene/processprogressbar.cpp \
+    scene/processscene.cpp \
+    ui/projectproperties.cpp \
+    ui/main.cpp \
+    core/operator.cpp \
+    operators/operatorexnihilo.cpp \
+    core/operatorinput.cpp \
+    operators/operatorloadraw.cpp \
+    core/operatoroutput.cpp \
+    core/operatorparameter.cpp \
+    core/operatorparameterdropdown.cpp \
+    core/operatorparameterfilescollection.cpp \
+    operators/operatorpassthrough.cpp \
+    core/operatorworker.cpp \
+    core/photo.cpp \
+    core/process.cpp \
+    operators/rawconvert.cpp \
+    operators/rawinfo.cpp
 
 HEADERS  += \
-    mainwindow.h \
-    aboutdialog.h \
-    projectproperties.h \
-    process.h \
-    processscene.h \
-    processnode.h \
-    operator.h \
-    operatorparameter.h \
-    operatorinput.h \
-    operatorexnihilo.h \
-    processbutton.h \
-    processport.h \
-    processconnection.h \
-    filesselection.h \
-    operatorparameterfilescollection.h \
-    operatorparameterdropdown.h \
-    operatorloadraw.h \
-    processdropdown.h \
-    processfilescollection.h \
-    processprogressbar.h \
-    operatorworker.h \
-    operatorpassthrough.h \
-    operatoroutput.h \
-    rawinfo.h \
-    rawconvert.h \
-    photo.h
+    ui/aboutdialog.h \
+    ui/filesselection.h \
+    ui/mainwindow.h \
+    scene/processbutton.h \
+    scene/processconnection.h \
+    scene/processdropdown.h \
+    scene/processnode.h \
+    scene/processport.h \
+    scene/processfilescollection.h \
+    scene/processprogressbar.h \
+    scene/processscene.h \
+    ui/projectproperties.h \
+    core/operator.h \
+    operators/operatorexnihilo.h \
+    core/operatorinput.h \
+    core/operatoroutput.h \
+    core/operatorparameter.h \
+    core/operatorparameterdropdown.h \
+    core/operatorparameterfilescollection.h \
+    operators/operatorpassthrough.h \
+    operators/operatorloadraw.h \
+    core/operatorworker.h \
+    core/photo.h \
+    core/process.h \
+    operators/rawconvert.h \
+    operators/rawinfo.h
 
-FORMS    += mainwindow.ui \
-    projectproperties.ui \
-    aboutdialog.ui \
-    filesselection.ui
+FORMS    += \
+    ui/aboutdialog.ui \
+    ui/filesselection.ui \
+    ui/mainwindow.ui \
+    ui/projectproperties.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++

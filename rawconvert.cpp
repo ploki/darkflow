@@ -4,10 +4,14 @@
 #include <QMutexLocker>
 #include <QByteArray>
 #include <QThread>
+#include <QFileInfo>
+#include <QDir>
+#include "process.h"
 
 #include <Magick++.h>
 
 #include "rawconvert.h"
+#include "rawinfo.h"
 #include "operatoroutput.h"
 #include "operatorloadraw.h"
 #include "photo.h"
@@ -38,6 +42,7 @@ void RawConvert::play()
             failure = true;
             continue;
         }
+        setTags(collection[i], photo);
         emit progress(++p, s);
         QMutexLocker lock(&mutex);
         m_operator->m_outputs[0]->m_result.push_back(photo);
@@ -116,4 +121,32 @@ QByteArray RawConvert::convert(const QString &filename)
     dcraw.waitForFinished();
     data = dcraw.readAllStandardOutput();
     return data;
+}
+
+void RawConvert::setTags(const QString &filename, Photo &photo)
+{
+    RawInfo info;
+    QFileInfo finfo(filename);
+    info.probeFile(filename);
+    photo.setTag("Name", finfo.fileName());
+    photo.setTag("Directory", finfo.dir().path());
+    photo.setTag("ISO Speed", QString("%0").arg(info.isoSpeed()));
+    photo.setTag("Shutter", QString("%0").arg(info.shutterSpeed()));
+    photo.setTag("Aperture", QString("%0").arg(info.aperture()));
+    photo.setTag("Focal length", QString("%0").arg(info.focal()));
+    photo.setTag("D65 R multiplier", QString("%0").arg(info.daylightMultipliers().r));
+    photo.setTag("D65 G multiplier", QString("%0").arg(info.daylightMultipliers().g));
+    photo.setTag("D65 B multiplier", QString("%0").arg(info.daylightMultipliers().b));
+    photo.setTag("Camera", info.camera());
+    photo.setTag("TimeStamp", info.timestamp());
+    photo.setTag("Filter pattern", info.filterPattern());
+    photo.setTag("Color Space", m_loadraw->getColorSpace());
+    photo.setTag("Debayer", m_loadraw->getDebayer());
+    photo.setTag("White Balance", m_loadraw->getWhiteBalance());
+    if ( m_loadraw->m_debayerValue == OperatorLoadRaw::NoDebayer ) {
+        photo.setTag("Pixels", "CFA");
+    }
+    else {
+        photo.setTag("Pixels", "RGB");
+    }
 }

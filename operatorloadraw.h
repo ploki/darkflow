@@ -38,6 +38,10 @@ public:
 
     QStringList getCollection() const;
 
+    QString getColorSpace() const;
+    QString getDebayer() const;
+    QString getWhiteBalance() const;
+
 public slots:
     void setColorSpaceLinear();
     void setColorSpacesRGB();

@@ -10,14 +10,16 @@ using namespace Magick;
 Photo::Photo(QObject *parent) :
     QObject(parent),
     m_image(new Image),
-    m_error(false)
+    m_error(false),
+    m_tags()
 {
 }
 
 Photo::Photo(const Blob &blob, QObject *parent) :
     QObject(parent),
     m_image(NULL),
-    m_error(false)
+    m_error(false),
+    m_tags()
 {
     try {
         m_image = new Magick::Image(blob);
@@ -32,7 +34,8 @@ Photo::Photo(const Blob &blob, QObject *parent) :
 Photo::Photo(const Magick::Image *image, QObject *parent) :
     QObject(parent),
     m_image(NULL),
-    m_error(false)
+    m_error(false),
+    m_tags()
 {
     try {
         m_image = new Magick::Image(*image);
@@ -47,7 +50,8 @@ Photo::Photo(const Magick::Image *image, QObject *parent) :
 Photo::Photo(const Photo &photo) :
     QObject(photo.parent()),
     m_image(NULL),
-    m_error(false)
+    m_error(false),
+    m_tags(photo.m_tags)
 {
     try {
         m_image = new Magick::Image(*photo.m_image);
@@ -70,6 +74,7 @@ Photo &Photo::operator=(const Photo &photo)
     try {
         newImage = new Magick::Image(*photo.m_image);
         m_image = newImage;
+        m_tags = photo.m_tags;
     }
     catch (std::exception *e) {
         qWarning(e->what());
@@ -147,6 +152,29 @@ bool Photo::error() const
 Magick::Image *Photo::image() const
 {
     return m_image;
+}
+
+QMap<QString, QString> Photo::tags() const
+{
+    return m_tags;
+}
+
+void Photo::setTag(const QString &name, const QString &value)
+{
+    m_tags.insert(name, value);
+}
+
+void Photo::removeTag(const QString &name)
+{
+    m_tags.remove(name);
+}
+
+QString Photo::getTag(const QString &name)
+{
+    QMap<QString, QString>::const_iterator it = m_tags.find(name);
+    if ( it == m_tags.end() )
+        return QString();
+    return it.value();
 }
 
 void Photo::setError()

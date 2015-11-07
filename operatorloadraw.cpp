@@ -76,6 +76,21 @@ QStringList OperatorLoadRaw::getCollection() const
     return m_filesCollection->collection();
 }
 
+QString OperatorLoadRaw::getColorSpace() const
+{
+    return ColorSpaceStr[m_colorSpaceValue];
+}
+
+QString OperatorLoadRaw::getDebayer() const
+{
+    return DebayerStr[m_debayerValue];
+}
+
+QString OperatorLoadRaw::getWhiteBalance() const
+{
+    return WhiteBalanceStr[m_whiteBalanceValue];
+}
+
 void OperatorLoadRaw::setColorSpaceLinear()
 {
     m_colorSpaceValue = Linear;

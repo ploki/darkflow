@@ -82,8 +82,12 @@ bool RawInfo::probeFile(const QString &filename)
     dcraw.start(dcraw_executable, arguments, QProcess::ReadOnly|QProcess::Text);
     if ( !dcraw.waitForStarted() )
         return false;
+    dcraw.waitForFinished();
     char buf[1024];
-    while ( dcraw.readLine(buf, sizeof(buf)) ) {
+    qint64 len;
+    while ( (len = dcraw.readLine(buf, sizeof(buf)) ) > 0 ) {
+        if ( buf[len-1] == '\n')
+            buf[len-1] = '\0';
         QString str(buf);
         QStringList elem = str.split(" ");
 
@@ -138,7 +142,6 @@ bool RawInfo::probeFile(const QString &filename)
             m_filterPattern=buf+16;
         }
     }
-    dcraw.waitForFinished();
     return true;
 }
 

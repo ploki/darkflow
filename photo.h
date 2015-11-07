@@ -2,6 +2,8 @@
 #define IMAGE_H
 
 #include <QObject>
+#include <QMap>
+#include <QString>
 
 namespace Magick {
 class Image;
@@ -15,7 +17,7 @@ Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
 class Photo : public QObject
 {
     Q_OBJECT
-public:
+public:    
     Photo(QObject *parent = 0);
     Photo(const Magick::Image *image, QObject *parent = 0);
     Photo(const Magick::Blob &blob, QObject *parent = 0);
@@ -36,9 +38,16 @@ public:
 
     Magick::Image *image() const;
 
+    QMap<QString, QString> tags() const;
+    void setTag(const QString& name, const QString& value);
+    void removeTag(const QString& name);
+    QString getTag(const QString& name);
+
+
 private:
     Magick::Image *m_image;
     bool m_error;
+    QMap<QString, QString> m_tags;
 
     void setError();
 };

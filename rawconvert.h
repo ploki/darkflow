@@ -4,6 +4,7 @@
 #include "operatorworker.h"
 
 class OperatorLoadRaw;
+class Photo;
 
 class RawConvert : public OperatorWorker
 {
@@ -16,6 +17,7 @@ private slots:
 
 private:
     QByteArray convert(const QString& filename);
+    void setTags(const QString& filename, Photo& photo);
 
 signals:
 

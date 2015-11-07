@@ -37,6 +37,7 @@ private:
     QSet<OperatorInput*> m_sinks;
 public:
     QVector<Photo> m_result;
+    Photo m_curve;
 
 public slots:
 };

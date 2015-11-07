@@ -14,6 +14,9 @@ class Blob;
 Q_STATIC_ASSERT(MAGICKCORE_HDRI_ENABLE == 0);
 Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
 
+typedef int quantum_t;
+
+
 class Photo : public QObject
 {
     Q_OBJECT

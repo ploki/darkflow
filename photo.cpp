@@ -9,8 +9,8 @@ using namespace Magick;
 
 Photo::Photo(QObject *parent) :
     QObject(parent),
-    m_image(new Image),
-    m_error(false),
+    m_image(NULL),
+    m_error(true),
     m_tags()
 {
 }

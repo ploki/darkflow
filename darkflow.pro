@@ -45,10 +45,10 @@ SOURCES +=\
     operators/operatorpassthrough.cpp \
     core/operatorworker.cpp \
     core/photo.cpp \
-    core/process.cpp \
     operators/rawconvert.cpp \
     operators/rawinfo.cpp \
-    ui/visualization.cpp
+    ui/visualization.cpp \
+    scene/process.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -74,10 +74,10 @@ HEADERS  += \
     operators/operatorloadraw.h \
     core/operatorworker.h \
     core/photo.h \
-    core/process.h \
     operators/rawconvert.h \
     operators/rawinfo.h \
-    ui/visualization.h
+    ui/visualization.h \
+    scene/process.h
 
 FORMS    += \
     ui/aboutdialog.ui \

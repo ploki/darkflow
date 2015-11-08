@@ -9,6 +9,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->operatorName->setText(m_operator->getName());
+    ui->operatorClass->setText(m_operator->getClassIdentifier());
+    setWindowTitle(m_operator->getName());
     connect(ui->operatorName, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
 }
 
@@ -19,5 +21,6 @@ Visualization::~Visualization()
 
 void Visualization::nameChanged(QString text)
 {
+    setWindowTitle(text);
     emit operatorNameChanged(text);
 }

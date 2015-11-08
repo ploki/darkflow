@@ -18,7 +18,7 @@ public:
 
 
 OperatorPassThrough::OperatorPassThrough(Process *parent) :
-    Operator(parent)
+    Operator("Pass Through", parent)
 {
     m_inputs.push_back(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set, this));
     m_inputs.push_back(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set, this));
@@ -35,11 +35,6 @@ OperatorPassThrough::~OperatorPassThrough()
 OperatorPassThrough *OperatorPassThrough::newInstance()
 {
     return new OperatorPassThrough(m_process);
-}
-
-QString OperatorPassThrough::getClassIdentifier()
-{
-    return "Pass Through";
 }
 
 OperatorWorker *OperatorPassThrough::newWorker()

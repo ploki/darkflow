@@ -1,7 +1,5 @@
 #include <QStringList>
 #include <QProcess>
-#include <QMutex>
-#include <QMutexLocker>
 #include <QByteArray>
 #include <QThread>
 #include <QFileInfo>
@@ -23,15 +21,15 @@ RawConvert::RawConvert(QThread *thread, OperatorLoadRaw *op) :
 
 void RawConvert::play()
 {
-    QMutex mutex;
+    if ( play_isUpToDate())
+        return;
     QVector<QString> collection = m_loadraw->getCollection().toVector();
     int s = collection.count();
     int p = 0;
-    bool failure = false;
-    QThread *mainThread = QThread::currentThread();
-#pragma omp parallel for shared(mutex, failure)
+    volatile bool failure = false;
+#pragma omp parallel for shared(failure)
     for (int i = 0 ; i < s ; ++i) {
-        if ( failure || mainThread->isInterruptionRequested() ) {
+        if ( failure || aborted() ) {
             failure = true;
             continue;
         }
@@ -43,9 +41,11 @@ void RawConvert::play()
             continue;
         }
         setTags(collection[i], photo);
-        emit progress(++p, s);
-        QMutexLocker lock(&mutex);
-        m_operator->m_outputs[0]->m_result.push_back(photo);
+#pragma omp critical
+        {
+            emit progress(++p, s);
+            m_operator->m_outputs[0]->m_result.push_back(photo);
+        }
     }
 #pragma omp barrier
     if ( failure )

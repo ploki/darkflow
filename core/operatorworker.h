@@ -16,8 +16,7 @@ public:
     explicit OperatorWorker(QThread *thread, Operator* op);
 private slots:
     virtual void play();
-    virtual Photo process(const Photo *photo)
-    { Q_UNUSED(photo); Q_ASSERT(!"Not Implemented");}
+    virtual Photo process(const Photo &photo, int p, int c);
 
 signals:
     void progress(int ,int);
@@ -32,6 +31,12 @@ protected:
     bool aborted();
     void emitFailure();
     void emitSuccess();
+    void emitProgress(int p, int c, int sub_p, int sub_c);
+    bool play_inputsAvailable();
+    bool play_outputsAvailable();
+    bool play_parentDirty();
+    bool play_isUpToDate();
+    bool play_onInput(int idx);
 };
 
 #endif // OPERATORWORKER_H

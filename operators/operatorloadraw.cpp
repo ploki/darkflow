@@ -16,7 +16,7 @@ static const char *WhiteBalanceStr[] = {
 };
 
 OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
-    Operator(parent),
+    Operator("Raw photos", parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "rawCollection",
                           "RAW photos",
@@ -64,11 +64,6 @@ OperatorLoadRaw::~OperatorLoadRaw()
 OperatorLoadRaw *OperatorLoadRaw::newInstance()
 {
     return new OperatorLoadRaw(m_process);
-}
-
-QString OperatorLoadRaw::getClassIdentifier()
-{
-    return "Raw photos";
 }
 
 QStringList OperatorLoadRaw::getCollection() const

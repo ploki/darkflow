@@ -210,6 +210,7 @@ void Process::load(const QString& filename)
                 m_lastMousePosition.setX(x);
                 m_lastMousePosition.setY(y);
                 Operator *newOp = op->newInstance();
+                newOp->setName(obj["name"].toString());
                 addOperator(newOp);
                 newOp->load(obj);
                 break;

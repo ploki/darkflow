@@ -19,6 +19,7 @@
 
 #include "operatorparameterfilescollection.h"
 #include "processfilescollection.h"
+#include "visualization.h"
 
 #define PEN_WIDTH 2
 
@@ -33,7 +34,8 @@ ProcessNode::ProcessNode(QPointF pos,
     m_caption(NULL),
     m_connections(),
     m_inPorts(),
-    m_outPorts()
+    m_outPorts(),
+    m_visualization(new Visualization(op))
 {
     qreal barHeight;
     qreal x = pos.x();
@@ -50,7 +52,7 @@ ProcessNode::ProcessNode(QPointF pos,
     int parameterRowsCount = parameters.count();
 
     m_caption = new QGraphicsTextItem(this);
-    m_caption->setPlainText(op->getClassIdentifier());
+    m_caption->setPlainText(op->getName());
     m_caption->setPos(x, y);
     barHeight = m_caption->boundingRect().height();
     h = barHeight*(2+portRowsCount+parameterRowsCount);
@@ -72,6 +74,8 @@ ProcessNode::ProcessNode(QPointF pos,
     addParameters(parameters, barHeight, (1+portRowsCount)*barHeight);
 
     connect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
+    connect(m_visualization, SIGNAL(operatorNameChanged(QString)), this, SLOT(operatorNameChanged(QString)));
+    connect(m_visualization, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
 }
 
 void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal size, qreal offset)
@@ -109,7 +113,7 @@ void ProcessNode::addButtons(qreal size)
 
     ProcessButton *buttViewImage= new ProcessButton(QRectF(x+w-size*3,y,size,size),
                                                     ProcessButton::Display,m_process, this);
-    connect(buttViewImage, SIGNAL(buttonClicked()), this, SLOT(viewImageClicked()));
+    connect(buttViewImage, SIGNAL(buttonClicked()), this, SLOT(visualizationClicked()));
 
     ProcessButton *buttPlay= new ProcessButton(QRectF(x,y+h-size,size,size),
                                                ProcessButton::Play,m_process, this);
@@ -153,6 +157,7 @@ ProcessNode::~ProcessNode()
     foreach(ProcessConnection *connection, m_connections)
         connection->detach();
     delete m_operator;
+    delete m_visualization;
 }
 
 void ProcessNode::paint(QPainter *painter,
@@ -214,14 +219,10 @@ void ProcessNode::passThroughClicked()
 
 }
 
-void ProcessNode::viewImageClicked()
+void ProcessNode::visualizationClicked()
 {
-
-}
-
-void ProcessNode::viewParametersClicked()
-{
-
+    m_visualization->show();
+    m_visualization->raise();
 }
 
 void ProcessNode::playClicked()
@@ -232,5 +233,10 @@ void ProcessNode::playClicked()
 void ProcessNode::abortClicked()
 {
     m_operator->abort();
+}
+
+void ProcessNode::operatorNameChanged(QString text)
+{
+    m_caption->setPlainText(text);
 }
 

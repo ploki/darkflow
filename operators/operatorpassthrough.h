@@ -11,8 +11,6 @@ public:
     OperatorPassThrough(Process *parent);
     ~OperatorPassThrough();
     OperatorPassThrough *newInstance();
-    QString getClassIdentifier();
-
 
     OperatorWorker *newWorker();
 };

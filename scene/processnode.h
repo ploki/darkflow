@@ -19,6 +19,7 @@ class QWidget;
 class OperatorInput;
 class OperatorOutput;
 class OperatorParameter;
+class Visualization;
 
 class ProcessNode : public QObject, public QGraphicsPathItem
 {
@@ -49,10 +50,10 @@ private slots:
     void operatorStateChanged();
     void closeButtonClicked();
     void passThroughClicked();
-    void viewImageClicked();
-    void viewParametersClicked();
+    void visualizationClicked();
     void playClicked();
     void abortClicked();
+    void operatorNameChanged(QString text);
 
 public:
     Operator *m_operator;
@@ -64,6 +65,7 @@ private:
     QSet<ProcessConnection*> m_connections;
     QVector<ProcessPort*> m_inPorts;
     QVector<ProcessPort*> m_outPorts;
+    Visualization *m_visualization;
 
     void addButtons(qreal size);
     void addPorts(QVector<OperatorOutput*>& outputs,

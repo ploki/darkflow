@@ -47,7 +47,8 @@ SOURCES +=\
     core/photo.cpp \
     core/process.cpp \
     operators/rawconvert.cpp \
-    operators/rawinfo.cpp
+    operators/rawinfo.cpp \
+    ui/visualization.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -75,13 +76,15 @@ HEADERS  += \
     core/photo.h \
     core/process.h \
     operators/rawconvert.h \
-    operators/rawinfo.h
+    operators/rawinfo.h \
+    ui/visualization.h
 
 FORMS    += \
     ui/aboutdialog.ui \
     ui/filesselection.ui \
     ui/mainwindow.ui \
-    ui/projectproperties.ui
+    ui/projectproperties.ui \
+    ui/visualization.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++

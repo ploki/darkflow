@@ -13,8 +13,6 @@ public:
     OperatorExNihilo(Process *parent);
     ~OperatorExNihilo();
     OperatorExNihilo *newInstance();
-    QString getClassIdentifier();
-
 
     OperatorWorker* newWorker();
 

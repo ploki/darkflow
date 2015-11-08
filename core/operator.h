@@ -21,7 +21,7 @@ class Operator : public QObject
 {
     Q_OBJECT
 public:
-    explicit Operator(Process *parent);
+    explicit Operator(const QString& classIdentifier, Process *parent);
     virtual ~Operator();
 
     /**
@@ -50,14 +50,17 @@ public:
     QString getUuid() const;
     void setUuid(const QString &uuid);
 
-    virtual QString getClassIdentifier() = 0;
     virtual Operator* newInstance() = 0;
+
+    QString getClassIdentifier() const;
 
     static void operator_connect(OperatorOutput *output, OperatorInput *input);
     static void operator_disconnect(OperatorOutput *output, OperatorInput *input);
 
     virtual void save(QJsonObject& obj);
     virtual void load(QJsonObject& obj);
+
+    QString getName() const;
 
 signals:
     void progress(int ,int );
@@ -73,6 +76,7 @@ public slots:
     void workerSuccess();
     void workerFailure();
     void parentUpToDate();
+    void setName(const QString &name);
 
 //protected:
 public:
@@ -84,6 +88,8 @@ public:
     QVector<OperatorOutput*> m_outputs;
     bool m_waitingForParentUpToDate;
     QString m_uuid;
+    QString m_classIdentifier;
+    QString m_name;
 
     QThread *m_thread;
     OperatorWorker *m_worker;

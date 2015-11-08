@@ -14,7 +14,6 @@ public:
     OperatorLoadRaw(Process *parent);
     ~OperatorLoadRaw();
     OperatorLoadRaw *newInstance();
-    QString getClassIdentifier();
 
     typedef enum {
         Linear,

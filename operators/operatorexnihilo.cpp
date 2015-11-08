@@ -16,6 +16,7 @@ public:
     {}
 private slots:
     void play() {
+        qWarning("play!!");
         Photo photo;
         photo.create(1000,1000);
         if (!photo.error()) {
@@ -49,7 +50,7 @@ private slots:
 };
 
 OperatorExNihilo::OperatorExNihilo(Process *parent) :
-    Operator(parent)
+    Operator("Ex Nihilo", parent)
 {
     m_outputs.push_back(new OperatorOutput("Random image", "Random Image", this));
 }
@@ -62,11 +63,6 @@ OperatorExNihilo::~OperatorExNihilo()
 OperatorExNihilo *OperatorExNihilo::newInstance()
 {
     return new OperatorExNihilo(m_process);
-}
-
-QString OperatorExNihilo::getClassIdentifier()
-{
-    return "Ex Nihilo";
 }
 
 OperatorWorker *OperatorExNihilo::newWorker()

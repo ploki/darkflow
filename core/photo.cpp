@@ -75,6 +75,7 @@ Photo &Photo::operator=(const Photo &photo)
         newImage = new Magick::Image(*photo.m_image);
         m_image = newImage;
         m_tags = photo.m_tags;
+        m_error = false;
     }
     catch (std::exception *e) {
         qWarning(e->what());
@@ -92,13 +93,14 @@ bool Photo::load(const QString &filename)
     QByteArray data = file.readAll();
     Blob blob(data.data(), data.length());
     try {
-        Image *newImage = new Magick::Image(blob);
         delete m_image;
-        m_image = newImage;
+        m_image = new Magick::Image(blob);
+        m_error = false;
     }
     catch (std::exception *e) {
         qWarning(e->what());
         delete e;
+        setError();
         return false;
     }
     return true;
@@ -131,6 +133,7 @@ void Photo::create(long width, long height)
     try {
         delete m_image;
         m_image = new Magick::Image(Geometry(width,height),Color(0,0,0));
+        m_error = false;
     }
     catch (std::exception *e) {
         qWarning(e->what());

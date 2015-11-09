@@ -26,17 +26,33 @@ public slots:
     void operatorUpdated();
     void updateTreeviewPhotos();
     void photoSelectionChanged();
+    void zoomFitVisible();
+    void zoomHalf();
+    void zoomOne();
+    void zoomDouble();
+    void zoomCustom();
+    void zoomPlus();
+    void zoomMinus();
 
 private:
     Ui::Visualization *ui;
     Operator *m_operator;
     OperatorOutput *m_output;
     Photo *m_photo;
+    enum ZoomLevel {
+        ZoomFitVisible,
+        ZoomHalf,
+        ZoomOne,
+        ZoomDouble,
+        ZoomCustom
+    } m_zoomLevel;
+    int m_zoom;
 
     void clearAllTabs();
     void updateTabs();
     void updateTabsWithPhoto();
     void updateTabsWithOutput();
+    void updateVisualizationZoom();
 
 };
 

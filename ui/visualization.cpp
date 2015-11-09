@@ -18,7 +18,9 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui(new Ui::Visualization),
     m_operator(op),
     m_output(NULL),
-    m_photo(NULL)
+    m_photo(NULL),
+    m_zoomLevel(ZoomFitVisible),
+    m_zoom(0)
 {
     ui->setupUi(this);
     ui->operatorName->setText(m_operator->getName());
@@ -27,11 +29,96 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(ui->operatorName, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
     connect(ui->tree_photos, SIGNAL(itemSelectionChanged()), this, SLOT(photoSelectionChanged()));
     updateTreeviewPhotos();
+    updateVisualizationZoom();
 }
 
 Visualization::~Visualization()
 {
     delete ui;
+}
+
+
+void Visualization::zoomFitVisible()
+{
+    m_zoomLevel=ZoomFitVisible;
+    updateVisualizationZoom();
+    qWarning("fit!");
+}
+
+void Visualization::zoomHalf()
+{
+    m_zoomLevel=ZoomHalf;
+    updateVisualizationZoom();
+}
+
+void Visualization::zoomOne()
+{
+    m_zoomLevel=ZoomOne;
+    updateVisualizationZoom();
+}
+
+void Visualization::zoomDouble()
+{
+    m_zoomLevel=ZoomDouble;
+    updateVisualizationZoom();
+}
+
+void Visualization::zoomCustom()
+{
+    m_zoomLevel=ZoomCustom;
+    updateVisualizationZoom();
+}
+
+void Visualization::zoomPlus()
+{
+    if ( m_zoom < 10)
+        ++m_zoom;
+    ui->radio_zoomCustom->click();
+    updateVisualizationZoom();
+}
+
+void Visualization::zoomMinus()
+{
+    if ( m_zoom > -10 )
+        --m_zoom;
+    ui->radio_zoomCustom->click();
+    updateVisualizationZoom();
+}
+
+void Visualization::updateVisualizationZoom()
+{
+    if ( ui->widget_visualization->pixmap() == NULL )
+        return;
+    switch(m_zoomLevel) {
+    case ZoomFitVisible:
+        break;
+    case ZoomHalf:
+        m_zoom=-5;
+        break;
+    case ZoomOne:
+        m_zoom=0;
+        break;
+    case ZoomDouble:
+        m_zoom=5;
+        break;
+    case ZoomCustom: default: break;
+    }
+    qreal zoom_factor = pow(2,qreal(m_zoom)/5);
+    if ( m_zoomLevel == ZoomFitVisible ) {
+        ui->scrollArea_visualization->setWidgetResizable(false);
+        ui->widget_visualization->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
+        QSize rect = ui->scrollArea_visualization->viewport()->size();
+        QSize size = ui->widget_visualization->pixmap()->size();
+        size.scale(rect, Qt::KeepAspectRatio);
+        ui->widget_visualization->resize(size);
+        //ui->widget_visualization->adjustSize();
+    }
+    else {
+        ui->scrollArea_visualization->setWidgetResizable(true);
+        ui->widget_visualization->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        ui->widget_visualization->resize(ui->widget_visualization->pixmap()->size()*zoom_factor);
+        //ui->widget_visualization->adjustSize();
+    }
 }
 
 void Visualization::nameChanged(QString text)
@@ -125,9 +212,12 @@ void Visualization::updateTabs()
 void Visualization::updateTabsWithPhoto()
 {
     ui->widget_visualization->setPixmap(m_photo->toPixmap(2.4, 0.00304L,1));
+    updateVisualizationZoom();
+    updateVisualizationZoom();
 }
 
 void Visualization::updateTabsWithOutput()
 {
 
 }
+

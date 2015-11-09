@@ -1,9 +1,13 @@
 #include "photo.h"
 #include <QFile>
 #include <QString>
+#include <QImage>
+#include <QPixmap>
 #include <Magick++.h>
 
 #include <string>
+
+#include "igamma.h"
 
 using namespace Magick;
 
@@ -172,7 +176,7 @@ void Photo::removeTag(const QString &name)
     m_tags.remove(name);
 }
 
-QString Photo::getTag(const QString &name)
+QString Photo::getTag(const QString &name) const
 {
     QMap<QString, QString>::const_iterator it = m_tags.find(name);
     if ( it == m_tags.end() )
@@ -185,6 +189,47 @@ void Photo::setError()
     m_error = true;
     delete m_image;
     m_image = NULL;
+}
+
+QPixmap Photo::toPixmap(double gamma, double x0, double exposureBoost)
+{
+    Q_UNUSED(exposureBoost);
+    Photo photo(*this);
+    Q_UNUSED(gamma);
+    Q_UNUSED(x0);
+    iGamma(gamma, x0).applyOn(photo);
+
+    Magick::Image &image = *photo.image();
+    image.modifyImage();
+    int h = image.rows(),
+            w = image.columns();
+    Magick::Pixels pixel_cache(image);
+    QImage qImage(w, h, QImage::Format_RGB32);
+    //#pragma omp parallel for
+    for ( int y = 0 ; y < h ; ++y ) {
+        const Magick::PixelPacket *pixels = pixel_cache.getConst(0,y,w,1);
+        if ( !pixels ) continue;
+        for ( int x = 0 ; x < w ; ++x ) {
+            qImage.setPixel(x,y,qRgb(
+                                (pixels[x].red/256),
+                                (pixels[x].green/256),
+                                (pixels[x].blue/256)));
+        }
+    }
+    // #pragma omb barrier
+    return QPixmap::fromImage(qImage,Qt::AutoColor|Qt::AvoidDither);
+}
+
+void Photo::writeJPG(const QString &filename)
+{
+    Magick::Image image(*this->image());
+
+    image.magick("JPG");
+    Magick::Blob blob;
+    image.write(&blob);
+    QFile f(filename);
+    f.open(QFile::WriteOnly);
+    f.write((char*)blob.data(), blob.length());
 }
 
 

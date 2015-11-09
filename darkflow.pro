@@ -14,7 +14,7 @@ QT       += core gui
 }
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-QMAKE_INCDIR += core operators scene ui
+QMAKE_INCDIR += core operators processing scene ui
 
 TARGET = darkflow
 TEMPLATE = app
@@ -48,7 +48,10 @@ SOURCES +=\
     operators/rawconvert.cpp \
     operators/rawinfo.cpp \
     ui/visualization.cpp \
-    scene/process.cpp
+    scene/process.cpp \
+    ui/treephotoitem.cpp \
+    ui/treeoutputitem.cpp \
+    processing/igamma.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -77,7 +80,10 @@ HEADERS  += \
     operators/rawconvert.h \
     operators/rawinfo.h \
     ui/visualization.h \
-    scene/process.h
+    scene/process.h \
+    ui/treephotoitem.h \
+    ui/treeoutputitem.h \
+    processing/igamma.h
 
 FORMS    += \
     ui/aboutdialog.ui \

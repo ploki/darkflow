@@ -44,8 +44,10 @@ public:
     QMap<QString, QString> tags() const;
     void setTag(const QString& name, const QString& value);
     void removeTag(const QString& name);
-    QString getTag(const QString& name);
+    QString getTag(const QString& name) const;
 
+    QPixmap toPixmap(double gamma, double x0, double exposureBoost);
+    void writeJPG(const QString& filename);
 
 private:
     Magick::Image *m_image;

@@ -112,7 +112,7 @@ QByteArray RawConvert::convert(const QString &filename)
     /* write to standard output */
     arguments << "-c";
     /* write a TIFF with MD */
-    arguments << "-T";
+    //arguments << "-T";
     /* the RAW photo */
     arguments << filename;
 
@@ -128,6 +128,7 @@ void RawConvert::setTags(const QString &filename, Photo &photo)
     RawInfo info;
     QFileInfo finfo(filename);
     info.probeFile(filename);
+    //photo.writeJPG("/tmp/"+finfo.fileName()+".jpg");
     photo.setTag("Name", finfo.fileName());
     photo.setTag("Directory", finfo.dir().path());
     photo.setTag("ISO Speed", QString("%0").arg(info.isoSpeed()));

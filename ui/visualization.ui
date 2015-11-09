@@ -49,10 +49,18 @@
          </widget>
         </item>
         <item>
-         <widget class="QTreeView" name="treeview_photos">
+         <widget class="QTreeWidget" name="tree_photos">
           <property name="indentation">
            <number>10</number>
           </property>
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
@@ -95,7 +103,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>535</width>
+                  <width>531</width>
                   <height>364</height>
                  </rect>
                 </property>
@@ -127,7 +135,7 @@
                    <item row="0" column="0">
                     <widget class="QRadioButton" name="radio_fitVisible">
                      <property name="text">
-                      <string>Fit visible</string>
+                      <string>Fit visi&amp;ble</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -137,7 +145,7 @@
                    <item row="1" column="0">
                     <widget class="QRadioButton" name="radio_zoomHalf">
                      <property name="text">
-                      <string>1:2</string>
+                      <string>&amp;1:2</string>
                      </property>
                     </widget>
                    </item>
@@ -151,7 +159,7 @@
                    <item row="3" column="0">
                     <widget class="QRadioButton" name="radio_zoomDouble">
                      <property name="text">
-                      <string>2:1</string>
+                      <string>&amp;2:1</string>
                      </property>
                     </widget>
                    </item>
@@ -432,6 +440,14 @@
                <bool>true</bool>
               </property>
               <widget class="QWidget" name="scrollAreaWidgetContents_2">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>531</width>
+                 <height>468</height>
+                </rect>
+               </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
                  <widget class="QWidget" name="content_histogram" native="true">
@@ -510,7 +526,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>535</width>
+                 <width>531</width>
                  <height>468</height>
                 </rect>
                </property>

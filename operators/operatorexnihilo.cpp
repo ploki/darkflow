@@ -40,6 +40,7 @@ private slots:
                 }
             }
             cache.sync();
+            photo.setTag("Name", "Random Image");
             m_operator->m_outputs[0]->m_result.push_back(photo);
             emitSuccess();
         }

@@ -96,7 +96,8 @@ FORMS    += \
     ui/filesselection.ui \
     ui/mainwindow.ui \
     ui/projectproperties.ui \
-    ui/visualization.ui
+    ui/visualization.ui \
+    ui/slider.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++

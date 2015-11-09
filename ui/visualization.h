@@ -33,6 +33,7 @@ public slots:
     void zoomCustom();
     void zoomPlus();
     void zoomMinus();
+    void expChanged();
 
 private:
     Ui::Visualization *ui;

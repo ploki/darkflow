@@ -51,7 +51,10 @@ SOURCES +=\
     scene/process.cpp \
     ui/treephotoitem.cpp \
     ui/treeoutputitem.cpp \
-    manipulation/igamma.cpp
+    manipulation/igamma.cpp \
+    manipulation/manipulation.cpp \
+    manipulation/exposure.cpp \
+    manipulation/lutbased.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -83,7 +86,10 @@ HEADERS  += \
     scene/process.h \
     ui/treephotoitem.h \
     ui/treeoutputitem.h \
-    manipulation/igamma.h
+    manipulation/igamma.h \
+    manipulation/manipulation.h \
+    manipulation/exposure.h \
+    manipulation/lutbased.h
 
 FORMS    += \
     ui/aboutdialog.ui \

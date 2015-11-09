@@ -342,6 +342,11 @@
                        <string>IUT BT.709</string>
                       </property>
                      </item>
+                     <item>
+                      <property name="text">
+                       <string>POW-2</string>
+                      </property>
+                     </item>
                     </widget>
                    </item>
                    <item row="1" column="0">
@@ -453,8 +458,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>50</height>
+                 <width>531</width>
+                 <height>468</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -535,8 +540,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>32</height>
+                 <width>531</width>
+                 <height>468</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -757,6 +762,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>slider_exp</sender>
+   <signal>sliderReleased()</signal>
+   <receiver>Visualization</receiver>
+   <slot>expChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>686</x>
+     <y>521</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>387</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_gamma</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>expChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>686</x>
+     <y>496</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>387</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -767,5 +804,6 @@
   <slot>zoomCustom()</slot>
   <slot>zoomPlus()</slot>
   <slot>zoomMinus()</slot>
+  <slot>expChanged()</slot>
  </slots>
 </ui>

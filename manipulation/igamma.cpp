@@ -6,13 +6,13 @@
 using Magick::Quantum;
 
 iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
-    QObject(parent),
+    LutBased(parent),
     m_gamma(gamma),
     m_x0(x0),
-    m_invert(invert),
-    m_lut(new quantum_t[QuantumRange+1])
+    m_invert(invert)
 {
-    if ( gamma == 1.0L ) return;
+    //FIXME doesn't work in this model
+    //if ( gamma == 1.0L ) return;
     double a = - ( gamma - 1.L)*pow(x0,1.L/gamma)/((gamma-1.L)*pow(x0,1.L/gamma)-gamma);
     double p=0;
     if ( invert ) {
@@ -43,38 +43,3 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
 
 }
 
-iGamma::~iGamma()
-{
-    delete[] m_lut;
-}
-
-Photo iGamma::apply(const Photo &source)
-{
-    Photo photo(source);
-    applyOn(photo);
-    return photo;
-}
-
-void iGamma::applyOn(Photo &photo)
-{
-    Magick::Image &image =  *photo.image();
-    image.modifyImage();
-
-    int h = image.rows(),
-            w = image.columns();
-    Magick::Pixels pixel_cache(image);
-
-#pragma omp parallel for
-    for ( int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        if ( !pixels ) continue;
-        for ( int x = 0 ; x < w ; ++x ) {
-            pixels[x].red=m_lut[pixels[x].red];
-            pixels[x].green=m_lut[pixels[x].green];
-            pixels[x].blue=m_lut[pixels[x].blue];
-        }
-    }
-#pragma omp barrier
-    pixel_cache.sync();
-
-}

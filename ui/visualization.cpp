@@ -40,9 +40,9 @@ Visualization::~Visualization()
 
 void Visualization::zoomFitVisible()
 {
+    qWarning("action fit!");
     m_zoomLevel=ZoomFitVisible;
     updateVisualizationZoom();
-    qWarning("fit!");
 }
 
 void Visualization::zoomHalf()
@@ -85,10 +85,17 @@ void Visualization::zoomMinus()
     updateVisualizationZoom();
 }
 
+void Visualization::expChanged()
+{
+    updateTabsWithPhoto();
+}
+
 void Visualization::updateVisualizationZoom()
 {
+    qWarning("updateVis");
     if ( ui->widget_visualization->pixmap() == NULL )
         return;
+    qWarning("pixmap defined");
     switch(m_zoomLevel) {
     case ZoomFitVisible:
         break;
@@ -105,6 +112,7 @@ void Visualization::updateVisualizationZoom()
     }
     qreal zoom_factor = pow(2,qreal(m_zoom)/5);
     if ( m_zoomLevel == ZoomFitVisible ) {
+        qWarning("proceed fit vis");
         ui->scrollArea_visualization->setWidgetResizable(false);
         ui->widget_visualization->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
         QSize rect = ui->scrollArea_visualization->viewport()->size();
@@ -114,6 +122,7 @@ void Visualization::updateVisualizationZoom()
         //ui->widget_visualization->adjustSize();
     }
     else {
+        qWarning("proceed zoom");
         ui->scrollArea_visualization->setWidgetResizable(true);
         ui->widget_visualization->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         ui->widget_visualization->resize(ui->widget_visualization->pixmap()->size()*zoom_factor);
@@ -211,8 +220,22 @@ void Visualization::updateTabs()
 
 void Visualization::updateTabsWithPhoto()
 {
-    ui->widget_visualization->setPixmap(m_photo->toPixmap(2.4, 0.00304L,1));
-    updateVisualizationZoom();
+    int exposure = ui->slider_exp->value();
+    qreal gamma, x0;
+    switch(ui->combo_gamma->currentIndex()) {
+    default:
+        qWarning("Unknown combo_gamma selection");
+    case 0: //Linear
+        gamma = 1.; x0 = 0; break;
+    case 1: //sRGB
+        gamma = 2.4L; x0 = 0.00304L; break;
+    case 2: //IUT BT.709
+        gamma = 2.222L; x0 = 0.018L; break;
+    case 3: //POW-2;
+        gamma = 2.L; x0 = 0.; break;
+    }
+
+    ui->widget_visualization->setPixmap(m_photo->toPixmap(gamma, x0, qreal(exposure)/100.));
     updateVisualizationZoom();
 }
 

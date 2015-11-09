@@ -8,6 +8,7 @@
 #include <string>
 
 #include "igamma.h"
+#include "exposure.h"
 
 using namespace Magick;
 
@@ -198,6 +199,7 @@ QPixmap Photo::toPixmap(double gamma, double x0, double exposureBoost)
     Q_UNUSED(gamma);
     Q_UNUSED(x0);
     iGamma(gamma, x0).applyOn(photo);
+    Exposure(exposureBoost).applyOn(photo);
 
     Magick::Image &image = *photo.image();
     image.modifyImage();

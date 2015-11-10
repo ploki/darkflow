@@ -23,7 +23,7 @@
       <item>
        <widget class="QRadioButton" name="radio_value">
         <property name="text">
-         <string>Value</string>
+         <string>&amp;Value</string>
         </property>
        </widget>
       </item>
@@ -37,7 +37,7 @@
       <item>
        <widget class="QRadioButton" name="radio_percent">
         <property name="text">
-         <string>Percent</string>
+         <string>Pe&amp;rcent</string>
         </property>
        </widget>
       </item>
@@ -81,7 +81,7 @@
       <item>
        <widget class="QRadioButton" name="radio_linear">
         <property name="text">
-         <string>Linear</string>
+         <string>&amp;Linear</string>
         </property>
        </widget>
       </item>
@@ -157,6 +157,9 @@
       </item>
       <item>
        <widget class="QSlider" name="slider_value">
+        <property name="maximum">
+         <number>65535</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -211,5 +214,160 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>radio_ev</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Slider</receiver>
+   <slot>selectExposureValue(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>245</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radio_linear</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Slider</receiver>
+   <slot>selectLinear(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radio_logarithmic</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Slider</receiver>
+   <slot>selectLogarithmic(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radio_mag</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Slider</receiver>
+   <slot>selectMagnitude(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radio_percent</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Slider</receiver>
+   <slot>selectPercent(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radio_value</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Slider</receiver>
+   <slot>selectValue(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dspin_min</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Slider</receiver>
+   <slot>changeMin(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>184</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dspin_max</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Slider</receiver>
+   <slot>changeMax(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>377</x>
+     <y>184</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dspin_value</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Slider</receiver>
+   <slot>changeValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>184</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>selectValue(bool)</slot>
+  <slot>selectPercent(bool)</slot>
+  <slot>selectExposureValue(bool)</slot>
+  <slot>selectMagnitude(bool)</slot>
+  <slot>selectLinear(bool)</slot>
+  <slot>selectLogarithmic(bool)</slot>
+  <slot>changeMin(double)</slot>
+  <slot>changeMax(double)</slot>
+  <slot>changeValue(double)</slot>
+ </slots>
 </ui>

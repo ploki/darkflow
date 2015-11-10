@@ -54,7 +54,8 @@ SOURCES +=\
     manipulation/igamma.cpp \
     manipulation/manipulation.cpp \
     manipulation/exposure.cpp \
-    manipulation/lutbased.cpp
+    manipulation/lutbased.cpp \
+    ui/slider.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -89,7 +90,8 @@ HEADERS  += \
     manipulation/igamma.h \
     manipulation/manipulation.h \
     manipulation/exposure.h \
-    manipulation/lutbased.h
+    manipulation/lutbased.h \
+    ui/slider.h
 
 FORMS    += \
     ui/aboutdialog.ui \

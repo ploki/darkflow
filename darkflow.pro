@@ -55,7 +55,9 @@ SOURCES +=\
     manipulation/manipulation.cpp \
     manipulation/exposure.cpp \
     manipulation/lutbased.cpp \
-    ui/slider.cpp
+    ui/slider.cpp \
+    scene/processslider.cpp \
+    core/operatorparameterslider.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -91,7 +93,9 @@ HEADERS  += \
     manipulation/manipulation.h \
     manipulation/exposure.h \
     manipulation/lutbased.h \
-    ui/slider.h
+    ui/slider.h \
+    scene/processslider.h \
+    core/operatorparameterslider.h
 
 FORMS    += \
     ui/aboutdialog.ui \

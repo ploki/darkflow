@@ -19,6 +19,7 @@
 #include "processconnection.h"
 #include "processdropdown.h"
 #include "processfilescollection.h"
+#include "processslider.h"
 
 #include "operatorloadraw.h"
 #include "operatorexnihilo.h"
@@ -294,6 +295,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     QGraphicsItem *connItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeConnection);
     QGraphicsItem *dropdownItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeDropDown);
     QGraphicsItem *filesCollectionItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeFilesCollection);
+    QGraphicsItem *sliderItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSlider);
     switch (type)
     {
     case QEvent::GraphicsSceneMousePress:
@@ -323,6 +325,11 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         }
         if (filesCollectionItem) {
             dynamic_cast<ProcessFilesCollection*>(filesCollectionItem)->clicked(me->screenPos());
+            event->accept();
+            return true;
+        }
+        if (sliderItem) {
+            dynamic_cast<ProcessSlider*>(sliderItem)->clicked(me->screenPos());
             event->accept();
             return true;
         }

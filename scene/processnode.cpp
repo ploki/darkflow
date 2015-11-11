@@ -19,6 +19,10 @@
 
 #include "operatorparameterfilescollection.h"
 #include "processfilescollection.h"
+
+#include "operatorparameterslider.h"
+#include "processslider.h"
+
 #include "visualization.h"
 
 #define PEN_WIDTH 2
@@ -93,6 +97,12 @@ void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal s
         else if ( OperatorParameterFilesCollection *filesCollection = dynamic_cast<OperatorParameterFilesCollection*>(parameters[i]) )
         {
             new ProcessFilesCollection(QRectF(x,y+size*i+offset, w, size),filesCollection, m_process, this);
+        }
+        else if ( OperatorParameterSlider *slider = dynamic_cast<OperatorParameterSlider*>(parameters[i])) {
+            new ProcessSlider(QRectF(x,y+size*i+offset, w, size),slider, m_process, this);
+        }
+        else {
+            qWarning("Unknown parameter type");
         }
     }
 }

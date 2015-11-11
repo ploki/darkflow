@@ -4,6 +4,8 @@
 #include "operator.h"
 #include <QObject>
 
+class OperatorParameterSlider;
+
 class OperatorPassThrough : public Operator
 {
     Q_OBJECT
@@ -13,6 +15,8 @@ public:
     OperatorPassThrough *newInstance();
 
     OperatorWorker *newWorker();
+private:
+    OperatorParameterSlider *m_slider;
 };
 
 #endif // OperatorPassThrough_H

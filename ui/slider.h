@@ -9,6 +9,8 @@ namespace Ui {
 class Slider;
 }
 
+class QAbstractButton;
+
 class Slider : public QDialog
 {
     Q_OBJECT
@@ -44,9 +46,21 @@ public:
                     qreal value,
                     qreal hardMin,
                     qreal hardMax,
-                    uint parametersFilter=-1,
+                    uint parametersFilter= FilterAll,
                     QWidget *parent = 0);
     ~Slider();
+
+    Unit getUnit() const;
+
+    Scale getScale() const;
+
+    qreal getMin() const;
+
+    qreal getMax() const;
+
+    qreal getValue() const;
+
+    QString currentValue() const;
 
 public slots:
     void selectValue(bool);
@@ -61,6 +75,21 @@ public slots:
     void changeValue(double);
 
     void sliderChanged();
+
+    void loadValues(Unit unit,
+                    Scale scale,
+                    qreal min,
+                    qreal max,
+                    qreal value);
+
+    static QString unitToString(Unit unit);
+    static Unit unitFromString(const QString& unit);
+    static QString scaleToString(Scale scale);
+    static Scale scaleFromString(const QString& scale);
+
+signals:
+    void updated();
+
 
 private:
     Ui::Slider *ui;
@@ -92,6 +121,8 @@ private:
     qreal fromUnit(qreal v);
     qreal toUnit(qreal v);
     void setUnit(Slider::Unit u);
+    void clickUnit(Slider::Unit u);
+    void clickScale(Slider::Scale s);
 };
 
 #endif // SLIDER_H

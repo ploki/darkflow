@@ -2,11 +2,11 @@
 #define LUTBASED_H
 
 #include <QObject>
-#include "manipulation.h"
+#include "algorithm.h"
 #include "photo.h"
 
 
-class LutBased : public Manipulation
+class LutBased : public Algorithm
 {
     Q_OBJECT
 public:

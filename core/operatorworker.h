@@ -16,7 +16,7 @@ public:
     explicit OperatorWorker(QThread *thread, Operator* op);
 private slots:
     virtual void play();
-    virtual Photo process(const Photo &photo, int p, int c);
+    virtual Photo process(const Photo &photo, int p, int c) = 0;
 
 signals:
     void progress(int ,int);

@@ -1,20 +1,20 @@
-#include "manipulation.h"
+#include "algorithm.h"
 #include "photo.h"
 
-Manipulation::Manipulation(QObject *parent) :
+Algorithm::Algorithm(QObject *parent) :
     QObject(parent)
 {
 
 }
 
-Photo Manipulation::apply(const Photo &source)
+Photo Algorithm::apply(const Photo &source)
 {
     Photo photo(source);
     applyOn(photo);
     return photo;
 }
 
-void Manipulation::applyOn(Photo &photo)
+void Algorithm::applyOn(Photo &photo)
 {
     Q_UNUSED(photo);
     qWarning("Not Implemented");

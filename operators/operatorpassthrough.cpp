@@ -11,8 +11,8 @@ public:
     PassThrough(QThread *thread, Operator *op) :
     OperatorWorker(thread, op) {}
 
-    Photo process(const Photo* photo) {
-        return Photo(*photo);
+    Photo process(const Photo &photo, int, int) {
+        return Photo(photo);
     }
 };
 

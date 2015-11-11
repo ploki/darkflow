@@ -198,8 +198,8 @@ QPixmap Photo::toPixmap(double gamma, double x0, double exposureBoost)
     Photo photo(*this);
     Q_UNUSED(gamma);
     Q_UNUSED(x0);
-    iGamma(gamma, x0).applyOn(photo);
     Exposure(exposureBoost).applyOn(photo);
+    iGamma(gamma, x0).applyOn(photo);
 
     Magick::Image &image = *photo.image();
     image.modifyImage();

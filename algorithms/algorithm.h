@@ -14,11 +14,11 @@ template<typename t> t clamp(t v,t min = 0, t max = 65535 /* ARgg! */ ) {
 
 class Photo;
 
-class Manipulation : public QObject
+class Algorithm : public QObject
 {
     Q_OBJECT
 public:
-    explicit Manipulation(QObject *parent = 0);
+    explicit Algorithm(QObject *parent = 0);
 
     virtual Photo apply(const Photo& source);
     virtual void applyOn(Photo& photo);

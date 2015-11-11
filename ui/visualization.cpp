@@ -40,7 +40,7 @@ Visualization::~Visualization()
 
 void Visualization::zoomFitVisible()
 {
-    qWarning("action fit!");
+    //qWarning("action fit!");
     m_zoomLevel=ZoomFitVisible;
     updateVisualizationZoom();
 }
@@ -87,15 +87,17 @@ void Visualization::zoomMinus()
 
 void Visualization::expChanged()
 {
+
+    ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
     updateTabsWithPhoto();
 }
 
 void Visualization::updateVisualizationZoom()
 {
-    qWarning("updateVis");
+    //qWarning("updateVis");
     if ( ui->widget_visualization->pixmap() == NULL )
         return;
-    qWarning("pixmap defined");
+    //qWarning("pixmap defined");
     switch(m_zoomLevel) {
     case ZoomFitVisible:
         break;
@@ -112,7 +114,7 @@ void Visualization::updateVisualizationZoom()
     }
     qreal zoom_factor = pow(2,qreal(m_zoom)/5);
     if ( m_zoomLevel == ZoomFitVisible ) {
-        qWarning("proceed fit vis");
+        //qWarning("proceed fit vis");
         ui->scrollArea_visualization->setWidgetResizable(false);
         ui->widget_visualization->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
         QSize rect = ui->scrollArea_visualization->viewport()->size();
@@ -122,7 +124,7 @@ void Visualization::updateVisualizationZoom()
         //ui->widget_visualization->adjustSize();
     }
     else {
-        qWarning("proceed zoom");
+        //qWarning("proceed zoom");
         ui->scrollArea_visualization->setWidgetResizable(true);
         ui->widget_visualization->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         ui->widget_visualization->resize(ui->widget_visualization->pixmap()->size()*zoom_factor);
@@ -235,7 +237,7 @@ void Visualization::updateTabsWithPhoto()
         gamma = 2.L; x0 = 0.; break;
     }
 
-    ui->widget_visualization->setPixmap(m_photo->toPixmap(gamma, x0, qreal(exposure)/100.));
+    ui->widget_visualization->setPixmap(m_photo->toPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
     updateVisualizationZoom();
 }
 

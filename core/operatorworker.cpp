@@ -40,14 +40,6 @@ void OperatorWorker::play()
     play_onInput(0);
 }
 
-/* default impl is a passthrough */
-Photo OperatorWorker::process(const Photo &photo, int p, int c)
-{
-    Q_UNUSED(p);
-    Q_UNUSED(c);
-    return Photo(photo);
-}
-
 bool OperatorWorker::aborted() {
     return m_thread->isInterruptionRequested();
 }
@@ -128,7 +120,7 @@ bool OperatorWorker::play_onInput(int idx)
         const QVector<Photo> source = remoteOutput->m_result;
         foreach(const Photo &photo, source) {
             emit progress(p, c);
-            Photo newResult = process(photo, p++, c);
+            Photo newResult = this->process(photo, p++, c);
             if ( newResult.error() ) {
                 emitFailure();
                 return false;

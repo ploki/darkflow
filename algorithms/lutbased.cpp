@@ -4,7 +4,7 @@
 using Magick::Quantum;
 
 LutBased::LutBased(QObject *parent) :
-    Manipulation(parent),
+    Algorithm(parent),
     m_lut(new quantum_t[QuantumRange+1])
 {
 

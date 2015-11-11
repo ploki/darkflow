@@ -12,6 +12,8 @@ class RawConvert : public OperatorWorker
 public:
     RawConvert(QThread *thread, OperatorLoadRaw *op);
 
+    Photo process(const Photo &, int, int) { throw 0; }
+
 private slots:
     void play();
 

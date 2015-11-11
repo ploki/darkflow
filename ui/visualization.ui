@@ -103,7 +103,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>534</width>
+                  <width>535</width>
                   <height>364</height>
                  </rect>
                 </property>
@@ -359,10 +359,19 @@
                    <item row="1" column="1">
                     <widget class="QSlider" name="slider_exp">
                      <property name="minimum">
-                      <number>100</number>
+                      <number>0</number>
                      </property>
                      <property name="maximum">
                       <number>800</number>
+                     </property>
+                     <property name="singleStep">
+                      <number>25</number>
+                     </property>
+                     <property name="pageStep">
+                      <number>100</number>
+                     </property>
+                     <property name="value">
+                      <number>0</number>
                      </property>
                      <property name="tracking">
                       <bool>false</bool>
@@ -382,7 +391,7 @@
                    <item row="2" column="1">
                     <widget class="QLabel" name="value_exp">
                      <property name="text">
-                      <string>100</string>
+                      <string>0 EV</string>
                      </property>
                     </widget>
                    </item>
@@ -461,7 +470,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>534</width>
+                 <width>535</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -543,7 +552,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>534</width>
+                 <width>535</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -622,30 +631,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>slider_exp</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>value_exp</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>703</x>
-     <y>487</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>702</x>
-     <y>506</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>Visualization</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>639</y>
+     <x>447</x>
+     <y>700</y>
     </hint>
     <hint type="destinationlabel">
      <x>438</x>

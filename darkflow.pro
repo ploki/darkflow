@@ -14,7 +14,7 @@ QT       += core gui
 }
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-QMAKE_INCDIR += core operators manipulation scene ui
+QMAKE_INCDIR += core operators algorithms scene ui
 
 TARGET = darkflow
 TEMPLATE = app
@@ -51,13 +51,14 @@ SOURCES +=\
     scene/process.cpp \
     ui/treephotoitem.cpp \
     ui/treeoutputitem.cpp \
-    manipulation/igamma.cpp \
-    manipulation/manipulation.cpp \
-    manipulation/exposure.cpp \
-    manipulation/lutbased.cpp \
     ui/slider.cpp \
     scene/processslider.cpp \
-    core/operatorparameterslider.cpp
+    core/operatorparameterslider.cpp \
+    operators/operatorrotate.cpp \
+    algorithms/exposure.cpp \
+    algorithms/igamma.cpp \
+    algorithms/lutbased.cpp \
+    algorithms/algorithm.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -89,13 +90,14 @@ HEADERS  += \
     scene/process.h \
     ui/treephotoitem.h \
     ui/treeoutputitem.h \
-    manipulation/igamma.h \
-    manipulation/manipulation.h \
-    manipulation/exposure.h \
-    manipulation/lutbased.h \
     ui/slider.h \
     scene/processslider.h \
-    core/operatorparameterslider.h
+    core/operatorparameterslider.h \
+    operators/operatorrotate.h \
+    algorithms/exposure.h \
+    algorithms/igamma.h \
+    algorithms/lutbased.h \
+    algorithms/algorithm.h
 
 FORMS    += \
     ui/aboutdialog.ui \

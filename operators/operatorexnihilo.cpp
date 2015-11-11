@@ -15,6 +15,7 @@ public:
         OperatorWorker(thread, op)
     {}
 private slots:
+    Photo process(const Photo &, int, int) { throw 0; }
     void play() {
         qWarning("play!!");
         Photo photo;

@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="group_unit">
      <property name="title">
       <string>Prefered unit</string>
      </property>
@@ -73,7 +73,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="group_scale">
      <property name="title">
       <string>Scale</string>
      </property>
@@ -115,6 +115,9 @@
           <property name="suffix">
            <string/>
           </property>
+          <property name="decimals">
+           <number>5</number>
+          </property>
          </widget>
         </item>
         <item>
@@ -135,6 +138,9 @@
           <property name="suffix">
            <string/>
           </property>
+          <property name="decimals">
+           <number>5</number>
+          </property>
          </widget>
         </item>
         <item>
@@ -151,7 +157,11 @@
          </spacer>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="dspin_max"/>
+         <widget class="QDoubleSpinBox" name="dspin_max">
+          <property name="decimals">
+           <number>5</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -159,6 +169,12 @@
        <widget class="QSlider" name="slider_value">
         <property name="maximum">
          <number>65535</number>
+        </property>
+        <property name="singleStep">
+         <number>128</number>
+        </property>
+        <property name="pageStep">
+         <number>2048</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -174,7 +190,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
      </property>
     </widget>
    </item>
@@ -358,6 +374,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>slider_value</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Slider</receiver>
+   <slot>sliderChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>selectValue(bool)</slot>
@@ -369,5 +401,6 @@
   <slot>changeMin(double)</slot>
   <slot>changeMax(double)</slot>
   <slot>changeValue(double)</slot>
+  <slot>sliderChanged()</slot>
  </slots>
 </ui>

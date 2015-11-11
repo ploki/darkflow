@@ -103,7 +103,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>531</width>
+                  <width>534</width>
                   <height>364</height>
                  </rect>
                 </property>
@@ -362,7 +362,10 @@
                       <number>100</number>
                      </property>
                      <property name="maximum">
-                      <number>500</number>
+                      <number>800</number>
+                     </property>
+                     <property name="tracking">
+                      <bool>false</bool>
                      </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
@@ -458,7 +461,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>531</width>
+                 <width>534</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -540,7 +543,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>531</width>
+                 <width>534</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -764,7 +767,7 @@
   </connection>
   <connection>
    <sender>slider_exp</sender>
-   <signal>sliderReleased()</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>Visualization</receiver>
    <slot>expChanged()</slot>
    <hints>

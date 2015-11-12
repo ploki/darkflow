@@ -24,7 +24,7 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
     else
         p=(a+1.L)*pow(x0,1.L/gamma)/(gamma*x0);
 
-    //    #pragma omp parallel for
+#pragma omp parallel for
     for ( unsigned int i = 0 ; i <= QuantumRange ; ++i ) {
         double xx= double(i)/double(QuantumRange);
         if ( xx > x0 ) {
@@ -32,15 +32,14 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
                 m_lut[i]=pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
             }
             else {
-               quantum_t tmp = ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
-                m_lut[i]= tmp;
+                m_lut[i]= ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
             }
         }
         else {
             m_lut[i]=p*xx*double(QuantumRange);
         }
     }
-    //    #pragma omp barrier
+#pragma omp barrier
 
 }
 

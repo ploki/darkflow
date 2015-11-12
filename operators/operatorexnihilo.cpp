@@ -4,7 +4,6 @@
 #include "operatorworker.h"
 #include "process.h"
 #include "photo.h"
-#include <unistd.h>
 
 #include <Magick++.h>
 
@@ -32,12 +31,12 @@ private slots:
                     emitFailure();
                     return;
                 }
-                usleep(1000);
                 Magick::PixelPacket *pixels = cache.get(0,y,w,1);
                 for (size_t x = 0 ; x < w ; ++x ) {
-                    pixels[x].red = 12;
-                    pixels[x].green = 128;
-                    pixels[x].blue = 250;
+                    using Magick::Quantum;
+                    pixels[x].red = qrand()%QuantumRange;
+                    pixels[x].green = qrand()%QuantumRange;
+                    pixels[x].blue = qrand()%QuantumRange;
                 }
             }
             cache.sync();

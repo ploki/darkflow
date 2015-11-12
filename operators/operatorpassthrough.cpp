@@ -49,6 +49,5 @@ OperatorPassThrough *OperatorPassThrough::newInstance()
 
 OperatorWorker *OperatorPassThrough::newWorker()
 {
-    qWarning("new PassThrough");
     return new PassThrough(m_thread, this);
 }

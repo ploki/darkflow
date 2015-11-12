@@ -16,30 +16,31 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
     double a = - ( gamma - 1.L)*pow(x0,1.L/gamma)/((gamma-1.L)*pow(x0,1.L/gamma)-gamma);
     double p=0;
     if ( invert ) {
-            //recalcul de x0 et a
-            x0=(1.L+a)*pow(x0,1.L/gamma)-a;
-            a=(gamma-1.L)*x0;
-            p=gamma*pow((x0+a)/(a+1.L),gamma)/(x0+a);
+        //recalcul de x0 et a
+        x0=(1.L+a)*pow(x0,1.L/gamma)-a;
+        a=(gamma-1.L)*x0;
+        p=gamma*pow((x0+a)/(a+1.L),gamma)/(x0+a);
     }
     else
-            p=(a+1.L)*pow(x0,1.L/gamma)/(gamma*x0);
+        p=(a+1.L)*pow(x0,1.L/gamma)/(gamma*x0);
 
-    #pragma omp parallel for
+    //    #pragma omp parallel for
     for ( unsigned int i = 0 ; i <= QuantumRange ; ++i ) {
-            double xx= double(i)/double(QuantumRange);
-            if ( xx > x0 ) {
-                    if ( invert ) {
-                            m_lut[i]=pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
-                    }
-                    else {
-                            m_lut[i]=((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
-                    }
+        double xx= double(i)/double(QuantumRange);
+        if ( xx > x0 ) {
+            if ( invert ) {
+                m_lut[i]=pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
             }
             else {
-                    m_lut[i]=p*xx*double(QuantumRange);
+               quantum_t tmp = ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
+                m_lut[i]= tmp;
             }
+        }
+        else {
+            m_lut[i]=p*xx*double(QuantumRange);
+        }
     }
-    #pragma omp barrier
+    //    #pragma omp barrier
 
 }
 

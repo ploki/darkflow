@@ -16,7 +16,8 @@ Photo::Photo(QObject *parent) :
     QObject(parent),
     m_image(NULL),
     m_error(true),
-    m_tags()
+    m_tags(),
+    m_sequenceNumber(0)
 {
 }
 
@@ -24,7 +25,8 @@ Photo::Photo(const Blob &blob, QObject *parent) :
     QObject(parent),
     m_image(NULL),
     m_error(false),
-    m_tags()
+    m_tags(),
+    m_sequenceNumber(0)
 {
     try {
         m_image = new Magick::Image(blob);
@@ -40,7 +42,8 @@ Photo::Photo(const Magick::Image *image, QObject *parent) :
     QObject(parent),
     m_image(NULL),
     m_error(false),
-    m_tags()
+    m_tags(),
+    m_sequenceNumber(0)
 {
     try {
         m_image = new Magick::Image(*image);
@@ -56,7 +59,8 @@ Photo::Photo(const Photo &photo) :
     QObject(photo.parent()),
     m_image(NULL),
     m_error(false),
-    m_tags(photo.m_tags)
+    m_tags(photo.m_tags),
+    m_sequenceNumber(photo.m_sequenceNumber)
 {
     try {
         m_image = new Magick::Image(*photo.m_image);
@@ -80,6 +84,7 @@ Photo &Photo::operator=(const Photo &photo)
         newImage = new Magick::Image(*photo.m_image);
         m_image = newImage;
         m_tags = photo.m_tags;
+        m_sequenceNumber = photo.m_sequenceNumber;
         m_error = false;
     }
     catch (std::exception *e) {
@@ -232,6 +237,20 @@ void Photo::writeJPG(const QString &filename)
     QFile f(filename);
     f.open(QFile::WriteOnly);
     f.write((char*)blob.data(), blob.length());
+}
+
+int Photo::getSequenceNumber() const
+{
+    return m_sequenceNumber;
+}
+
+void Photo::setSequenceNumber(int sequenceNumber)
+{
+    m_sequenceNumber = sequenceNumber;
+}
+
+bool Photo::operator<(const Photo &other) const {
+    return (m_sequenceNumber < other.m_sequenceNumber);
 }
 
 

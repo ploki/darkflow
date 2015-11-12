@@ -117,6 +117,7 @@ void Operator::play() {
     setUpToDate(false);
     if (!m_worker) {
         m_worker = newWorker();
+        m_worker->start();
     }
 }
 

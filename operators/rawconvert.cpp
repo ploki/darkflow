@@ -41,6 +41,7 @@ void RawConvert::play()
             continue;
         }
         setTags(collection[i], photo);
+        photo.setSequenceNumber(i);
 #pragma omp critical
         {
             emit progress(++p, s);
@@ -48,6 +49,7 @@ void RawConvert::play()
         }
     }
 #pragma omp barrier
+    qSort(m_operator->m_outputs[0]->m_result);
     if ( failure )
         emitFailure();
     else

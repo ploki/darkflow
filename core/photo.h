@@ -49,10 +49,14 @@ public:
     QPixmap toPixmap(double gamma, double x0, double exposureBoost);
     void writeJPG(const QString& filename);
 
+    int getSequenceNumber() const;
+    void setSequenceNumber(int sequenceNumber);
+    bool operator<(const Photo &other) const;
 private:
     Magick::Image *m_image;
     bool m_error;
     QMap<QString, QString> m_tags;
+    int m_sequenceNumber;
 
     void setError();
 };

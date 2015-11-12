@@ -19,7 +19,6 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     connect(this, SIGNAL(success()), m_operator, SLOT(workerSuccess()));
     connect(this, SIGNAL(failure()), m_operator, SLOT(workerFailure()));
     m_thread->start();
-    emit start();
 }
 
 void OperatorWorker::play()

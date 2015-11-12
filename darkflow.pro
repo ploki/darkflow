@@ -58,7 +58,11 @@ SOURCES +=\
     algorithms/exposure.cpp \
     algorithms/igamma.cpp \
     algorithms/lutbased.cpp \
-    algorithms/algorithm.cpp
+    algorithms/algorithm.cpp \
+    operators/opwhitebalance.cpp \
+    algorithms/whitebalance.cpp \
+    operators/opmodulate.cpp \
+    operators/opigamma.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -97,7 +101,11 @@ HEADERS  += \
     algorithms/exposure.h \
     algorithms/igamma.h \
     algorithms/lutbased.h \
-    algorithms/algorithm.h
+    algorithms/algorithm.h \
+    operators/opwhitebalance.h \
+    algorithms/whitebalance.h \
+    operators/opmodulate.h \
+    operators/opigamma.h
 
 FORMS    += \
     ui/aboutdialog.ui \

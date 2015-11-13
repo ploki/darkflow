@@ -62,6 +62,8 @@ public:
 
     QString getName() const;
 
+    bool spotLoop(const QString& uuid);
+
 signals:
     void progress(int ,int );
     void upToDate();

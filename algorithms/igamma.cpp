@@ -43,3 +43,33 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
 
 }
 
+iGamma* iGamma::sRGB(QObject *parent)
+{
+    return new iGamma(2.4L, 0.00304L,false, parent);
+}
+
+iGamma* iGamma::BT709(QObject *parent)
+{
+    return new iGamma(2.222L, 0.018L,false, parent);
+}
+
+iGamma* iGamma::Lab(QObject *parent)
+{
+    return new iGamma(3.0L, 0.008856L, false, parent);
+}
+
+iGamma* iGamma::reverse_sRGB(QObject *parent)
+{
+    return new iGamma(2.4L, 0.00304L,true, parent);
+}
+
+iGamma* iGamma::reverse_BT709(QObject *parent)
+{
+    return new iGamma(2.222L, 0.018L,true, parent);
+}
+
+iGamma* iGamma::reverse_Lab(QObject *parent)
+{
+    return new iGamma(3.0L, 0.008856L, true, parent);
+}
+

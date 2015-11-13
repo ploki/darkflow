@@ -93,6 +93,21 @@ QString Operator::getName() const
     return m_name;
 }
 
+bool Operator::spotLoop(const QString &uuid)
+{
+    if ( m_uuid == uuid )
+        return true;
+    foreach(OperatorOutput *output, m_outputs) {
+        foreach(OperatorInput *input, output->sinks()) {
+            bool spotted = input->m_operator->spotLoop(uuid);
+            if ( spotted )
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void Operator::setName(const QString &name)
 {
     m_name = name;

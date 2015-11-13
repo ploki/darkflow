@@ -13,7 +13,7 @@ public:
     explicit LutBased(QObject *parent = 0);
     ~LutBased();
 
-    void applyOn(Photo& photo);
+    void applyOnImage(Magick::Image& image);
 
 protected:
     quantum_t *m_lut;

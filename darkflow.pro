@@ -62,7 +62,12 @@ SOURCES +=\
     operators/opwhitebalance.cpp \
     algorithms/whitebalance.cpp \
     operators/opmodulate.cpp \
-    operators/opigamma.cpp
+    operators/opigamma.cpp \
+    algorithms/desaturateshadows.cpp \
+    operators/opdesaturateshadows.cpp \
+    algorithms/shapedynamicrange.cpp \
+    algorithms/cielab.cpp \
+    operators/opshapedynamicrange.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -105,7 +110,12 @@ HEADERS  += \
     operators/opwhitebalance.h \
     algorithms/whitebalance.h \
     operators/opmodulate.h \
-    operators/opigamma.h
+    operators/opigamma.h \
+    algorithms/desaturateshadows.h \
+    algorithms/cielab.h \
+    operators/opdesaturateshadows.h \
+    algorithms/shapedynamicrange.h \
+    operators/opshapedynamicrange.h
 
 FORMS    += \
     ui/aboutdialog.ui \

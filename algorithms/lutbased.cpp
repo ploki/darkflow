@@ -15,9 +15,8 @@ LutBased::~LutBased()
     delete[] m_lut;
 }
 
-void LutBased::applyOn(Photo &photo)
+void LutBased::applyOnImage(Magick::Image &image)
 {
-    Magick::Image &image =  *photo.image();
     image.modifyImage();
 
     int h = image.rows(),
@@ -37,3 +36,4 @@ void LutBased::applyOn(Photo &photo)
 #pragma omp barrier
     pixel_cache.sync();
 }
+

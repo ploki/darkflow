@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+
 template<typename t> t clamp(t v,t min = 0, t max = 65535 /* ARgg! */ ) {
   if ( v < min )
     return min;
@@ -13,6 +14,9 @@ template<typename t> t clamp(t v,t min = 0, t max = 65535 /* ARgg! */ ) {
 }
 
 class Photo;
+namespace Magick {
+class Image;
+}
 
 class Algorithm : public QObject
 {
@@ -21,6 +25,7 @@ public:
     explicit Algorithm(QObject *parent = 0);
 
     virtual Photo apply(const Photo& source);
+    virtual void applyOnImage(Magick::Image& image);
     virtual void applyOn(Photo& photo);
 
 signals:

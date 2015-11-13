@@ -28,6 +28,8 @@
 #include "opwhitebalance.h"
 #include "opmodulate.h"
 #include "opigamma.h"
+#include "opdesaturateshadows.h"
+#include "opshapedynamicrange.h"
 
 QString Process::uuid()
 {
@@ -60,6 +62,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpWhiteBalance(this));
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpIGamma(this));
+    m_availableOperators.push_back(new OpDesaturateShadows(this));
+    m_availableOperators.push_back(new OpShapeDynamicRange(this));
 }
 
 
@@ -354,10 +358,14 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
             if ( portItem ) {
                 ProcessPort *port = dynamic_cast<ProcessPort*>(portItem);
                 if ( ProcessPort::InputOnePort == port->portType() ||
-                     ProcessPort::InputPort == port->portType() )
-                    m_conn->setInputPort(port);
-                else
+                     ProcessPort::InputPort == port->portType() ) {
+                    bool connected = m_conn->setInputPort(port);
+                    if ( !connected )
+                        delete m_conn;
+                }
+                else {
                     delete m_conn;
+                }
             }
             else {
                 delete m_conn;

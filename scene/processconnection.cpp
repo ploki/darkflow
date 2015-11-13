@@ -103,8 +103,10 @@ void ProcessConnection::updateConnectedPath()
     updatePath(outPos, inPos);
 }
 
-void ProcessConnection::setInputPort(ProcessPort *port)
+bool ProcessConnection::setInputPort(ProcessPort *port)
 {
+    if ( port->m_node->m_operator->spotLoop(m_outPort->m_node->m_operator->getUuid()) )
+        return false;
     m_inPort = port;
     connect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
@@ -114,6 +116,7 @@ void ProcessConnection::setInputPort(ProcessPort *port)
     m_inPort->m_node->addConnection(this);
     m_outPort->m_node->addConnection(this);
     updateConnectedPath();
+    return true;
 }
 
 void ProcessConnection::unsetInputPort()

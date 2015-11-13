@@ -26,7 +26,7 @@ OpIGamma::OpIGamma(Process *parent) :
                                         0.1, 10, 2.4, 0.01, 100, Slider::FilterNothing,this)),
     m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Gamma Dynamic Range",
                                                Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
-                                               1./(1<<12), 1, 0.00304L, 1./(1<<16), 1, Slider::FilterExposureFromOne, this)),
+                                               1, 1<<12, 1./0.00304L, 1, 1<<16, Slider::FilterExposure, this)),
     m_revert(false),
     m_revertDialog(new OperatorParameterDropDown("revert","Revert", "No", this))
 {
@@ -49,7 +49,7 @@ OpIGamma *OpIGamma::newInstance()
 
 OperatorWorker *OpIGamma::newWorker()
 {
-    return new WorkerIGamma(m_gamma->value(), m_dynamicRange->value(), m_revert, m_thread, this);
+    return new WorkerIGamma(m_gamma->value(), 1./m_dynamicRange->value(), m_revert, m_thread, this);
 }
 
 void OpIGamma::revertYes()

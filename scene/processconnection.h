@@ -23,7 +23,7 @@ public:
     void updateDanglingPath(QPointF danglingPos);
     void updateConnectedPath();
 
-    void setInputPort(ProcessPort *port);
+    bool setInputPort(ProcessPort *port);
     void unsetInputPort();
     void detach();
     int type() const;

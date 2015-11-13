@@ -39,9 +39,8 @@ WhiteBalance::WhiteBalance(qreal temperature,
     }
 }
 
-void WhiteBalance::applyOn(Photo &photo)
+void WhiteBalance::applyOnImage(Magick::Image& image)
 {
-    Magick::Image &image = *photo.image();
     image.modifyImage();
     int h = image.rows(),
             w = image.columns();

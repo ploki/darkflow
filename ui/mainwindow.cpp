@@ -164,6 +164,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         if (aboutDialog->isVisible())
             aboutDialog->close();
         event->accept();
+        scene->clear();
     }
 }
 

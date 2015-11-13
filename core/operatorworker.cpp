@@ -118,6 +118,10 @@ bool OperatorWorker::play_onInput(int idx)
     foreach(OperatorOutput *remoteOutput, m_operator->m_inputs[idx]->sources()) {
         const QVector<Photo> source = remoteOutput->m_result;
         foreach(const Photo &photo, source) {
+            if ( aborted() ) {
+                emitFailure();
+                return false;
+            }
             emit progress(p, c);
             Photo newResult = this->process(photo, p++, c);
             if ( newResult.error() ) {

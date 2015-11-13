@@ -52,7 +52,9 @@ ShapeDynamicRange::ShapeDynamicRange(ShapeDynamicRange::Shape shape, qreal dynam
     m_LabGamma(iGamma::Lab(this)),
     m_labGammaReverse(iGamma::reverse_Lab(this))
 {
-    double val = log2(m_exposure)/pow(2.,log2(dynamicRange)-3.);
+    //log2(log2(DR)) may sounds weird but it was this way in not-so-original
+    //FIXME verify this
+    double val = m_exposure/pow(2.,log2(log2(dynamicRange))-3.);
     bool stop=false;
     for ( int i = QuantumRange ; i >= 0 ; --i ) {
         double xx=double(i)/double(QuantumRange);

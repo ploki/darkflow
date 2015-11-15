@@ -36,7 +36,8 @@ protected:
     bool play_outputsAvailable();
     bool play_parentDirty();
     bool play_isUpToDate();
-    bool play_onInput(int idx);
+    virtual void play_analyseSources();
+    virtual bool play_onInput(int idx);
 };
 
 #endif // OPERATORWORKER_H

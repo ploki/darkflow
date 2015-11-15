@@ -32,6 +32,7 @@
 #include "opshapedynamicrange.h"
 #include "opsubtract.h"
 #include "opblackbody.h"
+#include "opflatfieldcorrection.h"
 
 QString Process::uuid()
 {
@@ -68,6 +69,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpShapeDynamicRange(this));
     m_availableOperators.push_back(new OpSubtract(this));
     m_availableOperators.push_back(new OpBlackBody(this));
+    m_availableOperators.push_back(new OpFlatFieldCorrection(this));
 }
 
 

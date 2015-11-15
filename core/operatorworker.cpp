@@ -36,6 +36,8 @@ void OperatorWorker::play()
     if ( play_isUpToDate() )
         return;
 
+    play_analyseSources();
+
     play_onInput(0);
 }
 
@@ -105,6 +107,11 @@ bool OperatorWorker::play_isUpToDate()
         return true;
     }
     return false;
+}
+
+void OperatorWorker::play_analyseSources()
+{
+
 }
 
 bool OperatorWorker::play_onInput(int idx)

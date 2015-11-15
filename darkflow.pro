@@ -69,7 +69,8 @@ SOURCES +=\
     algorithms/cielab.cpp \
     operators/opshapedynamicrange.cpp \
     operators/opsubtract.cpp \
-    operators/opblackbody.cpp
+    operators/opblackbody.cpp \
+    operators/opflatfieldcorrection.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -119,7 +120,8 @@ HEADERS  += \
     algorithms/shapedynamicrange.h \
     operators/opshapedynamicrange.h \
     operators/opsubtract.h \
-    operators/opblackbody.h
+    operators/opblackbody.h \
+    operators/opflatfieldcorrection.h
 
 FORMS    += \
     ui/aboutdialog.ui \

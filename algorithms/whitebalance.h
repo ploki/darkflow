@@ -13,6 +13,8 @@ public:
                           QObject *parent = 0);
 
     void applyOnImage(Magick::Image& image);
+
+    static void Temperature_to_RGB(qreal T, qreal RGB[3]);
 signals:
 
 public slots:
@@ -23,7 +25,6 @@ private:
     bool m_safe;
     qreal m_rgb[3];
 
-    static void Temperature_to_RGB(qreal T, qreal RGB[3]);
 };
 
 #endif // WHITEBALANCE_H

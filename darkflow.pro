@@ -67,7 +67,9 @@ SOURCES +=\
     operators/opdesaturateshadows.cpp \
     algorithms/shapedynamicrange.cpp \
     algorithms/cielab.cpp \
-    operators/opshapedynamicrange.cpp
+    operators/opshapedynamicrange.cpp \
+    operators/opsubtract.cpp \
+    operators/opblackbody.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -115,7 +117,9 @@ HEADERS  += \
     algorithms/cielab.h \
     operators/opdesaturateshadows.h \
     algorithms/shapedynamicrange.h \
-    operators/opshapedynamicrange.h
+    operators/opshapedynamicrange.h \
+    operators/opsubtract.h \
+    operators/opblackbody.h
 
 FORMS    += \
     ui/aboutdialog.ui \

@@ -34,7 +34,7 @@ private slots:
             rgb[0]*=m_value;
             rgb[1]*=m_value;
             rgb[2]*=m_value;
-            photo.image()->pixelColor(0, 0,
+            photo.image().pixelColor(0, 0,
                      Magick::Color(
                         clamp<quantum_t>(rgb[0]*QuantumRange, 0, QuantumRange),
                         clamp<quantum_t>(rgb[1]*QuantumRange, 0, QuantumRange),

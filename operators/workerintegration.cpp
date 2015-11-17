@@ -42,13 +42,12 @@ bool WorkerIntegration::play_onInput(int idx)
         photoCount+=output->m_result.count();
     }
     foreach(OperatorOutput *output, m_operator->m_inputs[0]->sources()) {
-        const QVector<Photo> source = output->m_result;
-        foreach(const Photo& photo, source) {
+        foreach(Photo photo, output->m_result) {
             if ( aborted() ) {
                 emitFailure();
                 return false;
             }
-            Magick::Image& image = *photo.image();
+            Magick::Image& image = photo.image();
             if ( ! m_integrationPlane ) {
                 createPlanes(image);
             }
@@ -80,7 +79,7 @@ bool WorkerIntegration::play_onInput(int idx)
     }
     Photo newPhoto;
     newPhoto.create(m_w, m_h);
-    Magick::Image& newImage = *newPhoto.image();
+    Magick::Image& newImage = newPhoto.image();
     newImage.modifyImage();
     Magick::Pixels pixel_cache(newImage);
     qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );

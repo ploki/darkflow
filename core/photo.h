@@ -4,11 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QString>
-
-namespace Magick {
-class Image;
-class Blob;
-}
+#include <Magick++.h>
 
 /* macros defined in cc command line by pkg-config */
 Q_STATIC_ASSERT(MAGICKCORE_HDRI_ENABLE == 0);
@@ -22,8 +18,8 @@ class Photo : public QObject
     Q_OBJECT
 public:    
     Photo(QObject *parent = 0);
-    Photo(const Magick::Image *image, QObject *parent = 0);
-    Photo(const Magick::Blob &blob, QObject *parent = 0);
+    Photo(const Magick::Image& image, QObject *parent = 0);
+    Photo(const Magick::Blob& blob, QObject *parent = 0);
     Photo(const Photo& photo);
 
     ~Photo();
@@ -34,12 +30,13 @@ public:
     bool save(const QString& filename, const QString &magick);
 
     void create(long width, long height);
-    void createAlike(const Photo *photo);
+    void createAlike(const Photo& photo);
 
 
     bool error() const;
 
-    Magick::Image *image() const;
+    const Magick::Image& image() const;
+    Magick::Image& image();
 
     QMap<QString, QString> tags() const;
     void setTag(const QString& name, const QString& value);
@@ -53,7 +50,7 @@ public:
     void setSequenceNumber(int sequenceNumber);
     bool operator<(const Photo &other) const;
 private:
-    Magick::Image *m_image;
+    Magick::Image m_image;
     bool m_error;
     QMap<QString, QString> m_tags;
     int m_sequenceNumber;

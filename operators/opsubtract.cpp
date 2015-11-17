@@ -54,8 +54,8 @@ public:
               i < s ;
               ++i ) {
             foreach(OperatorOutput *parentOutput, m_operator->m_inputs[i]->sources()) {
-                foreach(const Photo& subtrahend, parentOutput->m_result) {
-                    subtract(*newPhoto.image(), *subtrahend.image());
+                foreach(Photo subtrahend, parentOutput->m_result) {
+                    subtract(newPhoto.image(), subtrahend.image());
                 }
             }
         }

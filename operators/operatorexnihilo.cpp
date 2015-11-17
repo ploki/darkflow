@@ -20,11 +20,11 @@ private slots:
         Photo photo;
         photo.create(1000,1000);
         if (!photo.error()) {
-            Magick::Image *image = photo.image();
-            image->modifyImage();
-            Magick::Pixels cache(*image);
-            size_t w = image->columns();
-            size_t h = image->rows();
+            Magick::Image& image = photo.image();
+            image.modifyImage();
+            Magick::Pixels cache(image);
+            size_t w = image.columns();
+            size_t h = image.rows();
             for (size_t y = 0 ; y < h ; ++y) {
                 emit progress(y, h);
                 if ( aborted() ) {

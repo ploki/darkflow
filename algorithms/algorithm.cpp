@@ -22,6 +22,6 @@ void Algorithm::applyOnImage(Magick::Image &)
 
 void Algorithm::applyOn(Photo &photo)
 {
-    Magick::Image& image = *photo.image();
+    Magick::Image& image = photo.image();
     applyOnImage(image);
 }

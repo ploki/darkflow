@@ -14,7 +14,7 @@ using namespace Magick;
 
 Photo::Photo(QObject *parent) :
     QObject(parent),
-    m_image(NULL),
+    m_image(),
     m_error(true),
     m_tags(),
     m_sequenceNumber(0)
@@ -23,13 +23,13 @@ Photo::Photo(QObject *parent) :
 
 Photo::Photo(const Blob &blob, QObject *parent) :
     QObject(parent),
-    m_image(NULL),
+    m_image(),
     m_error(false),
     m_tags(),
     m_sequenceNumber(0)
 {
     try {
-        m_image = new Magick::Image(blob);
+        m_image = Magick::Image(blob);
     }
     catch (std::exception *e) {
         qWarning(e->what());
@@ -38,15 +38,15 @@ Photo::Photo(const Blob &blob, QObject *parent) :
     }
 }
 
-Photo::Photo(const Magick::Image *image, QObject *parent) :
+Photo::Photo(const Magick::Image& image, QObject *parent) :
     QObject(parent),
-    m_image(NULL),
+    m_image(),
     m_error(false),
     m_tags(),
     m_sequenceNumber(0)
 {
     try {
-        m_image = new Magick::Image(*image);
+        m_image = image;
     }
     catch (std::exception *e) {
         qWarning(e->what());
@@ -57,13 +57,13 @@ Photo::Photo(const Magick::Image *image, QObject *parent) :
 
 Photo::Photo(const Photo &photo) :
     QObject(photo.parent()),
-    m_image(NULL),
+    m_image(),
     m_error(false),
     m_tags(photo.m_tags),
     m_sequenceNumber(photo.m_sequenceNumber)
 {
     try {
-        m_image = new Magick::Image(*photo.m_image);
+        m_image = photo.m_image;
     }
     catch (std::exception *e) {
         qWarning(e->what());
@@ -74,15 +74,12 @@ Photo::Photo(const Photo &photo) :
 
 Photo::~Photo()
 {
-    delete m_image;
 }
 
 Photo &Photo::operator=(const Photo &photo)
 {
-    Magick::Image *newImage;
     try {
-        newImage = new Magick::Image(*photo.m_image);
-        m_image = newImage;
+        m_image = photo.m_image;
         m_tags = photo.m_tags;
         m_sequenceNumber = photo.m_sequenceNumber;
         m_error = false;
@@ -103,8 +100,7 @@ bool Photo::load(const QString &filename)
     QByteArray data = file.readAll();
     try {
         Blob blob(data.data(), data.length());
-        delete m_image;
-        m_image = new Magick::Image(blob);
+        m_image = Image(blob);
         m_error = false;
     }
     catch (std::exception *e) {
@@ -120,7 +116,7 @@ bool Photo::save(const QString &filename, const QString &magick)
 {
     try {
         Blob blob;
-        m_image->write(&blob, magick.toStdString());
+        m_image.write(&blob, magick.toStdString());
         QFile file(filename);
         file.open(QFile::WriteOnly);
         if ( !file.write(reinterpret_cast<const char*>(blob.data()),blob.length()) ) {
@@ -140,9 +136,8 @@ bool Photo::save(const QString &filename, const QString &magick)
 void Photo::create(long width, long height)
 {
     try {
-        delete m_image;
-        m_image = new Magick::Image(Geometry(width,height),Color(0,0,0));
-        m_image->quantizeColorSpace(Magick::RGBColorspace);
+        m_image = Magick::Image(Geometry(width,height),Color(0,0,0));
+        m_image.quantizeColorSpace(Magick::RGBColorspace);
         m_error = false;
     }
     catch (std::exception *e) {
@@ -152,9 +147,9 @@ void Photo::create(long width, long height)
     }
 }
 
-void Photo::createAlike(const Photo *photo)
+void Photo::createAlike(const Photo& photo)
 {
-    create(photo->m_image->columns(), photo->m_image->rows());
+    create(photo.m_image.columns(), photo.m_image.rows());
 }
 
 bool Photo::error() const
@@ -162,7 +157,12 @@ bool Photo::error() const
     return m_error;
 }
 
-Magick::Image *Photo::image() const
+const Magick::Image& Photo::image() const
+{
+    return m_image;
+}
+
+Magick::Image& Photo::image()
 {
     return m_image;
 }
@@ -193,8 +193,7 @@ QString Photo::getTag(const QString &name) const
 void Photo::setError()
 {
     m_error = true;
-    delete m_image;
-    m_image = NULL;
+    m_image = Magick::Image();
 }
 
 QPixmap Photo::toPixmap(double gamma, double x0, double exposureBoost)
@@ -206,7 +205,7 @@ QPixmap Photo::toPixmap(double gamma, double x0, double exposureBoost)
     Exposure(exposureBoost).applyOn(photo);
     iGamma(gamma, x0).applyOn(photo);
 
-    Magick::Image &image = *photo.image();
+    Magick::Image& image = photo.image();
     image.modifyImage();
     int h = image.rows(),
             w = image.columns();
@@ -229,8 +228,8 @@ QPixmap Photo::toPixmap(double gamma, double x0, double exposureBoost)
 
 void Photo::writeJPG(const QString &filename)
 {
-    Magick::Image image(*this->image());
-
+    Magick::Image image(m_image);
+    image.modifyImage();
     image.magick("JPG");
     Magick::Blob blob;
     image.write(&blob);

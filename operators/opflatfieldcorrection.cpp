@@ -27,8 +27,8 @@ public:
               i < s ;
               ++i) {
             foreach(OperatorOutput *output, m_operator->m_inputs[i]->sources()) {
-                foreach(const Photo& photo, output->m_result) {
-                    Magick::Image &image = *photo.image();
+                foreach(Photo photo, output->m_result) {
+                    Magick::Image& image = photo.image();
                     Magick::Pixels pixels_cache(image);
                     int w = image.columns();
                     int h = image.rows();
@@ -106,8 +106,8 @@ public:
               i < s ;
               ++i) {
             foreach(OperatorOutput *output, m_operator->m_inputs[i]->sources()) {
-                foreach(const Photo& flatfield, output->m_result) {
-                    correct(*newPhoto.image(), *flatfield.image(), m_max[source_flatfield_idx++]);
+                foreach(Photo flatfield, output->m_result) {
+                    correct(newPhoto.image(), flatfield.image(), m_max[source_flatfield_idx++]);
                 }
             }
         }

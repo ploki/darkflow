@@ -18,9 +18,9 @@ public:
     {}
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
-        Magick::Image *image = newPhoto.image();
-        image->modifyImage();
-        image->modulate(m_value, m_saturation, m_hue);
+        Magick::Image& image = newPhoto.image();
+        image.modifyImage();
+        image.modulate(m_value, m_saturation, m_hue);
         return newPhoto;
     }
 private:

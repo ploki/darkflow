@@ -1,7 +1,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QScrollBar>
-
+#include <QGuiApplication>
+#include <QScreen>
 #include <cmath>
 
 #include "mainwindow.h"
@@ -106,6 +107,10 @@ MainWindow::MainWindow(QWidget *parent) :
     zoom(0)
 {
     ui->setupUi(this);
+    QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
+    resize( screenSize * 4 / 5);
+    move((screenSize.width()-size().width())/2,
+         (screenSize.height()-size().height())/2);
     scene->setBackgroundBrush(QColor(0x2e,0x34,0x36));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->installEventFilter(this);

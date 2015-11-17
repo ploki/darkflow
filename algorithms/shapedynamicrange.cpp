@@ -54,11 +54,13 @@ ShapeDynamicRange::ShapeDynamicRange(ShapeDynamicRange::Shape shape, qreal dynam
 {
     //log2(log2(DR)) may sounds weird but it was this way in not-so-original
     //FIXME verify this
-    double val = m_exposure/pow(2.,log2(log2(dynamicRange))-3.);
+
+    dynamicRange = log2(m_dynamicRange);
+    double val = log2(m_exposure)/pow(2.,log2(dynamicRange)-3.);
     bool stop=false;
     for ( int i = QuantumRange ; i >= 0 ; --i ) {
         double xx=double(i)/double(QuantumRange);
-        m_lut[i]=func_g(pow(xx,16.L/log2(dynamicRange)),val)*QuantumRange;
+        m_lut[i]=func_g(pow(xx,16.L/dynamicRange),val)*QuantumRange;
 
         //afin d'éviter que le sin ne remonte
         if ( stop )

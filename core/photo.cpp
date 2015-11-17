@@ -101,8 +101,8 @@ bool Photo::load(const QString &filename)
     if ( !file.open(QFile::ReadOnly) )
         return false;
     QByteArray data = file.readAll();
-    Blob blob(data.data(), data.length());
     try {
+        Blob blob(data.data(), data.length());
         delete m_image;
         m_image = new Magick::Image(blob);
         m_error = false;
@@ -118,20 +118,19 @@ bool Photo::load(const QString &filename)
 
 bool Photo::save(const QString &filename, const QString &magick)
 {
-    Blob blob;
     try {
+        Blob blob;
         m_image->write(&blob, magick.toStdString());
+        QFile file(filename);
+        file.open(QFile::WriteOnly);
+        if ( !file.write(reinterpret_cast<const char*>(blob.data()),blob.length()) ) {
+            setError();
+            return false;
+        }
     }
     catch (std::exception *e) {
         qWarning(e->what());
         delete e;
-        setError();
-        return false;
-    }
-
-    QFile file(filename);
-    file.open(QFile::WriteOnly);
-    if ( !file.write(reinterpret_cast<const char*>(blob.data()),blob.length()) ) {
         setError();
         return false;
     }

@@ -69,11 +69,6 @@
     <addaction name="actionI"/>
     <addaction name="actionInterrupt"/>
    </widget>
-   <widget class="QMenu" name="menuOPERATOR">
-    <property name="title">
-     <string>OPERATOR</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuHELP">
     <property name="title">
      <string>&amp;HELP</string>
@@ -82,7 +77,6 @@
    </widget>
    <addaction name="menuProject"/>
    <addaction name="menuPROCESS"/>
-   <addaction name="menuOPERATOR"/>
    <addaction name="menuHELP"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">

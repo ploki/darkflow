@@ -16,7 +16,7 @@ static const char *WhiteBalanceStr[] = {
 };
 
 OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
-    Operator("Raw photos", parent),
+    Operator(OP_SECTION_SOURCE_IMAGES, "Raw photos", parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "rawCollection",
                           "RAW photos",
@@ -30,7 +30,7 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     m_debayer(new OperatorParameterDropDown("debayer", "Debayer", DebayerStr[NoDebayer], this)),
     m_whiteBalance(new OperatorParameterDropDown("whiteBalance", "White Balance", WhiteBalanceStr[Daylight], this)),
     m_colorSpaceValue(Linear),
-    m_debayerValue(PPG),
+    m_debayerValue(NoDebayer),
     m_whiteBalanceValue(Daylight)
 {
     m_colorSpace->addOption(ColorSpaceStr[Linear], this, SLOT(setColorSpaceLinear()));
@@ -88,80 +88,106 @@ QString OperatorLoadRaw::getWhiteBalance() const
 
 void OperatorLoadRaw::setColorSpaceLinear()
 {
-    m_colorSpaceValue = Linear;
-    setUpToDate(false);
+    if ( m_colorSpaceValue != Linear ) {
+        m_colorSpaceValue = Linear;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setColorSpacesRGB()
 {
-    m_colorSpaceValue = sRGB;
-    setUpToDate(false);
+    if ( m_colorSpaceValue != sRGB ) {
+        m_colorSpaceValue = sRGB;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setColorSpaceIUT_BT_709()
 {
-    m_colorSpaceValue = IUT_BT_709;
-    setUpToDate(false);
+    if ( m_colorSpaceValue != IUT_BT_709 ) {
+        m_colorSpaceValue = IUT_BT_709;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setDebayerNone()
 {
-    m_debayerValue = NoDebayer;
-    setUpToDate(false);
+    if ( m_debayerValue != NoDebayer ) {
+        m_debayerValue = NoDebayer;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setDebayerHalfSize()
 {
-    m_debayerValue = HalfSize;
-    setUpToDate(false);
+    if ( m_debayerValue != HalfSize ) {
+        m_debayerValue = HalfSize;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setDebayerLow()
 {
-    m_debayerValue = Low;
-    setUpToDate(false);
+    if ( m_debayerValue != Low ) {
+        m_debayerValue = Low;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setDebayerVNG()
 {
-    m_debayerValue = VNG;
-    setUpToDate(false);
+    if ( m_debayerValue != VNG ) {
+        m_debayerValue = VNG;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setDebayerPPG()
 {
-    m_debayerValue = PPG;
-    setUpToDate(false);
+    if ( m_debayerValue != PPG ) {
+        m_debayerValue = PPG;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setDebayerAHD()
 {
-    m_debayerValue = AHD;
-    setUpToDate(false);
+    if ( m_debayerValue != AHD ) {
+        m_debayerValue = AHD;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setWhiteBalanceNone()
 {
-    m_whiteBalanceValue = NoWhiteBalance;
-    setUpToDate(false);
+    if ( m_whiteBalanceValue != NoWhiteBalance ) {
+        m_whiteBalanceValue = NoWhiteBalance;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setWhiteBalanceRawColors()
 {
-    m_whiteBalanceValue = RawColors;
-    setUpToDate(false);
+    if ( m_whiteBalanceValue != RawColors ) {
+        m_whiteBalanceValue = RawColors;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setWhiteBalanceCamera()
 {
-    m_whiteBalanceValue = Camera;
-    setUpToDate(false);
+    if ( m_whiteBalanceValue != Camera ) {
+        m_whiteBalanceValue = Camera;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::setWhiteBalanceDaylight()
 {
-    m_whiteBalanceValue = Camera;
-    setUpToDate(false);
+    if ( m_whiteBalanceValue != Daylight ) {
+        m_whiteBalanceValue = Daylight;
+        setUpToDate(false);
+    }
 }
 
 void OperatorLoadRaw::filesCollectionChanged()

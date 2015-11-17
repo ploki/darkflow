@@ -15,7 +15,7 @@ public:
             const QString& windowCaption,
             const QString& dir,
             const QString& filter,
-            QObject *parent = 0);
+            Operator *op);
     QString windowCaption() const;
 
     QString dir() const;

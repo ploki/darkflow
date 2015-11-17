@@ -103,7 +103,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>535</width>
+                  <width>572</width>
                   <height>364</height>
                  </rect>
                 </property>
@@ -321,7 +321,7 @@
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_gamma">
                      <property name="text">
-                      <string>G:</string>
+                      <string>Gamma:</string>
                      </property>
                     </widget>
                    </item>
@@ -344,7 +344,7 @@
                      </item>
                      <item>
                       <property name="text">
-                       <string>POW-2</string>
+                       <string>Square Root</string>
                       </property>
                      </item>
                     </widget>
@@ -378,6 +378,9 @@
                      </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="tickPosition">
+                      <enum>QSlider::TicksBelow</enum>
                      </property>
                     </widget>
                    </item>
@@ -470,7 +473,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>535</width>
+                 <width>572</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -552,7 +555,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>535</width>
+                 <width>572</width>
                  <height>468</height>
                 </rect>
                </property>

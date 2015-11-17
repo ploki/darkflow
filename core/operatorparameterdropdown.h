@@ -18,7 +18,7 @@ public:
             const QString& name,
             const QString& caption,
             const QString& currentValue,
-            QObject *parent = 0);
+            Operator *op);
     ~OperatorParameterDropDown();
 
     void addOption(const QString& option, QObject *obj, const char *slot);

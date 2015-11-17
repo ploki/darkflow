@@ -10,6 +10,8 @@
 #include <QMouseEvent>
 #include <QGraphicsItem>
 #include <QUuid>
+#include <QMap>
+
 
 #include "process.h"
 #include "processscene.h"
@@ -33,6 +35,7 @@
 #include "opsubtract.h"
 #include "opblackbody.h"
 #include "opflatfieldcorrection.h"
+#include "opintegration.h"
 
 QString Process::uuid()
 {
@@ -51,7 +54,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_dirty(false),
     m_availableOperators(),
     m_lastMousePosition(),
-    m_conn(NULL)
+    m_conn(NULL),
+    m_contextMenu(new QMenu)
 {
     reset();
     connect(m_scene, SIGNAL(contextMenuSignal(QGraphicsSceneContextMenuEvent*)),
@@ -70,8 +74,22 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpSubtract(this));
     m_availableOperators.push_back(new OpBlackBody(this));
     m_availableOperators.push_back(new OpFlatFieldCorrection(this));
+    m_availableOperators.push_back(new OpIntegration(this));
+    addOperatorsToContextMenu();
 }
 
+void Process::addOperatorsToContextMenu() {
+    QMap<QString, QMenu*> sections;
+    QMenu *all = new QMenu("< all >");
+    foreach(Operator *op, m_availableOperators) {
+        if ( sections.find(op->getClassSection()) == sections.end() ) {
+            sections[op->getClassSection()] = m_contextMenu->addMenu(QIcon(), op->getClassSection());
+        }
+        sections[op->getClassSection()]->addAction(QIcon(), op->getClassIdentifier(), op, SLOT(clone()));
+        all->addAction(QIcon(), op->getClassIdentifier(), op, SLOT(clone()));
+    }
+    m_contextMenu->addMenu(all);
+}
 
 Process::~Process() {
     foreach(Operator *op, m_availableOperators) {
@@ -354,7 +372,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         break;
     case QEvent::GraphicsSceneMouseRelease:
         if (button) {
-            dynamic_cast<ProcessButton*>(button)->mouseRelease();
+            dynamic_cast<ProcessButton*>(button)->mouseRelease(me->screenPos());
             resetAllButtonsBut(button);
             button->update();
             event->accept();
@@ -418,11 +436,7 @@ void Process::reset()
 }
 void Process::spawnContextMenu(const QPoint& pos)
 {
-    QMenu menu;
-    foreach(Operator *op, m_availableOperators) {
-        menu.addAction(QIcon(), op->getClassIdentifier(),op,SLOT(clone()));
-    }
-    menu.exec(pos);
+    m_contextMenu->exec(pos);
 }
 
 void Process::contextMenuSignal(QGraphicsSceneContextMenuEvent *event)

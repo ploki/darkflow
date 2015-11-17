@@ -58,6 +58,7 @@ void OperatorWorker::emitSuccess()
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
 {
+    qWarning(QString("Emitting p(%0, %1").arg(p * sub_c + sub_p).arg(c * sub_c).toLatin1());
     emit progress( p * sub_c + sub_p , c * sub_c);
 }
 

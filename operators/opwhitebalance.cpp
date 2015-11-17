@@ -21,7 +21,7 @@ private:
 };
 
 OpWhiteBalance::OpWhiteBalance(Process *parent) :
-    Operator("White Balance", parent),
+    Operator(OP_SECTION_CORRECTION, "White Balance", parent),
     m_temperature(new OperatorParameterSlider("temperature", "Temperature", "White Balance Temperature",
                                               Slider::Value, Slider::Logarithmic, Slider::Integer,
                                               2000, 12000, 6500, 2000, 12000, Slider::FilterNothing,this)),
@@ -55,10 +55,16 @@ OperatorWorker *OpWhiteBalance::newWorker()
 
 void OpWhiteBalance::setUnsafe()
 {
-    m_safe = false;
+    if ( m_safe ) {
+        m_safe = false;
+        setUpToDate(false);
+    }
 }
 
 void OpWhiteBalance::setSafe()
 {
-    m_safe = true;
+    if ( !m_safe ) {
+        m_safe = true;
+        setUpToDate(false);
+    }
 }

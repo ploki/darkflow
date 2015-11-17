@@ -70,7 +70,9 @@ SOURCES +=\
     operators/opshapedynamicrange.cpp \
     operators/opsubtract.cpp \
     operators/opblackbody.cpp \
-    operators/opflatfieldcorrection.cpp
+    operators/opflatfieldcorrection.cpp \
+    operators/opintegration.cpp \
+    operators/workerintegration.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -121,7 +123,9 @@ HEADERS  += \
     operators/opshapedynamicrange.h \
     operators/opsubtract.h \
     operators/opblackbody.h \
-    operators/opflatfieldcorrection.h
+    operators/opflatfieldcorrection.h \
+    operators/opintegration.h \
+    operators/workerintegration.h
 
 FORMS    += \
     ui/aboutdialog.ui \

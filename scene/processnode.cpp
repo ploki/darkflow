@@ -116,23 +116,23 @@ void ProcessNode::addButtons(qreal size)
 
     ProcessButton *buttClose = new ProcessButton(QRectF(x+w-size,y,size,size),
                                                  ProcessButton::Close,m_process, this);
-    connect(buttClose, SIGNAL(buttonClicked()), this, SLOT(closeButtonClicked()));
+    connect(buttClose, SIGNAL(buttonClicked(QPoint)), this, SLOT(closeButtonClicked(QPoint)));
 
     ProcessButton *buttPassThrough= new ProcessButton(QRectF(x+w-size*2,y,size,size),
                                                       ProcessButton::Ghost,m_process, this);
-    connect(buttPassThrough, SIGNAL(buttonClicked()), this, SLOT(passThroughClicked()));
+    connect(buttPassThrough, SIGNAL(buttonClicked(QPoint)), this, SLOT(passThroughClicked(QPoint)));
 
     ProcessButton *buttViewImage= new ProcessButton(QRectF(x+w-size*3,y,size,size),
                                                     ProcessButton::Display,m_process, this);
-    connect(buttViewImage, SIGNAL(buttonClicked()), this, SLOT(visualizationClicked()));
+    connect(buttViewImage, SIGNAL(buttonClicked(QPoint)), this, SLOT(visualizationClicked(QPoint)));
 
     ProcessButton *buttPlay= new ProcessButton(QRectF(x,y+h-size,size,size),
                                                ProcessButton::Play,m_process, this);
-    connect(buttPlay, SIGNAL(buttonClicked()), this, SLOT(playClicked()));
+    connect(buttPlay, SIGNAL(buttonClicked(QPoint)), this, SLOT(playClicked(QPoint)));
 
     ProcessButton *buttAbort= new ProcessButton(QRectF(x+size,y+h-size,size,size),
                                                 ProcessButton::Abort,m_process, this);
-    connect(buttAbort, SIGNAL(buttonClicked()), this, SLOT(abortClicked()));
+    connect(buttAbort, SIGNAL(buttonClicked(QPoint)), this, SLOT(abortClicked(QPoint)));
 
     ProcessProgressBar *progress = new ProcessProgressBar(QRectF(x+size*2, y+h-size, w-size*2, size), m_process, this);
     connect(m_operator, SIGNAL(progress(int,int)), progress, SLOT(progress(int,int)));
@@ -220,28 +220,32 @@ void ProcessNode::operatorStateChanged()
 
 }
 
-void ProcessNode::closeButtonClicked()
+void ProcessNode::closeButtonClicked(QPoint)
 {
     deleteLater();
 }
 
-void ProcessNode::passThroughClicked()
+void ProcessNode::passThroughClicked(QPoint)
 {
 
 }
 
-void ProcessNode::visualizationClicked()
+void ProcessNode::visualizationClicked(QPoint screenPos)
 {
+    QPoint newPos = screenPos;
+    newPos.setX(newPos.x() - m_visualization->size().width()/2);
+    newPos.setY(newPos.y() - m_visualization->size().height()/2);
+    m_visualization->move(newPos.x(), newPos.y());
     m_visualization->show();
     m_visualization->raise();
 }
 
-void ProcessNode::playClicked()
+void ProcessNode::playClicked(QPoint)
 {
     m_operator->play();
 }
 
-void ProcessNode::abortClicked()
+void ProcessNode::abortClicked(QPoint)
 {
     m_operator->abort();
 }

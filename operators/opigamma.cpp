@@ -20,7 +20,7 @@ private:
 };
 
 OpIGamma::OpIGamma(Process *parent) :
-    Operator("iGamma", parent),
+    Operator(OP_SECTION_CURVE, "iGamma", parent),
     m_gamma(new OperatorParameterSlider("gamma", "Gamma", "Gamma Power",
                                         Slider::Value, Slider::Logarithmic, Slider::Real,
                                         0.1, 10, 2.4, 0.01, 100, Slider::FilterNothing,this)),
@@ -54,10 +54,16 @@ OperatorWorker *OpIGamma::newWorker()
 
 void OpIGamma::revertYes()
 {
-    m_revert = true;
+    if ( !m_revert ) {
+        m_revert = true;
+        setUpToDate(false);
+    }
 }
 
 void OpIGamma::revertNo()
 {
-    m_revert = false;
+    if ( m_revert ) {
+        m_revert = false;
+        setUpToDate(false);
+    }
 }

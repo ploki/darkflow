@@ -31,7 +31,7 @@ private:
 };
 
 OpShapeDynamicRange::OpShapeDynamicRange(Process *parent) :
-    Operator("Shape DR.", parent),
+    Operator(OP_SECTION_CURVE, "Shape DR.", parent),
     m_shape(ShapeDynamicRange::TanH),
     m_shapeDialog(new OperatorParameterDropDown("shape", "Shape", "TanH", this)),
     m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Shape Dynamic Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<12, 1<<10, 1, QuantumRange, Slider::FilterExposure, this)),
@@ -66,15 +66,24 @@ OperatorWorker *OpShapeDynamicRange::newWorker()
 
 void OpShapeDynamicRange::selectShapeTanH()
 {
-    m_shape = ShapeDynamicRange::TanH;
+    if ( m_shape != ShapeDynamicRange::TanH ) {
+        m_shape = ShapeDynamicRange::TanH;
+        setUpToDate(false);
+    }
 }
 
 void OpShapeDynamicRange::selectLabNo()
 {
-    m_labDomain = false;
+    if ( m_labDomain ) {
+        m_labDomain = false;
+        setUpToDate(false);
+    }
 }
 
 void OpShapeDynamicRange::selectLabYes()
 {
-    m_labDomain = true;
+    if ( !m_labDomain ) {
+        m_labDomain = true;
+        setUpToDate(false);
+    }
 }

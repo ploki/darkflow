@@ -76,7 +76,10 @@ int ProcessFilesCollection::type() const
 
 void ProcessFilesCollection::clicked(QPoint pos)
 {
-    Q_UNUSED(pos);
+    QPoint newPos = pos;
+    newPos.setX(newPos.x() - m_selectionDialog->size().width()/2);
+    newPos.setY(newPos.y() - m_selectionDialog->size().height()/2);
+    m_selectionDialog->move(newPos.x(), newPos.y());
     m_selectionDialog->setSelection(m_filesCollection->collection());
     m_selectionDialog->show();
 }

@@ -15,6 +15,7 @@ class Operator;
 class ProcessNode;
 class ProcessConnection;
 class QGraphicsItem;
+class QMenu;
 
 
 class Process : public QObject
@@ -78,11 +79,13 @@ private:
     QVector<Operator*> m_availableOperators;
     QPointF m_lastMousePosition;
     ProcessConnection *m_conn;
+    QMenu *m_contextMenu;
 
 
     QGraphicsItem* findItem(const QPointF &pos, int type);
     void resetAllButtonsBut(QGraphicsItem*item=0);
     bool eventFilter(QObject *obj, QEvent *event);
+    void addOperatorsToContextMenu();
 };
 
 #endif // PROCESS_H

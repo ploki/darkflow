@@ -25,7 +25,7 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
 }
 
 OperatorRotate::OperatorRotate(Process *parent) :
-    Operator("Rotation", parent),
+    Operator(OP_SECTION_GEOMETRY, "Rotation", parent),
     m_dropdown(new OperatorParameterDropDown("angle","angle","0°",this)),
     m_angle(0)
 {
@@ -54,22 +54,34 @@ OperatorWorker *OperatorRotate::newWorker()
 
 void OperatorRotate::set0()
 {
-    m_angle = 0;
+    if ( m_angle != 0 ) {
+        m_angle = 0;
+        setUpToDate(false);
+    }
 }
 
 void OperatorRotate::set90()
 {
-    m_angle = 90;
+    if ( m_angle != 90 ) {
+        m_angle = 90;
+        setUpToDate(false);
+    }
 }
 
 void OperatorRotate::set180()
 {
-    m_angle = 180;
+    if ( m_angle != 180 ) {
+        m_angle = 180;
+        setUpToDate(false);
+    }
 }
 
 void OperatorRotate::set270()
 {
-    m_angle = 270;
+    if ( m_angle != 270 ) {
+        m_angle = 270;
+        setUpToDate(false);
+    }
 }
 
 qreal OperatorRotate::angle() const

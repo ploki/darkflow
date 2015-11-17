@@ -143,6 +143,7 @@ void Photo::create(long width, long height)
     try {
         delete m_image;
         m_image = new Magick::Image(Geometry(width,height),Color(0,0,0));
+        m_image->quantizeColorSpace(Magick::RGBColorspace);
         m_error = false;
     }
     catch (std::exception *e) {

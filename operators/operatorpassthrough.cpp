@@ -19,7 +19,7 @@ public:
 
 
 OperatorPassThrough::OperatorPassThrough(Process *parent) :
-    Operator("Pass Through", parent),
+    Operator(OP_SECTION_UTILITY, "Pass Through", parent),
     m_slider(new OperatorParameterSlider("scale", "scale", "scale",
                                          Slider::ExposureValue, Slider::Logarithmic,
                                          Slider::Real,

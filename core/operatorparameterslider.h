@@ -20,8 +20,8 @@ public:
             qreal value,
             qreal hardMin,
             qreal hardMax,
-            uint parametersFilter=Slider::FilterAll,
-            QObject *parent = 0);
+            uint parametersFilter,
+            Operator *op);
 
     QString windowCaption() const;
     Slider::Unit unit() const;

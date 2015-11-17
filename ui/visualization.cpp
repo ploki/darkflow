@@ -236,8 +236,8 @@ void Visualization::updateTabsWithPhoto()
     case 3: //POW-2;
         gamma = 2.L; x0 = 0.; break;
     }
-
-    ui->widget_visualization->setPixmap(m_photo->toPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+    if ( m_photo )
+        ui->widget_visualization->setPixmap(m_photo->toPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
     updateVisualizationZoom();
 }
 

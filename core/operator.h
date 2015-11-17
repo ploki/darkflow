@@ -17,11 +17,21 @@ class Process;
 class QThread;
 class OperatorWorker;
 
+#define OP_SECTION_SOURCE_IMAGES "Source Images"
+#define OP_SECTION_UTILITY "Utility"
+#define OP_SECTION_GEOMETRY "Geometry"
+#define OP_SECTION_CORRECTION "Correction"
+#define OP_SECTION_CURVE "Curve"
+#define OP_SECTION_BLEND "Blend"
+#define OP_SECTION_COSMETIC "Cosmetic"
+#define OP_SECTION_DEPRECATED "Deprecated"
+
+
 class Operator : public QObject
 {
     Q_OBJECT
 public:
-    explicit Operator(const QString& classIdentifier, Process *parent);
+    explicit Operator(const QString& classSection, const QString& classIdentifier, Process *parent);
     virtual ~Operator();
 
     /**
@@ -45,7 +55,6 @@ public:
     void setEnabled(bool enabled);
 
     bool isUpToDate() const;
-    void setUpToDate(bool upToDate);
 
     QString getUuid() const;
     void setUuid(const QString &uuid);
@@ -53,6 +62,7 @@ public:
     virtual Operator* newInstance() = 0;
 
     QString getClassIdentifier() const;
+    QString getClassSection() const;
 
     static void operator_connect(OperatorOutput *output, OperatorInput *input);
     static void operator_disconnect(OperatorOutput *output, OperatorInput *input);
@@ -79,6 +89,7 @@ public slots:
     void workerFailure();
     void parentUpToDate();
     void setName(const QString &name);
+    void setUpToDate(bool upToDate);
 
 //protected:
 public:
@@ -90,6 +101,7 @@ public:
     QVector<OperatorOutput*> m_outputs;
     bool m_waitingForParentUpToDate;
     QString m_uuid;
+    QString m_classSection;
     QString m_classIdentifier;
     QString m_name;
 

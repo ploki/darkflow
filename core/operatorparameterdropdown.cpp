@@ -5,8 +5,8 @@ OperatorParameterDropDown::OperatorParameterDropDown(
         const QString& name,
         const QString& caption,
         const QString& currentValue,
-        QObject *parent) :
-    OperatorParameter(name, caption, parent),
+        Operator *op) :
+    OperatorParameter(name, caption, op),
     m_menu(new QMenu),
     m_currentValue(currentValue)
 {

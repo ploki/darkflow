@@ -118,7 +118,7 @@ private:
 };
 
 OpFlatFieldCorrection::OpFlatFieldCorrection(Process *parent) :
-    Operator("Flat-Field Correction", parent)
+    Operator(OP_SECTION_BLEND, "Flat-Field Correction", parent)
 {
     m_inputs.push_back(new OperatorInput("Uneven images","Uneven images",OperatorInput::Set, this));
     m_inputs.push_back(new OperatorInput("Flat-field","Flat-field",OperatorInput::Set, this));

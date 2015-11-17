@@ -8,8 +8,8 @@ OperatorParameterFilesCollection::OperatorParameterFilesCollection(
         const QString& windowCaption,
         const QString& dir,
         const QString& filter,
-        QObject *parent) :
-    OperatorParameter(name, caption, parent),
+        Operator *op) :
+    OperatorParameter(name, caption, op),
     m_windowCaption(windowCaption),
     m_dir(dir),
     m_filter(filter),
@@ -42,6 +42,7 @@ void OperatorParameterFilesCollection::setCollection(const QStringList &collecti
 {
     m_collection=collection;
     emit parameterChanged();
+    emit setUpToDate(false);
 }
 
 QString OperatorParameterFilesCollection::currentValue() const

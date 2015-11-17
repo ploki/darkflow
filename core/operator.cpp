@@ -9,7 +9,7 @@
 #include "operatoroutput.h"
 #include "operatorworker.h"
 
-Operator::Operator(const QString& classIdentifier, Process *parent) :
+Operator::Operator(const QString& classSection, const QString& classIdentifier, Process *parent) :
     QObject(NULL),
     m_process(parent),
     m_enabled(true),
@@ -19,6 +19,7 @@ Operator::Operator(const QString& classIdentifier, Process *parent) :
     m_outputs(),
     m_waitingForParentUpToDate(false),
     m_uuid(Process::uuid()),
+    m_classSection(classSection),
     m_classIdentifier(classIdentifier),
     m_name(classIdentifier),
     m_thread(new QThread(this)),
@@ -129,8 +130,8 @@ void Operator::setUuid(const QString &uuid)
 
 
 void Operator::play() {
-    setUpToDate(false);
     if (!m_worker) {
+        setUpToDate(false);
         m_worker = newWorker();
         m_worker->start();
     }
@@ -156,6 +157,11 @@ void Operator::setUpToDate(bool b)
         emit progress(1, 1);
         emit upToDate();
     }
+}
+
+QString Operator::getClassSection() const
+{
+    return m_classSection;
 }
 
 bool Operator::isEnabled() const

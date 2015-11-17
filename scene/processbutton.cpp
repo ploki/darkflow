@@ -117,11 +117,11 @@ void ProcessButton::mousePress()
     m_mousePress=true;
 }
 
-void ProcessButton::mouseRelease()
+void ProcessButton::mouseRelease(QPoint screenPos)
 {
     if ( m_mousePress )
     {
-        emit buttonClicked();
+        emit buttonClicked(screenPos);
     }
     m_mousePress=false;
 }

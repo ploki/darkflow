@@ -5,13 +5,15 @@
 #include <QString>
 #include <QJsonObject>
 
+#include "operator.h"
+
 class OperatorParameter : public QObject
 {
     Q_OBJECT
 public:
-    explicit OperatorParameter(const QString& name,
-                               const QString& caption,
-                               QObject *parent = 0);
+    OperatorParameter(const QString& name,
+                      const QString& caption,
+                      Operator *op);
 
     virtual QJsonObject save() = 0;
     virtual void load(const QJsonObject& obj) = 0;
@@ -22,9 +24,11 @@ public:
 
 signals:
     void parameterChanged();
+    void setUpToDate(bool);
 
 public slots:
 protected:
+    Operator *m_operator;
     QString m_name;
     QString m_caption;
 };

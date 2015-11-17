@@ -14,8 +14,8 @@ OperatorParameterSlider::OperatorParameterSlider(const QString &name,
                                                  qreal hardMin,
                                                  qreal hardMax,
                                                  uint parametersFilter,
-                                                 QObject *parent) :
-    OperatorParameter(name, caption, parent),
+                                                 Operator *op) :
+    OperatorParameter(name, caption, op),
     m_windowCaption(windowCaption),
     m_unit(unit),
     m_scale(scale),
@@ -108,6 +108,7 @@ void OperatorParameterSlider::setMax(const qreal &max)
 void OperatorParameterSlider::setValue(const qreal &value)
 {
     m_value = value;
+    emit setUpToDate(false);
 }
 
 QJsonObject OperatorParameterSlider::save()

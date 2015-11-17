@@ -32,12 +32,12 @@ public:
     int type() const;
 
 signals:
-    void buttonClicked();
+    void buttonClicked(QPoint screenPos);
 
 public slots:
     void resetMouse();
     void mousePress();
-    void mouseRelease();
+    void mouseRelease(QPoint screenPos);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 private:

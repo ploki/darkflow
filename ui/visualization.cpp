@@ -250,6 +250,7 @@ void Visualization::updateTabsWithPhoto()
         }
 
         ui->widget_curve->setPixmap(m_photo->curveToPixmap(cv));
+        ui->widget_histogram->setPixmap(m_photo->histogramToPixmap(Photo::HistogramLinear, Photo::HistogramSurfaces));
     }
     updateVisualizationZoom();
 }

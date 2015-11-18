@@ -28,6 +28,14 @@ public:
         sRGB_Level,
         Log2,
     } CurveView;
+    typedef enum {
+        HistogramLinear,
+        HistogramLogarithmic,
+    } HistogramScale;
+    typedef enum {
+        HistogramLines,
+        HistogramSurfaces,
+    } HistogramGeometry;
     Photo(Gamma gamma = Linear, QObject *parent = 0);
     Photo(const Magick::Image& image, Gamma gamma, QObject *parent = 0);
     Photo(const Magick::Blob& blob, Gamma gamma, QObject *parent = 0);
@@ -58,6 +66,7 @@ public:
 
     QPixmap imageToPixmap(double gamma, double x0, double exposureBoost);
     QPixmap curveToPixmap(CurveView cv);
+    QPixmap histogramToPixmap(HistogramScale scale, HistogramGeometry geometry);
     void writeJPG(const QString& filename);
 
     int getSequenceNumber() const;

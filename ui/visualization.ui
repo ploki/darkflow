@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>710</height>
+    <width>767</width>
+    <height>754</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,8 +103,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>572</width>
-                  <height>364</height>
+                  <width>568</width>
+                  <height>408</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -465,6 +465,18 @@
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
              <widget class="QScrollArea" name="scrollArea_2">
+              <property name="minimumSize">
+               <size>
+                <width>512</width>
+                <height>512</height>
+               </size>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
               <property name="widgetResizable">
                <bool>true</bool>
               </property>
@@ -473,14 +485,44 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>572</width>
-                 <height>468</height>
+                 <width>568</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QWidget" name="content_histogram" native="true">
                   <layout class="QVBoxLayout" name="verticalLayout_12">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QLabel" name="widget_histogram">
                      <property name="text">
@@ -547,6 +589,18 @@
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
              <widget class="QScrollArea" name="scrollArea_curve">
+              <property name="minimumSize">
+               <size>
+                <width>512</width>
+                <height>512</height>
+               </size>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
               <property name="widgetResizable">
                <bool>true</bool>
               </property>
@@ -555,11 +609,26 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>572</width>
-                 <height>468</height>
+                 <width>568</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QLabel" name="widget_curve">
                   <property name="text">

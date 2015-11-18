@@ -361,6 +361,98 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     return convert(image);
 }
 
+QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGeometry geometry)
+{
+    Magick::Image image;
+    Magick::Image& photo = this->image();
+
+    bool adt = (geometry == HistogramLines);
+    bool hlog = (scale == HistogramLogarithmic);
+    int x,y;
+
+    int w = photo.columns(),
+            h = photo.rows();
+
+    const int range = 512;
+    quantum_t histo[range][3]={{0}};
+    quantum_t maxi=0;
+
+    Magick::Pixels photo_cache(photo);
+    photo.modifyImage();
+    for ( y = 0 ; y < h ; ++y ) {
+        const Magick::PixelPacket *pixels = photo_cache.getConst(0,y,w,1);
+        if (!pixels ) continue;
+        for ( x = 0 ; x < w ; ++x ) {
+            int r=(range-1)*pixels[x].red/QuantumRange;
+            int g=(range-1)*pixels[x].green/QuantumRange;
+            int b=(range-1)*pixels[x].blue/QuantumRange;
+            Q_ASSERT(r < range);
+            Q_ASSERT(g < range);
+            Q_ASSERT(b < range);
+            ++(histo[r][0]);
+            ++(histo[g][1]);
+            ++(histo[b][2]);
+            if ( r > 2 && r < (range-1) && histo[r][0] > maxi ) maxi=histo[r][0];
+            if ( g > 2 && g < (range-1) && histo[g][1] > maxi ) maxi=histo[g][1];
+            if ( b > 2 && b < (range-1) && histo[b][2] > maxi ) maxi=histo[b][2];
+        }
+    }
+    photo_cache.sync();
+    image = Image( "512x512" , "black" );
+    image.modifyImage();
+    Magick::Pixels image_cache(image);
+    Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
+    for ( x=0 ; x < range ; ++x ) {
+        quantum_t qr;
+        quantum_t qg;
+        quantum_t qb;
+        if ( hlog )
+        {
+            qg = (range-1)*log(histo[x][1])/log(maxi);
+            qr = (range-1)*log(histo[x][0])/log(maxi);
+            qb = (range-1)*log(histo[x][2])/log(maxi);
+        }
+        else
+        {
+            qg = (range-1)*(double)histo[x][1]/(double)maxi;
+            qr = (range-1)*(double)histo[x][0]/(double)maxi;
+            qb = (range-1)*(double)histo[x][2]/(double)maxi;
+        }
+
+        if ( qr > (range-1) ) qr = (range-1);
+        if ( qg > (range-1) ) qg = (range-1);
+        if ( qb > (range-1) ) qb = (range-1);
+
+        if ( qr == 0 && histo[x][0] > 0 ) qr=1;
+        if ( qg == 0 && histo[x][1] > 0 ) qg=1;
+        if ( qb == 0 && histo[x][2] > 0 ) qb=1;
+        for (int i = 0 ; i < qr ; ++i )
+        {
+            PXL(x, (range-1)-i).red = QuantumRange;
+        }
+        for (int i = 0 ; i < qg ; ++i )
+        {
+            PXL(x, (range-1)-i).green = QuantumRange;
+        }
+        for (int i = 0 ; i < qb ; ++i )
+        {
+            PXL(x, (range-1)-i).blue = QuantumRange;
+        }
+        if ( x == 188*2 || x == 137*2 || x == 99*2 || x == 71*2
+             || x == 49*2 || x == 34*2 || x == 22*2 || x == 13*2 || x == 6*2 )
+            //for (int i = 0 ; i < 256*3 ; ++ i )
+            for (int i = 0 ; i < range ; ++ i ) {
+                PXL(x,i).red = QuantumRange;
+                PXL(x,i).green = QuantumRange;
+                PXL(x,i).blue = QuantumRange;
+            }
+    }
+    image_cache.sync();
+    if ( adt )
+        image.adaptiveThreshold(4,4,0);
+    return convert(image);
+}
+
 
 void Photo::writeJPG(const QString &filename)
 {

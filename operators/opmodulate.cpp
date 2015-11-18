@@ -52,7 +52,7 @@ OpModulate *OpModulate::newInstance()
 
 OperatorWorker *OpModulate::newWorker()
 {
-    return new WorkerModulate(100+m_hue->value()/1.8,
+    return new WorkerModulate(100.+m_hue->value()/1.8,
                               m_saturation->value()*100.,
                               m_value->value()*100., m_thread, this);
 }

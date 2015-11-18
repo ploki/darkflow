@@ -28,6 +28,7 @@
 #include "operatorpassthrough.h"
 #include "operatorrotate.h"
 #include "opwhitebalance.h"
+#include "opexposure.h"
 #include "opmodulate.h"
 #include "opigamma.h"
 #include "opdesaturateshadows.h"
@@ -67,6 +68,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OperatorPassThrough(this));
     m_availableOperators.push_back(new OperatorRotate(this));
     m_availableOperators.push_back(new OpWhiteBalance(this));
+    m_availableOperators.push_back(new OpExposure(this));
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpIGamma(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));

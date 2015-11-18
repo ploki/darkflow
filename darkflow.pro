@@ -72,7 +72,8 @@ SOURCES +=\
     operators/opblackbody.cpp \
     operators/opflatfieldcorrection.cpp \
     operators/opintegration.cpp \
-    operators/workerintegration.cpp
+    operators/workerintegration.cpp \
+    operators/opexposure.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -125,7 +126,8 @@ HEADERS  += \
     operators/opblackbody.h \
     operators/opflatfieldcorrection.h \
     operators/opintegration.h \
-    operators/workerintegration.h
+    operators/workerintegration.h \
+    operators/opexposure.h
 
 FORMS    += \
     ui/aboutdialog.ui \

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>767</width>
+    <width>771</width>
     <height>754</height>
    </rect>
   </property>
@@ -103,7 +103,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>568</width>
+                  <width>572</width>
                   <height>408</height>
                  </rect>
                 </property>
@@ -485,7 +485,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>568</width>
+                 <width>572</width>
                  <height>512</height>
                 </rect>
                </property>
@@ -609,7 +609,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>568</width>
+                 <width>572</width>
                  <height>512</height>
                 </rect>
                </property>
@@ -862,6 +862,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>combo_log</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>histogramParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>673</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_surface</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>histogramParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>645</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_cumulative</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>curveParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>645</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_scale</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>curveParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>673</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -873,5 +937,7 @@
   <slot>zoomPlus()</slot>
   <slot>zoomMinus()</slot>
   <slot>expChanged()</slot>
+  <slot>curveParamsChanged()</slot>
+  <slot>histogramParamsChanged()</slot>
  </slots>
 </ui>

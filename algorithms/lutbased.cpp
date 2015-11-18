@@ -22,11 +22,13 @@ void LutBased::applyOnImage(Magick::Image &image)
     int h = image.rows(),
             w = image.columns();
     Magick::Pixels pixel_cache(image);
-
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
         Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        if ( !pixels ) continue;
+        if ( !pixels ) {
+            qWarning("NULL pixels !");
+            continue;
+        }
         for ( int x = 0 ; x < w ; ++x ) {
             pixels[x].red=m_lut[pixels[x].red];
             pixels[x].green=m_lut[pixels[x].green];

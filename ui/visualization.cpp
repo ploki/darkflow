@@ -87,9 +87,68 @@ void Visualization::zoomMinus()
 
 void Visualization::expChanged()
 {
+    if ( m_photo ) {
+        ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
+        int exposure = ui->slider_exp->value();
+        qreal gamma, x0;
+        switch(ui->combo_gamma->currentIndex()) {
+        default:
+            qWarning("Unknown combo_gamma selection");
+        case 0: //Linear
+            gamma = 1.; x0 = 0; break;
+        case 1: //sRGB
+            gamma = 2.4L; x0 = 0.00304L; break;
+        case 2: //IUT BT.709
+            gamma = 2.222L; x0 = 0.018L; break;
+        case 3: //POW-2;
+            gamma = 2.L; x0 = 0.; break;
+        }
+        ui->widget_visualization->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+    }
+}
 
-    ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
-    updateTabsWithPhoto();
+void Visualization::histogramParamsChanged()
+{
+    if ( m_photo ) {
+        Photo::HistogramScale scale;
+        Photo::HistogramGeometry geometry;
+        switch ( ui->combo_log->currentIndex()) {
+        default:
+            qWarning("Unknown combo_log histogram selection");
+        case 0:
+            scale = Photo::HistogramLinear; break;
+        case 1:
+            scale = Photo::HistogramLogarithmic; break;
+        }
+        switch ( ui->combo_surface->currentIndex()) {
+        default:
+            qWarning("Unknown combo_surface selection");
+        case 0:
+            geometry = Photo::HistogramLines; break;
+        case 1:
+            geometry = Photo::HistogramSurfaces; break;
+        }
+
+        ui->widget_histogram->setPixmap(m_photo->histogramToPixmap(scale, geometry));
+    }
+}
+
+void Visualization::curveParamsChanged()
+{
+    if ( m_photo ) {
+        Photo::CurveView cv;
+        switch(ui->combo_scale->currentIndex()) {
+        default:
+        case 0: //Linear
+            cv = Photo::sRGB_EV; break;
+        case 1: //Level
+            cv = Photo::sRGB_Level; break;
+        case 2: //log2
+            cv = Photo::Log2; break;
+        }
+
+        ui->widget_curve->setPixmap(m_photo->curveToPixmap(cv));
+    }
 }
 
 void Visualization::updateVisualizationZoom()
@@ -222,36 +281,9 @@ void Visualization::updateTabs()
 
 void Visualization::updateTabsWithPhoto()
 {
-    int exposure = ui->slider_exp->value();
-    qreal gamma, x0;
-    switch(ui->combo_gamma->currentIndex()) {
-    default:
-        qWarning("Unknown combo_gamma selection");
-    case 0: //Linear
-        gamma = 1.; x0 = 0; break;
-    case 1: //sRGB
-        gamma = 2.4L; x0 = 0.00304L; break;
-    case 2: //IUT BT.709
-        gamma = 2.222L; x0 = 0.018L; break;
-    case 3: //POW-2;
-        gamma = 2.L; x0 = 0.; break;
-    }
-    if ( m_photo ) {
-        ui->widget_visualization->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
-        Photo::CurveView cv;
-        switch(ui->combo_scale->currentIndex()) {
-        default:
-        case 0: //Linear
-            cv = Photo::sRGB_EV; break;
-        case 1: //Level
-            cv = Photo::sRGB_Level; break;
-        case 2: //log2
-            cv = Photo::Log2; break;
-        }
-
-        ui->widget_curve->setPixmap(m_photo->curveToPixmap(cv));
-        ui->widget_histogram->setPixmap(m_photo->histogramToPixmap(Photo::HistogramLinear, Photo::HistogramSurfaces));
-    }
+    expChanged();
+    curveParamsChanged();
+    histogramParamsChanged();
     updateVisualizationZoom();
 }
 

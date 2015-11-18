@@ -35,6 +35,9 @@ public slots:
     void zoomMinus();
     void expChanged();
 
+    void histogramParamsChanged();
+    void curveParamsChanged();
+
 private:
     Ui::Visualization *ui;
     Operator *m_operator;

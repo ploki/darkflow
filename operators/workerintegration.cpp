@@ -51,7 +51,6 @@ bool WorkerIntegration::play_onInput(int idx)
             if ( ! m_integrationPlane ) {
                 createPlanes(image);
             }
-
             Magick::Pixels pixel_cache(image);
             int line = 0;
 #pragma omp parallel for
@@ -87,6 +86,7 @@ bool WorkerIntegration::play_onInput(int idx)
     for ( int y = 0 ; y < m_h ; ++y ) {
         Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
         for ( int x = 0 ; x < m_w ; ++x ) {
+            Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
             pixels[x].red   =
                     clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
             pixels[x].green =
@@ -108,6 +108,9 @@ void WorkerIntegration::createPlanes(Magick::Image &image)
     m_h = image.rows();
     m_integrationPlane = new quantum_t[m_w*m_h*3];
     m_countPlane = new int[m_w*m_h*3];
+    ::memset(m_integrationPlane, 0, m_w*m_h*3*sizeof(quantum_t));
+    ::memset(m_countPlane, 0, m_w*m_h*3*sizeof(int));
+    qDebug(QString("Plane dim: w:%0, h:%1, sz:%2").arg(m_w).arg(m_h).arg(m_w*m_h*3).toLatin1());
     for ( int i = 0 ; i < m_w*m_h ; ++i ) {
         m_integrationPlane[i] = m_countPlane[i] = 0;
     }

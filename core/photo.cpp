@@ -307,31 +307,32 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     else if ( cv == Log2 )
         curve.gamma(1.L/2.2L);
 
+    Magick::Pixels curve_cache(curve);
+    const Magick::PixelPacket *curve_pixels = curve_cache.getConst(0,0,65536,1);
     for ( int x=0 ; x < 65536 ; ++x ) {
-        Magick::Color col = curve.pixelColor(x,0);
         double x0 = log(double(x+1)/65536.L)/log(2);
         // x0 compris entre 0 et -16
         int i = (16.L+x0)*32.L-1.L;
         int yr=0,yg=0,yb=0;
         switch ( cv ) {
         case sRGB_Level:
-            yr=col.redQuantum()/128.L;
-            yg=col.greenQuantum()/128.L;
-            yb=col.blueQuantum()/128.L;
+            yr=curve_pixels[x].red/128.L;
+            yg=curve_pixels[x].green/128.L;
+            yb=curve_pixels[x].blue/128.L;
             break;
         case sRGB_EV:
         case Log2: {
-            double  v = double(col.redQuantum()+1)/double(QuantumRange+1);
+            double  v = double(curve_pixels[x].red+1)/double(QuantumRange+1);
             v = log2(v);
             yr=  (16.L+v)*32.L-1.L;
             if ( yr < 0 ) yr = 0;
             else if ( yr > 511 ) yr = 511;
-            v = double(col.greenQuantum()+1)/double(QuantumRange+1);
+            v = double(curve_pixels[x].green+1)/double(QuantumRange+1);
             v = log2(v);
             yg=  (16.L+v)*32.L-1.L;
             if ( yg < 0 ) yg = 0;
             else if ( yg > 511 ) yg = 511;
-            v = double(col.blueQuantum()+1)/double(QuantumRange+1);
+            v = double(curve_pixels[x].blue+1)/double(QuantumRange+1);
             v = log2(v);
             yb=  (16.L+v)*32.L-1.L;
             if ( yb < 0 ) yb = 0;
@@ -347,6 +348,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
         PXL(i,yg).green = QuantumRange;
         PXL(i,yb).blue = QuantumRange;
     }
+    curve_cache.sync();
     image_cache.sync();
     /*
              for ( int x=0 ; x < 512 ; ++x) {
@@ -438,18 +440,25 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
         {
             PXL(x, (range-1)-i).blue = QuantumRange;
         }
-        if ( x == 188*2 || x == 137*2 || x == 99*2 || x == 71*2
-             || x == 49*2 || x == 34*2 || x == 22*2 || x == 13*2 || x == 6*2 )
-            //for (int i = 0 ; i < 256*3 ; ++ i )
+    }
+    image_cache.sync();
+    if ( adt )
+        image.adaptiveThreshold(4,4,0);
+    {
+        image.modifyImage();
+        Magick::Pixels image_cache(image);
+        Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
+        int marks[] = { 188*2, 137*2, 99*2, 71*2, 49*2, 34*2, 22*2, 13*2, 6*2, 0 };
+        for ( int i = 0 ; marks[i] != 0 ; ++i ) {
+            x = marks[i];
             for (int i = 0 ; i < range ; ++ i ) {
                 PXL(x,i).red = QuantumRange;
                 PXL(x,i).green = QuantumRange;
                 PXL(x,i).blue = QuantumRange;
             }
+        }
     }
     image_cache.sync();
-    if ( adt )
-        image.adaptiveThreshold(4,4,0);
     return convert(image);
 }
 

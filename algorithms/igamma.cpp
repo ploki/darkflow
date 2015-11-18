@@ -43,33 +43,39 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
 
 }
 
-iGamma* iGamma::sRGB(QObject *parent)
+iGamma& iGamma::sRGB()
 {
-    return new iGamma(2.4L, 0.00304L,false, parent);
+    static iGamma g(2.4L, 0.00304L,false);
+    return g;
 }
 
-iGamma* iGamma::BT709(QObject *parent)
+iGamma& iGamma::BT709()
 {
-    return new iGamma(2.222L, 0.018L,false, parent);
+    static iGamma g(2.222L, 0.018L,false);
+    return g;
 }
 
-iGamma* iGamma::Lab(QObject *parent)
+iGamma& iGamma::Lab()
 {
-    return new iGamma(3.0L, 0.008856L, false, parent);
+    static iGamma g(3.0L, 0.008856L, false);
+    return g;
 }
 
-iGamma* iGamma::reverse_sRGB(QObject *parent)
+iGamma& iGamma::reverse_sRGB()
 {
-    return new iGamma(2.4L, 0.00304L,true, parent);
+    static iGamma g(2.4L, 0.00304L,true);
+    return g;
 }
 
-iGamma* iGamma::reverse_BT709(QObject *parent)
+iGamma& iGamma::reverse_BT709()
 {
-    return new iGamma(2.222L, 0.018L,true, parent);
+    static iGamma g(2.222L, 0.018L,true);
+    return g;
 }
 
-iGamma* iGamma::reverse_Lab(QObject *parent)
+iGamma& iGamma::reverse_Lab()
 {
-    return new iGamma(3.0L, 0.008856L, true, parent);
+    static iGamma g(3.0L, 0.008856L, true);
+    return g;
 }
 

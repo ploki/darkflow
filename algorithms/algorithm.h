@@ -31,6 +31,8 @@ public:
 signals:
 
 public slots:
+private:
+    Q_DISABLE_COPY(Algorithm);
 };
 
 #endif // MANIPULATION_H

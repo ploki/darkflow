@@ -17,6 +17,9 @@ public:
     Photo process(const Photo &photo, int , int ) {
         Photo newPhoto(photo);
         m_desha.applyOn(newPhoto);
+
+        //nonsens
+        //m_desha.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 

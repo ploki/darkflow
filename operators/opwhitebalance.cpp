@@ -13,7 +13,10 @@ public:
         m_whitebalance(temperature,tint, safe)
     {}
     Photo process(const Photo& photo, int, int) {
-        return m_whitebalance.apply(photo);
+        Photo newPhoto(photo);
+        m_whitebalance.applyOn(newPhoto);
+        m_whitebalance.applyOnImage(newPhoto.curve());
+        return newPhoto;
     }
 
 private:

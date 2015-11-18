@@ -17,7 +17,7 @@ private slots:
     Photo process(const Photo &, int, int) { throw 0; }
     void play() {
         qWarning("play!!");
-        Photo photo;
+        Photo photo(Photo::Linear);
         photo.create(1000,1000);
         if (!photo.error()) {
             Magick::Image& image = photo.image();

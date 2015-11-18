@@ -11,8 +11,7 @@ OperatorOutput::OperatorOutput(const QString &name,
     m_name(name),
     m_description(description),
     m_sinks(),
-    m_result(),
-    m_curve()
+    m_result()
 {
 }
 

@@ -35,7 +35,14 @@ void RawConvert::play()
         }
         QByteArray data = convert(collection[i]);
         Magick::Blob blob(data.data(),data.length());
-        Photo photo(blob);
+        Photo::Gamma gamma;
+        switch(m_loadraw->m_colorSpaceValue) {
+        default:
+        case OperatorLoadRaw::Linear: gamma = Photo::Linear; break;
+        case OperatorLoadRaw::IUT_BT_709: gamma = Photo::IUT_BT_709; break;
+        case OperatorLoadRaw::sRGB: gamma = Photo::sRGB; break;
+        }
+        Photo photo(blob, gamma);
         if ( photo.error() ) {
             failure = true;
             continue;

@@ -21,6 +21,7 @@ public:
         Magick::Image& image = newPhoto.image();
         image.modifyImage();
         image.modulate(m_value, m_saturation, m_hue);
+        newPhoto.curve().modulate(m_value, 100, 100);
         return newPhoto;
     }
 private:

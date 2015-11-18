@@ -23,8 +23,8 @@ private:
     qreal m_dynamicRange;
     qreal m_exposure;
     bool m_labDomain;
-    iGamma *m_LabGamma;
-    iGamma *m_labGammaReverse;
+    iGamma& m_LabGamma;
+    iGamma& m_labGammaReverse;
 };
 
 #endif // SHAPEDYNAMICRANGE_H

@@ -49,8 +49,8 @@ ShapeDynamicRange::ShapeDynamicRange(ShapeDynamicRange::Shape shape, qreal dynam
     m_dynamicRange(dynamicRange),
     m_exposure(exposure),
     m_labDomain(labDomain),
-    m_LabGamma(iGamma::Lab(this)),
-    m_labGammaReverse(iGamma::reverse_Lab(this))
+    m_LabGamma(iGamma::Lab()),
+    m_labGammaReverse(iGamma::reverse_Lab())
 {
     //log2(log2(DR)) may sounds weird but it was this way in not-so-original
     //FIXME verify this
@@ -83,7 +83,7 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image)
     Magick::Image labImage=image;
     if ( m_labDomain ) {
         Labize(image,labImage);
-        m_labGammaReverse->applyOnImage(labImage); // lab -> linear
+        m_labGammaReverse.applyOnImage(labImage); // lab -> linear
         labImage.modifyImage();
         pixel_cache = new Magick::Pixels(labImage);
     }
@@ -116,7 +116,7 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image)
     delete pixel_cache;
 
     if ( m_labDomain ) {
-        m_LabGamma->applyOnImage(labImage); // linear -> lab
+        m_LabGamma.applyOnImage(labImage); // linear -> lab
         unLabize(image,labImage);
     }
 }

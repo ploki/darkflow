@@ -236,8 +236,21 @@ void Visualization::updateTabsWithPhoto()
     case 3: //POW-2;
         gamma = 2.L; x0 = 0.; break;
     }
-    if ( m_photo )
-        ui->widget_visualization->setPixmap(m_photo->toPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+    if ( m_photo ) {
+        ui->widget_visualization->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+        Photo::CurveView cv;
+        switch(ui->combo_scale->currentIndex()) {
+        default:
+        case 0: //Linear
+            cv = Photo::sRGB_EV; break;
+        case 1: //Level
+            cv = Photo::sRGB_Level; break;
+        case 2: //log2
+            cv = Photo::Log2; break;
+        }
+
+        ui->widget_curve->setPixmap(m_photo->curveToPixmap(cv));
+    }
     updateVisualizationZoom();
 }
 

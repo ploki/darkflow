@@ -13,7 +13,10 @@ public:
         m_iGamma(gamma, x0, invert)
     {}
     Photo process(const Photo &photo, int, int) {
-        return m_iGamma.apply(photo);
+        Photo newPhoto(photo);
+        m_iGamma.applyOn(newPhoto);
+        m_iGamma.applyOnImage(newPhoto.curve());
+        return newPhoto;
     }
 private:
     iGamma m_iGamma;

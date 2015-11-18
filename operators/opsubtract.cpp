@@ -56,6 +56,9 @@ public:
             foreach(OperatorOutput *parentOutput, m_operator->m_inputs[i]->sources()) {
                 foreach(Photo subtrahend, parentOutput->m_result) {
                     subtract(newPhoto.image(), subtrahend.image());
+                    if (subtrahend.image().columns() == 1 &&
+                            subtrahend.image().rows() == 1 )
+                        subtract(newPhoto.curve(), subtrahend.image());
                 }
             }
         }

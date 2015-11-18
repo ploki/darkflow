@@ -546,7 +546,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
-             <widget class="QScrollArea" name="scrollArea_3">
+             <widget class="QScrollArea" name="scrollArea_curve">
               <property name="widgetResizable">
                <bool>true</bool>
               </property>

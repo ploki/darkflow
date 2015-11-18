@@ -23,6 +23,7 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         m_shapeDR.applyOn(newPhoto);
+        m_shapeDR.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 

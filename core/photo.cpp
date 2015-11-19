@@ -260,13 +260,18 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     Magick::Image curve(this->curve());
     Magick::Pixels image_cache(image);
     Magick::PixelPacket *pixels = image_cache.get(0,0, 512, 512);
+    iGamma& g = iGamma::sRGB();
     const bool zoneV_18=false;
     //Vertical lines (input)
     for ( int x = 32 ; x < 512 ; x+=32 ) {
-        int c=QuantumRange/4;
+#if 0
+        quantum_t c=QuantumRange/4;
         if ( x == 512 - 3*32 ) c*=2;
         //      if ( x == 512 - 9*32 ) c*=2;
         if ( x == 512 - 12*32 ) c*=1.5;
+#else
+        quantum_t c = g.applyOnQuantum(pow(2,double(x)/32));
+#endif
         for ( int y = 0 ; y < 512 ; y++ ) {
             PXL(x+(zoneV_18?16:0),y).red = c;
             PXL(x+(zoneV_18?16:0),y).green = c;
@@ -276,10 +281,14 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
 
     //Horizontal lines (output)
     for ( int il = 1; il < 16 ; ++il ) {
+#if 0
         int c=QuantumRange/4;
         if ( il == 3 ) c*=2;
         if ( il == 9 ) c*=2;   //practical limit
         if ( il == 12 ) c*=1.5; //theorical limit
+#else
+        quantum_t c = g.applyOnQuantum(pow(2,16-il));
+#endif
         //double v=1.L/pow(2.L,16-il);
         int y=128;
         switch(cv) {
@@ -448,13 +457,30 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
         image.modifyImage();
         Magick::Pixels image_cache(image);
         Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
-        int marks[] = { 188*2, 137*2, 99*2, 71*2, 49*2, 34*2, 22*2, 13*2, 6*2, 0 };
+        iGamma& g = iGamma::sRGB();
+        int marks[] = { g.applyOnQuantum(1<<15)/128,
+                        g.applyOnQuantum(1<<14)/128,
+                        g.applyOnQuantum(1<<13)/128,
+                        g.applyOnQuantum(1<<12)/128,
+                        g.applyOnQuantum(1<<11)/128,
+                        g.applyOnQuantum(1<<10)/128,
+                        g.applyOnQuantum(1<<9)/128,
+                        g.applyOnQuantum(1<<8)/128,
+                        g.applyOnQuantum(1<<7)/128,
+                        g.applyOnQuantum(1<<6)/128,
+                        0 };
         for ( int i = 0 ; marks[i] != 0 ; ++i ) {
             x = marks[i];
             for (int i = 0 ; i < range ; ++ i ) {
+#if 0
                 PXL(x,i).red = QuantumRange;
                 PXL(x,i).green = QuantumRange;
                 PXL(x,i).blue = QuantumRange;
+#else
+                PXL(x,i).red = x*128;
+                PXL(x,i).green = x*128;
+                PXL(x,i).blue = x*128;
+#endif
             }
         }
     }

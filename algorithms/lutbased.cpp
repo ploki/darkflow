@@ -39,3 +39,8 @@ void LutBased::applyOnImage(Magick::Image &image)
     pixel_cache.sync();
 }
 
+quantum_t LutBased::applyOnQuantum(quantum_t v)
+{
+    return m_lut[clamp(v)];
+}
+

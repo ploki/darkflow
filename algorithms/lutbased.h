@@ -14,6 +14,7 @@ public:
     ~LutBased();
 
     void applyOnImage(Magick::Image& image);
+    quantum_t applyOnQuantum(quantum_t v);
 
 protected:
     quantum_t *m_lut;

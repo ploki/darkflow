@@ -14,12 +14,12 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     m_signalEmited(false)
 {
     moveToThread(thread);
-    connect(m_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
+    connect(m_thread, SIGNAL(finished()), this, SLOT(finished()));
     connect(this, SIGNAL(start()), this, SLOT(play()));
     connect(this, SIGNAL(progress(int,int)), m_operator, SLOT(workerProgress(int,int)));
     connect(this, SIGNAL(success()), m_operator, SLOT(workerSuccess()));
     connect(this, SIGNAL(failure()), m_operator, SLOT(workerFailure()));
-    //m_thread->start();
+    m_thread->start();
 }
 
 void OperatorWorker::play()
@@ -41,6 +41,13 @@ void OperatorWorker::play()
 
     play_onInput(0);
     Q_ASSERT(m_signalEmited);
+}
+
+void OperatorWorker::finished()
+{
+    if ( !m_signalEmited)
+        emitFailure();
+    deleteLater();
 }
 
 bool OperatorWorker::aborted() {

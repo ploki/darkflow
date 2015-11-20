@@ -35,6 +35,7 @@ WorkerIntegration::~WorkerIntegration()
 
 bool WorkerIntegration::play_onInput(int idx)
 {
+    Q_UNUSED(idx);
     Q_ASSERT( idx == 0 );
     int photoCount = 0;
     int photoN = 0;

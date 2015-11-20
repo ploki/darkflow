@@ -17,6 +17,7 @@ public:
 private slots:
     virtual void play();
     virtual Photo process(const Photo &photo, int p, int c) = 0;
+    void finished();
 
 signals:
     void progress(int ,int);

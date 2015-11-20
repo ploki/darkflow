@@ -228,7 +228,7 @@ void Visualization::updateTreeviewPhotos()
 {
     QTreeWidget *tree = ui->tree_photos;
     QString currentPhoto;
-    const OperatorOutput *currentOutput;
+    const OperatorOutput *currentOutput = NULL;
     QList<QTreeWidgetItem*> selectedItems = tree->selectedItems();
     if ( selectedItems.count() == 1 ) {
         if ( TreePhotoItem * photoItem = dynamic_cast<TreePhotoItem*>(selectedItems.first()) ) {

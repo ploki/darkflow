@@ -27,6 +27,7 @@ signals:
 protected:
     QThread *m_thread;
     Operator *m_operator;
+    bool m_signalEmited;
 
     bool aborted();
     void emitFailure();

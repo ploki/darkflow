@@ -111,6 +111,7 @@ void Visualization::expChanged()
 void Visualization::outOfDate()
 {
     bool one_defined = false;
+    Q_UNUSED(one_defined);
     QTreeWidget *tree = ui->tree_photos;
     QTreeWidgetItemIterator it(tree);
     while (*it) {
@@ -121,8 +122,10 @@ void Visualization::outOfDate()
         }
         ++it;
     }
-    if ( one_defined && this->isVisible() )
+    if ( /* one_defined &&*/ this->isVisible() ) {
+        qWarning("Vis requests play");
         m_operator->play();
+    }
 }
 
 void Visualization::histogramParamsChanged()

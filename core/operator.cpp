@@ -14,6 +14,7 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_process(parent),
     m_enabled(true),
     m_upToDate(false),
+    m_playRequested(false),
     m_parameters(),
     m_inputs(),
     m_outputs(),
@@ -69,16 +70,18 @@ void Operator::workerProgress(int p, int c)
 
 void Operator::workerSuccess()
 {
-    setUpToDate(true);
     m_thread->quit();
     m_worker=NULL;
+    m_playRequested=false;
+    setUpToDate(true);
 }
 
 void Operator::workerFailure()
 {
-    setUpToDate(false);
     m_thread->quit();
     m_worker=NULL;
+    m_playRequested=false;
+    setUpToDate(false);
 }
 
 void Operator::parentUpToDate()
@@ -131,7 +134,9 @@ void Operator::setUuid(const QString &uuid)
 
 void Operator::play() {
     if (!m_worker) {
+        m_playRequested = true;
         setUpToDate(false);
+        m_upToDate = true;
         m_worker = newWorker();
         m_worker->start();
     }
@@ -139,14 +144,19 @@ void Operator::play() {
 
 bool Operator::isUpToDate() const
 {
-    return m_upToDate;
+    return m_upToDate && !m_worker;
 }
 
 void Operator::setUpToDate(bool b)
 {
-    m_upToDate = b;
-    if (!m_upToDate) {
-        emit outOfDate();
+    if (!b) {
+        if ( m_worker ) {
+            abort();
+            return;
+        }
+        m_upToDate = false;
+        if ( !m_playRequested )
+            emit outOfDate();
         foreach(OperatorOutput *output, m_outputs) {
             foreach(OperatorInput *remoteInput, output->sinks())
                 remoteInput->m_operator->setUpToDate(false);
@@ -155,8 +165,13 @@ void Operator::setUpToDate(bool b)
         emit progress(0, 1);
     }
     else {
-        emit progress(1, 1);
-        emit upToDate();
+        if ( !m_upToDate ) {
+            play();
+        }
+        else {
+            emit progress(1, 1);
+            emit upToDate();
+        }
     }
 }
 

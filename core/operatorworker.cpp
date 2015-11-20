@@ -10,7 +10,8 @@
 OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     QObject(NULL),
     m_thread(thread),
-    m_operator(op)
+    m_operator(op),
+    m_signalEmited(false)
 {
     moveToThread(thread);
     connect(m_thread, SIGNAL(finished()), this, SLOT(deleteLater()));
@@ -18,7 +19,7 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     connect(this, SIGNAL(progress(int,int)), m_operator, SLOT(workerProgress(int,int)));
     connect(this, SIGNAL(success()), m_operator, SLOT(workerSuccess()));
     connect(this, SIGNAL(failure()), m_operator, SLOT(workerFailure()));
-    m_thread->start();
+    //m_thread->start();
 }
 
 void OperatorWorker::play()
@@ -39,6 +40,7 @@ void OperatorWorker::play()
     play_analyseSources();
 
     play_onInput(0);
+    Q_ASSERT(m_signalEmited);
 }
 
 bool OperatorWorker::aborted() {
@@ -46,12 +48,14 @@ bool OperatorWorker::aborted() {
 }
 
 void OperatorWorker::emitFailure() {
+    m_signalEmited = true;
     emit progress(0, 1);
     emit failure();
 }
 
 void OperatorWorker::emitSuccess()
 {
+    m_signalEmited = true;
     emit progress(1, 1);
     emit success();
 }
@@ -116,7 +120,6 @@ void OperatorWorker::play_analyseSources()
 
 bool OperatorWorker::play_onInput(int idx)
 {
-    m_operator->setUpToDate(false);
     int c = 0;
     int p = 0;
     foreach(OperatorOutput *remoteOutput, m_operator->m_inputs[idx]->sources())

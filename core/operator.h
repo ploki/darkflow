@@ -95,6 +95,7 @@ public:
     Process *m_process;
     bool m_enabled;
     bool m_upToDate;
+    bool m_playRequested;
     QVector<OperatorParameter*> m_parameters;
     QVector<OperatorInput*> m_inputs;
     QVector<OperatorOutput*> m_outputs;

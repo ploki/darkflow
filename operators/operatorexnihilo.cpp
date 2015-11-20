@@ -18,8 +18,9 @@ private slots:
     void play() {
         qWarning("play!!");
         Photo photo(Photo::Linear);
-        photo.create(1000,1000);
-        if (!photo.error()) {
+        photo.setIdentity(m_operator->m_uuid);
+        photo.createImage(1000,1000);
+        if (photo.isComplete()) {
             Magick::Image& image = photo.image();
             image.modifyImage();
             Magick::Pixels cache(image);

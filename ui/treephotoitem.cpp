@@ -4,17 +4,23 @@
 
 TreePhotoItem::TreePhotoItem(const Photo &photo, QTreeWidgetItem *parent) :
     QTreeWidgetItem(parent, Type),
-    m_photo(new Photo(photo))
+    m_photo(photo)
 {
     setText(0, photo.getTag("Name"));
+    if ( !photo.isComplete() ) {
+        qWarning("photo is not complete");
+    }
+    if ( !m_photo.isComplete() ) {
+        qWarning("m_photo is not complete");
+    }
 }
 
-TreePhotoItem::~TreePhotoItem()
+const Photo &TreePhotoItem::photo() const
 {
-    delete m_photo;
+    return m_photo;
 }
 
-Photo *TreePhotoItem::photo() const
+Photo &TreePhotoItem::photo()
 {
     return m_photo;
 }

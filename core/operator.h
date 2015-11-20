@@ -48,9 +48,6 @@ public:
 
     QVector<OperatorOutput *> getOutputs() const;
 
-    void addSource(const QString &inputName, Operator *op);
-    void clearSource(const QString &inputName);
-
     bool isEnabled() const;
     void setEnabled(bool enabled);
 
@@ -77,6 +74,8 @@ public:
 signals:
     void progress(int ,int );
     void upToDate();
+    void outOfDate();
+
 public:
     virtual OperatorWorker* newWorker() = 0;
 

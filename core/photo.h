@@ -36,6 +36,11 @@ public:
         HistogramLines,
         HistogramSurfaces,
     } HistogramGeometry;
+    typedef enum {
+        Undefined,
+        Identified,
+        Complete
+    } Status;
     Photo(Gamma gamma = Linear, QObject *parent = 0);
     Photo(const Magick::Image& image, Gamma gamma, QObject *parent = 0);
     Photo(const Magick::Blob& blob, Gamma gamma, QObject *parent = 0);
@@ -48,11 +53,8 @@ public:
     bool load(const QString& filename);
     bool save(const QString& filename, const QString &magick);
 
-    void create(long width, long height);
-    void createAlike(const Photo& photo);
-
-
-    bool error() const;
+    void createImage(long width, long height);
+    void createImageAlike(const Photo& photo);
 
     const Magick::Image& image() const;
     Magick::Image& image();
@@ -72,15 +74,25 @@ public:
     int getSequenceNumber() const;
     void setSequenceNumber(int sequenceNumber);
     bool operator<(const Photo &other) const;
+    QString getIdentity() const;
+    void setIdentity(const QString &identity);
+
+    void setUndefined();
+    void setComplete();
+    bool isUndefined() const;
+    bool isIdentified() const;
+    bool isComplete() const;
+
 private:
     Magick::Image m_image;
     Magick::Image m_curve;
     Gamma m_gamma;
-    bool m_error;
+    Status m_status;
     QMap<QString, QString> m_tags;
+    QString m_identity;
     int m_sequenceNumber;
 
-    void setError();
+
     static Magick::Image newCurve(Gamma gamma);
 };
 

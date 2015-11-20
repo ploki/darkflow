@@ -34,6 +34,7 @@ public slots:
     void zoomPlus();
     void zoomMinus();
     void expChanged();
+    void outOfDate();
 
     void histogramParamsChanged();
     void curveParamsChanged();

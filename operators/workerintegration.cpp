@@ -77,7 +77,8 @@ bool WorkerIntegration::play_onInput(int idx)
         }
     }
     Photo newPhoto;
-    newPhoto.create(m_w, m_h);
+    newPhoto.setIdentity(m_operator->m_uuid);
+    newPhoto.createImage(m_w, m_h);
     Magick::Image& newImage = newPhoto.image();
     newImage.modifyImage();
     Magick::Pixels pixel_cache(newImage);

@@ -20,10 +20,11 @@ private slots:
     Photo process(const Photo &, int, int) { throw 0; }
     void play() {
         Photo photo;
-        photo.create(1,1);
-        if ( !photo.error() ) {
+        photo.setIdentity(m_operator->m_uuid);
+        photo.createImage(1,1);
+        if ( photo.isComplete() ) {
             double rgb[3];
-            WhiteBalance::Temperature_to_RGB(m_temperature,rgb);
+            WhiteBalance::Temperature_to_RGB(m_temperature, rgb);
             rgb[1]/=m_tint;
             double div=rgb[0];
             if (div < rgb[1] ) div=rgb[1];

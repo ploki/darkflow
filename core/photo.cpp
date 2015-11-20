@@ -9,6 +9,7 @@
 
 #include "igamma.h"
 #include "exposure.h"
+#include "process.h"
 
 using namespace Magick;
 
@@ -17,8 +18,9 @@ Photo::Photo(Photo::Gamma gamma, QObject *parent) :
     m_image(),
     m_curve(newCurve(gamma)),
     m_gamma(gamma),
-    m_error(true),
+    m_status(Photo::Undefined),
     m_tags(),
+    m_identity(Process::uuid()),
     m_sequenceNumber(0)
 {
 }
@@ -28,8 +30,9 @@ Photo::Photo(const Blob &blob, Photo::Gamma gamma, QObject *parent) :
     m_image(Magick::Image(blob)),
     m_curve(newCurve(gamma)),
     m_gamma(gamma),
-    m_error(false),
+    m_status(Photo::Complete),
     m_tags(),
+    m_identity(Process::uuid()),
     m_sequenceNumber(0)
 {
 }
@@ -39,8 +42,9 @@ Photo::Photo(const Magick::Image& image, Photo::Gamma gamma, QObject *parent) :
     m_image(image),
     m_curve(newCurve(gamma)),
     m_gamma(gamma),
-    m_error(false),
+    m_status(Photo::Complete),
     m_tags(),
+    m_identity(Process::uuid()),
     m_sequenceNumber(0)
 {
 }
@@ -50,8 +54,9 @@ Photo::Photo(const Photo &photo) :
     m_image(photo.m_image),
     m_curve(photo.m_curve),
     m_gamma(photo.m_gamma),
-    m_error(false),
+    m_status(photo.m_status),
     m_tags(photo.m_tags),
+    m_identity(photo.m_identity),
     m_sequenceNumber(photo.m_sequenceNumber)
 {
 }
@@ -66,8 +71,9 @@ Photo &Photo::operator=(const Photo &photo)
     m_curve = photo.m_curve;
     m_gamma = photo.m_gamma;
     m_tags = photo.m_tags;
+    m_identity = photo.m_identity;
     m_sequenceNumber = photo.m_sequenceNumber;
-    m_error = false;
+    m_status = photo.m_status;
     return *this;
 }
 
@@ -80,14 +86,17 @@ bool Photo::load(const QString &filename)
     try {
         Blob blob(data.data(), data.length());
         m_image = Image(blob);
-        m_error = false;
+        m_status = Photo::Complete;
     }
     catch (std::exception *e) {
         qWarning(e->what());
         delete e;
-        setError();
+        setUndefined();
         return false;
     }
+    m_tags.clear();
+    m_tags["Name"] = filename;
+    setIdentity(filename);
     return true;
 }
 
@@ -99,41 +108,36 @@ bool Photo::save(const QString &filename, const QString &magick)
         QFile file(filename);
         file.open(QFile::WriteOnly);
         if ( !file.write(reinterpret_cast<const char*>(blob.data()),blob.length()) ) {
-            setError();
+            setUndefined();
             return false;
         }
     }
     catch (std::exception *e) {
         qWarning(e->what());
         delete e;
-        setError();
+        setUndefined();
         return false;
     }
     return true;
 }
 
-void Photo::create(long width, long height)
+void Photo::createImage(long width, long height)
 {
     try {
         m_image = Magick::Image(Geometry(width,height),Color(0,0,0));
         m_image.quantizeColorSpace(Magick::RGBColorspace);
-        m_error = false;
+        m_status = Complete;
     }
     catch (std::exception *e) {
         qWarning(e->what());
         delete e;
-        setError();
+        setUndefined();
     }
 }
 
-void Photo::createAlike(const Photo& photo)
+void Photo::createImageAlike(const Photo& photo)
 {
-    create(photo.m_image.columns(), photo.m_image.rows());
-}
-
-bool Photo::error() const
-{
-    return m_error;
+    createImage(photo.m_image.columns(), photo.m_image.rows());
 }
 
 const Magick::Image& Photo::image() const
@@ -179,11 +183,6 @@ QString Photo::getTag(const QString &name) const
     return it.value();
 }
 
-void Photo::setError()
-{
-    m_error = true;
-    m_image = Magick::Image();
-}
 
 Image Photo::newCurve(Photo::Gamma gamma)
 {
@@ -233,6 +232,7 @@ static QPixmap convert(Magick::Image& image) {
 
 QPixmap Photo::imageToPixmap(double gamma, double x0, double exposureBoost)
 {
+    Q_ASSERT( m_status == Complete );
     Photo photo(*this);
     Exposure(exposureBoost).applyOn(photo);
     iGamma(gamma, x0).applyOn(photo);
@@ -256,6 +256,7 @@ static double calcGamma(double v) {
 #define PXL(x,y) pixels[(y)*512+(x)]
 QPixmap Photo::curveToPixmap(Photo::CurveView cv)
 {
+    Q_ASSERT( m_status == Complete );
     Magick::Image image("512x512", "black");
     Magick::Image curve(this->curve());
     Magick::Pixels image_cache(image);
@@ -374,6 +375,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
 
 QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGeometry geometry)
 {
+    Q_ASSERT( m_status == Complete );
     Magick::Image image;
     Magick::Image& photo = this->image();
 
@@ -513,6 +515,44 @@ void Photo::setSequenceNumber(int sequenceNumber)
 
 bool Photo::operator<(const Photo &other) const {
     return (m_sequenceNumber < other.m_sequenceNumber);
+}
+
+QString Photo::getIdentity() const
+{
+    return m_identity;
+}
+
+void Photo::setIdentity(const QString &identity)
+{
+    m_identity = identity;
+    if ( m_status == Undefined )
+        m_status = Identified;
+}
+
+void Photo::setUndefined()
+{
+    m_status = Undefined;
+    m_image = Magick::Image();
+}
+
+void Photo::setComplete()
+{
+    m_status = Complete;
+}
+
+bool Photo::isUndefined() const
+{
+    return m_status == Undefined;
+}
+
+bool Photo::isIdentified() const
+{
+    return m_status == Identified;
+}
+
+bool Photo::isComplete() const
+{
+    return m_status == Complete;
 }
 
 

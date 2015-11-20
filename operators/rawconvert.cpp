@@ -43,10 +43,11 @@ void RawConvert::play()
         case OperatorLoadRaw::sRGB: gamma = Photo::sRGB; break;
         }
         Photo photo(blob, gamma);
-        if ( photo.error() ) {
+        if ( !photo.isComplete() ) {
             failure = true;
             continue;
         }
+        photo.setIdentity(collection[i]);
         setTags(collection[i], photo);
         photo.setSequenceNumber(i);
 #pragma omp critical

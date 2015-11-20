@@ -146,6 +146,7 @@ void Operator::setUpToDate(bool b)
 {
     m_upToDate = b;
     if (!m_upToDate) {
+        emit outOfDate();
         foreach(OperatorOutput *output, m_outputs) {
             foreach(OperatorInput *remoteInput, output->sinks())
                 remoteInput->m_operator->setUpToDate(false);

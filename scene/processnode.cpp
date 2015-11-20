@@ -81,6 +81,7 @@ ProcessNode::ProcessNode(QPointF pos,
     connect(m_visualization, SIGNAL(operatorNameChanged(QString)), this, SLOT(operatorNameChanged(QString)));
     connect(m_visualization, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
     connect(m_operator, SIGNAL(upToDate()), m_visualization, SLOT(operatorUpdated()));
+    connect(m_operator, SIGNAL(outOfDate()), m_visualization, SLOT(outOfDate()));
 }
 
 void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal size, qreal offset)

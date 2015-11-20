@@ -1,5 +1,6 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QTreeWidgetItemIterator>
 #include <QPixmap>
 
 #include <Magick++.h>
@@ -87,7 +88,7 @@ void Visualization::zoomMinus()
 
 void Visualization::expChanged()
 {
-    if ( m_photo ) {
+    if ( m_photo && m_photo->isComplete() ) {
         ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
         int exposure = ui->slider_exp->value();
         qreal gamma, x0;
@@ -107,9 +108,22 @@ void Visualization::expChanged()
     }
 }
 
+void Visualization::outOfDate()
+{
+    QTreeWidget *tree = ui->tree_photos;
+    QTreeWidgetItemIterator it(tree);
+    while (*it) {
+        if ( TreePhotoItem * photoItem = dynamic_cast<TreePhotoItem*>(*it) ) {
+            photoItem->photo().setUndefined();
+        }
+        ++it;
+    }
+
+}
+
 void Visualization::histogramParamsChanged()
 {
-    if ( m_photo ) {
+    if ( m_photo && m_photo->isComplete() ) {
         Photo::HistogramScale scale;
         Photo::HistogramGeometry geometry;
         switch ( ui->combo_log->currentIndex()) {
@@ -135,7 +149,7 @@ void Visualization::histogramParamsChanged()
 
 void Visualization::curveParamsChanged()
 {
-    if ( m_photo ) {
+    if ( m_photo && m_photo->isComplete() ) {
         Photo::CurveView cv;
         switch(ui->combo_scale->currentIndex()) {
         default:
@@ -206,6 +220,15 @@ void Visualization::operatorUpdated()
 void Visualization::updateTreeviewPhotos()
 {
     QTreeWidget *tree = ui->tree_photos;
+    QString currentPhoto;
+    const OperatorOutput *currentOutput;
+    QList<QTreeWidgetItem*> selectedItems = tree->selectedItems();
+    if ( selectedItems.count() == 1 ) {
+        if ( TreePhotoItem * photoItem = dynamic_cast<TreePhotoItem*>(selectedItems.first()) ) {
+            currentPhoto = photoItem->photo().getIdentity();
+            currentOutput = dynamic_cast<TreeOutputItem*>(photoItem->parent())->output();
+        }
+    }
     tree->clear();
 
     QTreeWidgetItem *tree_inputs = new QTreeWidgetItem(tree);
@@ -220,7 +243,13 @@ void Visualization::updateTreeviewPhotos()
         foreach(OperatorOutput *source, input->sources()) {
             QTreeWidgetItem *tree_source = new TreeOutputItem(source, TreeOutputItem::Source, tree_input);
             foreach(const Photo& photo, source->m_result) {
-                new TreePhotoItem(photo, tree_source);
+                if ( !photo.isComplete() )
+                    qWarning("source photo is not complete");
+                TreePhotoItem *item = new TreePhotoItem(photo, tree_source);
+                if ( photo.getIdentity() == currentPhoto &&
+                     source == currentOutput ) {
+                    item->setSelected(true);
+                }
             }
 
         }
@@ -233,7 +262,13 @@ void Visualization::updateTreeviewPhotos()
     foreach(OperatorOutput *output, m_operator->m_outputs) {
         QTreeWidgetItem *tree_output = new TreeOutputItem(output,TreeOutputItem::Sink,tree_outputs);
         foreach(const Photo& photo, output->m_result) {
-            new TreePhotoItem(photo, tree_output);
+            if ( !photo.isComplete() )
+                qWarning("output photo is not complete");
+            TreePhotoItem *item = new TreePhotoItem(photo, tree_output);
+            if ( photo.getIdentity() == currentPhoto &&
+                 output == currentOutput ) {
+                item->setSelected(true);
+            }
         }
     }
 
@@ -251,7 +286,7 @@ void Visualization::photoSelectionChanged()
     foreach(QTreeWidgetItem *item, items ) {
         switch(item->type()) {
         case TreePhotoItem::Type:
-            m_photo = dynamic_cast<TreePhotoItem*>(item)->photo();
+            m_photo = &dynamic_cast<TreePhotoItem*>(item)->photo();
             updateTabs();
             return;
         case TreeOutputItem::Type:

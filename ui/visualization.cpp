@@ -110,15 +110,19 @@ void Visualization::expChanged()
 
 void Visualization::outOfDate()
 {
+    bool one_defined = false;
     QTreeWidget *tree = ui->tree_photos;
     QTreeWidgetItemIterator it(tree);
     while (*it) {
         if ( TreePhotoItem * photoItem = dynamic_cast<TreePhotoItem*>(*it) ) {
+            if (photoItem->photo().isComplete() )
+                one_defined = true;
             photoItem->photo().setUndefined();
         }
         ++it;
     }
-
+    if ( one_defined && this->isVisible() )
+        m_operator->play();
 }
 
 void Visualization::histogramParamsChanged()

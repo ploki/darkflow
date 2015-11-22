@@ -24,30 +24,26 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
 
 void OperatorWorker::play()
 {
-    qWarning("OperatorWorker::play()");
+    qDebug("OperatorWorker::play()");
 
     if ( !play_inputsAvailable() )
         return;
     if (!play_outputsAvailable())
         return;
 
-    if ( play_parentDirty() )
-        return;
-
-    if ( play_isUpToDate() )
-        return;
-
     play_analyseSources();
 
     play_onInput(0);
-    Q_ASSERT(m_signalEmited);
+    if (!m_signalEmited) {
+        qWarning("BUG: No signal sent!!!");
+        emitFailure();
+    }
 }
 
 void OperatorWorker::finished()
 {
     if ( !m_signalEmited)
         emitFailure();
-    deleteLater();
 }
 
 bool OperatorWorker::aborted() {
@@ -56,15 +52,21 @@ bool OperatorWorker::aborted() {
 
 void OperatorWorker::emitFailure() {
     m_signalEmited = true;
+    qDebug(QString("Worker of " + m_operator->m_uuid + "emit progress(0, 1)").toLatin1());
     emit progress(0, 1);
+    qDebug(QString("Worker of " + m_operator->m_uuid + "emit failure").toLatin1());
     emit failure();
+    qDebug(QString("Worker of " + m_operator->m_uuid + "emit done").toLatin1());
 }
 
 void OperatorWorker::emitSuccess()
 {
     m_signalEmited = true;
+    qDebug(QString("Worker of " + m_operator->m_uuid + "emit progress(1, 1)").toLatin1());
     emit progress(1, 1);
+    qDebug(QString("Worker of " + m_operator->m_uuid + "emit success").toLatin1());
     emit success();
+    qDebug(QString("Worker of " + m_operator->m_uuid + "emit done").toLatin1());
 }
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
@@ -90,34 +92,6 @@ bool OperatorWorker::play_outputsAvailable()
         return false;
     }
     return true;
-}
-
-bool OperatorWorker::play_parentDirty()
-{
-    bool dirty = false;
-    foreach(OperatorInput *input, m_operator->m_inputs)
-        foreach(OperatorOutput *parentOutput, input->sources()) {
-            if ( !parentOutput->m_operator->isUpToDate() ) {
-                dirty = true;
-                parentOutput->m_operator->play();
-                m_operator->m_waitingForParentUpToDate = true;
-            }
-        }
-    if (dirty) {
-        //will be signaled later
-        emitFailure();
-    }
-    return dirty;
-}
-
-bool OperatorWorker::play_isUpToDate()
-{
-    if ( m_operator->isUpToDate())
-    {
-        emitSuccess();
-        return true;
-    }
-    return false;
 }
 
 void OperatorWorker::play_analyseSources()

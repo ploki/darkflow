@@ -38,7 +38,7 @@ OperatorPassThrough::OperatorPassThrough(Process *parent) :
 
 OperatorPassThrough::~OperatorPassThrough()
 {
-   // qWarning((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
+   // qDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
 }
 
 

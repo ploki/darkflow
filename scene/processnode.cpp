@@ -3,6 +3,8 @@
 #include <QString>
 #include <QGraphicsTextItem>
 #include <QCursor>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "process.h"
 #include "processnode.h"
@@ -79,9 +81,6 @@ ProcessNode::ProcessNode(QPointF pos,
 
     connect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
     connect(m_visualization, SIGNAL(operatorNameChanged(QString)), this, SLOT(operatorNameChanged(QString)));
-    connect(m_visualization, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
-    connect(m_operator, SIGNAL(upToDate()), m_visualization, SLOT(operatorUpdated()));
-    connect(m_operator, SIGNAL(outOfDate()), m_visualization, SLOT(outOfDate()));
 }
 
 void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal size, qreal offset)
@@ -119,9 +118,9 @@ void ProcessNode::addButtons(qreal size)
                                                  ProcessButton::Close,m_process, this);
     connect(buttClose, SIGNAL(buttonClicked(QPoint)), this, SLOT(closeButtonClicked(QPoint)));
 
-    ProcessButton *buttPassThrough= new ProcessButton(QRectF(x+w-size*2,y,size,size),
-                                                      ProcessButton::Ghost,m_process, this);
-    connect(buttPassThrough, SIGNAL(buttonClicked(QPoint)), this, SLOT(passThroughClicked(QPoint)));
+    ProcessButton *buttHelp= new ProcessButton(QRectF(x+w-size*2,y,size,size),
+                                               ProcessButton::Help,m_process, this);
+    connect(buttHelp, SIGNAL(buttonClicked(QPoint)), this, SLOT(helpClicked(QPoint)));
 
     ProcessButton *buttViewImage= new ProcessButton(QRectF(x+w-size*3,y,size,size),
                                                     ProcessButton::Display,m_process, this);
@@ -226,9 +225,9 @@ void ProcessNode::closeButtonClicked(QPoint)
     deleteLater();
 }
 
-void ProcessNode::passThroughClicked(QPoint)
+void ProcessNode::helpClicked(QPoint)
 {
-
+    QDesktopServices::openUrl(QUrl("http://darkflow.org/redirect/?operator="+m_operator->getClassIdentifier()));
 }
 
 void ProcessNode::visualizationClicked(QPoint screenPos)
@@ -248,7 +247,7 @@ void ProcessNode::playClicked(QPoint)
 
 void ProcessNode::abortClicked(QPoint)
 {
-    m_operator->abort();
+    m_operator->stop();
 }
 
 void ProcessNode::operatorNameChanged(QString text)

@@ -24,7 +24,7 @@ public:
 
 signals:
     void parameterChanged();
-    void setUpToDate(bool);
+    void setOutOfDate();
 
 public slots:
 protected:

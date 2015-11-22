@@ -69,7 +69,7 @@ void OpShapeDynamicRange::selectShapeTanH()
 {
     if ( m_shape != ShapeDynamicRange::TanH ) {
         m_shape = ShapeDynamicRange::TanH;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -77,7 +77,7 @@ void OpShapeDynamicRange::selectLabNo()
 {
     if ( m_labDomain ) {
         m_labDomain = false;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -85,6 +85,6 @@ void OpShapeDynamicRange::selectLabYes()
 {
     if ( !m_labDomain ) {
         m_labDomain = true;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }

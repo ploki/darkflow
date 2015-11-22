@@ -40,7 +40,7 @@ private slots:
                         clamp<quantum_t>(rgb[0]*QuantumRange, 0, QuantumRange),
                         clamp<quantum_t>(rgb[1]*QuantumRange, 0, QuantumRange),
                         clamp<quantum_t>(rgb[2]*QuantumRange, 0, QuantumRange)));
-            //qWarning(QString("r: %0, g: %1, b: %2").arg(rgb[0]).arg(rgb[1]).arg(rgb[2]).toLatin1());
+            //qDebug(QString("r: %0, g: %1, b: %2").arg(rgb[0]).arg(rgb[1]).arg(rgb[2]).toLatin1());
             photo.setTag("Name", QString("Black Body %0 K").arg(m_temperature));
             m_operator->m_outputs[0]->m_result.push_back(photo);
             emitSuccess();

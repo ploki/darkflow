@@ -108,7 +108,7 @@ void OperatorParameterSlider::setMax(const qreal &max)
 void OperatorParameterSlider::setValue(const qreal &value)
 {
     m_value = value;
-    emit setUpToDate(false);
+    emit setOutOfDate();
 }
 
 QJsonObject OperatorParameterSlider::save()

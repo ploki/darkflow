@@ -36,8 +36,6 @@ protected:
     void emitProgress(int p, int c, int sub_p, int sub_c);
     bool play_inputsAvailable();
     bool play_outputsAvailable();
-    bool play_parentDirty();
-    bool play_isUpToDate();
     virtual void play_analyseSources();
     virtual bool play_onInput(int idx);
 };

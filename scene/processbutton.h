@@ -19,7 +19,7 @@ public:
                    Abort,
                    Display,
                    Close,
-                   Ghost } ButtonType;
+                   Help } ButtonType;
 
     explicit ProcessButton(QRectF rect,
                            ButtonType type,

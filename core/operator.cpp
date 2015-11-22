@@ -26,7 +26,7 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_thread(new QThread(this)),
     m_worker(NULL)
 {
-
+    connect(this, SIGNAL(remotePlay()), this, SLOT(play()), Qt::QueuedConnection);
 }
 
 Operator::~Operator()
@@ -52,7 +52,7 @@ QVector<OperatorOutput *> Operator::getOutputs() const
     return m_outputs;
 }
 
-void Operator::abort()
+void Operator::stop()
 {
     m_thread->requestInterruption();
 }
@@ -71,24 +71,27 @@ void Operator::workerProgress(int p, int c)
 void Operator::workerSuccess()
 {
     m_thread->quit();
+    //m_worker->deleteLater();
     m_worker=NULL;
     m_playRequested=false;
-    setUpToDate(true);
+    m_waitingForParentUpToDate=false;
+    setUpToDate();
 }
 
 void Operator::workerFailure()
 {
     m_thread->quit();
+    //m_worker->deleteLater();
     m_worker=NULL;
     m_playRequested=false;
-    setUpToDate(false);
+    m_waitingForParentUpToDate=false;
+    setOutOfDate();
 }
 
 void Operator::parentUpToDate()
 {
     if ( !m_waitingForParentUpToDate )
         return;
-    m_waitingForParentUpToDate=false;
     play();
 }
 
@@ -132,47 +135,78 @@ void Operator::setUuid(const QString &uuid)
 }
 
 
-void Operator::play() {
-    if (!m_worker) {
-        m_playRequested = true;
-        setUpToDate(false);
-        m_upToDate = true;
-        m_worker = newWorker();
-        m_worker->start();
+bool Operator::play_parentDirty()
+{
+    bool dirty = false;
+    foreach(OperatorInput *input, m_inputs)
+        foreach(OperatorOutput *parentOutput, input->sources()) {
+            if ( !parentOutput->m_operator->isUpToDate() ) {
+                dirty = true;
+                parentOutput->m_operator->remotePlay();
+                m_waitingForParentUpToDate = true;
+            }
+        }
+    if (dirty) {
+        //will be signaled later
+        emit progress(0, 1);
     }
+    return dirty;
+}
+
+void Operator::play() {
+    Q_ASSERT(QThread::currentThread() == thread());
+    if (m_worker) {
+        qDebug("already playing");
+        return;
+    }
+    if (play_parentDirty())
+        return;
+    if (isUpToDate())
+        return;
+    qDebug(QString("play on "+m_uuid).toLatin1());
+    m_playRequested = true;
+    setOutOfDate();
+    m_upToDate = true;
+    m_worker = newWorker();
+    m_worker->start();
+    qDebug(QString("worker started for "+m_uuid).toLatin1());
 }
 
 bool Operator::isUpToDate() const
 {
+    qDebug(QString(m_uuid + " is up to date: %0").arg(m_upToDate && !m_worker).toLatin1());
     return m_upToDate && !m_worker;
 }
 
-void Operator::setUpToDate(bool b)
+void Operator::setUpToDate()
 {
-    if (!b) {
-        if ( m_worker ) {
-            abort();
-            return;
-        }
-        m_upToDate = false;
-        if ( !m_playRequested )
-            emit outOfDate();
-        foreach(OperatorOutput *output, m_outputs) {
-            foreach(OperatorInput *remoteInput, output->sinks())
-                remoteInput->m_operator->setUpToDate(false);
-            output->m_result.clear();
-        }
-        emit progress(0, 1);
+    Q_ASSERT(QThread::currentThread() == thread());
+    if ( !m_upToDate ) {
+        play();
     }
     else {
-        if ( !m_upToDate ) {
-            play();
-        }
-        else {
-            emit progress(1, 1);
-            emit upToDate();
-        }
+        emit progress(1, 1);
+        emit upToDate();
     }
+}
+
+void Operator::setOutOfDate()
+{
+    Q_ASSERT(QThread::currentThread() == thread());
+    if ( m_worker ) {
+        stop();
+        return;
+    }
+    bool was_upToDate = m_upToDate;
+    m_upToDate = false;
+    foreach(OperatorOutput *output, m_outputs) {
+        foreach(OperatorInput *remoteInput, output->sinks())
+            remoteInput->m_operator->setOutOfDate();
+        output->m_result.clear();
+    }
+    if ( !m_playRequested && was_upToDate )
+        emit outOfDate();
+    emit progress(0, 1);
 }
 
 QString Operator::getClassSection() const
@@ -195,7 +229,7 @@ void Operator::operator_connect(OperatorOutput *output, OperatorInput *input)
     output->addSink(input);
     input->addSource(output);
     connect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
-    input->m_operator->setUpToDate(false);
+    input->m_operator->setOutOfDate();
 }
 
 void Operator::operator_disconnect(OperatorOutput *output, OperatorInput *input)
@@ -203,7 +237,7 @@ void Operator::operator_disconnect(OperatorOutput *output, OperatorInput *input)
     disconnect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
     output->removeSink(input);
     input->removeSource(output);
-    input->m_operator->setUpToDate(false);
+    input->m_operator->setOutOfDate();
 }
 
 void Operator::save(QJsonObject &obj)
@@ -214,7 +248,7 @@ void Operator::save(QJsonObject &obj)
     obj["classIdentifier"] = getClassIdentifier();
     obj["name"] = getName();
     foreach(OperatorParameter *parameter, m_parameters) {
-        qWarning("saving a parameter");
+        qDebug("saving a parameter");
         parameters.push_back(parameter->save());
     }
     obj["parameters"] = parameters;

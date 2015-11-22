@@ -23,7 +23,6 @@ signals:
 
 public slots:
     void nameChanged(QString text);
-    void operatorUpdated();
     void updateTreeviewPhotos();
     void photoSelectionChanged();
     void zoomFitVisible();
@@ -34,6 +33,7 @@ public slots:
     void zoomPlus();
     void zoomMinus();
     void expChanged();
+    void upToDate();
     void outOfDate();
 
     void histogramParamsChanged();
@@ -52,6 +52,8 @@ private:
         ZoomCustom
     } m_zoomLevel;
     int m_zoom;
+    QString m_currentPhoto;
+    const OperatorOutput *m_currentOutput;
 
     void clearAllTabs();
     void updateTabs();

@@ -42,7 +42,7 @@ void OperatorParameterFilesCollection::setCollection(const QStringList &collecti
 {
     m_collection=collection;
     emit parameterChanged();
-    emit setUpToDate(false);
+    emit setOutOfDate();
 }
 
 QString OperatorParameterFilesCollection::currentValue() const
@@ -61,7 +61,7 @@ QJsonObject OperatorParameterFilesCollection::save()
     obj["type"] = "filesCollection";
     obj["name"] = m_name;
     foreach(const QString& file, m_collection) {
-        qWarning("saving a file");
+        qDebug("saving a file");
         files.push_back(file);
     }
     obj["files"] = files;

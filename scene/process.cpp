@@ -197,7 +197,7 @@ void Process::save()
     foreach (QGraphicsItem *item, m_scene->items()) {
         if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
             ProcessNode *node = dynamic_cast<ProcessNode *>(item);
-            qWarning("saving a node");
+            qDebug("saving a node");
             nodes.push_back(node->save());
         }
         else if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeConnection ) {
@@ -416,7 +416,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     }
 
 /*
- *     qWarning("it's a mouse event");
+ *     qDebug("it's a mouse event");
     m_scene->addRect(me->scenePos().x()-5,
                      me->scenePos().y()-5,
                      10,

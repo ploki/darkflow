@@ -21,8 +21,6 @@ RawConvert::RawConvert(QThread *thread, OperatorLoadRaw *op) :
 
 void RawConvert::play()
 {
-    if ( play_isUpToDate())
-        return;
     QVector<QString> collection = m_loadraw->getCollection().toVector();
     int s = collection.count();
     int p = 0;

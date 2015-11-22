@@ -71,24 +71,29 @@ public:
 
     bool spotLoop(const QString& uuid);
 
+    bool play_parentDirty();
+
+
 signals:
     void progress(int ,int );
     void upToDate();
     void outOfDate();
+    void remotePlay();
 
 public:
     virtual OperatorWorker* newWorker() = 0;
 
 public slots:
     void play();
-    void abort();
+    void stop();
     void clone();
     void workerProgress(int p, int c);
     void workerSuccess();
     void workerFailure();
     void parentUpToDate();
     void setName(const QString &name);
-    void setUpToDate(bool upToDate);
+    void setUpToDate();
+    void setOutOfDate();
 
 //protected:
 public:

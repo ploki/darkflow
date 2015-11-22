@@ -64,7 +64,7 @@ void OpIntegration::setNoRejection()
 {
     if ( m_rejectionType != NoRejection ) {
         m_rejectionType = NoRejection;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -72,7 +72,7 @@ void OpIntegration::setMedianPercentil()
 {
     if ( m_rejectionType != MedianPercentil ) {
         m_rejectionType = MedianPercentil;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -80,7 +80,7 @@ void OpIntegration::setSigmaClip()
 {
     if ( m_rejectionType != SigmaClipping ) {
         m_rejectionType = SigmaClipping;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -88,7 +88,7 @@ void OpIntegration::setWinsorized()
 {
     if ( m_rejectionType != Winsorized ) {
         m_rejectionType = Winsorized;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -96,7 +96,7 @@ void OpIntegration::setNoNormalization()
 {
     if ( m_normalizationType != NoNormalization ) {
         m_normalizationType = NoNormalization;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -104,7 +104,7 @@ void OpIntegration::setHighestValue()
 {
     if ( m_normalizationType != HighestValue ) {
         m_normalizationType = HighestValue;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -112,6 +112,6 @@ void OpIntegration::setCustom()
 {
     if ( m_normalizationType != Custom ) {
         m_normalizationType = Custom;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }

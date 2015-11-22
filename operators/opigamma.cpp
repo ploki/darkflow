@@ -27,7 +27,7 @@ OpIGamma::OpIGamma(Process *parent) :
     m_gamma(new OperatorParameterSlider("gamma", "Gamma", "Gamma Power",
                                         Slider::Value, Slider::Logarithmic, Slider::Real,
                                         0.1, 10, 2.4, 0.01, 100, Slider::FilterNothing,this)),
-    m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Gamma Dynamic Range",
+    m_dynamicRange(new OperatorParameterSlider("logarithmicRange", "Logarithmic on", "Gamma Logarithmic Range",
                                                Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
                                                1, 1<<12, 1./0.00304L, 1, 1<<16, Slider::FilterExposure, this)),
     m_revert(false),
@@ -59,7 +59,7 @@ void OpIGamma::revertYes()
 {
     if ( !m_revert ) {
         m_revert = true;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -67,6 +67,6 @@ void OpIGamma::revertNo()
 {
     if ( m_revert ) {
         m_revert = false;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }

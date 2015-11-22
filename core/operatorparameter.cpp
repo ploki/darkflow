@@ -9,7 +9,7 @@ OperatorParameter::OperatorParameter(
     m_name(name),
     m_caption(caption)
 {
-    connect(this, SIGNAL(setUpToDate(bool)), m_operator, SLOT(setUpToDate(bool)));
+    connect(this, SIGNAL(setOutOfDate()), m_operator, SLOT(setOutOfDate()));
 }
 QString OperatorParameter::caption() const
 {

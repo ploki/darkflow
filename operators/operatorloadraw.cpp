@@ -90,7 +90,7 @@ void OperatorLoadRaw::setColorSpaceLinear()
 {
     if ( m_colorSpaceValue != Linear ) {
         m_colorSpaceValue = Linear;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -98,7 +98,7 @@ void OperatorLoadRaw::setColorSpacesRGB()
 {
     if ( m_colorSpaceValue != sRGB ) {
         m_colorSpaceValue = sRGB;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -106,7 +106,7 @@ void OperatorLoadRaw::setColorSpaceIUT_BT_709()
 {
     if ( m_colorSpaceValue != IUT_BT_709 ) {
         m_colorSpaceValue = IUT_BT_709;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -114,7 +114,7 @@ void OperatorLoadRaw::setDebayerNone()
 {
     if ( m_debayerValue != NoDebayer ) {
         m_debayerValue = NoDebayer;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -122,7 +122,7 @@ void OperatorLoadRaw::setDebayerHalfSize()
 {
     if ( m_debayerValue != HalfSize ) {
         m_debayerValue = HalfSize;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -130,7 +130,7 @@ void OperatorLoadRaw::setDebayerLow()
 {
     if ( m_debayerValue != Low ) {
         m_debayerValue = Low;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -138,7 +138,7 @@ void OperatorLoadRaw::setDebayerVNG()
 {
     if ( m_debayerValue != VNG ) {
         m_debayerValue = VNG;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -146,7 +146,7 @@ void OperatorLoadRaw::setDebayerPPG()
 {
     if ( m_debayerValue != PPG ) {
         m_debayerValue = PPG;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -154,7 +154,7 @@ void OperatorLoadRaw::setDebayerAHD()
 {
     if ( m_debayerValue != AHD ) {
         m_debayerValue = AHD;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -162,7 +162,7 @@ void OperatorLoadRaw::setWhiteBalanceNone()
 {
     if ( m_whiteBalanceValue != NoWhiteBalance ) {
         m_whiteBalanceValue = NoWhiteBalance;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -170,7 +170,7 @@ void OperatorLoadRaw::setWhiteBalanceRawColors()
 {
     if ( m_whiteBalanceValue != RawColors ) {
         m_whiteBalanceValue = RawColors;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -178,7 +178,7 @@ void OperatorLoadRaw::setWhiteBalanceCamera()
 {
     if ( m_whiteBalanceValue != Camera ) {
         m_whiteBalanceValue = Camera;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -186,13 +186,13 @@ void OperatorLoadRaw::setWhiteBalanceDaylight()
 {
     if ( m_whiteBalanceValue != Daylight ) {
         m_whiteBalanceValue = Daylight;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
 void OperatorLoadRaw::filesCollectionChanged()
 {
-    setUpToDate(false);
+    setOutOfDate();
 }
 
 OperatorWorker *OperatorLoadRaw::newWorker() {

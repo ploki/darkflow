@@ -16,7 +16,7 @@ public:
 private slots:
     Photo process(const Photo &, int, int) { throw 0; }
     void play() {
-        qWarning("play!!");
+        qDebug("play!!");
         Photo photo(Photo::Linear);
         photo.setIdentity(m_operator->m_uuid);
         photo.createImage(1000,1000);
@@ -59,7 +59,7 @@ OperatorExNihilo::OperatorExNihilo(Process *parent) :
 
 OperatorExNihilo::~OperatorExNihilo()
 {
-    //qWarning((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
+    //qDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
 }
 
 OperatorExNihilo *OperatorExNihilo::newInstance()

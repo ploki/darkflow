@@ -49,7 +49,7 @@ signals:
 private slots:
     void operatorStateChanged();
     void closeButtonClicked(QPoint screenPos);
-    void passThroughClicked(QPoint screenPos);
+    void helpClicked(QPoint screenPos);
     void visualizationClicked(QPoint screenPos);
     void playClicked(QPoint screenPos);
     void abortClicked(QPoint screenPos);

@@ -19,7 +19,7 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
     Photo newPhoto(photo);
     qreal angle = dynamic_cast<OperatorRotate*>(m_operator)->angle();
 
-    qWarning(QString("apply rotation of %0 °").arg(angle).toLatin1());
+    qDebug(QString("apply rotation of %0 °").arg(angle).toLatin1());
     newPhoto.image().rotate(angle);
     return newPhoto;
 }
@@ -56,7 +56,7 @@ void OperatorRotate::set0()
 {
     if ( m_angle != 0 ) {
         m_angle = 0;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -64,7 +64,7 @@ void OperatorRotate::set90()
 {
     if ( m_angle != 90 ) {
         m_angle = 90;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -72,7 +72,7 @@ void OperatorRotate::set180()
 {
     if ( m_angle != 180 ) {
         m_angle = 180;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -80,7 +80,7 @@ void OperatorRotate::set270()
 {
     if ( m_angle != 270 ) {
         m_angle = 270;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 

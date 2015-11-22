@@ -21,7 +21,9 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_output(NULL),
     m_photo(NULL),
     m_zoomLevel(ZoomFitVisible),
-    m_zoom(0)
+    m_zoom(0),
+    m_currentPhoto(),
+    m_currentOutput(0)
 {
     ui->setupUi(this);
     ui->operatorName->setText(m_operator->getName());
@@ -29,6 +31,10 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     setWindowTitle(m_operator->getName());
     connect(ui->operatorName, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
     connect(ui->tree_photos, SIGNAL(itemSelectionChanged()), this, SLOT(photoSelectionChanged()));
+    connect(this, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
+    connect(m_operator, SIGNAL(upToDate()), this, SLOT(upToDate()));
+    connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()));
+
     updateTreeviewPhotos();
     updateVisualizationZoom();
 }
@@ -41,7 +47,7 @@ Visualization::~Visualization()
 
 void Visualization::zoomFitVisible()
 {
-    //qWarning("action fit!");
+    //qDebug("action fit!");
     m_zoomLevel=ZoomFitVisible;
     updateVisualizationZoom();
 }
@@ -108,6 +114,12 @@ void Visualization::expChanged()
     }
 }
 
+void Visualization::upToDate()
+{
+    updateTreeviewPhotos();
+    this->raise();
+}
+
 void Visualization::outOfDate()
 {
     bool one_defined = false;
@@ -123,7 +135,7 @@ void Visualization::outOfDate()
         ++it;
     }
     if ( /* one_defined &&*/ this->isVisible() ) {
-        qWarning("Vis requests play");
+        qDebug(QString(m_operator->m_uuid + " Vis requests play").toLatin1());
         m_operator->play();
     }
 }
@@ -174,10 +186,10 @@ void Visualization::curveParamsChanged()
 
 void Visualization::updateVisualizationZoom()
 {
-    //qWarning("updateVis");
+    //qDebug("updateVis");
     if ( ui->widget_visualization->pixmap() == NULL )
         return;
-    //qWarning("pixmap defined");
+    //qDebug("pixmap defined");
     switch(m_zoomLevel) {
     case ZoomFitVisible:
         break;
@@ -194,7 +206,7 @@ void Visualization::updateVisualizationZoom()
     }
     qreal zoom_factor = pow(2,qreal(m_zoom)/5);
     if ( m_zoomLevel == ZoomFitVisible ) {
-        //qWarning("proceed fit vis");
+        //qDebug("proceed fit vis");
         ui->scrollArea_visualization->setWidgetResizable(false);
         ui->widget_visualization->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
         QSize rect = ui->scrollArea_visualization->viewport()->size();
@@ -204,7 +216,7 @@ void Visualization::updateVisualizationZoom()
         //ui->widget_visualization->adjustSize();
     }
     else {
-        //qWarning("proceed zoom");
+        //qDebug("proceed zoom");
         ui->scrollArea_visualization->setWidgetResizable(true);
         ui->widget_visualization->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         ui->widget_visualization->resize(ui->widget_visualization->pixmap()->size()*zoom_factor);
@@ -218,22 +230,14 @@ void Visualization::nameChanged(QString text)
     emit operatorNameChanged(text);
 }
 
-void Visualization::operatorUpdated()
-{
-    updateTreeviewPhotos();
-    this->raise();
-}
-
 void Visualization::updateTreeviewPhotos()
 {
     QTreeWidget *tree = ui->tree_photos;
-    QString currentPhoto;
-    const OperatorOutput *currentOutput = NULL;
     QList<QTreeWidgetItem*> selectedItems = tree->selectedItems();
     if ( selectedItems.count() == 1 ) {
         if ( TreePhotoItem * photoItem = dynamic_cast<TreePhotoItem*>(selectedItems.first()) ) {
-            currentPhoto = photoItem->photo().getIdentity();
-            currentOutput = dynamic_cast<TreeOutputItem*>(photoItem->parent())->output();
+            m_currentPhoto = photoItem->photo().getIdentity();
+            m_currentOutput = dynamic_cast<TreeOutputItem*>(photoItem->parent())->output();
         }
     }
     tree->clear();
@@ -253,8 +257,8 @@ void Visualization::updateTreeviewPhotos()
                 if ( !photo.isComplete() )
                     qWarning("source photo is not complete");
                 TreePhotoItem *item = new TreePhotoItem(photo, tree_source);
-                if ( photo.getIdentity() == currentPhoto &&
-                     source == currentOutput ) {
+                if ( photo.getIdentity() == m_currentPhoto &&
+                     source == m_currentOutput ) {
                     item->setSelected(true);
                 }
             }
@@ -272,8 +276,8 @@ void Visualization::updateTreeviewPhotos()
             if ( !photo.isComplete() )
                 qWarning("output photo is not complete");
             TreePhotoItem *item = new TreePhotoItem(photo, tree_output);
-            if ( photo.getIdentity() == currentPhoto &&
-                 output == currentOutput ) {
+            if ( photo.getIdentity() == m_currentPhoto &&
+                 output == m_currentOutput ) {
                 item->setSelected(true);
             }
         }
@@ -286,8 +290,10 @@ void Visualization::photoSelectionChanged()
 {
     QList<QTreeWidgetItem*> items = ui->tree_photos->selectedItems();
 
-    if ( items.count() > 1 )
-        qWarning("Invalid photo selection in visualization tree view");
+    if ( items.count() > 1 ) {
+        qDebug(QString("Invalid photo selection in visualization tree view: sel count %0").arg(items.count()).toLatin1());
+        return;
+    }
 
     clearAllTabs();
     foreach(QTreeWidgetItem *item, items ) {

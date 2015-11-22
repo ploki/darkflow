@@ -60,7 +60,7 @@ void OpWhiteBalance::setUnsafe()
 {
     if ( m_safe ) {
         m_safe = false;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }
 
@@ -68,6 +68,6 @@ void OpWhiteBalance::setSafe()
 {
     if ( !m_safe ) {
         m_safe = true;
-        setUpToDate(false);
+        setOutOfDate();
     }
 }

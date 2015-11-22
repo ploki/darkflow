@@ -36,8 +36,8 @@ ProcessConnection::~ProcessConnection()
 {
     //m_outPort->m_node->removeConnection(this);
     if (m_inPort)
-        Operator::operator_disconnect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
-                m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
+        Operator::operator_disconnect(m_outPort->m_node->m_operator, m_outPort->portIdx(),
+                                      m_inPort->m_node->m_operator, m_inPort->portIdx());
 }
 
 int ProcessConnection::type() const
@@ -61,9 +61,9 @@ void ProcessConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 QJsonObject ProcessConnection::save()
 {
     QJsonObject obj;
-    obj["outPortUuid"] = m_outPort->m_node->m_operator->getUuid();
+    obj["outPortUuid"] = m_outPort->m_node->m_operator->uuid();
     obj["outPortIdx"] = m_outPort->portIdx();
-    obj["inPortUuid"] = m_inPort->m_node->m_operator->getUuid();
+    obj["inPortUuid"] = m_inPort->m_node->m_operator->uuid();
     obj["inPortIdx"] = m_inPort->portIdx();
     return obj;
 }
@@ -105,14 +105,14 @@ void ProcessConnection::updateConnectedPath()
 
 bool ProcessConnection::setInputPort(ProcessPort *port)
 {
-    if ( port->m_node->m_operator->spotLoop(m_outPort->m_node->m_operator->getUuid()) )
+    if ( port->m_node->m_operator->spotLoop(m_outPort->m_node->m_operator->uuid()) )
         return false;
     m_inPort = port;
     connect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     connect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
 
-    Operator::operator_connect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
-            m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
+    Operator::operator_connect(m_outPort->m_node->m_operator,m_outPort->portIdx(),
+                               m_inPort->m_node->m_operator,m_inPort->portIdx());
     m_inPort->m_node->addConnection(this);
     m_outPort->m_node->addConnection(this);
     updateConnectedPath();
@@ -123,8 +123,8 @@ void ProcessConnection::unsetInputPort()
 {
     disconnect(m_inPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
     disconnect(m_inPort, SIGNAL(destroyed(QObject*)), this, SLOT(portDestroyed(QObject*)));
-    Operator::operator_disconnect(m_outPort->m_node->m_operator->m_outputs[m_outPort->portIdx()],
-            m_inPort->m_node->m_operator->m_inputs[m_inPort->portIdx()]);
+    Operator::operator_disconnect(m_outPort->m_node->m_operator, m_outPort->portIdx(),
+                                  m_inPort->m_node->m_operator,m_inPort->portIdx());
     m_inPort->m_node->removeConnection(this);
     m_outPort->m_node->removeConnection(this);
     m_inPort = NULL;

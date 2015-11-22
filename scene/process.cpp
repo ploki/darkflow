@@ -290,7 +290,7 @@ ProcessNode *Process::findNode(const QString &uuid)
     foreach(QGraphicsItem *item, items) {
         if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
             ProcessNode *node = dynamic_cast<ProcessNode *>(item);
-            if ( node->m_operator->getUuid() == uuid )
+            if ( node->m_operator->uuid() == uuid )
                 return node;
         }
     }

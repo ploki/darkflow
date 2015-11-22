@@ -15,10 +15,12 @@ public:
     {}
 private slots:
     Photo process(const Photo &, int, int) { throw 0; }
-    void play() {
+    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
         qDebug("play!!");
         Photo photo(Photo::Linear);
-        photo.setIdentity(m_operator->m_uuid);
+        m_inputs = inputs;
+        play_prepareOutputs(n_outputs);
+        photo.setIdentity(m_operator->uuid());
         photo.createImage(1000,1000);
         if (photo.isComplete()) {
             Magick::Image& image = photo.image();
@@ -42,7 +44,7 @@ private slots:
             }
             cache.sync();
             photo.setTag("Name", "Random Image");
-            m_operator->m_outputs[0]->m_result.push_back(photo);
+            m_outputs[0].push_back(photo);
             emitSuccess();
         }
         else {

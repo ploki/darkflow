@@ -15,7 +15,7 @@ public:
     Photo process(const Photo &, int, int) { throw 0; }
 
 private slots:
-    void play();
+    void play(QVector<QVector<Photo> > inputs, int n_outputs);
 
 private:
     QByteArray convert(const QString& filename);

@@ -6,24 +6,34 @@
 #include "operatoroutput.h"
 #include "photo.h"
 
+static struct AtStart {
+    AtStart() {
+        qRegisterMetaType<QVector<QVector<Photo> > >("QVector<QVector<Photo> >");
+    }
+} foo;
 
 OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     QObject(NULL),
     m_thread(thread),
     m_operator(op),
+    m_inputs(),
+    m_n_outputs(0),
+    m_outputs(),
     m_signalEmited(false)
 {
     moveToThread(thread);
     connect(m_thread, SIGNAL(finished()), this, SLOT(finished()));
-    connect(this, SIGNAL(start()), this, SLOT(play()));
+    connect(this, SIGNAL(start(QVector<QVector<Photo> >, int)), this, SLOT(play(QVector<QVector<Photo> >, int)));
     connect(this, SIGNAL(progress(int,int)), m_operator, SLOT(workerProgress(int,int)));
-    connect(this, SIGNAL(success()), m_operator, SLOT(workerSuccess()));
+    connect(this, SIGNAL(success(QVector<QVector<Photo> >)), m_operator, SLOT(workerSuccess(QVector<QVector<Photo> >)));
     connect(this, SIGNAL(failure()), m_operator, SLOT(workerFailure()));
     m_thread->start();
 }
 
-void OperatorWorker::play()
+void OperatorWorker::play(QVector<QVector<Photo> > inputs, int n_outputs)
 {
+    m_inputs = inputs;
+    play_prepareOutputs(n_outputs);
     qDebug("OperatorWorker::play()");
 
     if ( !play_inputsAvailable() )
@@ -42,8 +52,10 @@ void OperatorWorker::play()
 
 void OperatorWorker::finished()
 {
-    if ( !m_signalEmited)
+    if ( !m_signalEmited) {
+        qDebug("OperatorWorker: not signal sent, sending failure");
         emitFailure();
+    }
 }
 
 bool OperatorWorker::aborted() {
@@ -52,21 +64,21 @@ bool OperatorWorker::aborted() {
 
 void OperatorWorker::emitFailure() {
     m_signalEmited = true;
-    qDebug(QString("Worker of " + m_operator->m_uuid + "emit progress(0, 1)").toLatin1());
+    qDebug(QString("Worker of " + m_operator->uuid() + "emit progress(0, 1)").toLatin1());
     emit progress(0, 1);
-    qDebug(QString("Worker of " + m_operator->m_uuid + "emit failure").toLatin1());
+    qDebug(QString("Worker of " + m_operator->uuid() + "emit failure").toLatin1());
     emit failure();
-    qDebug(QString("Worker of " + m_operator->m_uuid + "emit done").toLatin1());
+    qDebug(QString("Worker of " + m_operator->uuid() + "emit done").toLatin1());
 }
 
 void OperatorWorker::emitSuccess()
 {
     m_signalEmited = true;
-    qDebug(QString("Worker of " + m_operator->m_uuid + "emit progress(1, 1)").toLatin1());
+    qDebug(QString("Worker of " + m_operator->uuid() + "emit progress(1, 1)").toLatin1());
     emit progress(1, 1);
-    qDebug(QString("Worker of " + m_operator->m_uuid + "emit success").toLatin1());
-    emit success();
-    qDebug(QString("Worker of " + m_operator->m_uuid + "emit done").toLatin1());
+    qDebug(QString("Worker of " + m_operator->uuid() + "emit success").toLatin1());
+    emit success(m_outputs);
+    qDebug(QString("Worker of " + m_operator->uuid() + "emit done").toLatin1());
 }
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
@@ -76,7 +88,7 @@ void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
 
 bool OperatorWorker::play_inputsAvailable()
 {
-    if ( 0 == m_operator->m_inputs.size() ) {
+    if ( 0 == m_inputs.size() ) {
         qWarning("OperatorWorker::play() not overloaded for no input");
         emitFailure();
         return false;
@@ -84,9 +96,16 @@ bool OperatorWorker::play_inputsAvailable()
     return true;
 }
 
+void OperatorWorker::play_prepareOutputs(int n_outputs)
+{
+    for (int i = 0 ; i < n_outputs ; ++i )
+        m_outputs.push_back(QVector<Photo>());
+    m_n_outputs = n_outputs;
+}
+
 bool OperatorWorker::play_outputsAvailable()
 {
-    if ( 0 == m_operator->m_outputs.size() ) {
+    if ( 0 == m_n_outputs ) {
         qWarning("OperatorWorker::play() not overloaded for #output != 1");
         emitFailure();
         return false;
@@ -103,25 +122,24 @@ bool OperatorWorker::play_onInput(int idx)
 {
     int c = 0;
     int p = 0;
-    foreach(OperatorOutput *remoteOutput, m_operator->m_inputs[idx]->sources())
-        c += remoteOutput->m_result.count();
+    c = m_inputs[idx].count();
 
-    foreach(OperatorOutput *remoteOutput, m_operator->m_inputs[idx]->sources()) {
-        const QVector<Photo> source = remoteOutput->m_result;
-        foreach(const Photo &photo, source) {
-            if ( aborted() ) {
-                emitFailure();
-                return false;
-            }
-            emit progress(p, c);
-            Photo newResult = this->process(photo, p++, c);
-            if ( !newResult.isComplete() ) {
-                emitFailure();
-                return false;
-            }
-            m_operator->m_outputs[0]->m_result.push_back(newResult);
+    foreach(Photo photo, m_inputs[idx]) {
+        if ( aborted() ) {
+            qDebug("OperatorWorker aborted, sending failure");
+            emitFailure();
+            return false;
         }
+        emit progress(p, c);
+        Photo newPhoto = this->process(photo, p++, c);
+        if ( !newPhoto.isComplete() ) {
+            qWarning("OperatorWorker: photo is not complete, sending failure");
+            emitFailure();
+            return false;
+        }
+        m_outputs[0].push_back(newPhoto);
     }
+
     emitSuccess();
     return true;
 }

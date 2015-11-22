@@ -50,16 +50,14 @@ public:
 
         Photo newPhoto(photo);
         for ( int i = 1,
-              s = m_operator->m_inputs.count() ;
+              s = m_inputs.count() ;
               i < s ;
               ++i ) {
-            foreach(OperatorOutput *parentOutput, m_operator->m_inputs[i]->sources()) {
-                foreach(Photo subtrahend, parentOutput->m_result) {
-                    subtract(newPhoto.image(), subtrahend.image());
-                    if (subtrahend.image().columns() == 1 &&
-                            subtrahend.image().rows() == 1 )
-                        subtract(newPhoto.curve(), subtrahend.image());
-                }
+            foreach(Photo subtrahend, m_inputs[i]) {
+                subtract(newPhoto.image(), subtrahend.image());
+                if (subtrahend.image().columns() == 1 &&
+                        subtrahend.image().rows() == 1 )
+                    subtract(newPhoto.curve(), subtrahend.image());
             }
         }
         return newPhoto;

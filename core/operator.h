@@ -53,7 +53,7 @@ public:
 
     bool isUpToDate() const;
 
-    QString getUuid() const;
+    QString uuid() const;
     void setUuid(const QString &uuid);
 
     virtual Operator* newInstance() = 0;
@@ -61,8 +61,10 @@ public:
     QString getClassIdentifier() const;
     QString getClassSection() const;
 
-    static void operator_connect(OperatorOutput *output, OperatorInput *input);
-    static void operator_disconnect(OperatorOutput *output, OperatorInput *input);
+    static void operator_connect(Operator *outputOperator, int outputIdx,
+                                 Operator *inputOperator, int inputIdx);
+    static void operator_disconnect(Operator *outputOperator, int outputIdx,
+                                    Operator *inputOperator, int inputIdx);
 
     virtual void save(QJsonObject& obj);
     virtual void load(QJsonObject& obj);
@@ -73,12 +75,13 @@ public:
 
     bool play_parentDirty();
 
+private:
+    QVector<QVector<Photo> > collectInputs();
 
 signals:
     void progress(int ,int );
     void upToDate();
     void outOfDate();
-    void remotePlay();
 
 public:
     virtual OperatorWorker* newWorker() = 0;
@@ -88,19 +91,19 @@ public slots:
     void stop();
     void clone();
     void workerProgress(int p, int c);
-    void workerSuccess();
+    void workerSuccess(QVector<QVector<Photo> > result);
     void workerFailure();
     void parentUpToDate();
     void setName(const QString &name);
     void setUpToDate();
     void setOutOfDate();
 
-//protected:
-public:
+protected:
+    friend class Visualization;
     Process *m_process;
     bool m_enabled;
     bool m_upToDate;
-    bool m_playRequested;
+    bool m_workerAboutToStart;
     QVector<OperatorParameter*> m_parameters;
     QVector<OperatorInput*> m_inputs;
     QVector<OperatorOutput*> m_outputs;

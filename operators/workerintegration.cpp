@@ -39,46 +39,44 @@ bool WorkerIntegration::play_onInput(int idx)
     Q_ASSERT( idx == 0 );
     int photoCount = 0;
     int photoN = 0;
-    foreach(OperatorOutput *output, m_operator->m_inputs[0]->sources()) {
-        photoCount+=output->m_result.count();
-    }
-    foreach(OperatorOutput *output, m_operator->m_inputs[0]->sources()) {
-        foreach(Photo photo, output->m_result) {
-            if ( aborted() ) {
-                emitFailure();
-                return false;
-            }
-            Magick::Image& image = photo.image();
-            if ( ! m_integrationPlane ) {
-                createPlanes(image);
-            }
-            Magick::Pixels pixel_cache(image);
-            int line = 0;
-#pragma omp parallel for
-            for ( int y = 0 ; y < m_h ; ++y ) {
-                Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
-                if ( !pixels ) continue;
-                for ( int x = 0 ; x < m_w ; ++x ) {
-                    m_integrationPlane[y*m_w*3+x*3+0] += pixels[x].red;
-                    m_integrationPlane[y*m_w*3+x*3+1] += pixels[x].green;
-                    m_integrationPlane[y*m_w*3+x*3+2] += pixels[x].blue;
-                    ++m_countPlane[y*m_w*3+x*3+0];
-                    ++m_countPlane[y*m_w*3+x*3+1];
-                    ++m_countPlane[y*m_w*3+x*3+2];
-                }
-#pragma omp critical
-                {
-                    ++line;
-                    if ( 0 == line % 100 )
-                        emitProgress(photoN, photoCount, line, m_h);
-                }
-            }
-#pragma omp barrier
-            ++photoN;
+    Q_ASSERT( m_inputs.count() == 1 );
+    photoCount=m_inputs[0].count();
+
+    foreach(Photo photo, m_inputs[0]) {
+        if ( aborted() ) {
+            emitFailure();
+            return false;
         }
+        Magick::Image& image = photo.image();
+        if ( ! m_integrationPlane ) {
+            createPlanes(image);
+        }
+        Magick::Pixels pixel_cache(image);
+        int line = 0;
+#pragma omp parallel for
+        for ( int y = 0 ; y < m_h ; ++y ) {
+            Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
+            if ( !pixels ) continue;
+            for ( int x = 0 ; x < m_w ; ++x ) {
+                m_integrationPlane[y*m_w*3+x*3+0] += pixels[x].red;
+                m_integrationPlane[y*m_w*3+x*3+1] += pixels[x].green;
+                m_integrationPlane[y*m_w*3+x*3+2] += pixels[x].blue;
+                ++m_countPlane[y*m_w*3+x*3+0];
+                ++m_countPlane[y*m_w*3+x*3+1];
+                ++m_countPlane[y*m_w*3+x*3+2];
+            }
+#pragma omp critical
+            {
+                ++line;
+                if ( 0 == line % 100 )
+                    emitProgress(photoN, photoCount, line, m_h);
+            }
+        }
+#pragma omp barrier
+        ++photoN;
     }
     Photo newPhoto;
-    newPhoto.setIdentity(m_operator->m_uuid);
+    newPhoto.setIdentity(m_operator->uuid());
     newPhoto.createImage(m_w, m_h);
     Magick::Image& newImage = newPhoto.image();
     newImage.modifyImage();
@@ -99,7 +97,7 @@ bool WorkerIntegration::play_onInput(int idx)
     }
 #pragma omp barrier
     newPhoto.setTag("Name", "Integration");
-    m_operator->m_outputs[0]->m_result.push_back(newPhoto);
+    m_outputs[0].push_back(newPhoto);
     emitSuccess();
     return true;
 }

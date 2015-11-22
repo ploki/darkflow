@@ -14,7 +14,7 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_process(parent),
     m_enabled(true),
     m_upToDate(false),
-    m_playRequested(false),
+    m_workerAboutToStart(false),
     m_parameters(),
     m_inputs(),
     m_outputs(),
@@ -26,7 +26,6 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_thread(new QThread(this)),
     m_worker(NULL)
 {
-    connect(this, SIGNAL(remotePlay()), this, SLOT(play()), Qt::QueuedConnection);
 }
 
 Operator::~Operator()
@@ -68,13 +67,23 @@ void Operator::workerProgress(int p, int c)
     emit progress(p,c);
 }
 
-void Operator::workerSuccess()
+void Operator::workerSuccess(QVector<QVector<Photo> > result)
 {
     m_thread->quit();
     //m_worker->deleteLater();
     m_worker=NULL;
-    m_playRequested=false;
     m_waitingForParentUpToDate=false;
+
+    int idx = 0;
+    Q_ASSERT(m_outputs.count() == result.count());
+    foreach(OperatorOutput *output, m_outputs) {
+        output->m_result.clear();
+        foreach(Photo photo, result[idx]) {
+            output->m_result.push_back(photo);
+        }
+        ++idx;
+    }
+
     setUpToDate();
 }
 
@@ -83,7 +92,6 @@ void Operator::workerFailure()
     m_thread->quit();
     //m_worker->deleteLater();
     m_worker=NULL;
-    m_playRequested=false;
     m_waitingForParentUpToDate=false;
     setOutOfDate();
 }
@@ -124,7 +132,7 @@ QString Operator::getClassIdentifier() const
 {
     return m_classIdentifier;
 }
-QString Operator::getUuid() const
+QString Operator::uuid() const
 {
     return m_uuid;
 }
@@ -142,7 +150,7 @@ bool Operator::play_parentDirty()
         foreach(OperatorOutput *parentOutput, input->sources()) {
             if ( !parentOutput->m_operator->isUpToDate() ) {
                 dirty = true;
-                parentOutput->m_operator->remotePlay();
+                parentOutput->m_operator->play();
                 m_waitingForParentUpToDate = true;
             }
         }
@@ -153,58 +161,72 @@ bool Operator::play_parentDirty()
     return dirty;
 }
 
+QVector<QVector<Photo> > Operator::collectInputs()
+{
+    QVector<QVector<Photo> > inputs;
+    int i = 0;
+    foreach(OperatorInput *input, m_inputs) {
+        inputs.push_back(QVector<Photo>());
+        foreach(OperatorOutput *source, input->sources()) {
+            foreach(Photo photo, source->m_result) {
+                inputs[i].push_back(photo);
+            }
+        }
+        ++i;
+    }
+    return inputs;
+}
+
 void Operator::play() {
     Q_ASSERT(QThread::currentThread() == thread());
     if (m_worker) {
         qDebug("already playing");
         return;
     }
-    if (play_parentDirty())
-        return;
     if (isUpToDate())
         return;
+    if (play_parentDirty())
+        return;
     qDebug(QString("play on "+m_uuid).toLatin1());
-    m_playRequested = true;
-    setOutOfDate();
-    m_upToDate = true;
+    m_workerAboutToStart = true;
     m_worker = newWorker();
-    m_worker->start();
+    setOutOfDate();
+    m_worker->start(collectInputs(), m_outputs.count());
+    m_workerAboutToStart = false;
     qDebug(QString("worker started for "+m_uuid).toLatin1());
 }
 
 bool Operator::isUpToDate() const
 {
     qDebug(QString(m_uuid + " is up to date: %0").arg(m_upToDate && !m_worker).toLatin1());
-    return m_upToDate && !m_worker;
+    return m_upToDate;
 }
 
 void Operator::setUpToDate()
 {
+    qDebug("setUpToDate()");
     Q_ASSERT(QThread::currentThread() == thread());
-    if ( !m_upToDate ) {
-        play();
-    }
-    else {
-        emit progress(1, 1);
-        emit upToDate();
-    }
+    m_upToDate = true;
+    emit progress(1, 1);
+    emit upToDate();
 }
 
 void Operator::setOutOfDate()
 {
     Q_ASSERT(QThread::currentThread() == thread());
-    if ( m_worker ) {
+    if ( m_worker && !m_workerAboutToStart ) {
+        qDebug("Sending 'stop' to worker");
         stop();
         return;
     }
-    bool was_upToDate = m_upToDate;
+    qDebug("setOutOfDate()");
     m_upToDate = false;
     foreach(OperatorOutput *output, m_outputs) {
+        output->m_result.clear();
         foreach(OperatorInput *remoteInput, output->sinks())
             remoteInput->m_operator->setOutOfDate();
-        output->m_result.clear();
     }
-    if ( !m_playRequested && was_upToDate )
+    if ( !m_workerAboutToStart )
         emit outOfDate();
     emit progress(0, 1);
 }
@@ -224,16 +246,22 @@ void Operator::setEnabled(bool enabled)
     m_enabled = enabled;
 }
 
-void Operator::operator_connect(OperatorOutput *output, OperatorInput *input)
+void Operator::operator_connect(Operator *outputOperator, int outputIdx,
+                                Operator *inputOperator, int inputIdx)
 {
+    OperatorOutput *output = outputOperator->m_outputs[outputIdx];
+    OperatorInput *input = inputOperator->m_inputs[inputIdx];
     output->addSink(input);
     input->addSource(output);
     connect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
     input->m_operator->setOutOfDate();
 }
 
-void Operator::operator_disconnect(OperatorOutput *output, OperatorInput *input)
+void Operator::operator_disconnect(Operator *outputOperator, int outputIdx,
+                                   Operator *inputOperator, int inputIdx)
 {
+    OperatorOutput *output = outputOperator->m_outputs[outputIdx];
+    OperatorInput *input = inputOperator->m_inputs[inputIdx];
     disconnect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
     output->removeSink(input);
     input->removeSource(output);

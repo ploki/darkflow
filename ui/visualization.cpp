@@ -33,7 +33,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(ui->tree_photos, SIGNAL(itemSelectionChanged()), this, SLOT(photoSelectionChanged()));
     connect(this, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
     connect(m_operator, SIGNAL(upToDate()), this, SLOT(upToDate()));
-    connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()));
+    connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()), Qt::QueuedConnection);
 
     updateTreeviewPhotos();
     updateVisualizationZoom();
@@ -135,7 +135,7 @@ void Visualization::outOfDate()
         ++it;
     }
     if ( /* one_defined &&*/ this->isVisible() ) {
-        qDebug(QString(m_operator->m_uuid + " Vis requests play").toLatin1());
+        qDebug(QString(m_operator->uuid() + " Vis requests play").toLatin1());
         m_operator->play();
     }
 }

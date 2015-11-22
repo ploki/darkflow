@@ -22,33 +22,28 @@ public:
         m_max()
     {}
     void play_analyseSources() {
-        for ( int i = 1,
-              s = m_operator->m_inputs.count() ;
-              i < s ;
-              ++i) {
-            foreach(OperatorOutput *output, m_operator->m_inputs[i]->sources()) {
-                foreach(Photo photo, output->m_result) {
-                    Magick::Image& image = photo.image();
-                    Magick::Pixels pixels_cache(image);
-                    int w = image.columns();
-                    int h = image.rows();
-                    Triplet max;
-                    for ( int y = 0 ; y < h ; ++ y) {
-                        Magick::PixelPacket * pixels = pixels_cache.get(0, y, w, 1);
-                        for ( int x = 0 ; x < w ; ++x ) {
-                            if ( pixels[x].red > max.r )
-                                max.r = pixels[x].red;
-                            if ( pixels[x].green > max.g )
-                                max.g = pixels[x].green;
-                            if ( pixels[x].blue > max.b )
-                                max.b = pixels[x].blue;
-                        }
-                    }
-                    m_max.push_back(max);
+        Q_ASSERT(m_inputs.count() == 2);
+        foreach(Photo photo, m_inputs[1]) {
+            Magick::Image& image = photo.image();
+            Magick::Pixels pixels_cache(image);
+            int w = image.columns();
+            int h = image.rows();
+            Triplet max;
+            for ( int y = 0 ; y < h ; ++ y) {
+                Magick::PixelPacket * pixels = pixels_cache.get(0, y, w, 1);
+                for ( int x = 0 ; x < w ; ++x ) {
+                    if ( pixels[x].red > max.r )
+                        max.r = pixels[x].red;
+                    if ( pixels[x].green > max.g )
+                        max.g = pixels[x].green;
+                    if ( pixels[x].blue > max.b )
+                        max.b = pixels[x].blue;
                 }
             }
+            m_max.push_back(max);
         }
     }
+
     void correct(Magick::Image &image, Magick::Image& flatfield, Triplet& max) {
         int w = image.columns();
         int h = image.rows();
@@ -101,15 +96,9 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         int source_flatfield_idx = 0;
-        for ( int i = 1,
-              s = m_operator->m_inputs.count() ;
-              i < s ;
-              ++i) {
-            foreach(OperatorOutput *output, m_operator->m_inputs[i]->sources()) {
-                foreach(Photo flatfield, output->m_result) {
-                    correct(newPhoto.image(), flatfield.image(), m_max[source_flatfield_idx++]);
-                }
-            }
+        Q_ASSERT(m_inputs.count() == 2);
+        foreach(Photo flatfield, m_inputs[1]) {
+            correct(newPhoto.image(), flatfield.image(), m_max[source_flatfield_idx++]);
         }
         return newPhoto;
     }

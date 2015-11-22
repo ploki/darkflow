@@ -108,6 +108,7 @@ void OperatorParameterSlider::setMax(const qreal &max)
 void OperatorParameterSlider::setValue(const qreal &value)
 {
     m_value = value;
+    qDebug("Slider emit setOutOfDate()");
     emit setOutOfDate();
 }
 

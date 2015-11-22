@@ -134,7 +134,11 @@ void ProcessNode::addButtons(qreal size)
                                                 ProcessButton::Abort,m_process, this);
     connect(buttAbort, SIGNAL(buttonClicked(QPoint)), this, SLOT(abortClicked(QPoint)));
 
-    ProcessProgressBar *progress = new ProcessProgressBar(QRectF(x+size*2, y+h-size, w-size*2, size), m_process, this);
+    ProcessButton *buttRefresh= new ProcessButton(QRectF(x+size*2,y+h-size,size,size),
+                                                ProcessButton::Refresh,m_process, this);
+    connect(buttRefresh, SIGNAL(buttonClicked(QPoint)), this, SLOT(refreshClicked(QPoint)));
+
+    ProcessProgressBar *progress = new ProcessProgressBar(QRectF(x+size*3, y+h-size, w-size*3, size), m_process, this);
     connect(m_operator, SIGNAL(progress(int,int)), progress, SLOT(progress(int,int)));
 }
 void ProcessNode::addPorts(QVector<OperatorOutput*>& outputs, QVector<OperatorInput*>& inputs, qreal size)
@@ -248,6 +252,12 @@ void ProcessNode::playClicked(QPoint)
 void ProcessNode::abortClicked(QPoint)
 {
     m_operator->stop();
+}
+
+void ProcessNode::refreshClicked(QPoint)
+{
+    m_operator->setOutOfDate();
+    m_operator->play();
 }
 
 void ProcessNode::operatorNameChanged(QString text)

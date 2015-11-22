@@ -19,7 +19,8 @@ public:
                    Abort,
                    Display,
                    Close,
-                   Help } ButtonType;
+                   Help,
+                   Refresh } ButtonType;
 
     explicit ProcessButton(QRectF rect,
                            ButtonType type,

@@ -15,7 +15,7 @@ public:
         OperatorWorker(thread, op)
     {}
 
-    void subtract(Magick::Image& minuend, Magick::Image& subtrahend) {
+    void subtract(Magick::Image& minuend, Magick::Image& subtrahend, Magick::Image& underflow) {
         int w = minuend.columns(),
                 h = minuend.rows();
         int s_w = subtrahend.columns(),
@@ -27,41 +27,62 @@ public:
             return;
         }
         minuend.modifyImage();
+        underflow.modifyImage();
         Magick::Pixels minuend_cache(minuend);
         Magick::Pixels subtrahend_cache(subtrahend);
+        Magick::Pixels underflow_cache(underflow);
 #pragma omp parallel for
         for ( int y = 0 ; y < h ; ++y ) {
             Magick::PixelPacket *minuend_pixels = minuend_cache.get(0, y, w, 1);
+            Magick::PixelPacket *underflow_pixels = underflow_cache.get(0, y, w,1);
             const Magick::PixelPacket *subtrahend_pixels = subtrahend_cache.getConst(0, (1 == s_h ? 0 : y), s_w, 1);
             if ( !minuend_pixels ) continue;
             if ( !subtrahend_pixels ) continue;
             for ( int x = 0 ; x < w ; ++x ) {
                 int s_x = ( 1 == s_w ) ? 0 : x ;
-                minuend_pixels[x].red = clamp<quantum_t>(minuend_pixels[x].red - subtrahend_pixels[s_x].red, 0, QuantumRange);
-                minuend_pixels[x].green = clamp<quantum_t>(minuend_pixels[x].green - subtrahend_pixels[s_x].green, 0, QuantumRange);
-                minuend_pixels[x].blue = clamp<quantum_t>(minuend_pixels[x].blue - subtrahend_pixels[s_x].blue, 0, QuantumRange);
+                quantum_t r = minuend_pixels[x].red - subtrahend_pixels[s_x].red;
+                quantum_t g = minuend_pixels[x].green - subtrahend_pixels[s_x].green;
+                quantum_t b = minuend_pixels[x].blue - subtrahend_pixels[s_x].blue;
+                underflow_pixels[x].red = underflow_pixels[x].green = underflow_pixels[x].blue =
+                        ( r < 0 || g < 0 || b < 0) ? QuantumRange : 0;
+                minuend_pixels[x].red = clamp<quantum_t>(r, 0, QuantumRange);
+                minuend_pixels[x].green = clamp<quantum_t>(g, 0, QuantumRange);
+                minuend_pixels[x].blue = clamp<quantum_t>(b, 0, QuantumRange);
             }
         }
 #pragma omp barrier
         minuend_cache.sync();
     }
-
-    Photo process(const Photo &photo, int, int) {
-
-        Photo newPhoto(photo);
-        for ( int i = 1,
-              s = m_inputs.count() ;
-              i < s ;
-              ++i ) {
-            foreach(Photo subtrahend, m_inputs[i]) {
-                subtract(newPhoto.image(), subtrahend.image());
-                if (subtrahend.image().columns() == 1 &&
-                        subtrahend.image().rows() == 1 )
-                    subtract(newPhoto.curve(), subtrahend.image());
+    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
+        m_inputs = inputs;
+        play_prepareOutputs(n_outputs);
+        Q_ASSERT( inputs.count() == 2 );
+        int n_photos = inputs[0].count() * inputs[1].count();
+        int n = 0;
+        foreach(Photo subtrahend, inputs[1]) {
+            foreach(Photo minuend, inputs[0]) {
+                ++n;
+                if (aborted())
+                    continue;
+                Photo underflow(minuend);
+                subtract(minuend.image(), subtrahend.image(), underflow.image());
+                if ( subtrahend.image().columns() == 1 &&
+                     subtrahend.image().rows() == 1 ) {
+                    Photo dummy(minuend);
+                    subtract(minuend.curve(), subtrahend.image(), dummy.image());
+                }
+                m_outputs[0].push_back(minuend);
+                m_outputs[1].push_back(underflow);
+                emit progress(n, n_photos);
             }
         }
-        return newPhoto;
+        if ( aborted() )
+            emitFailure();
+        else
+            emitSuccess();
     }
+
+    Photo process(const Photo &, int, int) { throw 0; }
 };
 
 
@@ -71,6 +92,7 @@ OpSubtract::OpSubtract(Process *parent) :
     m_inputs.push_back(new OperatorInput("Minuend","Minuend",OperatorInput::Set, this));
     m_inputs.push_back(new OperatorInput("Subtrahend","Subtrahend",OperatorInput::Set, this));
     m_outputs.push_back(new OperatorOutput("Difference", "Difference", this));
+    m_outputs.push_back(new OperatorOutput("Underflow", "Underflow", this));
 
 }
 

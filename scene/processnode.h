@@ -53,6 +53,7 @@ private slots:
     void visualizationClicked(QPoint screenPos);
     void playClicked(QPoint screenPos);
     void abortClicked(QPoint screenPos);
+    void refreshClicked(QPoint screenPos);
     void operatorNameChanged(QString text);
 
 public:

@@ -73,7 +73,9 @@ SOURCES +=\
     operators/opflatfieldcorrection.cpp \
     operators/opintegration.cpp \
     operators/workerintegration.cpp \
-    operators/opexposure.cpp
+    operators/opexposure.cpp \
+    operators/opinvert.cpp \
+    algorithms/invert.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -127,7 +129,9 @@ HEADERS  += \
     operators/opflatfieldcorrection.h \
     operators/opintegration.h \
     operators/workerintegration.h \
-    operators/opexposure.h
+    operators/opexposure.h \
+    operators/opinvert.h \
+    algorithms/invert.h
 
 FORMS    += \
     ui/aboutdialog.ui \

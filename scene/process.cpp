@@ -37,6 +37,7 @@
 #include "opblackbody.h"
 #include "opflatfieldcorrection.h"
 #include "opintegration.h"
+#include "opinvert.h"
 
 QString Process::uuid()
 {
@@ -77,6 +78,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpBlackBody(this));
     m_availableOperators.push_back(new OpFlatFieldCorrection(this));
     m_availableOperators.push_back(new OpIntegration(this));
+    m_availableOperators.push_back(new OpInvert(this));
     addOperatorsToContextMenu();
 }
 

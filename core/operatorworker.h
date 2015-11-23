@@ -15,7 +15,7 @@ class OperatorWorker : public QObject
     Q_OBJECT
 public:
     explicit OperatorWorker(QThread *thread, Operator* op);
-private slots:
+protected slots:
     virtual void play(QVector<QVector<Photo> > inputs, int n_outputs);
     virtual Photo process(const Photo &photo, int p, int c) = 0;
     void finished();

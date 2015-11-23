@@ -54,9 +54,11 @@ public:
         minuend_cache.sync();
     }
     void play(QVector<QVector<Photo> > inputs, int n_outputs) {
+        Q_ASSERT( inputs.count() == 2 );
+        if ( inputs[1].count() == 0 )
+            return OperatorWorker::play(inputs, n_outputs);
         m_inputs = inputs;
         play_prepareOutputs(n_outputs);
-        Q_ASSERT( inputs.count() == 2 );
         int n_photos = inputs[0].count() * inputs[1].count();
         int n = 0;
         foreach(Photo subtrahend, inputs[1]) {
@@ -68,7 +70,7 @@ public:
                 subtract(minuend.image(), subtrahend.image(), underflow.image());
                 if ( subtrahend.image().columns() == 1 &&
                      subtrahend.image().rows() == 1 ) {
-                    Photo dummy(minuend);
+                    Photo dummy(minuend.curve(),Photo::Linear);
                     subtract(minuend.curve(), subtrahend.image(), dummy.image());
                 }
                 m_outputs[0].push_back(minuend);
@@ -82,7 +84,7 @@ public:
             emitSuccess();
     }
 
-    Photo process(const Photo &, int, int) { throw 0; }
+    Photo process(const Photo &photo, int, int) { return Photo(photo); }
 };
 
 

@@ -35,6 +35,10 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(m_operator, SIGNAL(upToDate()), this, SLOT(upToDate()));
     connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()), Qt::QueuedConnection);
 
+    QStringList headers;
+    headers.push_back("Key");
+    headers.push_back("Value");
+    ui->table_tags->setHorizontalHeaderLabels(headers);
     updateTreeviewPhotos();
     updateVisualizationZoom();
 }
@@ -122,22 +126,24 @@ void Visualization::upToDate()
 
 void Visualization::outOfDate()
 {
-    bool one_defined = false;
-    Q_UNUSED(one_defined);
     QTreeWidget *tree = ui->tree_photos;
     QTreeWidgetItemIterator it(tree);
     while (*it) {
         if ( TreePhotoItem * photoItem = dynamic_cast<TreePhotoItem*>(*it) ) {
-            if (photoItem->photo().isComplete() )
-                one_defined = true;
-            photoItem->photo().setUndefined();
+            if (!photoItem->photo().isComplete() )
+                photoItem->photo().setUndefined();
         }
         ++it;
     }
-    if ( /* one_defined &&*/ this->isVisible() ) {
+    if ( this->isVisible() && ui->checkBox_autoPlay->isChecked() ) {
         qDebug(QString(m_operator->uuid() + " Vis requests play").toLatin1());
         m_operator->play();
     }
+}
+
+void Visualization::playClicked()
+{
+    m_operator->play();
 }
 
 void Visualization::histogramParamsChanged()
@@ -221,6 +227,23 @@ void Visualization::updateVisualizationZoom()
         ui->widget_visualization->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         ui->widget_visualization->resize(ui->widget_visualization->pixmap()->size()*zoom_factor);
         //ui->widget_visualization->adjustSize();
+    }
+}
+
+void Visualization::updateTagsTable()
+{
+    if ( !m_photo )
+        return;
+    int i = 0;
+    QMap<QString, QString> tags = m_photo->tags();
+    ui->table_tags->setRowCount(tags.count());
+    ui->table_tags->setColumnCount(2);
+    for(QMap<QString, QString>::iterator it = tags.begin() ;
+        it != tags.end() ;
+        ++it ) {
+        ui->table_tags->setItem(i, 0, new QTableWidgetItem(it.key()));
+        ui->table_tags->setItem(i, 1, new QTableWidgetItem(it.value()));
+        ++i;
     }
 }
 
@@ -319,6 +342,10 @@ void Visualization::clearAllTabs()
     ui->widget_histogram->setPixmap(QPixmap());
     m_output = NULL;
     m_photo = NULL;
+
+    //ui->table_tags->clear();
+    ui->table_tags->setRowCount(0);
+    ui->table_tags->setColumnCount(2);
 }
 
 void Visualization::updateTabs()
@@ -333,6 +360,7 @@ void Visualization::updateTabsWithPhoto()
     curveParamsChanged();
     histogramParamsChanged();
     updateVisualizationZoom();
+    updateTagsTable();
 }
 
 void Visualization::updateTabsWithOutput()

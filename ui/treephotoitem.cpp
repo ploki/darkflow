@@ -7,6 +7,7 @@ TreePhotoItem::TreePhotoItem(const Photo &photo, QTreeWidgetItem *parent) :
     m_photo(photo)
 {
     setText(0, photo.getTag("Name"));
+    setToolTip(0, photo.getIdentity());
     if ( !photo.isComplete() ) {
         qWarning("photo is not complete");
     }

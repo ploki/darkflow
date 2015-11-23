@@ -63,6 +63,23 @@
           </column>
          </widget>
         </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_autoPlay">
+          <property name="text">
+           <string>Auto Play</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="button_play">
+          <property name="text">
+           <string>Play</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="widget_2" native="true">
@@ -431,7 +448,13 @@
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QTableView" name="table_tags"/>
+             <widget class="QTableWidget" name="table_tags">
+              <property name="columnCount">
+               <number>2</number>
+              </property>
+              <column/>
+              <column/>
+             </widget>
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -941,6 +964,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_play</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>playClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>696</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -954,5 +993,6 @@
   <slot>expChanged()</slot>
   <slot>curveParamsChanged()</slot>
   <slot>histogramParamsChanged()</slot>
+  <slot>playClicked()</slot>
  </slots>
 </ui>

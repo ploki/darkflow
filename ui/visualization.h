@@ -35,6 +35,7 @@ public slots:
     void expChanged();
     void upToDate();
     void outOfDate();
+    void playClicked();
 
     void histogramParamsChanged();
     void curveParamsChanged();
@@ -60,6 +61,7 @@ private:
     void updateTabsWithPhoto();
     void updateTabsWithOutput();
     void updateVisualizationZoom();
+    void updateTagsTable();
 
 };
 

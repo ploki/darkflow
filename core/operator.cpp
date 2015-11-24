@@ -1,5 +1,6 @@
 #include <QThread>
 #include <QJsonArray>
+#include <QStringList>
 
 #include "operator.h"
 #include "process.h"
@@ -164,15 +165,22 @@ bool Operator::play_parentDirty()
 
 QVector<QVector<Photo> > Operator::collectInputs()
 {
+    QMap<QString, int> seen;
+
     QVector<QVector<Photo> > inputs;
     int i = 0;
     foreach(OperatorInput *input, m_inputs) {
         inputs.push_back(QVector<Photo>());
         foreach(OperatorOutput *source, input->sources()) {
             foreach(Photo photo, source->m_result) {
-                overrideTags(photo);
                 QString identity = photo.getIdentity();
-                photo.setIdentity(identity +"\n"+uuid());
+                identity = identity.split(':').first();
+                int count = ++seen[identity];
+                if ( count > 1 ) {
+                    identity+=QString(":%0").arg(count-1);
+                    photo.setIdentity(identity);
+                }
+                overrideTags(photo);
                 inputs[i].push_back(photo);
             }
         }
@@ -273,11 +281,16 @@ QMap<QString, QString> Operator::photoTags(const QString &photoIdentity)
     return m_tagsOverride[photoIdentity];
 }
 
+/**
+ * @brief Operator::overrideTags
+ * @param photo with identity's dedup postfix
+ */
 void Operator::overrideTags(Photo &photo)
 {
-    if (!photoTagsExists(photo.getIdentity()))
+    QString identity = photo.getIdentity();
+    if (!photoTagsExists(identity))
         return;
-    QMap<QString, QString> tags = photoTags(photo.getIdentity());
+    QMap<QString, QString> tags = photoTags(identity);
     for(QMap<QString, QString>::iterator it = tags.begin() ;
         it != tags.end() ;
         ++it ) {

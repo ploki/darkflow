@@ -337,6 +337,8 @@ void Visualization::updateTreeviewPhotos()
     }
     tree->clear();
 
+    QMap<QString, int> seen;
+
     QTreeWidgetItem *tree_inputs = new QTreeWidgetItem(tree);
     tree_inputs->setText(0, "Inputs:");
     tree_inputs->setFont(0,QFont("Sans", 14));
@@ -348,11 +350,18 @@ void Visualization::updateTreeviewPhotos()
         tree_input->setBackground(0, QBrush(Qt::green));
         foreach(OperatorOutput *source, input->sources()) {
             QTreeWidgetItem *tree_source = new TreeOutputItem(source, TreeOutputItem::Source, tree_input);
-            foreach(const Photo& photo, source->m_result) {
+            foreach(Photo photo, source->m_result) {
                 if ( !photo.isComplete() )
                     qWarning("source photo is not complete");
+                QString identity = photo.getIdentity();
+                identity = identity.split(":").first();
+                int count = ++seen[identity];
+                if ( count > 1 ) {
+                    identity+=QString(":%0").arg(count-1);
+                    photo.setIdentity(identity);
+                }
                 TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Input, tree_source);
-                if ( photo.getIdentity() == m_currentPhoto &&
+                if ( identity == m_currentPhoto &&
                      source == m_currentOutput ) {
                     item->setSelected(true);
                 }

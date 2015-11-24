@@ -47,7 +47,7 @@ void RawConvert::play(QVector<QVector<Photo> > inputs, int n_outputs)
             failure = true;
             continue;
         }
-        photo.setIdentity(collection[i] + "\n" + m_operator->uuid());
+        photo.setIdentity(collection[i]);
         setTags(collection[i], photo);
         photo.setSequenceNumber(i);
 #pragma omp critical

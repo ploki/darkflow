@@ -75,7 +75,9 @@ SOURCES +=\
     operators/workerintegration.cpp \
     operators/opexposure.cpp \
     operators/opinvert.cpp \
-    algorithms/invert.cpp
+    algorithms/invert.cpp \
+    ui/tabletagsrow.cpp \
+    ui/tablewidgetitem.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -131,7 +133,9 @@ HEADERS  += \
     operators/workerintegration.h \
     operators/opexposure.h \
     operators/opinvert.h \
-    algorithms/invert.h
+    algorithms/invert.h \
+    ui/tabletagsrow.h \
+    ui/tablewidgetitem.h
 
 FORMS    += \
     ui/aboutdialog.ui \

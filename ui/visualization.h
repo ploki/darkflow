@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class TableTagsRow;
+
 namespace Ui {
 class Visualization;
 }
@@ -39,6 +41,10 @@ public slots:
 
     void histogramParamsChanged();
     void curveParamsChanged();
+    void clearTags();
+    void tags_buttonAddClicked();
+    void tags_buttonRemoveClicked();
+    void tags_buttonResetClicked();
 
 private:
     Ui::Visualization *ui;
@@ -55,6 +61,8 @@ private:
     int m_zoom;
     QString m_currentPhoto;
     const OperatorOutput *m_currentOutput;
+    bool m_photoIsInput;
+    QVector<TableTagsRow*> m_tags;
 
     void clearAllTabs();
     void updateTabs();
@@ -62,7 +70,7 @@ private:
     void updateTabsWithOutput();
     void updateVisualizationZoom();
     void updateTagsTable();
-
+    void setInputControlEnabled(bool v);
 };
 
 #endif // VISUALIZATION_H

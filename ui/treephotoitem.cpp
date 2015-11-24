@@ -2,9 +2,12 @@
 #include "photo.h"
 
 
-TreePhotoItem::TreePhotoItem(const Photo &photo, QTreeWidgetItem *parent) :
+TreePhotoItem::TreePhotoItem(const Photo &photo,
+                             PhotoType type,
+                             QTreeWidgetItem *parent) :
     QTreeWidgetItem(parent, Type),
-    m_photo(photo)
+    m_photo(photo),
+    m_type(type)
 {
     setText(0, photo.getTag("Name"));
     setToolTip(0, photo.getIdentity());
@@ -24,4 +27,9 @@ const Photo &TreePhotoItem::photo() const
 Photo &TreePhotoItem::photo()
 {
     return m_photo;
+}
+
+bool TreePhotoItem::isInput() const
+{
+    return m_type == Input;
 }

@@ -97,6 +97,18 @@ public slots:
     void setName(const QString &name);
     void setUpToDate();
     void setOutOfDate();
+    void setTagOverride(const QString& photoIdentity,
+                        const QString& key,
+                        const QString& value);
+    void resetTagOverride(const QString& photoIdentity,
+                          const QString& key);
+    bool isTagOverrided(const QString& photoIdentity,
+                        const QString& key);
+    QString getTagOverrided(const QString& photoIdentity,
+                            const QString& key);
+    bool photoTagsExists(const QString& photoIdentity);
+    QMap<QString,QString> photoTags(const QString& photoIdentity);
+    void overrideTags(Photo& photo);
 
 protected:
     friend class Visualization;
@@ -112,6 +124,7 @@ protected:
     QString m_classSection;
     QString m_classIdentifier;
     QString m_name;
+    QMap<QString, QMap<QString, QString> > m_tagsOverride;
 
     QThread *m_thread;
     OperatorWorker *m_worker;

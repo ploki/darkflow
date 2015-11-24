@@ -23,6 +23,7 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_classSection(classSection),
     m_classIdentifier(classIdentifier),
     m_name(classIdentifier),
+    m_tagsOverride(),
     m_thread(new QThread(this)),
     m_worker(NULL)
 {
@@ -169,6 +170,9 @@ QVector<QVector<Photo> > Operator::collectInputs()
         inputs.push_back(QVector<Photo>());
         foreach(OperatorOutput *source, input->sources()) {
             foreach(Photo photo, source->m_result) {
+                overrideTags(photo);
+                QString identity = photo.getIdentity();
+                photo.setIdentity(identity +"\n"+uuid());
                 inputs[i].push_back(photo);
             }
         }
@@ -231,6 +235,59 @@ void Operator::setOutOfDate()
     emit progress(0, 1);
 }
 
+void Operator::setTagOverride(const QString &photoIdentity, const QString &key, const QString &value)
+{
+    m_tagsOverride[photoIdentity].insert(key,value);
+    setOutOfDate();
+}
+
+void Operator::resetTagOverride(const QString &photoIdentity, const QString &key)
+{
+    m_tagsOverride[photoIdentity].remove(key);
+    if ( m_tagsOverride[photoIdentity].empty() )
+        m_tagsOverride.remove(photoIdentity);
+    setOutOfDate();
+}
+
+bool Operator::isTagOverrided(const QString &photoIdentity, const QString &key)
+{
+    if ( m_tagsOverride.find(photoIdentity) == m_tagsOverride.end() )
+        return false;
+    if ( m_tagsOverride[photoIdentity].find(key) == m_tagsOverride[photoIdentity].end() )
+        return false;
+    return true;
+}
+
+QString Operator::getTagOverrided(const QString &photoIdentity, const QString &key)
+{
+    return m_tagsOverride[photoIdentity][key];
+}
+
+bool Operator::photoTagsExists(const QString &photoIdentity)
+{
+    return m_tagsOverride.find(photoIdentity) != m_tagsOverride.end();
+}
+
+QMap<QString, QString> Operator::photoTags(const QString &photoIdentity)
+{
+    return m_tagsOverride[photoIdentity];
+}
+
+void Operator::overrideTags(Photo &photo)
+{
+    if (!photoTagsExists(photo.getIdentity()))
+        return;
+    QMap<QString, QString> tags = photoTags(photo.getIdentity());
+    for(QMap<QString, QString>::iterator it = tags.begin() ;
+        it != tags.end() ;
+        ++it ) {
+        if ( it.value().count() == 0 )
+            photo.removeTag(it.key());
+        else
+            photo.setTag(it.key(), it.value());
+    }
+}
+
 QString Operator::getClassSection() const
 {
     return m_classSection;
@@ -280,6 +337,20 @@ void Operator::save(QJsonObject &obj)
         parameters.push_back(parameter->save());
     }
     obj["parameters"] = parameters;
+
+    QJsonObject allTags;
+    for(QMap<QString, QMap<QString, QString> >::iterator it = m_tagsOverride.begin() ;
+        it != m_tagsOverride.end() ;
+        ++it ) {
+        QJsonObject photoTags;
+        for(QMap<QString, QString>::iterator tag = it.value().begin() ;
+            tag != it.value().end() ;
+            ++tag ) {
+            photoTags[tag.key()] = tag.value();
+        }
+        allTags[it.key()]=photoTags;
+    }
+    obj["tags"] = allTags;
 }
 
 void Operator::load(QJsonObject &obj)
@@ -291,6 +362,20 @@ void Operator::load(QJsonObject &obj)
     for (int i = 0 ; i < m_parameters.count(); ++i ) {
         QJsonObject obj = array[i].toObject();
         m_parameters[i]->load(obj);
+    }
+    m_tagsOverride.clear();
+    QJsonObject tags = obj["tags"].toObject();
+    for (QJsonObject::iterator it = tags.begin() ;
+         it != tags.end() ;
+         ++it ) {
+        QMap<QString, QString> photoTags;
+        QJsonObject photoTagsObject = it.value().toObject();
+        for (QJsonObject::iterator tag = photoTagsObject.begin() ;
+             tag != photoTagsObject.end() ;
+             ++tag ) {
+            photoTags[tag.key()] = tag.value().toString();
+        }
+        m_tagsOverride[it.key()] = photoTags;
     }
 }
 

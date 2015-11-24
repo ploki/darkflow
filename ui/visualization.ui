@@ -459,21 +459,21 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QPushButton" name="button_remove">
+               <widget class="QPushButton" name="tag_buttonAdd">
+                <property name="text">
+                 <string>Add</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="tag_buttonRemove">
                 <property name="text">
                  <string>Remove</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="button_clear">
-                <property name="text">
-                 <string>Clear</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="button_reset">
+               <widget class="QPushButton" name="tag_buttonReset">
                 <property name="text">
                  <string>Reset</string>
                 </property>
@@ -980,6 +980,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tag_buttonAdd</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>tags_buttonAddClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>700</x>
+     <y>97</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tag_buttonRemove</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>tags_buttonRemoveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>700</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tag_buttonReset</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>tags_buttonResetClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>700</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -994,5 +1042,8 @@
   <slot>curveParamsChanged()</slot>
   <slot>histogramParamsChanged()</slot>
   <slot>playClicked()</slot>
+  <slot>tags_buttonAddClicked()</slot>
+  <slot>tags_buttonRemoveClicked()</slot>
+  <slot>tags_buttonResetClicked()</slot>
  </slots>
 </ui>

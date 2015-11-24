@@ -8,13 +8,21 @@ class TreePhotoItem : public QTreeWidgetItem
 {
 public:
     enum { Type = QTreeWidgetItem::UserType + 2 };
-    explicit TreePhotoItem(const Photo& photo, QTreeWidgetItem *parent = 0);
+    typedef enum {
+        Input,
+        Output,
+    } PhotoType;
+    explicit TreePhotoItem(const Photo& photo,
+                           PhotoType type,
+                           QTreeWidgetItem *parent = 0);
 
     const Photo &photo() const;
     Photo &photo();
+    bool isInput() const;
 
 private:
     Photo m_photo;
+    PhotoType m_type;
 };
 
 #endif // TREEPHOTOITEM_H

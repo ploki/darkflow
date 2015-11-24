@@ -13,6 +13,8 @@
 #include "photo.h"
 #include "treephotoitem.h"
 #include "treeoutputitem.h"
+#include "tabletagsrow.h"
+#include "tablewidgetitem.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -23,7 +25,9 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_zoomLevel(ZoomFitVisible),
     m_zoom(0),
     m_currentPhoto(),
-    m_currentOutput(0)
+    m_currentOutput(0),
+    m_photoIsInput(false),
+    m_tags()
 {
     ui->setupUi(this);
     ui->operatorName->setText(m_operator->getName());
@@ -35,16 +39,24 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(m_operator, SIGNAL(upToDate()), this, SLOT(upToDate()));
     connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()), Qt::QueuedConnection);
 
+    updateTreeviewPhotos();
+    updateVisualizationZoom();
+    setInputControlEnabled(false);
+    clearTags();
+
     QStringList headers;
     headers.push_back("Key");
     headers.push_back("Value");
+    ui->table_tags->setRowCount(0);
+    ui->table_tags->setColumnCount(2);
     ui->table_tags->setHorizontalHeaderLabels(headers);
-    updateTreeviewPhotos();
-    updateVisualizationZoom();
+    ui->table_tags->horizontalHeader()->setStretchLastSection(true);
+
 }
 
 Visualization::~Visualization()
 {
+    clearTags();
     delete ui;
 }
 
@@ -190,6 +202,50 @@ void Visualization::curveParamsChanged()
     }
 }
 
+void Visualization::clearTags()
+{
+    foreach(TableTagsRow *tagRow, m_tags)
+        delete tagRow;
+    m_tags.clear();
+    //ui->table_tags->clear();
+}
+
+void Visualization::tags_buttonAddClicked()
+{
+    if (!m_photo) return;
+    m_tags.push_back(new TableTagsRow(m_photo->getIdentity(), "New key", "value", TableTagsRow::FromOperator, ui->table_tags, m_operator));
+}
+
+void Visualization::tags_buttonRemoveClicked()
+{
+    if (!m_photo) return;
+    QList<QTableWidgetItem *> items = ui->table_tags->selectedItems();
+    foreach(QTableWidgetItem *item, items ) {
+        TableTagsRow *row = dynamic_cast<TableWidgetItem*>(item)->tableRow();
+        bool removed = row->remove();
+        if ( !removed ) {
+            int idx = m_tags.indexOf(row);
+            if (-1 != idx ) {
+                delete row;
+                m_tags.remove(idx);
+            }
+            else {
+                qWarning("row not found in m_tags");
+            }
+        }
+    }
+}
+
+void Visualization::tags_buttonResetClicked()
+{
+    if (!m_photo) return;
+    QList<QTableWidgetItem *> items = ui->table_tags->selectedItems();
+    foreach(QTableWidgetItem *item, items ) {
+        TableTagsRow *row = dynamic_cast<TableWidgetItem*>(item)->tableRow();
+        row->reset();
+    }
+}
+
 void Visualization::updateVisualizationZoom()
 {
     //qDebug("updateVis");
@@ -234,16 +290,32 @@ void Visualization::updateTagsTable()
 {
     if ( !m_photo )
         return;
-    int i = 0;
+    clearTags();
     QMap<QString, QString> tags = m_photo->tags();
-    ui->table_tags->setRowCount(tags.count());
-    ui->table_tags->setColumnCount(2);
     for(QMap<QString, QString>::iterator it = tags.begin() ;
         it != tags.end() ;
         ++it ) {
-        ui->table_tags->setItem(i, 0, new QTableWidgetItem(it.key()));
-        ui->table_tags->setItem(i, 1, new QTableWidgetItem(it.value()));
-        ++i;
+        TableTagsRow *row = new TableTagsRow(m_photo->getIdentity(), it.key(), it.value(), TableTagsRow::FromPhoto, ui->table_tags, m_operator);
+        m_tags.push_back(row);
+        if ( m_operator->isTagOverrided(m_photo->getIdentity(), it.key()) )
+            row->setValue(m_operator->getTagOverrided(m_photo->getIdentity(), it.key() ), true);
+    }
+    if ( m_operator->photoTagsExists(m_photo->getIdentity()) ) {
+        QMap<QString, QString> tags = m_operator->photoTags(m_photo->getIdentity());
+        for(QMap<QString, QString>::iterator it = tags.begin() ;
+            it != tags.end() ;
+            ++it ) {
+            bool found = false;
+            foreach(TableTagsRow *row, m_tags) {
+                if ( row->getKey() == it.key() ) {
+                    found = true;
+                    break;
+                }
+            }
+            if ( !found ) {
+                m_tags.push_back(new TableTagsRow(m_photo->getIdentity(), it.key(), it.value(), TableTagsRow::FromOperator, ui->table_tags, m_operator));
+            }
+        }
     }
 }
 
@@ -279,7 +351,7 @@ void Visualization::updateTreeviewPhotos()
             foreach(const Photo& photo, source->m_result) {
                 if ( !photo.isComplete() )
                     qWarning("source photo is not complete");
-                TreePhotoItem *item = new TreePhotoItem(photo, tree_source);
+                TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Input, tree_source);
                 if ( photo.getIdentity() == m_currentPhoto &&
                      source == m_currentOutput ) {
                     item->setSelected(true);
@@ -298,7 +370,7 @@ void Visualization::updateTreeviewPhotos()
         foreach(const Photo& photo, output->m_result) {
             if ( !photo.isComplete() )
                 qWarning("output photo is not complete");
-            TreePhotoItem *item = new TreePhotoItem(photo, tree_output);
+            TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Output, tree_output);
             if ( photo.getIdentity() == m_currentPhoto &&
                  output == m_currentOutput ) {
                 item->setSelected(true);
@@ -321,10 +393,13 @@ void Visualization::photoSelectionChanged()
     clearAllTabs();
     foreach(QTreeWidgetItem *item, items ) {
         switch(item->type()) {
-        case TreePhotoItem::Type:
-            m_photo = &dynamic_cast<TreePhotoItem*>(item)->photo();
+        case TreePhotoItem::Type: {
+            TreePhotoItem *photoItem = dynamic_cast<TreePhotoItem*>(item);
+            m_photo = &photoItem->photo();
+            m_photoIsInput = photoItem->isInput();
             updateTabs();
             return;
+        }
         case TreeOutputItem::Type:
             m_output = dynamic_cast<TreeOutputItem*>(item)->output();
             updateTabs();
@@ -342,10 +417,10 @@ void Visualization::clearAllTabs()
     ui->widget_histogram->setPixmap(QPixmap());
     m_output = NULL;
     m_photo = NULL;
+    m_photoIsInput = false;
 
-    //ui->table_tags->clear();
-    ui->table_tags->setRowCount(0);
-    ui->table_tags->setColumnCount(2);
+    clearTags();
+    setInputControlEnabled(false);
 }
 
 void Visualization::updateTabs()
@@ -361,6 +436,7 @@ void Visualization::updateTabsWithPhoto()
     histogramParamsChanged();
     updateVisualizationZoom();
     updateTagsTable();
+    if ( m_photoIsInput ) setInputControlEnabled(true);
 }
 
 void Visualization::updateTabsWithOutput()
@@ -368,3 +444,12 @@ void Visualization::updateTabsWithOutput()
 
 }
 
+
+void Visualization::setInputControlEnabled(bool v)
+{
+    ui->table_tags->setEnabled(v);
+    ui->combo_tool->setEnabled(v);
+    ui->tag_buttonAdd->setEnabled(v);
+    ui->tag_buttonRemove->setEnabled(v);
+    ui->tag_buttonReset->setEnabled(v);
+}

@@ -35,12 +35,18 @@ QString OperatorParameterFilesCollection::filter() const
 
 QStringList OperatorParameterFilesCollection::collection() const
 {
-    return m_collection;
+    QStringList collection;
+    foreach(QString str, m_collection) {
+        collection.push_back(str);
+    }
+    return collection;
 }
 
 void OperatorParameterFilesCollection::setCollection(const QStringList &collection)
 {
-    m_collection=collection;
+    foreach(QString str, collection) {
+        m_collection.insert(str);
+    }
     emit parameterChanged();
     emit setOutOfDate();
 }
@@ -80,7 +86,7 @@ void OperatorParameterFilesCollection::load(const QJsonObject &obj)
     }
     QJsonArray files = obj["files"].toArray();
     foreach(QJsonValue val, files) {
-        m_collection.push_back(val.toString());
+        m_collection.insert(val.toString());
     }
     emit updated();
 }

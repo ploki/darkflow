@@ -36,7 +36,7 @@ private:
     QString m_windowCaption;
     QString m_dir;
     QString m_filter;
-    QStringList m_collection;
+    QSet<QString> m_collection;
 };
 
 #endif // OPERATORPARAMETERFILESCOLLECTION_H

@@ -174,10 +174,10 @@ QVector<QVector<Photo> > Operator::collectInputs()
         foreach(OperatorOutput *source, input->sources()) {
             foreach(Photo photo, source->m_result) {
                 QString identity = photo.getIdentity();
-                identity = identity.split(':').first();
+                identity = identity.split('|').first();
                 int count = ++seen[identity];
                 if ( count > 1 ) {
-                    identity+=QString(":%0").arg(count-1);
+                    identity+=QString("|%0").arg(count-1);
                     photo.setIdentity(identity);
                 }
                 overrideTags(photo);

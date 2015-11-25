@@ -414,10 +414,10 @@ void Visualization::updateTreeviewPhotos()
                 if ( !photo.isComplete() )
                     qWarning("source photo is not complete");
                 QString identity = photo.getIdentity();
-                identity = identity.split(":").first();
+                identity = identity.split("|").first();
                 int count = ++seen[identity];
                 if ( count > 1 ) {
-                    identity+=QString(":%0").arg(count-1);
+                    identity+=QString("|%0").arg(count-1);
                     photo.setIdentity(identity);
                 }
                 TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Input, tree_source);

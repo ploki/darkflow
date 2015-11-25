@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsPathItem>
+#include <QGraphicsSceneMouseEvent>
 
 #include <Magick++.h>
 
@@ -21,6 +22,7 @@
 #include "treeoutputitem.h"
 #include "tabletagsrow.h"
 #include "tablewidgetitem.h"
+#include "vispoint.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -36,6 +38,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_tags(),
     m_scene(new QGraphicsScene),
     m_pixmapItem(new QGraphicsPixmapItem),
+    m_lastMouseScreenPosition(),
+    m_points(),
     m_roi(0),
     m_roi_p1(),
     m_roi_p2(),
@@ -67,7 +71,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->graphicsView->setScene(m_scene);
     ui->graphicsView->adjustSize();
     m_scene->addItem(m_pixmapItem);
-    //m_scene->installEventFilter(this);
+    m_scene->installEventFilter(this);
     ui->graphicsView->installEventFilter(this);
     connect(ui->graphicsView, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)), this, SLOT(rubberBandChanged(QRect,QPointF,QPointF)));
 }
@@ -279,12 +283,15 @@ void Visualization::toolChanged(int idx)
     }
     switch (m_tool) {
     case ToolNone:
+        ui->graphicsView->setCursor(Qt::ArrowCursor);
         ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
         break;
     case ToolROI:
+        ui->graphicsView->setCursor(Qt::CrossCursor);
         ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
         break;
     default:
+        ui->graphicsView->setCursor(Qt::CrossCursor);
         ui->graphicsView->setDragMode(QGraphicsView::NoDrag);
         break;
     }
@@ -557,6 +564,22 @@ void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
 bool Visualization::eventFilter(QObject *obj, QEvent *event)
 {
     switch(event->type()) {
+    case QEvent::GraphicsSceneMousePress: {
+        QGraphicsSceneMouseEvent *me =
+                dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+        m_lastMouseScreenPosition = me->screenPos();
+    }
+        break;
+    case QEvent::GraphicsSceneMouseRelease: {
+        QGraphicsSceneMouseEvent *me =
+                dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+        if ( m_lastMouseScreenPosition == me->screenPos() ) {
+            removePoints(me->scenePos());
+          if ( me->button() == Qt::LeftButton )
+                addPoint(me->scenePos());
+        }
+    }
+        break;
     case QEvent::Resize: {
         updateVisualizationFitVisible();
     }
@@ -597,4 +620,69 @@ void Visualization::storeROI()
             .arg(m_roi_p2.x())
             .arg(m_roi_p2.y());
     m_operator->setTagOverride(m_photo->getIdentity(),"ROI", roiTag);
+}
+
+void Visualization::addPoint(QPointF scenePos)
+{
+    int maxPoints = 0;
+    switch(m_tool) {
+    case ToolNone:
+    case ToolROI:
+        return;
+    case Tool1Point:
+        maxPoints = 1;
+        break;
+    case Tool2Points:
+        maxPoints = 2;
+        break;
+    case Tool3Points:
+        maxPoints = 3;
+        break;
+    case ToolNPoints:
+        maxPoints = 100000;
+        break;
+    default: break;
+    }
+
+    VisPoint *point = new VisPoint(scenePos, this);
+    m_scene->addItem(point);
+    m_points.prepend(point);
+    while(m_points.count() > maxPoints ) {
+        m_scene->removeItem(m_points.last());
+        m_points.pop_back();
+    }
+    storePoints();
+}
+
+void Visualization::removePoints(QPointF scenePos)
+{
+    bool modified = false;
+    QList<QGraphicsItem*> items = m_scene->items(QRectF(scenePos - QPointF(1,1), QSize(3,3)));
+    foreach(QGraphicsItem *item, items) {
+        if ( item->type() == VisPoint::Type ) {
+            VisPoint *point = dynamic_cast<VisPoint*>(item);
+            m_scene->removeItem(point);
+            m_points.removeOne(point);
+            modified = true;
+        }
+    }
+    if ( modified )
+        storePoints();
+}
+
+void Visualization::storePoints()
+{
+    QString pointsTag;
+    foreach(VisPoint *point, m_points) {
+        if ( pointsTag.count() )
+            pointsTag += ";";
+        point->scenePos();
+        pointsTag += QString::number(point->mapToScene(point->boundingRect().center()).x()) +
+                "," +
+                QString::number(point->mapToScene(point->boundingRect().center()).y());
+    }
+    if ( pointsTag.count() )
+        m_operator->setTagOverride(m_photo->getIdentity(),"POINTS", pointsTag);
+    else
+        m_operator->resetTagOverride(m_photo->getIdentity(),"POINTS");
 }

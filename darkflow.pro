@@ -78,7 +78,8 @@ SOURCES +=\
     algorithms/invert.cpp \
     ui/tabletagsrow.cpp \
     ui/tablewidgetitem.cpp \
-    operators/opcrop.cpp
+    operators/opcrop.cpp \
+    ui/vispoint.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -137,7 +138,8 @@ HEADERS  += \
     algorithms/invert.h \
     ui/tabletagsrow.h \
     ui/tablewidgetitem.h \
-    operators/opcrop.h
+    operators/opcrop.h \
+    ui/vispoint.h
 
 FORMS    += \
     ui/aboutdialog.ui \

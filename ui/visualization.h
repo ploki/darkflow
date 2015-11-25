@@ -6,6 +6,7 @@
 class QGraphicsScene;
 class QGraphicsPixmapItem;
 class QGraphicsPathItem;
+class VisPoint;
 class TableTagsRow;
 
 namespace Ui {
@@ -49,6 +50,7 @@ public slots:
     void tags_buttonRemoveClicked();
     void tags_buttonResetClicked();
     void toolChanged(int idx);
+    void storePoints();
 
 private slots:
     void rubberBandChanged(QRect rubberBandRect, QPointF fromScenePoint, QPointF toScenePoint);
@@ -71,6 +73,8 @@ private:
     QVector<TableTagsRow*> m_tags;
     QGraphicsScene *m_scene;
     QGraphicsPixmapItem *m_pixmapItem;
+    QPoint m_lastMouseScreenPosition;
+    QList<VisPoint*> m_points;
     QGraphicsPathItem *m_roi;
     QPointF m_roi_p1;
     QPointF m_roi_p2;
@@ -95,6 +99,9 @@ private:
     bool eventFilter(QObject *obj, QEvent *event);
     void drawROI();
     void storeROI();
+    void addPoint(QPointF scenePos);
+    void removePoints(QPointF scenePos);
+
 };
 
 #endif // VISUALIZATION_H

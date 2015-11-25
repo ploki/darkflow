@@ -38,6 +38,7 @@
 #include "opflatfieldcorrection.h"
 #include "opintegration.h"
 #include "opinvert.h"
+#include "opcrop.h"
 
 QString Process::uuid()
 {
@@ -79,6 +80,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpFlatFieldCorrection(this));
     m_availableOperators.push_back(new OpIntegration(this));
     m_availableOperators.push_back(new OpInvert(this));
+    m_availableOperators.push_back(new OpCrop(this));
     addOperatorsToContextMenu();
 }
 

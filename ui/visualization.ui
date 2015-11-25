@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>754</height>
+    <width>805</width>
+    <height>776</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,66 +105,29 @@
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <widget class="QScrollArea" name="scrollArea_visualization">
+              <widget class="QGraphicsView" name="graphicsView">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>5</horstretch>
                  <verstretch>5</verstretch>
                 </sizepolicy>
                </property>
-               <property name="widgetResizable">
-                <bool>true</bool>
+               <property name="backgroundBrush">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
                </property>
-               <widget class="QWidget" name="content_visualization">
-                <property name="geometry">
-                 <rect>
-                  <x>0</x>
-                  <y>0</y>
-                  <width>572</width>
-                  <height>408</height>
-                 </rect>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_11">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QLabel" name="widget_visualization">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
               </widget>
               <widget class="QWidget" name="layoutWidget">
                <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
                  <widget class="QGroupBox" name="groupBox_5">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -523,8 +486,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
-                 <height>510</height>
+                 <width>572</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -647,8 +610,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
-                 <height>510</height>
+                 <width>572</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -737,6 +700,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <resources/>
  <connections>
@@ -1028,6 +992,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>combo_tool</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>toolChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>385</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1045,5 +1025,6 @@
   <slot>tags_buttonAddClicked()</slot>
   <slot>tags_buttonRemoveClicked()</slot>
   <slot>tags_buttonResetClicked()</slot>
+  <slot>toolChanged(int)</slot>
  </slots>
 </ui>

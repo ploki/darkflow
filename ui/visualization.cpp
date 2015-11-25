@@ -2,6 +2,12 @@
 #include <QTreeWidgetItem>
 #include <QTreeWidgetItemIterator>
 #include <QPixmap>
+#include <QEvent>
+#include <QScrollBar>
+
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsPathItem>
 
 #include <Magick++.h>
 
@@ -27,7 +33,13 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_currentPhoto(),
     m_currentOutput(0),
     m_photoIsInput(false),
-    m_tags()
+    m_tags(),
+    m_scene(new QGraphicsScene),
+    m_pixmapItem(new QGraphicsPixmapItem),
+    m_roi(0),
+    m_roi_p1(),
+    m_roi_p2(),
+    m_tool(ToolNone)
 {
     ui->setupUi(this);
     ui->operatorName->setText(m_operator->getName());
@@ -43,6 +55,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     updateVisualizationZoom();
     setInputControlEnabled(false);
     clearTags();
+    toolChanged(0);
 
     QStringList headers;
     headers.push_back("Key");
@@ -51,7 +64,12 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->table_tags->setColumnCount(2);
     ui->table_tags->setHorizontalHeaderLabels(headers);
     ui->table_tags->horizontalHeader()->setStretchLastSection(true);
-
+    ui->graphicsView->setScene(m_scene);
+    ui->graphicsView->adjustSize();
+    m_scene->addItem(m_pixmapItem);
+    //m_scene->installEventFilter(this);
+    ui->graphicsView->installEventFilter(this);
+    connect(ui->graphicsView, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)), this, SLOT(rubberBandChanged(QRect,QPointF,QPointF)));
 }
 
 Visualization::~Visualization()
@@ -94,7 +112,7 @@ void Visualization::zoomCustom()
 
 void Visualization::zoomPlus()
 {
-    if ( m_zoom < 10)
+    if ( m_zoom < 20)
         ++m_zoom;
     ui->radio_zoomCustom->click();
     updateVisualizationZoom();
@@ -102,7 +120,7 @@ void Visualization::zoomPlus()
 
 void Visualization::zoomMinus()
 {
-    if ( m_zoom > -10 )
+    if ( m_zoom > -20 )
         --m_zoom;
     ui->radio_zoomCustom->click();
     updateVisualizationZoom();
@@ -126,7 +144,8 @@ void Visualization::expChanged()
         case 3: //POW-2;
             gamma = 2.L; x0 = 0.; break;
         }
-        ui->widget_visualization->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+        m_pixmapItem->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+        m_scene->setSceneRect(0,0,m_photo->image().columns(),m_photo->image().rows());
     }
 }
 
@@ -246,14 +265,37 @@ void Visualization::tags_buttonResetClicked()
     }
 }
 
+void Visualization::toolChanged(int idx)
+{
+    switch(idx) {
+    default:
+        qWarning("Unknown tool combo index");
+    case 0: m_tool = ToolNone; break;
+    case 1: m_tool = ToolROI; break;
+    case 2: m_tool = Tool1Point; break;
+    case 3: m_tool = Tool2Points; break;
+    case 4: m_tool = Tool3Points; break;
+    case 5: m_tool = ToolNPoints; break;
+    }
+    switch (m_tool) {
+    case ToolNone:
+        ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+        break;
+    case ToolROI:
+        ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+        break;
+    default:
+        ui->graphicsView->setDragMode(QGraphicsView::NoDrag);
+        break;
+    }
+}
+
 void Visualization::updateVisualizationZoom()
 {
-    //qDebug("updateVis");
-    if ( ui->widget_visualization->pixmap() == NULL )
-        return;
-    //qDebug("pixmap defined");
     switch(m_zoomLevel) {
     case ZoomFitVisible:
+        updateVisualizationFitVisible();
+        return;
         break;
     case ZoomHalf:
         m_zoom=-5;
@@ -266,24 +308,35 @@ void Visualization::updateVisualizationZoom()
         break;
     case ZoomCustom: default: break;
     }
-    qreal zoom_factor = pow(2,qreal(m_zoom)/5);
-    if ( m_zoomLevel == ZoomFitVisible ) {
-        //qDebug("proceed fit vis");
-        ui->scrollArea_visualization->setWidgetResizable(false);
-        ui->widget_visualization->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
-        QSize rect = ui->scrollArea_visualization->viewport()->size();
-        QSize size = ui->widget_visualization->pixmap()->size();
-        size.scale(rect, Qt::KeepAspectRatio);
-        ui->widget_visualization->resize(size);
-        //ui->widget_visualization->adjustSize();
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    qreal factor = pow(2,qreal(m_zoom)/5);
+    ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
+}
+
+void Visualization::updateVisualizationFitVisible()
+{
+    if ( m_zoomLevel == ZoomFitVisible && m_photo ) {
+        ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        QSize widgetSize = ui->graphicsView->size();
+        int w = m_photo->image().columns();
+        int h = m_photo->image().rows();
+        double factor;
+        if ( double(widgetSize.width())/double(widgetSize.height()) <=
+             double(w)/double(h) ) {
+            factor = double(widgetSize.width()-2)/double(w);
+        }
+        else {
+            factor = double(widgetSize.height()-2)/double(h);
+        }
+        ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
     }
-    else {
-        //qDebug("proceed zoom");
-        ui->scrollArea_visualization->setWidgetResizable(true);
-        ui->widget_visualization->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        ui->widget_visualization->resize(ui->widget_visualization->pixmap()->size()*zoom_factor);
-        //ui->widget_visualization->adjustSize();
-    }
+
 }
 
 void Visualization::updateTagsTable()
@@ -297,10 +350,10 @@ void Visualization::updateTagsTable()
         ++it ) {
         TableTagsRow *row = new TableTagsRow(m_photo->getIdentity(), it.key(), it.value(), TableTagsRow::FromPhoto, ui->table_tags, m_operator);
         m_tags.push_back(row);
-        if ( m_operator->isTagOverrided(m_photo->getIdentity(), it.key()) )
+        if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), it.key()) )
             row->setValue(m_operator->getTagOverrided(m_photo->getIdentity(), it.key() ), true);
     }
-    if ( m_operator->photoTagsExists(m_photo->getIdentity()) ) {
+    if ( m_photoIsInput && m_operator->photoTagsExists(m_photo->getIdentity()) ) {
         QMap<QString, QString> tags = m_operator->photoTags(m_photo->getIdentity());
         for(QMap<QString, QString>::iterator it = tags.begin() ;
             it != tags.end() ;
@@ -421,9 +474,10 @@ void Visualization::photoSelectionChanged()
 
 void Visualization::clearAllTabs()
 {
-    ui->widget_visualization->setPixmap(QPixmap());
+    m_pixmapItem->setPixmap(QPixmap());
     ui->widget_curve->setPixmap(QPixmap());
     ui->widget_histogram->setPixmap(QPixmap());
+    drawROI();
     m_output = NULL;
     m_photo = NULL;
     m_photoIsInput = false;
@@ -445,7 +499,26 @@ void Visualization::updateTabsWithPhoto()
     histogramParamsChanged();
     updateVisualizationZoom();
     updateTagsTable();
+    ui->value_width->setText(QString::number(m_photo->image().columns()));
+    ui->value_height->setText(QString::number(m_photo->image().rows()));
     if ( m_photoIsInput ) setInputControlEnabled(true);
+    QString roiTag = m_photo->getTag("ROI");
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "ROI") ) {
+        roiTag = m_operator->getTagOverrided(m_photo->getIdentity(), "ROI");
+    }
+    if ( roiTag.count() ) {
+        QStringList coord = roiTag.split(',');
+        if ( coord.count() == 4 ) {
+            m_roi_p1.setX(coord[0].toDouble());
+            m_roi_p1.setY(coord[1].toDouble());
+            m_roi_p2.setX(coord[2].toDouble());
+            m_roi_p2.setY(coord[3].toDouble());
+        }
+    }
+    drawROI();
+    m_roi_p1.setX(0);
+    m_roi_p1.setY(0);
+    m_roi_p2 = m_roi_p1;
 }
 
 void Visualization::updateTabsWithOutput()
@@ -461,4 +534,67 @@ void Visualization::setInputControlEnabled(bool v)
     ui->tag_buttonAdd->setEnabled(v);
     ui->tag_buttonRemove->setEnabled(v);
     ui->tag_buttonReset->setEnabled(v);
+}
+void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
+{
+    if ( !m_photo )
+        return;
+    if ( m_roi ) {
+        m_scene->removeItem(m_roi);
+        m_roi = NULL;
+    }
+    if ( p1.isNull() && p2.isNull() ) {
+        drawROI();
+        storeROI();
+        ui->statusBar->showMessage("");
+    }
+    else
+        ui->statusBar->showMessage(QString("Selection: x1=%0, y1=%1, x2=%2, y2=%3").arg(p1.x()).arg(p1.y()).arg(p2.x()).arg(p2.y()));
+    m_roi_p1 = p1;
+    m_roi_p2 = p2;
+}
+
+bool Visualization::eventFilter(QObject *obj, QEvent *event)
+{
+    switch(event->type()) {
+    case QEvent::Resize: {
+        updateVisualizationFitVisible();
+    }
+    default:break;
+
+    }
+    return QObject::eventFilter(obj, event);
+}
+
+void Visualization::drawROI()
+{
+    if ( m_roi ) {
+        m_scene->removeItem(m_roi);
+        m_roi = NULL;
+    }
+    if ( m_roi_p1.isNull() && m_roi_p2.isNull() )
+        return;
+    QPointF p1=m_roi_p1;
+    QPointF p2=m_roi_p2;
+    QPointF p3(p1);
+    QPointF p4(p2);
+    p3.setX(p2.x());
+    p4.setX(p1.x());
+    QPainterPath pp;
+    pp.moveTo(p1);
+    pp.lineTo(p4);
+    pp.lineTo(p2);
+    pp.lineTo(p3);
+    pp.lineTo(p1);
+    m_roi = m_scene->addPath(pp, QPen(Qt::green, 1));//, QBrush(QColor(10,10,10,10)));
+}
+
+void Visualization::storeROI()
+{
+    QString roiTag = QString("%0,%1,%2,%3")
+            .arg(m_roi_p1.x())
+            .arg(m_roi_p1.y())
+            .arg(m_roi_p2.x())
+            .arg(m_roi_p2.y());
+    m_operator->setTagOverride(m_photo->getIdentity(),"ROI", roiTag);
 }

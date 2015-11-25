@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+class QGraphicsScene;
+class QGraphicsPixmapItem;
+class QGraphicsPathItem;
 class TableTagsRow;
 
 namespace Ui {
@@ -45,7 +48,10 @@ public slots:
     void tags_buttonAddClicked();
     void tags_buttonRemoveClicked();
     void tags_buttonResetClicked();
+    void toolChanged(int idx);
 
+private slots:
+    void rubberBandChanged(QRect rubberBandRect, QPointF fromScenePoint, QPointF toScenePoint);
 private:
     Ui::Visualization *ui;
     Operator *m_operator;
@@ -63,14 +69,32 @@ private:
     const OperatorOutput *m_currentOutput;
     bool m_photoIsInput;
     QVector<TableTagsRow*> m_tags;
+    QGraphicsScene *m_scene;
+    QGraphicsPixmapItem *m_pixmapItem;
+    QGraphicsPathItem *m_roi;
+    QPointF m_roi_p1;
+    QPointF m_roi_p2;
+    enum Tool {
+        ToolNone,
+        ToolROI,
+        Tool1Point,
+        Tool2Points,
+        Tool3Points,
+        ToolNPoints,
+    } m_tool;
+
 
     void clearAllTabs();
     void updateTabs();
     void updateTabsWithPhoto();
     void updateTabsWithOutput();
     void updateVisualizationZoom();
+    void updateVisualizationFitVisible();
     void updateTagsTable();
     void setInputControlEnabled(bool v);
+    bool eventFilter(QObject *obj, QEvent *event);
+    void drawROI();
+    void storeROI();
 };
 
 #endif // VISUALIZATION_H

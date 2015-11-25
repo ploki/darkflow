@@ -526,6 +526,18 @@ void Visualization::updateTabsWithPhoto()
     m_roi_p1.setX(0);
     m_roi_p1.setY(0);
     m_roi_p2 = m_roi_p1;
+
+    clearPoints(ToolNone);
+    QString pointsTag = m_photo->getTag("POINTS");
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "POINTS") ) {
+        pointsTag = m_operator->getTagOverrided(m_photo->getIdentity(), "POINTS");
+    }
+    QStringList coords = pointsTag.split(';');
+    foreach(QString coord, coords) {
+        QStringList coordStr = coord.split(',');
+        if (coordStr.count() != 2) continue;
+        addPoint(QPointF(coordStr[0].toDouble(),coordStr[1].toDouble()));
+    }
 }
 
 void Visualization::updateTabsWithOutput()
@@ -575,8 +587,11 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
                 dynamic_cast<QGraphicsSceneMouseEvent*>(event);
         if ( m_lastMouseScreenPosition == me->screenPos() ) {
             removePoints(me->scenePos());
-          if ( me->button() == Qt::LeftButton )
+          if ( me->button() == Qt::LeftButton ) {
                 addPoint(me->scenePos());
+                clearPoints(m_tool);
+                storePoints();
+          }
         }
     }
         break;
@@ -622,13 +637,14 @@ void Visualization::storeROI()
     m_operator->setTagOverride(m_photo->getIdentity(),"ROI", roiTag);
 }
 
-void Visualization::addPoint(QPointF scenePos)
+void Visualization::clearPoints(Tool tool)
 {
     int maxPoints = 0;
-    switch(m_tool) {
+    switch(tool) {
     case ToolNone:
     case ToolROI:
-        return;
+        maxPoints = 0;
+        break;
     case Tool1Point:
         maxPoints = 1;
         break;
@@ -644,14 +660,17 @@ void Visualization::addPoint(QPointF scenePos)
     default: break;
     }
 
-    VisPoint *point = new VisPoint(scenePos, this);
-    m_scene->addItem(point);
-    m_points.prepend(point);
     while(m_points.count() > maxPoints ) {
         m_scene->removeItem(m_points.last());
         m_points.pop_back();
     }
-    storePoints();
+}
+
+void Visualization::addPoint(QPointF scenePos)
+{
+    VisPoint *point = new VisPoint(scenePos, this);
+    m_scene->addItem(point);
+    m_points.prepend(point);
 }
 
 void Visualization::removePoints(QPointF scenePos)

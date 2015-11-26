@@ -83,6 +83,8 @@ public:
     bool isIdentified() const;
     bool isComplete() const;
 
+    QVector<QPointF> getPoints() const;
+
 private:
     Magick::Image m_image;
     Magick::Image m_curve;

@@ -318,9 +318,7 @@ void Visualization::updateVisualizationZoom()
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     qreal factor = pow(2,qreal(m_zoom)/5);
-    ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
+    transformView(factor);
 }
 
 void Visualization::updateVisualizationFitVisible()
@@ -339,10 +337,20 @@ void Visualization::updateVisualizationFitVisible()
         else {
             factor = double(widgetSize.height()-2)/double(h);
         }
-        ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-        ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
+        transformView(factor);
     }
+
+}
+
+void Visualization::transformView(qreal factor)
+{
+    if (factor >= 1 )
+        m_pixmapItem->setTransformationMode(Qt::FastTransformation);
+    else
+        m_pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+    ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
 
 }
 

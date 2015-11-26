@@ -555,5 +555,24 @@ bool Photo::isComplete() const
     return m_status == Complete;
 }
 
+QVector<QPointF> Photo::getPoints() const
+{
+    QVector<QPointF> vec;
+    QStringList points = getTag("POINTS").split(';');
+    if ( points.count() == 1 && points[0].count() == 0 )
+        return vec;
+    foreach(QString point, points) {
+        if ( point.count() == 0 )
+            continue;
+        QStringList coords = point.split(',');
+        if ( coords.count() != 2 ) {
+            qWarning("Invalid numbers in POINTS");
+            continue;
+        }
+        vec.push_back(QPointF(coords[0].toDouble(), coords[1].toDouble()));
+    }
+    return vec;
+}
+
 
 

@@ -21,6 +21,7 @@ public:
     Photo process(const Photo &, int, int) { throw 0; }
     bool play_onInput(int idx);
 
+    QRectF computePlanesDimensions();
 signals:
 
 public slots:
@@ -33,6 +34,8 @@ public slots:
     int *m_countPlane;
     int m_w;
     int m_h;
+    qreal m_offX;
+    qreal m_offY;
 
 private:
     void createPlanes(Magick::Image&);

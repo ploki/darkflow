@@ -94,6 +94,7 @@ private:
     void updateTabsWithOutput();
     void updateVisualizationZoom();
     void updateVisualizationFitVisible();
+    void transformView(qreal factor);
     void updateTagsTable();
     void setInputControlEnabled(bool v);
     bool eventFilter(QObject *obj, QEvent *event);

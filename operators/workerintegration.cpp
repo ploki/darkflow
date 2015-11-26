@@ -5,6 +5,10 @@
 #include "algorithm.h"
 #include <Magick++.h>
 
+#include <QVector>
+#include <QPointF>
+#include <QRectF>
+
 using Magick::Quantum;
 
 WorkerIntegration::WorkerIntegration(OpIntegration::RejectionType rejectionType,
@@ -23,7 +27,9 @@ WorkerIntegration::WorkerIntegration(OpIntegration::RejectionType rejectionType,
     m_integrationPlane(0),
     m_countPlane(0),
     m_w(0),
-    m_h(0)
+    m_h(0),
+    m_offX(0),
+    m_offY(0)
 {
 }
 
@@ -31,6 +37,37 @@ WorkerIntegration::~WorkerIntegration()
 {
     delete[] m_integrationPlane;
     delete[] m_countPlane;
+}
+
+QRectF WorkerIntegration::computePlanesDimensions()
+{
+    bool offSet = false;
+    qreal x1=0,y1=0,x2=0,y2=0;
+    foreach(Photo photo, m_inputs[0]) {
+        Magick::Image& image = photo.image();
+        int w = image.columns();
+        int h = image.rows();
+        qreal x = 0, y = 0;
+        QVector<QPointF> points = photo.getPoints();
+        if ( points.count() == 1 ) {
+            if ( !offSet ) {
+                m_offX=points[0].x();
+                m_offY=points[0].y();
+                offSet = true;
+            }
+            x = points[0].x() - m_offX;
+            y = points[0].y() - m_offY;
+        }
+        if ( x < x1 )
+            x1 = x;
+        if ( y < y1 )
+            y1 = y;
+        if ( x+w > x2 )
+            x2 = x+w;
+        if ( y+h > y2 )
+            y2 = y+h;
+    }
+    return QRectF(x1,y1,x2-x1,y2-y1);
 }
 
 bool WorkerIntegration::play_onInput(int idx)
@@ -42,28 +79,50 @@ bool WorkerIntegration::play_onInput(int idx)
     Q_ASSERT( m_inputs.count() == 1 );
     photoCount=m_inputs[0].count();
 
+    bool firstFrame=true;
+    qreal ff_x = 0, ff_y = 0;
+
     foreach(Photo photo, m_inputs[0]) {
         if ( aborted() ) {
             emitFailure();
             return false;
         }
+
+        QVector<QPointF> points = photo.getPoints();
+        qreal lcx=0, lcy=0;
+        if ( points.count() > 0 ) {
+            lcx = points[0].x();
+            lcy = points[0].y();
+            if ( firstFrame ) {
+                firstFrame = false;
+                ff_x = lcx;
+                ff_y = lcy;
+            }
+        }
+        int cx = round(lcx - ff_x);
+        int cy = round(lcy - ff_y);
+
         Magick::Image& image = photo.image();
         if ( ! m_integrationPlane ) {
             createPlanes(image);
         }
         Magick::Pixels pixel_cache(image);
         int line = 0;
+
+#define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
 #pragma omp parallel for
         for ( int y = 0 ; y < m_h ; ++y ) {
-            Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
+            if ( y+cy < 0 || y+cy >= m_h ) continue;
+            Magick::PixelPacket *pixels = pixel_cache.get(0, y+cy, m_w, 1);
             if ( !pixels ) continue;
             for ( int x = 0 ; x < m_w ; ++x ) {
-                m_integrationPlane[y*m_w*3+x*3+0] += pixels[x].red;
-                m_integrationPlane[y*m_w*3+x*3+1] += pixels[x].green;
-                m_integrationPlane[y*m_w*3+x*3+2] += pixels[x].blue;
-                ++m_countPlane[y*m_w*3+x*3+0];
-                ++m_countPlane[y*m_w*3+x*3+1];
-                ++m_countPlane[y*m_w*3+x*3+2];
+                if ( x+cx < 0 || x+cx >= m_w ) continue;
+                SUBPXL(m_integrationPlane,x,y,0) += pixels[x+cx].red;
+                SUBPXL(m_integrationPlane,x,y,1) += pixels[x+cx].green;
+                SUBPXL(m_integrationPlane,x,y,2) += pixels[x+cx].blue;
+                ++SUBPXL(m_countPlane,x,y,0);
+                ++SUBPXL(m_countPlane,x,y,1);
+                ++SUBPXL(m_countPlane,x,y,2);
             }
 #pragma omp critical
             {

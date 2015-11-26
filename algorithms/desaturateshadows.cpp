@@ -20,6 +20,7 @@ DesaturateShadows::DesaturateShadows(qreal highlightLimit,
     double low = high - log2(range);
     double threshold_high = highlightLimit * QuantumRange;
     double threshold_low =  threshold_high / range;
+#pragma omp parallel for
     for ( unsigned int i = 0 ; i < QuantumRange+1 ; ++i ) {
         if ( i < threshold_low ) {
             m_lut[i]=saturation;

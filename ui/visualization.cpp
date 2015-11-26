@@ -497,6 +497,7 @@ void Visualization::clearAllTabs()
     m_photo = NULL;
     m_photoIsInput = false;
 
+    clearPoints(ToolNone);
     clearTags();
     setInputControlEnabled(false);
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 *-g++* {
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
@@ -79,7 +79,9 @@ SOURCES +=\
     ui/tabletagsrow.cpp \
     ui/tablewidgetitem.cpp \
     operators/opcrop.cpp \
-    ui/vispoint.cpp
+    ui/vispoint.cpp \
+    operators/oploadvideo.cpp \
+    operators/workerloadvideo.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -139,7 +141,9 @@ HEADERS  += \
     ui/tabletagsrow.h \
     ui/tablewidgetitem.h \
     operators/opcrop.h \
-    ui/vispoint.h
+    ui/vispoint.h \
+    operators/oploadvideo.h \
+    operators/workerloadvideo.h
 
 FORMS    += \
     ui/aboutdialog.ui \

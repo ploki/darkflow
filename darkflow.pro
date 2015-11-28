@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia
+QT       += core gui
 
 *-g++* {
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
@@ -154,4 +154,4 @@ FORMS    += \
     ui/slider.ui
 
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += Magick++
+unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil

@@ -74,6 +74,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_scene->installEventFilter(this);
     ui->graphicsView->installEventFilter(this);
     connect(ui->graphicsView, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)), this, SLOT(rubberBandChanged(QRect,QPointF,QPointF)));
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 Visualization::~Visualization()

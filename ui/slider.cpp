@@ -96,6 +96,7 @@ Slider::Slider(const QString &windowCaption,
 
     setSlider();
     updateInputs();
+    setWindowFlags(Qt::Tool|Qt::WindowStaysOnTopHint);
 }
 
 Slider::~Slider()

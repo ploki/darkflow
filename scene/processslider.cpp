@@ -76,11 +76,14 @@ int ProcessSlider::type() const
 
 void ProcessSlider::clicked(QPoint pos)
 {
-    QPoint newPos = pos;
-    newPos.setX(newPos.x() - m_sliderDialog->size().width()/2);
-    newPos.setY(newPos.y() - m_sliderDialog->size().height()/2);
-    m_sliderDialog->move(newPos.x(), newPos.y());
-    m_sliderDialog->show();
+    if ( !m_sliderDialog->isVisible() ) {
+        QPoint newPos = pos;
+        newPos.setX(newPos.x() - m_sliderDialog->size().width()/2);
+        newPos.setY(newPos.y() - m_sliderDialog->size().height()/2);
+        m_sliderDialog->move(newPos.x(), newPos.y());
+        m_sliderDialog->show();
+    }
+    m_sliderDialog->activateWindow();
     m_sliderDialog->raise();
 }
 

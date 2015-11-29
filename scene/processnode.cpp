@@ -236,11 +236,14 @@ void ProcessNode::helpClicked(QPoint)
 
 void ProcessNode::visualizationClicked(QPoint screenPos)
 {
-    QPoint newPos = screenPos;
-    newPos.setX(newPos.x() - m_visualization->size().width()/2);
-    newPos.setY(newPos.y() - m_visualization->size().height()/2);
-    m_visualization->move(newPos.x(), newPos.y());
-    m_visualization->show();
+    if ( !m_visualization->isVisible() ) {
+        QPoint newPos = screenPos;
+        newPos.setX(newPos.x() - m_visualization->size().width()/2);
+        newPos.setY(newPos.y() - m_visualization->size().height()/2);
+        m_visualization->move(newPos.x(), newPos.y());
+        m_visualization->show();
+    }
+    m_visualization->activateWindow();
     m_visualization->raise();
 }
 

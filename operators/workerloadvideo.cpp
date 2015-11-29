@@ -91,7 +91,8 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
     if(pCodec->capabilities & CODEC_CAP_TRUNCATED)
         pCodecCtx->flags|=CODEC_FLAG_TRUNCATED;
 
-    if ( pCodecCtx->pix_fmt != PIX_FMT_YUV420P )
+    if ( pCodecCtx->pix_fmt != AV_PIX_FMT_YUV420P &&
+         pCodecCtx->pix_fmt != AV_PIX_FMT_YUV410P)
             return handle_error("pix_fmt != PIX_FMT_YUV420P");
 
     // Open codec
@@ -104,7 +105,14 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
     if ( !fps_num || !fps_den ) {
         fps_num=1; fps_den=30;
     }
-    int64_t frame_count = (pFormatCtx->duration==0?1:pFormatCtx->duration/AV_TIME_BASE) *  fps_den / fps_num;
+    if ( fps_num > fps_den ) {
+        int tmp = fps_num;
+        fps_num = fps_den;
+        fps_den = tmp;
+    }
+    int64_t frame_count = (pFormatCtx->duration==0?AV_TIME_BASE:pFormatCtx->duration/AV_TIME_BASE) *  fps_num / fps_den;
+    if ( !frame_count )
+        frame_count=30;
     int frame, got_picture, len;
     picture=av_frame_alloc();
 
@@ -177,7 +185,16 @@ void WorkerLoadVideo::push_frame(AVFrame *picture,
 {
     int w = picture->width;
     int h = picture->height;
-    Q_ASSERT( picture->format == PIX_FMT_YUV420P );
+    int div = 1;
+    switch ( picture->format ) {
+    case AV_PIX_FMT_YUV420P:
+        div = 2; break;
+    case AV_PIX_FMT_YUV410P:
+        div = 4; break;
+    default:
+        qWarning("Unsupported pixel format");
+        return;
+    }
 
     Photo photo(Photo::sRGB);
     photo.setIdentity(QString("%0[%1]").arg(filename).arg(n));
@@ -193,11 +210,11 @@ void WorkerLoadVideo::push_frame(AVFrame *picture,
             continue;
         }
         for ( int x = 0 ; x < w ; ++x ) {
-            Q_ASSERT( x/2 < picture->linesize[1] );
-            Q_ASSERT( x/2 < picture->linesize[2] );
+            Q_ASSERT( x/div < picture->linesize[1] );
+            Q_ASSERT( x/div < picture->linesize[2] );
             const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
-            const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/2) + x/2];
-            const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/2) + x/2];
+            const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
+            const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
 
             quantum_t r, g, b;
             yuv420_to_rgb(c_y,c_u,c_v,r,g,b);

@@ -700,6 +700,7 @@ void Visualization::removePoints(QPointF scenePos)
 
 void Visualization::storePoints()
 {
+    if ( !m_photo ) return;
     QString pointsTag;
     foreach(VisPoint *point, m_points) {
         if ( pointsTag.count() )

@@ -40,6 +40,7 @@
 #include "opinvert.h"
 #include "opcrop.h"
 #include "oploadvideo.h"
+#include "opblend.h"
 
 QString Process::uuid()
 {
@@ -83,6 +84,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpInvert(this));
     m_availableOperators.push_back(new OpCrop(this));
     m_availableOperators.push_back(new OpLoadVideo(this));
+    m_availableOperators.push_back(new OpBlend(this));
     addOperatorsToContextMenu();
 }
 

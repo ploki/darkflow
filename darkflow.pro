@@ -81,7 +81,9 @@ SOURCES +=\
     operators/opcrop.cpp \
     ui/vispoint.cpp \
     operators/oploadvideo.cpp \
-    operators/workerloadvideo.cpp
+    operators/workerloadvideo.cpp \
+    operators/opblend.cpp \
+    operators/workerblend.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -143,7 +145,9 @@ HEADERS  += \
     operators/opcrop.h \
     ui/vispoint.h \
     operators/oploadvideo.h \
-    operators/workerloadvideo.h
+    operators/workerloadvideo.h \
+    operators/opblend.h \
+    operators/workerblend.h
 
 FORMS    += \
     ui/aboutdialog.ui \

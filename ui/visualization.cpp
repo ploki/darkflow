@@ -605,7 +605,9 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
     case QEvent::GraphicsSceneMouseRelease: {
         QGraphicsSceneMouseEvent *me =
                 dynamic_cast<QGraphicsSceneMouseEvent*>(event);
-        if ( m_lastMouseScreenPosition == me->screenPos() ) {
+        if ( m_lastMouseScreenPosition == me->screenPos() &&
+             m_tool != ToolNone && m_tool != ToolROI &&
+             m_photoIsInput ) {
             removePoints(me->scenePos());
           if ( me->button() == Qt::LeftButton ) {
                 addPoint(me->scenePos());

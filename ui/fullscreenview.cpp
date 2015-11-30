@@ -1,5 +1,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QGraphicsPixmapItem>
 #include <QWheelEvent>
 #include <QKeyEvent>
 
@@ -51,6 +53,15 @@ bool FullScreenView::eventFilter(QObject *obj, QEvent *event)
             zoomUpdate();
             event->accept();
             return true;
+        }
+        else if ( key == Qt::Key_F) {
+            foreach(QGraphicsItem *item, m_scene->items()) {
+                if ( item->type() != QGraphicsPixmapItem::Type )
+                    continue;
+                ui->graphicsView->fitInView(item,Qt::KeepAspectRatio);
+                event->accept();
+                return true;
+            }
         }
 
     }

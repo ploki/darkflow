@@ -55,7 +55,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
 
     AVFormatContext *pFormatCtx = avformat_alloc_context();
 
-    if(avformat_open_input(&pFormatCtx, filename.toLatin1(), NULL, NULL)!=0)
+    if(avformat_open_input(&pFormatCtx, filename.toLocal8Bit(), NULL, NULL)!=0)
             return handle_error("Couldn't open file");
 
     // Retrieve stream information

@@ -83,7 +83,8 @@ SOURCES +=\
     operators/oploadvideo.cpp \
     operators/workerloadvideo.cpp \
     operators/opblend.cpp \
-    operators/workerblend.cpp
+    operators/workerblend.cpp \
+    ui/fullscreenview.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -147,7 +148,8 @@ HEADERS  += \
     operators/oploadvideo.h \
     operators/workerloadvideo.h \
     operators/opblend.h \
-    operators/workerblend.h
+    operators/workerblend.h \
+    ui/fullscreenview.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -155,7 +157,8 @@ FORMS    += \
     ui/mainwindow.ui \
     ui/projectproperties.ui \
     ui/visualization.ui \
-    ui/slider.ui
+    ui/slider.ui \
+    ui/fullscreenview.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil

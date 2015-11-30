@@ -8,6 +8,7 @@ class QGraphicsPixmapItem;
 class QGraphicsPathItem;
 class VisPoint;
 class TableTagsRow;
+class FullScreenView;
 
 namespace Ui {
 class Visualization;
@@ -42,6 +43,7 @@ public slots:
     void upToDate();
     void outOfDate();
     void playClicked();
+    void fullScreenViewClicked();
 
     void histogramParamsChanged();
     void curveParamsChanged();
@@ -86,7 +88,7 @@ private:
         Tool3Points,
         ToolNPoints,
     } m_tool;
-
+    FullScreenView *m_fullScreenView;
 
     void clearAllTabs();
     void updateTabs();

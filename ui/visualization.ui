@@ -393,6 +393,13 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="3" column="1">
+                    <widget class="QPushButton" name="button_fullScreen">
+                     <property name="text">
+                      <string>Full Screen</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -486,7 +493,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>572</width>
+                 <width>568</width>
                  <height>512</height>
                 </rect>
                </property>
@@ -610,7 +617,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>572</width>
+                 <width>568</width>
                  <height>512</height>
                 </rect>
                </property>
@@ -1008,6 +1015,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_fullScreen</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>fullScreenViewClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>709</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>387</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1026,5 +1049,6 @@
   <slot>tags_buttonRemoveClicked()</slot>
   <slot>tags_buttonResetClicked()</slot>
   <slot>toolChanged(int)</slot>
+  <slot>fullScreenViewClicked()</slot>
  </slots>
 </ui>

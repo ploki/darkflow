@@ -10,6 +10,8 @@
 #include <QGraphicsPathItem>
 #include <QGraphicsSceneMouseEvent>
 
+#include <QWindow>
+
 #include <Magick++.h>
 
 #include "visualization.h"
@@ -23,6 +25,7 @@
 #include "tabletagsrow.h"
 #include "tablewidgetitem.h"
 #include "vispoint.h"
+#include "fullscreenview.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -43,7 +46,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_roi(0),
     m_roi_p1(),
     m_roi_p2(),
-    m_tool(ToolNone)
+    m_tool(ToolNone),
+    m_fullScreenView(new FullScreenView(m_scene, this))
 {
     ui->setupUi(this);
     ui->operatorName->setText(m_operator->getName());
@@ -180,6 +184,12 @@ void Visualization::outOfDate()
 void Visualization::playClicked()
 {
     m_operator->play();
+}
+
+void Visualization::fullScreenViewClicked()
+{
+    m_fullScreenView->showFullScreen();
+    //m_fullScreenView->showMaximized();
 }
 
 void Visualization::histogramParamsChanged()
@@ -608,10 +618,17 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
     case QEvent::Resize: {
         updateVisualizationFitVisible();
     }
+        break;
+    case QEvent::KeyRelease: {
+        fullScreenViewClicked();
+        event->accept();
+        return true;
+    }
+        break;
     default:break;
 
     }
-    return QObject::eventFilter(obj, event);
+    return QMainWindow::eventFilter(obj, event);
 }
 
 void Visualization::drawROI()

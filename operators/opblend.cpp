@@ -5,9 +5,10 @@
 #include "workerblend.h"
 
 static const char *BlendModeStr[] = {
-"Multiply", "Screen", "Overlay", "HardLight", "SoftLight",
-"Divide", "Addition", "Subtract", "Difference", "DarkenOnly",
-"LightenOnly"
+    "Multiply", "Screen", "Overlay", "Hard Light", "Soft Light",
+    "Divide Brighten", "Divide", "Divide Darken",
+    "Addition", "Subtract", "Difference",
+    "Darken Only", "Lighten Only"
 };
 
 
@@ -23,7 +24,9 @@ OpBlend::OpBlend(Process *parent) :
     m_mode1->addOption(BlendModeStr[Overlay], this, SLOT(mode1Overlay()));
     m_mode1->addOption(BlendModeStr[HardLight], this, SLOT(mode1HardLight()));
     m_mode1->addOption(BlendModeStr[SoftLight], this, SLOT(mode1SoftLight()));
+    m_mode1->addOption(BlendModeStr[DivideBrighten], this, SLOT(mode1Divide()));
     m_mode1->addOption(BlendModeStr[Divide], this, SLOT(mode1Divide()));
+    m_mode1->addOption(BlendModeStr[DivideDarken], this, SLOT(mode1Divide()));
     m_mode1->addOption(BlendModeStr[Addition], this, SLOT(mode1Addition()));
     m_mode1->addOption(BlendModeStr[Subtract], this, SLOT(mode1Subtract()));
     m_mode1->addOption(BlendModeStr[Difference], this, SLOT(mode1Difference()));
@@ -35,7 +38,9 @@ OpBlend::OpBlend(Process *parent) :
     m_mode2->addOption(BlendModeStr[Overlay], this, SLOT(mode2Overlay()));
     m_mode2->addOption(BlendModeStr[HardLight], this, SLOT(mode2HardLight()));
     m_mode2->addOption(BlendModeStr[SoftLight], this, SLOT(mode2SoftLight()));
+    m_mode2->addOption(BlendModeStr[DivideBrighten], this, SLOT(mode2Divide()));
     m_mode2->addOption(BlendModeStr[Divide], this, SLOT(mode2Divide()));
+    m_mode2->addOption(BlendModeStr[DivideDarken], this, SLOT(mode2Divide()));
     m_mode2->addOption(BlendModeStr[Addition], this, SLOT(mode2Addition()));
     m_mode2->addOption(BlendModeStr[Subtract], this, SLOT(mode2Subtract()));
     m_mode2->addOption(BlendModeStr[Difference], this, SLOT(mode2Difference()));
@@ -95,9 +100,21 @@ void OpBlend::mode1SoftLight()
     setOutOfDate();
 }
 
+void OpBlend::mode1DivideBrighten()
+{
+    m_mode1Value = DivideBrighten;
+    setOutOfDate();
+}
+
 void OpBlend::mode1Divide()
 {
     m_mode1Value = Divide;
+    setOutOfDate();
+}
+
+void OpBlend::mode1DivideDarken()
+{
+    m_mode1Value = DivideDarken;
     setOutOfDate();
 }
 
@@ -161,9 +178,21 @@ void OpBlend::mode2SoftLight()
     setOutOfDate();
 }
 
+void OpBlend::mode2DivideBrighten()
+{
+    m_mode2Value = DivideBrighten;
+    setOutOfDate();
+}
+
 void OpBlend::mode2Divide()
 {
     m_mode2Value = Divide;
+    setOutOfDate();
+}
+
+void OpBlend::mode2DivideDarken()
+{
+    m_mode2Value = DivideDarken;
     setOutOfDate();
 }
 

@@ -38,11 +38,48 @@ blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
         break;
     case OpBlend::SoftLight:
         break;
-    case OpBlend::Divide:
-        //f(a,b) = a/b
-        rgb[0] = (double(rgb[0])/QuantumRange / double(p->red)/QuantumRange) * QuantumRange;
-        rgb[1] = (double(rgb[1])/QuantumRange / double(p->green)/QuantumRange) * QuantumRange;
-        rgb[2] = (double(rgb[2])/QuantumRange / double(p->blue)/QuantumRange) * QuantumRange;
+    case OpBlend::DivideBrighten: {
+        //f(a,b) = a*(1-b)
+        double mul[3] = {
+            p->red?double(QuantumRange)/double(p->red):0,
+            p->green?double(QuantumRange)/double(p->green):0,
+            p->blue?double(QuantumRange)/double(p->blue):0
+        };
+        rgb[0] = mul[0]*rgb[0];
+        rgb[1] = mul[1]*rgb[1];
+        rgb[2] = mul[2]*rgb[2];
+    }
+        break;
+    case OpBlend::Divide: {
+        //f(a,b) = a*(1-b)
+        double mul[3] = {
+            p->red?double(QuantumRange)/double(p->red):0,
+            p->green?double(QuantumRange)/double(p->green):0,
+            p->blue?double(QuantumRange)/double(p->blue):0
+        };
+        double max = 0;
+        if ( mul[0] > max) max = mul[0];
+        if ( mul[1] > max) max = mul[1];
+        if ( mul[2] > max) max = mul[2];
+        mul[0]/=max;
+        mul[1]/=max;
+        mul[2]/=max;
+        rgb[0] = mul[0]*rgb[0];
+        rgb[1] = mul[1]*rgb[1];
+        rgb[2] = mul[2]*rgb[2];
+    }
+        break;
+    case OpBlend::DivideDarken: {
+        //f(a,b) = a*(1-b)
+        double mul[3] = {
+            p->red?1/double(p->red):0,
+            p->green?1/double(p->green):0,
+            p->blue?1/double(p->blue):0
+        };
+        rgb[0] = mul[0]*rgb[0];
+        rgb[1] = mul[1]*rgb[1];
+        rgb[2] = mul[2]*rgb[2];
+    }
         break;
     case OpBlend::Addition:
         rgb[0] = rgb[0]+quantum_t(p->red);
@@ -187,8 +224,8 @@ void WorkerBlend::play(QVector<QVector<Photo> > inputs, int n_outputs)
         delete imageA_cache;
         delete imageB_cache;
         delete imageC_cache;
-        ++n;
         emitProgress(n,complete, 1, 1);
+        ++n;
     }
     if ( aborted() )
         emitFailure();

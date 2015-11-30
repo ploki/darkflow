@@ -20,7 +20,9 @@ public:
         Overlay,
         HardLight,
         SoftLight,
+        DivideBrighten,
         Divide,
+        DivideDarken,
         Addition,
         Subtract,
         Difference,
@@ -34,7 +36,9 @@ public slots:
     void mode1Overlay();
     void mode1HardLight();
     void mode1SoftLight();
+    void mode1DivideBrighten();
     void mode1Divide();
+    void mode1DivideDarken();
     void mode1Addition();
     void mode1Subtract();
     void mode1Difference();
@@ -46,7 +50,9 @@ public slots:
     void mode2Overlay();
     void mode2HardLight();
     void mode2SoftLight();
+    void mode2DivideBrighten();
     void mode2Divide();
+    void mode2DivideDarken();
     void mode2Addition();
     void mode2Subtract();
     void mode2Difference();

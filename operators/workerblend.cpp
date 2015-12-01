@@ -125,14 +125,16 @@ blend(Magick::PixelPacket *a,
     if ( c ) {
         blend(rgb, c, mode2);
     }
-    if ( rgb[0] < 0 ) u->red = QuantumRange; else u->red = 0;
-    if ( rgb[1] < 0 ) u->green = QuantumRange; else u->green = 0;
-    if ( rgb[2] < 0 ) u->blue = QuantumRange; else u->blue = 0;
-
-    if ( rgb[0] > QuantumRange ) o->red = QuantumRange; else o->red = 0;
-    if ( rgb[1] > QuantumRange ) o->green = QuantumRange; else o->green = 0;
-    if ( rgb[2] > QuantumRange ) o->blue = QuantumRange; else o->blue = 0;
-
+    if (u) {
+        if ( rgb[0] < 0 ) u->red = QuantumRange; else u->red = 0;
+        if ( rgb[1] < 0 ) u->green = QuantumRange; else u->green = 0;
+        if ( rgb[2] < 0 ) u->blue = QuantumRange; else u->blue = 0;
+    }
+    if (o) {
+        if ( rgb[0] > QuantumRange ) o->red = QuantumRange; else o->red = 0;
+        if ( rgb[1] > QuantumRange ) o->green = QuantumRange; else o->green = 0;
+        if ( rgb[2] > QuantumRange ) o->blue = QuantumRange; else o->blue = 0;
+    }
     a->red = clamp(rgb[0]);
     a->green = clamp(rgb[1]);
     a->blue = clamp(rgb[2]);
@@ -218,6 +220,24 @@ void WorkerBlend::play(QVector<QVector<Photo> > inputs, int n_outputs)
         imageA_cache->sync();
         underflow_cache.sync();
         overflow_cache.sync();
+
+        if ( b_h == 1 && b_w == 1 &&
+             c_h == 1 && c_w == 1 ) {
+            photoA.curve().modifyImage();
+            Magick::Pixels curve_cache(photoA.curve());
+            Magick::PixelPacket *pxl_A = curve_cache.get(0, 0, 65536, 1);
+            const Magick::PixelPacket *pxl_B = NULL;
+            const Magick::PixelPacket *pxl_C = NULL;
+            if ( imageB_cache )
+                pxl_B = imageB_cache->getConst(0, 0, 1, 1);
+            if ( imageC_cache )
+                pxl_C = imageC_cache->getConst(0, 0, 1, 1);
+            for ( int x = 0; x < 65536 ; ++x ) {
+                blend(pxl_A+x, pxl_B, pxl_C, NULL, NULL, m_mode1, m_mode2);
+            }
+            curve_cache.sync();
+        }
+
         m_outputs[0].push_back(photoA);
         m_outputs[1].push_back(overflow);
         m_outputs[2].push_back(underflow);

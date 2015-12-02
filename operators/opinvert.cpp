@@ -21,7 +21,7 @@ private:
 };
 
 OpInvert::OpInvert(Process *parent) :
-    Operator(OP_SECTION_CURVE, "Invert", parent)
+    Operator(OP_SECTION_EFFECTS, "Invert", parent)
 {
     m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
     m_outputs.push_back(new OperatorOutput("Negative images", "Negative Images", this));

@@ -54,7 +54,7 @@ private slots:
 };
 
 OperatorExNihilo::OperatorExNihilo(Process *parent) :
-    Operator(OP_SECTION_UTILITY, "Ex Nihilo", parent)
+    Operator(OP_SECTION_DEPRECATED, "Ex Nihilo", parent)
 {
     m_outputs.push_back(new OperatorOutput("Random image", "Random Image", this));
 }

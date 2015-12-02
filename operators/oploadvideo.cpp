@@ -5,7 +5,7 @@
 #include "process.h"
 
 OpLoadVideo::OpLoadVideo(Process *process) :
-    Operator(OP_SECTION_SOURCE_IMAGES, "Videos", process),
+    Operator(OP_SECTION_ASSETS, "Videos", process),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "videoCollection",
                           "Videos",

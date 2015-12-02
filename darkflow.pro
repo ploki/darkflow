@@ -84,7 +84,16 @@ SOURCES +=\
     operators/workerloadvideo.cpp \
     operators/opblend.cpp \
     operators/workerblend.cpp \
-    ui/fullscreenview.cpp
+    ui/fullscreenview.cpp \
+    operators/opmultiplexer.cpp \
+    operators/opdemultiplexer.cpp \
+    operators/oprgbdecompose.cpp \
+    operators/oprgbcompose.cpp \
+    operators/opequalize.cpp \
+    algorithms/channelmixer.cpp \
+    operators/opchannelmixer.cpp \
+    algorithms/colorfilter.cpp \
+    operators/opcolorfilter.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -149,7 +158,16 @@ HEADERS  += \
     operators/workerloadvideo.h \
     operators/opblend.h \
     operators/workerblend.h \
-    ui/fullscreenview.h
+    ui/fullscreenview.h \
+    operators/opmultiplexer.h \
+    operators/opdemultiplexer.h \
+    operators/oprgbdecompose.h \
+    operators/oprgbcompose.h \
+    operators/opequalize.h \
+    algorithms/channelmixer.h \
+    operators/opchannelmixer.h \
+    algorithms/colorfilter.h \
+    operators/opcolorfilter.h
 
 FORMS    += \
     ui/aboutdialog.ui \

@@ -111,7 +111,7 @@ public:
 
 
 OpSubtract::OpSubtract(Process *parent) :
-    Operator(OP_SECTION_BLEND, "Subtract", parent)
+    Operator(OP_SECTION_DEPRECATED, "Subtract", parent)
 {
     m_inputs.push_back(new OperatorInput("Minuend","Minuend",OperatorInput::Set, this));
     m_inputs.push_back(new OperatorInput("Subtrahend","Subtrahend",OperatorInput::Set, this));

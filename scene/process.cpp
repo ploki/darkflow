@@ -41,6 +41,13 @@
 #include "opcrop.h"
 #include "oploadvideo.h"
 #include "opblend.h"
+#include "opmultiplexer.h"
+#include "opdemultiplexer.h"
+#include "oprgbdecompose.h"
+#include "oprgbcompose.h"
+#include "opequalize.h"
+#include "opchannelmixer.h"
+#include "opcolorfilter.h"
 
 QString Process::uuid()
 {
@@ -68,23 +75,46 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_scene->installEventFilter(this);
 
     m_availableOperators.push_back(new OperatorLoadRaw(this));
+    m_availableOperators.push_back(new OpLoadVideo(this));
+
+    m_availableOperators.push_back(new OpExposure(this));
+    m_availableOperators.push_back(new OpShapeDynamicRange(this));
+    m_availableOperators.push_back(new OpIGamma(this));
+
+    m_availableOperators.push_back(new OpWhiteBalance(this));
+    m_availableOperators.push_back(new OpBlackBody(this));
+    m_availableOperators.push_back(new OpRGBDecompose(this));
+    m_availableOperators.push_back(new OpRGBCompose(this));
+    m_availableOperators.push_back(new OpColorFilter(this));
+    m_availableOperators.push_back(new OpChannelMixer(this));
+    m_availableOperators.push_back(new OpEqualize(this));
+
+    m_availableOperators.push_back(new OpModulate(this));
+    m_availableOperators.push_back(new OpDesaturateShadows(this));
+
+    m_availableOperators.push_back(new OpInvert(this));
+
+    m_availableOperators.push_back(new OpBlend(this));
+    m_availableOperators.push_back(new OpIntegration(this));
+    m_availableOperators.push_back(new OpFlatFieldCorrection(this));
+
+    m_availableOperators.push_back(new OpCrop(this));
+    m_availableOperators.push_back(new OperatorRotate(this));
+
+    m_availableOperators.push_back(new OpDemultiplexer(2, this));
+    m_availableOperators.push_back(new OpDemultiplexer(3, this));
+    m_availableOperators.push_back(new OpDemultiplexer(4, this));
+    m_availableOperators.push_back(new OpDemultiplexer(5, this));
+    m_availableOperators.push_back(new OpMultiplexer(2, this));
+    m_availableOperators.push_back(new OpMultiplexer(3, this));
+    m_availableOperators.push_back(new OpMultiplexer(4, this));
+    m_availableOperators.push_back(new OpMultiplexer(5, this));
+
+
+
+    m_availableOperators.push_back(new OpSubtract(this));
     m_availableOperators.push_back(new OperatorExNihilo(this));
     m_availableOperators.push_back(new OperatorPassThrough(this));
-    m_availableOperators.push_back(new OperatorRotate(this));
-    m_availableOperators.push_back(new OpWhiteBalance(this));
-    m_availableOperators.push_back(new OpExposure(this));
-    m_availableOperators.push_back(new OpModulate(this));
-    m_availableOperators.push_back(new OpIGamma(this));
-    m_availableOperators.push_back(new OpDesaturateShadows(this));
-    m_availableOperators.push_back(new OpShapeDynamicRange(this));
-    m_availableOperators.push_back(new OpSubtract(this));
-    m_availableOperators.push_back(new OpBlackBody(this));
-    m_availableOperators.push_back(new OpFlatFieldCorrection(this));
-    m_availableOperators.push_back(new OpIntegration(this));
-    m_availableOperators.push_back(new OpInvert(this));
-    m_availableOperators.push_back(new OpCrop(this));
-    m_availableOperators.push_back(new OpLoadVideo(this));
-    m_availableOperators.push_back(new OpBlend(this));
     addOperatorsToContextMenu();
 }
 

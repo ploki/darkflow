@@ -17,13 +17,14 @@ class Process;
 class QThread;
 class OperatorWorker;
 
-#define OP_SECTION_SOURCE_IMAGES "Source Images"
-#define OP_SECTION_UTILITY "Utility"
+#define OP_SECTION_ASSETS "Assets"
+#define OP_SECTION_TOOLS "Tools"
 #define OP_SECTION_GEOMETRY "Geometry"
-#define OP_SECTION_CORRECTION "Correction"
+#define OP_SECTION_COLOR "Color"
 #define OP_SECTION_CURVE "Curve"
 #define OP_SECTION_BLEND "Blend"
 #define OP_SECTION_COSMETIC "Cosmetic"
+#define OP_SECTION_EFFECTS "Effects"
 #define OP_SECTION_DEPRECATED "Deprecated"
 
 

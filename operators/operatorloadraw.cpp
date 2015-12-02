@@ -16,7 +16,7 @@ static const char *WhiteBalanceStr[] = {
 };
 
 OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
-    Operator(OP_SECTION_SOURCE_IMAGES, "Raw photos", parent),
+    Operator(OP_SECTION_ASSETS, "Raw photos", parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "rawCollection",
                           "RAW photos",

@@ -93,7 +93,9 @@ SOURCES +=\
     algorithms/channelmixer.cpp \
     operators/opchannelmixer.cpp \
     algorithms/colorfilter.cpp \
-    operators/opcolorfilter.cpp
+    operators/opcolorfilter.cpp \
+    operators/opmicrocontrasts.cpp \
+    operators/opunsharpmask.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -167,7 +169,9 @@ HEADERS  += \
     algorithms/channelmixer.h \
     operators/opchannelmixer.h \
     algorithms/colorfilter.h \
-    operators/opcolorfilter.h
+    operators/opcolorfilter.h \
+    operators/opmicrocontrasts.h \
+    operators/opunsharpmask.h
 
 FORMS    += \
     ui/aboutdialog.ui \

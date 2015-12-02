@@ -48,6 +48,8 @@
 #include "opequalize.h"
 #include "opchannelmixer.h"
 #include "opcolorfilter.h"
+#include "opmicrocontrasts.h"
+#include "opunsharpmask.h"
 
 QString Process::uuid()
 {
@@ -91,6 +93,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
+    m_availableOperators.push_back(new OpMicroContrasts(this));
+    m_availableOperators.push_back(new OpUnsharpMask(this));
 
     m_availableOperators.push_back(new OpInvert(this));
 

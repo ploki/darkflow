@@ -4,6 +4,8 @@
 #include "operator.h"
 #include <QObject>
 
+class OperatorParameterSlider;
+
 class OpDeconvolution : public Operator
 {
     Q_OBJECT
@@ -11,6 +13,8 @@ public:
     OpDeconvolution(Process *parent);
     OpDeconvolution *newInstance();
     OperatorWorker *newWorker();
+private:
+    OperatorParameterSlider *m_luminosity;
 };
 
 #endif // OPDECONVOLUTION_H

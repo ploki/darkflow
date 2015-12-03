@@ -5,8 +5,9 @@
 
 using Magick::Quantum;
 
-WorkerDeconvolution::WorkerDeconvolution(QThread *thread, OpDeconvolution *op) :
-    OperatorWorker(thread, op)
+WorkerDeconvolution::WorkerDeconvolution(qreal luminosity, QThread *thread, OpDeconvolution *op) :
+    OperatorWorker(thread, op),
+    m_luminosity(luminosity)
 {
 }
 
@@ -63,7 +64,7 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
 
 }
 
-static void deconv(Magick::Image& image, Magick::Image& kernel)
+static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity)
 {
     std::list<Magick::Image> fft_image;
     std::list<Magick::Image> fft_kernel;
@@ -104,10 +105,11 @@ static void deconv(Magick::Image& image, Magick::Image& kernel)
     Magick::Pixels Rm_cache(Rm);
     Magick::Pixels Rp_cache(Rp);
 
-    const Magick::PixelPacket *center_pxl = Am_cache.getConst(w/2, h/2, 1, 1);
+    const Magick::PixelPacket *center_pxl = Bm_cache.getConst(w/2, h/2, 1, 1);
     quantum_t red = center_pxl[0].red;
     quantum_t green = center_pxl[0].green;
     quantum_t blue = center_pxl[0].blue;
+    Q_UNUSED(red); Q_UNUSED(green); Q_UNUSED(blue);
 
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
@@ -121,14 +123,24 @@ static void deconv(Magick::Image& image, Magick::Image& kernel)
 
            Q_UNUSED(Am_pxl);
            Q_UNUSED(Bm_pxl);
-
+#if 1
 #define RM(comp) \
-    Rm_pxl[x].comp = clamp( comp * (Bm_pxl[x].comp) / ( Am_pxl[x].comp?:1 )  )
+    Rm_pxl[x].comp = clamp(  double(Bm_pxl[x].comp) * double(comp) / (double(Am_pxl[x].comp?:1)*(1./luminosity)))
            RM(red); RM(green); RM(blue);
 #define mod(a,b) (a)%(b)
 #define RP(comp) \
-    Rp_pxl[x].comp = mod( - quantum_t(Ap_pxl[x].comp) + quantum_t(Bp_pxl[x].comp)+ 65536+32768, 65536)
+    Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) - quantum_t(Ap_pxl[x].comp)+ 65536+32768, 65536)
            RP(red); RP(green); RP(blue);
+#else
+#define RM(comp) \
+    Rm_pxl[x].comp = clamp( (Bm_pxl[x].comp) * ( Am_pxl[x].comp) / comp  )
+           RM(red); RM(green); RM(blue);
+#define mod(a,b) (a)%(b)
+#define RP(comp) \
+    Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) + quantum_t(Ap_pxl[x].comp) + 32768, 65536)
+           RP(red); RP(green); RP(blue);
+#endif
+
        }
     }
     Rm_cache.sync();
@@ -156,7 +168,7 @@ void WorkerDeconvolution::play(QVector<QVector<Photo> > inputs, int n_outputs)
         Magick::Image& kernel = inputs[1][n%k_count].image();
         int w=image.columns();
         int h=image.rows();
-        deconv(image, kernel);
+        deconv(image, kernel, m_luminosity);
         image.crop(Magick::Geometry(w, h));
         m_outputs[0].push_back(photo);
         emitProgress(n,complete, 1, 1);

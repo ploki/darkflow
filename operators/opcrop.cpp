@@ -42,6 +42,8 @@ public:
             qDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
             qDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
             Magick::Geometry geo(w,h,x,y);
+            //nasty kludge to prevent crop to miss the target (it's my understanding)
+            newPhoto.image().page(Magick::Geometry(0,0,0,0));
             newPhoto.image().crop(geo);
         }
         else {

@@ -39,7 +39,7 @@ private:
 };
 
 OpDemultiplexer::OpDemultiplexer(int ways, Process *parent) :
-    Operator(OP_SECTION_TOOLS, QString("%0ways Demultiplexer").arg(ways),parent),
+    Operator(OP_SECTION_TOOLS, QString("%0-way Demultiplexer").arg(ways),parent),
     m_ways(ways)
 {
     m_inputs.push_back(new OperatorInput("Multiplexed set", "Multiplexed set", OperatorInput::Set, this));

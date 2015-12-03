@@ -35,7 +35,6 @@ void LutBased::applyOnImage(Magick::Image &image)
             pixels[x].blue=m_lut[pixels[x].blue];
         }
     }
-#pragma omp barrier
     pixel_cache.sync();
 }
 

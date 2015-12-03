@@ -148,7 +148,7 @@ void WorkerBlend::play(QVector<QVector<Photo> > inputs, int n_outputs)
     m_inputs = inputs;
     play_prepareOutputs(n_outputs);
 
-    int complete = qMax(b_count, c_count) * inputs[0].count();
+    int complete = qMin(1,qMax(b_count, c_count)) * inputs[0].count();
     int n = 0;
     foreach(Photo photoA, inputs[0]) {
         if (aborted())

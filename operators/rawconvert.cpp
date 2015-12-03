@@ -126,6 +126,11 @@ QByteArray RawConvert::convert(const QString &filename)
     /* the RAW photo */
     arguments << filename;
 
+    QString args = "cmd: dcraw";
+    foreach(QString e, arguments)
+        args += " " + e;
+    qDebug(args.toLocal8Bit());
+
     dcraw.start(dcraw_executable, arguments, QProcess::ReadOnly);
     QByteArray data;
     dcraw.waitForFinished();

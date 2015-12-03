@@ -1,9 +1,11 @@
 #include <QObject>
-#include <QUrl>
+#include <QStringList>
+
+#include <Magick++.h>
+
 #include "workerloadvideo.h"
 #include "oploadvideo.h"
-#include <QFile>
-#include <Magick++.h>
+#include "algorithm.h"
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -11,7 +13,6 @@ extern "C" {
 #include <libavutil/mathematics.h>
 }
 
-#include "algorithm.h"
 
 WorkerLoadVideo::WorkerLoadVideo(QThread *thread, OpLoadVideo *op) :
     OperatorWorker(thread, op),
@@ -116,8 +117,6 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
     int frame, got_picture, len;
     picture=av_frame_alloc();
 
-    //QFile file(filename);
-    //file.open(QFile::ReadOnly);
     AVPacket avpkt;
     //av_init_packet(&avpkt);
     avpkt.data=NULL;

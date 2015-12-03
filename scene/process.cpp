@@ -50,6 +50,10 @@
 #include "opcolorfilter.h"
 #include "opmicrocontrasts.h"
 #include "opunsharpmask.h"
+#include "opgaussianblur.h"
+#include "opblur.h"
+#include "opthreshold.h"
+#include "opdeconvolution.h"
 
 QString Process::uuid()
 {
@@ -89,14 +93,18 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpRGBCompose(this));
     m_availableOperators.push_back(new OpColorFilter(this));
     m_availableOperators.push_back(new OpChannelMixer(this));
+    m_availableOperators.push_back(new OpThreshold(this));
     m_availableOperators.push_back(new OpEqualize(this));
 
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
     m_availableOperators.push_back(new OpMicroContrasts(this));
     m_availableOperators.push_back(new OpUnsharpMask(this));
+    m_availableOperators.push_back(new OpDeconvolution(this));
 
     m_availableOperators.push_back(new OpInvert(this));
+    m_availableOperators.push_back(new OpBlur(this));
+    m_availableOperators.push_back(new OpGaussianBlur(this));
 
     m_availableOperators.push_back(new OpBlend(this));
     m_availableOperators.push_back(new OpIntegration(this));

@@ -95,7 +95,13 @@ SOURCES +=\
     algorithms/colorfilter.cpp \
     operators/opcolorfilter.cpp \
     operators/opmicrocontrasts.cpp \
-    operators/opunsharpmask.cpp
+    operators/opunsharpmask.cpp \
+    operators/opgaussianblur.cpp \
+    operators/opblur.cpp \
+    operators/opthreshold.cpp \
+    algorithms/threshold.cpp \
+    operators/opdeconvolution.cpp \
+    operators/workerdeconvolution.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -171,7 +177,13 @@ HEADERS  += \
     algorithms/colorfilter.h \
     operators/opcolorfilter.h \
     operators/opmicrocontrasts.h \
-    operators/opunsharpmask.h
+    operators/opunsharpmask.h \
+    operators/opgaussianblur.h \
+    operators/opblur.h \
+    operators/opthreshold.h \
+    algorithms/threshold.h \
+    operators/opdeconvolution.h \
+    operators/workerdeconvolution.h
 
 FORMS    += \
     ui/aboutdialog.ui \

@@ -17,20 +17,24 @@ Photo WorkerDeconvolution::process(const Photo &, int, int)
 
 
 static Magick::Image
-normalizeKernel(Magick::Image& kernel, int w, int h)
+normalizeImage(Magick::Image& image, int w, int h, bool center)
 {
-    int k_w = kernel.columns();
-    int k_h = kernel.rows();
+    int k_w = image.columns();
+    int k_h = image.rows();
     Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
     int o_x = (w-k_w)/2;
     int o_y = (h-k_h)/2;
-    Magick::Pixels k_cache(kernel);
+    Magick::Pixels i_cache(image);
     nk.modifyImage();
     Magick::Pixels n_cache(nk);
 #pragma omp parallel for
     for ( int y = 0 ; y < k_h ; ++y ) {
-        const Magick::PixelPacket * k_pixel = k_cache.getConst(0, y, k_w, 1);
-        Magick::PixelPacket * n_pixel = n_cache.get(o_x, o_y+y, k_w, 1);
+        const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, k_w, 1);
+        Magick::PixelPacket * n_pixel;
+        if (center)
+            n_pixel = n_cache.get(o_x, o_y+y, k_w, 1);
+        else
+            n_pixel = n_cache.get(0, y, k_w, 1);
         for ( int x = 0 ; x < k_w ; ++x ) {
             n_pixel[x] = k_pixel[x];
         }
@@ -38,14 +42,38 @@ normalizeKernel(Magick::Image& kernel, int w, int h)
     n_cache.sync();
     return nk;
 }
+static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
+{
+    int w = image.columns();
+    int h = image.rows();
+    Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
+    Magick::Pixels i_cache(image);
+    nk.modifyImage();
+    Magick::Pixels n_cache(nk);
+#pragma omp parallel for
+    for ( int y = 0 ; y < h ; ++y ) {
+        const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, w, 1);
+        Magick::PixelPacket * n_pixel= n_cache.get(0, (y+o_y+h)%h, w, 1);
+        for ( int x = 0 ; x < w ; ++x ) {
+            n_pixel[(x+o_x+w)%w] = k_pixel[x];
+        }
+    }
+    n_cache.sync();
+    return nk;
+
+}
 
 static void deconv(Magick::Image& image, Magick::Image& kernel)
 {
     std::list<Magick::Image> fft_image;
     std::list<Magick::Image> fft_kernel;
-    Magick::Image nk = normalizeKernel(kernel, image.columns(), image.rows());
-    Magick::forwardFourierTransformImage(&fft_image, image, true);
-    Magick::forwardFourierTransformImage(&fft_kernel, nk, true);
+    Magick::Image nk = normalizeImage(kernel, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), true);
+    Magick::Image ni = normalizeImage(image, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), false);
+
+    Magick::Image nnk = roll(nk,-nk.columns()/2, -nk.rows()/2);
+
+    Magick::forwardFourierTransformImage(&fft_image, ni, true);
+    Magick::forwardFourierTransformImage(&fft_kernel, nnk, true);
     qDebug("fft_image.size = %ld", fft_image.size());
     qDebug("fft_kernel.size = %ld", fft_kernel.size());
     qDebug("w1=%ld, h1=%ld, w2=%ld, h2=%ld",
@@ -75,10 +103,16 @@ static void deconv(Magick::Image& image, Magick::Image& kernel)
     Magick::Pixels Bp_cache(Bp);
     Magick::Pixels Rm_cache(Rm);
     Magick::Pixels Rp_cache(Rp);
+
+    const Magick::PixelPacket *center_pxl = Am_cache.getConst(w/2, h/2, 1, 1);
+    quantum_t red = center_pxl[0].red;
+    quantum_t green = center_pxl[0].green;
+    quantum_t blue = center_pxl[0].blue;
+
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
        const Magick::PixelPacket *Am_pxl = Am_cache.getConst(0, y, w, 1);
-       const Magick::PixelPacket *Ap_pxl = Am_cache.getConst(0, y, w, 1);
+       const Magick::PixelPacket *Ap_pxl = Ap_cache.getConst(0, y, w, 1);
        const Magick::PixelPacket *Bm_pxl = Bm_cache.getConst(0, y, w, 1);
        const Magick::PixelPacket *Bp_pxl = Bp_cache.getConst(0, y, w, 1);
        Magick::PixelPacket *Rm_pxl = Rm_cache.get(0, y, w, 1);
@@ -89,7 +123,7 @@ static void deconv(Magick::Image& image, Magick::Image& kernel)
            Q_UNUSED(Bm_pxl);
 
 #define RM(comp) \
-    Rm_pxl[x].comp = clamp( (Bm_pxl[x].comp)/(Am_pxl[x].comp?:1))
+    Rm_pxl[x].comp = clamp( comp * (Bm_pxl[x].comp) / ( Am_pxl[x].comp?:1 )  )
            RM(red); RM(green); RM(blue);
 #define mod(a,b) (a)%(b)
 #define RP(comp) \

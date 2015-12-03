@@ -39,6 +39,8 @@ public:
             if ( y1 > y2 ) {
                 y=y2; h=-h;
             }
+            qDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
+            qDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
             Magick::Geometry geo(w,h,x,y);
             newPhoto.image().crop(geo);
         }

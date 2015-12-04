@@ -4,6 +4,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <Magick++.h>
+#include <cmath>
 
 #include <string>
 
@@ -454,7 +455,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
     }
     image_cache.sync();
     if ( adt )
-        image.adaptiveThreshold(4,4,0);
+        image.adaptiveThreshold(4,4,0.);
     {
         image.modifyImage();
         Magick::Pixels image_cache(image);

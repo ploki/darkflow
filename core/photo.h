@@ -7,8 +7,13 @@
 #include <Magick++.h>
 
 /* macros defined in cc command line by pkg-config */
+#ifdef QuantumRange
 Q_STATIC_ASSERT(MAGICKCORE_HDRI_ENABLE == 0);
 Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
+#else
+#define USING_GRAPHICSMAGICK
+#define QuantumRange (Quantum(65535))
+#endif
 
 typedef int quantum_t;
 

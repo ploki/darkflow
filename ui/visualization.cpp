@@ -13,6 +13,7 @@
 #include <QWindow>
 
 #include <Magick++.h>
+#include <cmath>
 
 #include "visualization.h"
 #include "ui_visualization.h"

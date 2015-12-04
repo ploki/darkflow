@@ -7,7 +7,7 @@
 
 OpDeconvolution::OpDeconvolution(Process *parent) :
     Operator(OP_SECTION_COSMETIC, "Deconvolution", parent),
-    m_luminosity(new OperatorParameterSlider("luminosity", "Luminosity", "Deconvolution Luminosity", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1<<8, 1./(1<<16), 1, Slider::FilterExposureFromOne, this))
+    m_luminosity(new OperatorParameterSlider("luminosity", "Luminosity", "Deconvolution Luminosity", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this))
 {
     m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
     m_inputs.push_back(new OperatorInput("Kernel","Kernel",OperatorInput::Set, this));

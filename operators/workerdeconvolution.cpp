@@ -11,13 +11,13 @@ WorkerDeconvolution::WorkerDeconvolution(qreal luminosity, QThread *thread, OpDe
 {
 }
 
-Photo WorkerDeconvolution::process(const Photo &, int, int)
+Photo WorkerDeconvolution::process(const Photo &photo, int, int)
 {
-    throw 0;
+    return photo;
 }
 
 
-static Magick::Image
+static inline Magick::Image
 normalizeImage(Magick::Image& image, int w, int h, bool center)
 {
     int k_w = image.columns();
@@ -66,6 +66,13 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
 
 static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity)
 {
+#ifdef USING_GRAPHICSMAGICK
+    Q_UNUSED(image);
+    Q_UNUSED(kernel);
+    Q_UNUSED(luminosity);
+    qWarning("Fourier Transformation not available with GraphicsMagick");
+    return;
+#else
     std::list<Magick::Image> fft_image;
     std::list<Magick::Image> fft_kernel;
     Magick::Image nk = normalizeImage(kernel, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), true);
@@ -110,6 +117,9 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
     quantum_t green = center_pxl[0].green;
     quantum_t blue = center_pxl[0].blue;
     Q_UNUSED(red); Q_UNUSED(green); Q_UNUSED(blue);
+    qDebug("comp.red=%d, luminosity=%f",red, 1./luminosity);
+    qDebug("comp.green=%d, luminosity=%f",green, 1./luminosity);
+    qDebug("comp.blue=%d, luminosity=%f",blue, 1./luminosity);
 
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
@@ -123,15 +133,17 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
 
            Q_UNUSED(Am_pxl);
            Q_UNUSED(Bm_pxl);
+           Q_UNUSED(luminosity);
 #if 1
 #define RM(comp) \
-    Rm_pxl[x].comp = clamp(  double(Bm_pxl[x].comp) * double(comp) / (double(Am_pxl[x].comp?:1)*(1./luminosity)))
+    Rm_pxl[x].comp = clamp( luminosity * double(Bm_pxl[x].comp) / double(Am_pxl[x].comp?:1))
            RM(red); RM(green); RM(blue);
 #define mod(a,b) (a)%(b)
 #define RP(comp) \
     Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) - quantum_t(Ap_pxl[x].comp)+ 65536+32768, 65536)
            RP(red); RP(green); RP(blue);
 #else
+           //this is a convolution
 #define RM(comp) \
     Rm_pxl[x].comp = clamp( (Bm_pxl[x].comp) * ( Am_pxl[x].comp) / comp  )
            RM(red); RM(green); RM(blue);
@@ -147,6 +159,7 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
     Rp_cache.sync();
     Rm.inverseFourierTransform(Rp, true);
     image=Rm;
+#endif
 }
 
 void WorkerDeconvolution::play(QVector<QVector<Photo> > inputs, int n_outputs)

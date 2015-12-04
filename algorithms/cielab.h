@@ -32,6 +32,7 @@
  */
 #include "cielab.h"
 #include "photo.h"
+#include <cmath>
 
 extern const double xyz_rgb[3][3];
 extern const double rgb_xyz[3][3];
@@ -101,7 +102,7 @@ do { \
 
 
 //QuantumRange is defined as Quantum which is not in scope
-using MagickCore::Quantum;
+using Magick::Quantum;
 
 static inline void lab_to_int(const double lab[3], quantum_t lab16[3]) {
 	lab16[0]=lab[0]*65535.L/100.L;

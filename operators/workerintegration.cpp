@@ -4,6 +4,7 @@
 #include "photo.h"
 #include "algorithm.h"
 #include <Magick++.h>
+#include <cmath>
 
 #include <QVector>
 #include <QPointF>

@@ -7,8 +7,11 @@
 QT       += core gui
 
 *-g++* {
-    QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
-    QMAKE_CXXFLAGS_RELEASE += -O9
+# If you get linker errors about undefined references to symbols that
+# involve types in the std::__cxx11 namespace
+# -D_GLIBCXX_USE_CXX11_ABI=0
+    QMAKE_CXXFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
+    QMAKE_CXXFLAGS_RELEASE += -O9 -march=native -mfpmath=sse
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_LFLAGS +=  -fopenmp
 }
@@ -196,3 +199,4 @@ FORMS    += \
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil
+#unix: PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil

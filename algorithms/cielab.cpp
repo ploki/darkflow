@@ -72,7 +72,6 @@ void Labize(Magick::Image &image, Magick::Image &labImage) {
                     labpixels[x].blue=lab[0];
         }
     }
-#pragma omp barrier
     lab_cache.sync();
     pixel_cache.sync();
 
@@ -116,7 +115,6 @@ void unLabize(Magick::Image &image, Magick::Image &labImage) {
 
         }
     }
-#pragma omp barrier
     lab_cache.sync();
     pixel_cache.sync();
 

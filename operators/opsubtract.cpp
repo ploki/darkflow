@@ -64,9 +64,9 @@ public:
                 minuend_pixels[x].blue = clamp<quantum_t>(b, 0, QuantumRange);
             }
         }
-#pragma omp barrier
         minuend_cache.sync();
     }
+
     void play(QVector<QVector<Photo> > inputs, int n_outputs) {
         Q_ASSERT( inputs.count() == 3 );
         if ( inputs[1].count() == 0 )

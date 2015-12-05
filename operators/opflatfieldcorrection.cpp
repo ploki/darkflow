@@ -108,8 +108,8 @@ public:
                         clamp<quantum_t>(b, 0, QuantumRange);
             }
         }
-#pragma omp barrier
     }
+
     void play(QVector<QVector<Photo> > inputs, int n_outputs) {
         Q_ASSERT( inputs.count() == 2 );
         if ( inputs[1].count() == 0 )

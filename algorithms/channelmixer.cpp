@@ -28,7 +28,6 @@ void ChannelMixer::applyOnImage(Magick::Image &image)
             pixels[x].blue=clamp<double>(pixels[x].red*m_rgb[0]+pixels[x].green*m_rgb[1]+pixels[x].blue*m_rgb[2],0,QuantumRange);
         }
     }
-#pragma omp barrier
     pixel_cache.sync();
 
 }

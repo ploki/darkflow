@@ -111,7 +111,6 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image)
             //                        image.pixelColor(x,y,Color(rgb[0],rgb[1],rgb[2],0));
         }
     }
-#pragma omp barrier
     pixel_cache->sync();
     delete pixel_cache;
 

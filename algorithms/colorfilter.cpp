@@ -29,7 +29,6 @@ void ColorFilter::applyOnImage(Magick::Image &image)
             pixels[x].blue=clamp<double>(pixels[x].blue*m_rgb[2],0,QuantumRange);
         }
     }
-#pragma omp barrier
     pixel_cache.sync();
 
 }

@@ -227,7 +227,6 @@ static QPixmap convert(Magick::Image& image) {
                                 (pixels[x].blue/256)));
         }
     }
-    // #pragma omb barrier
     return QPixmap::fromImage(qImage,Qt::AutoColor|Qt::AvoidDither);
 }
 

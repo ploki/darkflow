@@ -71,7 +71,6 @@ void DesaturateShadows::applyOnImage(Magick::Image& image)
             }
         }
     }
-#pragma omp barrier
     pixel_cache.sync();
 }
 

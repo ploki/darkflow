@@ -150,7 +150,7 @@ Process::~Process() {
 
     disconnect(m_scene, SIGNAL(contextMenuSignal(QGraphicsSceneContextMenuEvent*)),
             this, SLOT(contextMenuSignal(QGraphicsSceneContextMenuEvent*)));
-
+    delete m_contextMenu;
 }
 
 QString Process::projectName() const

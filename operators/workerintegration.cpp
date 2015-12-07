@@ -146,12 +146,15 @@ bool WorkerIntegration::play_onInput(int idx)
         Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
         for ( int x = 0 ; x < m_w ; ++x ) {
             Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
-            pixels[x].red   =
-                    clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
-            pixels[x].green =
-                    clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
-            pixels[x].blue  =
-                    clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
+            if ( m_countPlane[y*m_w*3+x*3+0] )
+                pixels[x].red   =
+                        clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
+            if ( m_countPlane[y*m_w*3+x*3+1] )
+                pixels[x].green =
+                        clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
+            if ( m_countPlane[y*m_w*3+x*3+2] )
+                pixels[x].blue  =
+                        clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
         }
     }
     newPhoto.setTag("Name", "Integration");

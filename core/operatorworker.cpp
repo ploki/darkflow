@@ -56,6 +56,7 @@ void OperatorWorker::finished()
         qDebug("OperatorWorker: not signal sent, sending failure");
         emitFailure();
     }
+    deleteLater();
 }
 
 bool OperatorWorker::aborted() {

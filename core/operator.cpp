@@ -72,7 +72,6 @@ void Operator::workerProgress(int p, int c)
 void Operator::workerSuccess(QVector<QVector<Photo> > result)
 {
     m_thread->quit();
-    m_worker->deleteLater();
     m_worker=NULL;
     m_waitingForParentUpToDate=false;
 
@@ -93,7 +92,6 @@ void Operator::workerSuccess(QVector<QVector<Photo> > result)
 void Operator::workerFailure()
 {
     m_thread->quit();
-    m_worker->deleteLater();
     m_worker=NULL;
     m_waitingForParentUpToDate=false;
     setOutOfDate();

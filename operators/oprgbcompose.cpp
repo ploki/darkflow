@@ -74,11 +74,11 @@ public:
 OpRGBCompose::OpRGBCompose(Process *parent) :
     Operator(OP_SECTION_COLOR, "LRGB Compose", parent)
 {
-    m_inputs.push_back(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Red", "Red", OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Green", "Green", OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Blue", "Blue", OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("RGB", "RGB", this));
+    addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
+    addInput(new OperatorInput("Red", "Red", OperatorInput::Set, this));
+    addInput(new OperatorInput("Green", "Green", OperatorInput::Set, this));
+    addInput(new OperatorInput("Blue", "Blue", OperatorInput::Set, this));
+    addOutput(new OperatorOutput("RGB", "RGB", this));
 }
 
 OpRGBCompose *OpRGBCompose::newInstance()

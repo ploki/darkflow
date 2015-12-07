@@ -113,11 +113,11 @@ public:
 OpSubtract::OpSubtract(Process *parent) :
     Operator(OP_SECTION_DEPRECATED, "Subtract", parent)
 {
-    m_inputs.push_back(new OperatorInput("Minuend","Minuend",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Subtrahend","Subtrahend",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Addend","Addend",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Difference", "Difference", this));
-    m_outputs.push_back(new OperatorOutput("Underflow", "Underflow", this));
+    addInput(new OperatorInput("Minuend","Minuend",OperatorInput::Set, this));
+    addInput(new OperatorInput("Subtrahend","Subtrahend",OperatorInput::Set, this));
+    addInput(new OperatorInput("Addend","Addend",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Difference", "Difference", this));
+    addOutput(new OperatorOutput("Underflow", "Underflow", this));
 
 }
 

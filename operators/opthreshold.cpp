@@ -32,10 +32,10 @@ OpThreshold::OpThreshold(Process *parent) :
     m_high(new OperatorParameterSlider("high", "High", "Threshold High",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this)),
     m_low(new OperatorParameterSlider("low", "Low", "Threshold Low",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
-    m_parameters.push_back(m_high);
-    m_parameters.push_back(m_low);
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
+    addParameter(m_high);
+    addParameter(m_low);
 }
 
 OpThreshold *OpThreshold::newInstance()

@@ -56,8 +56,8 @@ public:
 OpCrop::OpCrop(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, "Crop", parent)
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Cropped", "Cropped", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Cropped", "Cropped", this));
 
 }
 

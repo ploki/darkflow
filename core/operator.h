@@ -32,6 +32,10 @@ class Operator : public QObject
 {
     Q_OBJECT
 public:
+    typedef enum {
+        OutputEnabled,
+        OutputDisabled
+    } OperatorOutputStatus;
     explicit Operator(const QString& classSection, const QString& classIdentifier, Process *parent);
     virtual ~Operator();
 
@@ -75,6 +79,10 @@ public:
     bool spotLoop(const QString& uuid);
 
     bool play_parentDirty();
+    void addInput(OperatorInput* input);
+    void addOutput(OperatorOutput* output);
+    void addParameter(OperatorParameter* parameter);
+    void setOutputStatus(int idx, OperatorOutputStatus status);
 
 private:
     QVector<QVector<Photo> > collectInputs();
@@ -83,6 +91,7 @@ signals:
     void progress(int ,int );
     void upToDate();
     void outOfDate();
+    void stateChanged();
 
 public:
     virtual OperatorWorker* newWorker() = 0;
@@ -117,9 +126,12 @@ protected:
     bool m_enabled;
     bool m_upToDate;
     bool m_workerAboutToStart;
+private:
     QVector<OperatorParameter*> m_parameters;
     QVector<OperatorInput*> m_inputs;
     QVector<OperatorOutput*> m_outputs;
+    QVector<OperatorOutputStatus> m_outputStatus;
+protected:
     bool m_waitingForParentUpToDate;
     QString m_uuid;
     QString m_classSection;

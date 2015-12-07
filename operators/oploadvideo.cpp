@@ -14,8 +14,8 @@ OpLoadVideo::OpLoadVideo(Process *process) :
                           "Videos (*.avi *.mjpg *.mjpeg *.ts *.mov *.mpg *.mpeg *.mp4 *.webm *);;"
                           "All Files (*.*)", this))
 {
-    m_parameters.push_back(m_filesCollection);
-    m_outputs.push_back(new OperatorOutput("Video frames","Video frames collection",this));
+    addParameter(m_filesCollection);
+    addOutput(new OperatorOutput("Video frames","Video frames collection",this));
 }
 
 OpLoadVideo::~OpLoadVideo()

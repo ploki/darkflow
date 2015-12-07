@@ -49,12 +49,12 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     m_whiteBalance->addOption(WhiteBalanceStr[Camera], this, SLOT(setWhiteBalanceCamera()));
     m_whiteBalance->addOption(WhiteBalanceStr[Daylight], this, SLOT(setWhiteBalanceDaylight()));
 
-    m_parameters.push_back(m_filesCollection);
-    m_parameters.push_back(m_colorSpace);
-    m_parameters.push_back(m_debayer);
-    m_parameters.push_back(m_whiteBalance);
+    addParameter(m_filesCollection);
+    addParameter(m_colorSpace);
+    addParameter(m_debayer);
+    addParameter(m_whiteBalance);
 
-    m_outputs.push_back(new OperatorOutput("RAWs","RAW photos collection",this));
+    addOutput(new OperatorOutput("RAWs","RAW photos collection",this));
 }
 
 OperatorLoadRaw::~OperatorLoadRaw()

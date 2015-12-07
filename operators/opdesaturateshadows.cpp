@@ -33,12 +33,12 @@ OpDesaturateShadows::OpDesaturateShadows(Process *parent) :
     m_range(new OperatorParameterSlider("range", "Range", "Desaturate Shadows Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1<<3, 1, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_saturation(new OperatorParameterSlider("saturation", "Saturation", "Desaturate Shadows Saturation", Slider::Percent, Slider::Linear, Slider::Integer, 0, 1, 0, 0, 1, Slider::FilterNothing, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
 
-    m_parameters.push_back(m_highlightLimit);
-    m_parameters.push_back(m_range);
-    m_parameters.push_back(m_saturation);
+    addParameter(m_highlightLimit);
+    addParameter(m_range);
+    addParameter(m_saturation);
 }
 
 OpDesaturateShadows *OpDesaturateShadows::newInstance()

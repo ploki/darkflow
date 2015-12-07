@@ -17,6 +17,7 @@ class Visualization;
 class Operator;
 class OperatorOutput;
 class Photo;
+class QTreeWidgetItem;
 
 class Visualization : public QMainWindow
 {
@@ -42,6 +43,7 @@ public slots:
     void expChanged();
     void upToDate();
     void outOfDate();
+    void stateChanged();
     void playClicked();
     void fullScreenViewClicked();
 
@@ -53,6 +55,7 @@ public slots:
     void tags_buttonResetClicked();
     void toolChanged(int idx);
     void storePoints();
+    void treeWidgetItemDoubleClicked(QTreeWidgetItem * item, int column);
 
 private slots:
     void rubberBandChanged(QRect rubberBandRect, QPointF fromScenePoint, QPointF toScenePoint);

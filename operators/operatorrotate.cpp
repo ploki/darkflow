@@ -33,9 +33,9 @@ OperatorRotate::OperatorRotate(Process *parent) :
     m_dropdown->addOption("90°", this, SLOT(set90()));
     m_dropdown->addOption("180°", this, SLOT(set180()));
     m_dropdown->addOption("270°", this, SLOT(set270()));
-    m_parameters.push_back(m_dropdown);
-    m_inputs.push_back(new OperatorInput("Images","Image", OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Rotated", "Rotated", this));
+    addParameter(m_dropdown);
+    addInput(new OperatorInput("Images","Image", OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Rotated", "Rotated", this));
 }
 
 OperatorRotate::~OperatorRotate()

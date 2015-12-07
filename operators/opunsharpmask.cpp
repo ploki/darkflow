@@ -40,12 +40,12 @@ OpUnsharpMask::OpUnsharpMask(Process *parent) :
     m_amount(new OperatorParameterSlider("amount", "Amount", "Unsharp Mask Amount", Slider::Percent, Slider::Logarithmic, Slider::Real, 0.1, 10, 1, 0.01, 100, Slider::FilterPercent, this)),
     m_threshold(new OperatorParameterSlider("threshold", "Threshold", "Unsharp Mask Threshold", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1./QuantumRange, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
-    m_parameters.push_back(m_radius);
-    m_parameters.push_back(m_sigma);
-    m_parameters.push_back(m_amount);
-    m_parameters.push_back(m_threshold);
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
+    addParameter(m_radius);
+    addParameter(m_sigma);
+    addParameter(m_amount);
+    addParameter(m_threshold);
 
 }
 

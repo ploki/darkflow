@@ -28,12 +28,12 @@ OperatorPassThrough::OperatorPassThrough(Process *parent) :
                                          1./65535, 65535,
                                          Slider::FilterAll,this))
 {
-    m_inputs.push_back(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Images set 3","Images set # three",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("merge", "merge", this));
+    addInput(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set, this));
+    addInput(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set, this));
+    addInput(new OperatorInput("Images set 3","Images set # three",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("merge", "merge", this));
 
-    m_parameters.push_back(m_slider);
+    addParameter(m_slider);
 }
 
 OperatorPassThrough::~OperatorPassThrough()

@@ -49,9 +49,9 @@ OpMultiplexer::OpMultiplexer(int ways, Process *parent) :
 {
     for (int i = 1 ; i <= m_ways ; ++i ) {
         QString name = QString("Images set %0").arg(i);
-         m_inputs.push_back(new OperatorInput(name, name, OperatorInput::Set, this));
+         addInput(new OperatorInput(name, name, OperatorInput::Set, this));
     }
-    m_outputs.push_back(new OperatorOutput("Multiplexed set", "Multiplexed set", this));
+    addOutput(new OperatorOutput("Multiplexed set", "Multiplexed set", this));
 }
 
 OpMultiplexer *OpMultiplexer::newInstance()

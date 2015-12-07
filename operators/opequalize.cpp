@@ -23,8 +23,8 @@ public:
 OpEqualize::OpEqualize(Process *parent) :
     Operator(OP_SECTION_COLOR, "Equalize", parent)
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
 }
 
 OpEqualize *OpEqualize::newInstance()

@@ -42,10 +42,10 @@ OpDemultiplexer::OpDemultiplexer(int ways, Process *parent) :
     Operator(OP_SECTION_TOOLS, QString("%0-way Demultiplexer").arg(ways),parent),
     m_ways(ways)
 {
-    m_inputs.push_back(new OperatorInput("Multiplexed set", "Multiplexed set", OperatorInput::Set, this));
+    addInput(new OperatorInput("Multiplexed set", "Multiplexed set", OperatorInput::Set, this));
     for (int i = 1 ; i <= m_ways ; ++i ) {
         QString name = QString("Images set %0").arg(i);
-        m_outputs.push_back(new OperatorOutput(name, name, this));
+        addOutput(new OperatorOutput(name, name, this));
     }
 }
 

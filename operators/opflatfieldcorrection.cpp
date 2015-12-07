@@ -148,10 +148,10 @@ private:
 OpFlatFieldCorrection::OpFlatFieldCorrection(Process *parent) :
     Operator(OP_SECTION_BLEND, "Flat-Field Correction", parent)
 {
-    m_inputs.push_back(new OperatorInput("Uneven images","Uneven images",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Flat-field","Flat-field",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Flattened", "Flattened", this));
-    m_outputs.push_back(new OperatorOutput("Overflow", "Overflow", this));
+    addInput(new OperatorInput("Uneven images","Uneven images",OperatorInput::Set, this));
+    addInput(new OperatorInput("Flat-field","Flat-field",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Flattened", "Flattened", this));
+    addOutput(new OperatorOutput("Overflow", "Overflow", this));
 }
 
 OpFlatFieldCorrection *OpFlatFieldCorrection::newInstance()

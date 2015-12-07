@@ -79,6 +79,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_scene->installEventFilter(this);
     ui->graphicsView->installEventFilter(this);
     connect(ui->graphicsView, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)), this, SLOT(rubberBandChanged(QRect,QPointF,QPointF)));
+    connect(ui->tree_photos, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            this, SLOT(treeWidgetItemDoubleClicked(QTreeWidgetItem*,int)));
     setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
@@ -180,6 +182,11 @@ void Visualization::outOfDate()
         qDebug(QString(m_operator->uuid() + " Vis requests play").toLatin1());
         m_operator->play();
     }
+}
+
+void Visualization::stateChanged()
+{
+    updateTreeviewPhotos();
 }
 
 void Visualization::playClicked()
@@ -428,8 +435,9 @@ void Visualization::updateTreeviewPhotos()
         tree_input->setText(0, input->name());
         tree_input->setFont(0, QFont("Sans", 12));
         tree_input->setBackground(0, QBrush(Qt::green));
+        int idx = 0;
         foreach(OperatorOutput *source, input->sources()) {
-            QTreeWidgetItem *tree_source = new TreeOutputItem(source, TreeOutputItem::Source, tree_input);
+            QTreeWidgetItem *tree_source = new TreeOutputItem(source, idx, TreeOutputItem::Source, tree_input);
             foreach(Photo photo, source->m_result) {
                 if ( !photo.isComplete() )
                     qWarning("source photo is not complete");
@@ -446,7 +454,7 @@ void Visualization::updateTreeviewPhotos()
                     item->setSelected(true);
                 }
             }
-
+            ++idx;
         }
     }
 
@@ -454,19 +462,27 @@ void Visualization::updateTreeviewPhotos()
     tree_outputs->setText(0, "outputs:");
     tree_outputs->setFont(0, QFont("Sans", 14));
     tree_outputs->setBackground(0, QBrush(Qt::lightGray));
+    int idx = 0;
     foreach(OperatorOutput *output, m_operator->m_outputs) {
-        QTreeWidgetItem *tree_output = new TreeOutputItem(output,TreeOutputItem::Sink,tree_outputs);
-        foreach(const Photo& photo, output->m_result) {
-            if ( !photo.isComplete() )
-                qWarning("output photo is not complete");
-            TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Output, tree_output);
-            if ( photo.getIdentity() == m_currentPhoto &&
-                 output == m_currentOutput ) {
-                item->setSelected(true);
+        QTreeWidgetItem *tree_output = new TreeOutputItem(output,
+                                                          idx,
+                                                          m_operator->m_outputStatus[idx] == Operator::OutputEnabled
+                                                          ? TreeOutputItem::EnabledSink
+                                                          : TreeOutputItem::DisabledSink,
+                                                          tree_outputs);
+        if (m_operator->m_outputStatus[idx] == Operator::OutputEnabled) {
+            foreach(const Photo& photo, output->m_result) {
+                if ( !photo.isComplete() )
+                    qWarning("output photo is not complete");
+                TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Output, tree_output);
+                if ( photo.getIdentity() == m_currentPhoto &&
+                     output == m_currentOutput ) {
+                    item->setSelected(true);
+                }
             }
         }
+        ++idx;
     }
-
     tree->expandAll();
 }
 
@@ -735,4 +751,27 @@ void Visualization::storePoints()
         m_operator->setTagOverride(m_photo->getIdentity(),"POINTS", pointsTag);
     else
         m_operator->resetTagOverride(m_photo->getIdentity(),"POINTS");
+}
+
+void Visualization::treeWidgetItemDoubleClicked(QTreeWidgetItem *item, int)
+{
+    if ( item->type() == TreeOutputItem::Type ) {
+        TreeOutputItem *outputItem = dynamic_cast<TreeOutputItem*>(item);
+        if ( outputItem ) {
+            int idx = outputItem->idx();
+            TreeOutputItem::Role role = outputItem->role();
+            if ( role != TreeOutputItem::Source ) {
+                bool newStatus = role == TreeOutputItem::DisabledSink;
+                outputItem->setRole(newStatus
+                                    ? TreeOutputItem::EnabledSink
+                                    : TreeOutputItem::DisabledSink);
+                outputItem->setCaption();
+                m_operator->setOutputStatus(idx,
+                                            newStatus
+                                            ? Operator::OutputEnabled
+                                            : Operator::OutputDisabled );
+                m_operator->setOutOfDate();
+            }
+        }
+    }
 }

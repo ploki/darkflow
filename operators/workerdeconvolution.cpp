@@ -182,6 +182,7 @@ void WorkerDeconvolution::play(QVector<QVector<Photo> > inputs, int n_outputs)
         int w=image.columns();
         int h=image.rows();
         deconv(image, kernel, m_luminosity);
+        image.page(Magick::Geometry(0,0,0,0));
         image.crop(Magick::Geometry(w, h));
         m_outputs[0].push_back(photo);
         emitProgress(n,complete, 1, 1);

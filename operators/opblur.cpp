@@ -33,10 +33,10 @@ OpBlur::OpBlur(Process *parent) :
     m_sigma(new OperatorParameterSlider("sigma", "Sigma", "Gaussian Blur Sigma", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, .5, 0, 1, Slider::FilterPercent, this))
 
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
-    m_parameters.push_back(m_radius);
-    m_parameters.push_back(m_sigma);
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
+    addParameter(m_radius);
+    addParameter(m_sigma);
 
 }
 

@@ -31,11 +31,11 @@ OpChannelMixer::OpChannelMixer(Process *parent) :
     m_g(new OperatorParameterSlider("green", "Green", "Channel Mixer Green Component", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, .7152, 0, 1, Slider::FilterPercent, this)),
     m_b(new OperatorParameterSlider("blue", "Blue", "Channel Mixer Blue Component", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, .0722, 0, 1, Slider::FilterPercent, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
-    m_parameters.push_back(m_r);
-    m_parameters.push_back(m_g);
-    m_parameters.push_back(m_b);
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
+    addParameter(m_r);
+    addParameter(m_g);
+    addParameter(m_b);
 }
 
 OpChannelMixer *OpChannelMixer::newInstance()

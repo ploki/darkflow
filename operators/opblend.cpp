@@ -47,15 +47,15 @@ OpBlend::OpBlend(Process *parent) :
     m_mode2->addOption(BlendModeStr[DarkenOnly], this, SLOT(mode2DarkenOnly()));
     m_mode2->addOption(BlendModeStr[LightenOnly], this, SLOT(mode2LightenOnly()));
 
-    m_parameters.push_back(m_mode1);
-    m_parameters.push_back(m_mode2);
+    addParameter(m_mode1);
+    addParameter(m_mode2);
 
-    m_inputs.push_back(new OperatorInput("Layer A (top)","Layer A",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Layer B (Middle)","Mayer B",OperatorInput::Set, this));
-    m_inputs.push_back(new OperatorInput("Layer C (Bottom)","Layer C",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Blend","Blend",this));
-    m_outputs.push_back(new OperatorOutput("Overflow","Overflow",this));
-    m_outputs.push_back(new OperatorOutput("Underflow","Underflow",this));
+    addInput(new OperatorInput("Layer A (top)","Layer A",OperatorInput::Set, this));
+    addInput(new OperatorInput("Layer B (Middle)","Mayer B",OperatorInput::Set, this));
+    addInput(new OperatorInput("Layer C (Bottom)","Layer C",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Blend","Blend",this));
+    addOutput(new OperatorOutput("Overflow","Overflow",this));
+    addOutput(new OperatorOutput("Underflow","Underflow",this));
 
 }
 

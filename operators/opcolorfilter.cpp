@@ -31,11 +31,11 @@ OpColorFilter::OpColorFilter(Process *parent) :
     m_g(new OperatorParameterSlider("green", "Green", "Color Filter Green Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_b(new OperatorParameterSlider("blue", "Blue", "Color Filter Blue Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
-    m_parameters.push_back(m_r);
-    m_parameters.push_back(m_g);
-    m_parameters.push_back(m_b);
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
+    addParameter(m_r);
+    addParameter(m_g);
+    addParameter(m_b);
 }
 
 OpColorFilter *OpColorFilter::newInstance()

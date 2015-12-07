@@ -80,9 +80,10 @@ void Operator::workerSuccess(QVector<QVector<Photo> > result)
     Q_ASSERT(m_outputs.count() == result.count());
     foreach(OperatorOutput *output, m_outputs) {
         output->m_result.clear();
-        foreach(Photo photo, result[idx]) {
-            output->m_result.push_back(photo);
-        }
+        if ( m_outputStatus[idx] == OutputEnabled )
+            foreach(Photo photo, result[idx]) {
+                output->m_result.push_back(photo);
+            }
         ++idx;
     }
 
@@ -161,6 +162,27 @@ bool Operator::play_parentDirty()
         emit progress(0, 1);
     }
     return dirty;
+}
+
+void Operator::addInput(OperatorInput *input)
+{
+    m_inputs.push_back(input);
+}
+
+void Operator::addOutput(OperatorOutput *output)
+{
+    m_outputs.push_back(output);
+    m_outputStatus.push_back(OutputEnabled);
+}
+
+void Operator::addParameter(OperatorParameter *parameter)
+{
+    m_parameters.push_back(parameter);
+}
+
+void Operator::setOutputStatus(int idx, Operator::OperatorOutputStatus status)
+{
+    m_outputStatus[idx] = status;
 }
 
 QVector<QVector<Photo> > Operator::collectInputs()
@@ -364,6 +386,11 @@ void Operator::save(QJsonObject &obj)
         allTags[it.key()]=photoTags;
     }
     obj["tags"] = allTags;
+    QJsonArray outputsEnabled;
+    for(int i = 0 ; i < m_outputStatus.count() ; ++i ) {
+        outputsEnabled.push_back(m_outputStatus[i]==OutputEnabled);
+    }
+    obj["outputsEnabled"] = outputsEnabled;
 }
 
 void Operator::load(QJsonObject &obj)
@@ -390,5 +417,10 @@ void Operator::load(QJsonObject &obj)
         }
         m_tagsOverride[it.key()] = photoTags;
     }
+    QJsonArray outputsEnabled = obj["outputsEnabled"].toArray();
+    for (int i = 0 ; i < outputsEnabled.count() ; ++i ) {
+        m_outputStatus[i] = outputsEnabled[i].toBool() ? OutputEnabled : OutputDisabled;
+    }
+    emit stateChanged();
 }
 

@@ -33,15 +33,15 @@ OpIGamma::OpIGamma(Process *parent) :
     m_revert(false),
     m_revertDialog(new OperatorParameterDropDown("revert","Revert", "No", this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
 
     m_revertDialog->addOption("No", this, SLOT(revertNo()));
     m_revertDialog->addOption("Yes", this, SLOT(revertYes()));
 
-    m_parameters.push_back(m_gamma);
-    m_parameters.push_back(m_dynamicRange);
-    m_parameters.push_back(m_revertDialog);
+    addParameter(m_gamma);
+    addParameter(m_dynamicRange);
+    addParameter(m_revertDialog);
 
 }
 

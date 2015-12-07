@@ -37,12 +37,12 @@ OpModulate::OpModulate(Process *parent) :
     m_saturation(new OperatorParameterSlider("saturation", "Saturation", "Modulate Saturation",Slider::Percent, Slider::Linear, Slider::Integer, 0, 2, 1, 0, 10, Slider::FilterNothing, this)),
     m_value(new OperatorParameterSlider("value", "Exposure", "Modulate Exposure",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
 
-    m_parameters.push_back(m_hue);
-    m_parameters.push_back(m_saturation);
-    m_parameters.push_back(m_value);
+    addParameter(m_hue);
+    addParameter(m_saturation);
+    addParameter(m_value);
 }
 
 OpModulate *OpModulate::newInstance()

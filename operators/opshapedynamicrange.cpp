@@ -40,18 +40,18 @@ OpShapeDynamicRange::OpShapeDynamicRange(Process *parent) :
     m_labDomain(false),
     m_labDomainDialog(new OperatorParameterDropDown("lab", "On L*", "No", this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
 
     m_shapeDialog->addOption("TanH", this, SLOT(selectShapeTanH()));
 
     m_labDomainDialog->addOption("No", this, SLOT(selectLabNo()));
     m_labDomainDialog->addOption("Yes", this, SLOT(selectLabYes()));
 
-    m_parameters.push_back(m_shapeDialog);
-    m_parameters.push_back(m_dynamicRange);
-    m_parameters.push_back(m_exposure);
-    m_parameters.push_back(m_labDomainDialog);
+    addParameter(m_shapeDialog);
+    addParameter(m_dynamicRange);
+    addParameter(m_exposure);
+    addParameter(m_labDomainDialog);
 
 }
 

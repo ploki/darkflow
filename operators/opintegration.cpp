@@ -26,8 +26,8 @@ OpIntegration::OpIntegration(Process *parent) :
     m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", "Normalization", NormalizationTypeStr[NoNormalization], this)),
     m_customNormalization(new OperatorParameterSlider("normalizationValue", "Custom Norm.", "Integration Custom Normalization", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Integrated Image", "Integrated Image", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Integrated Image", "Integrated Image", this));
 
     m_rejectionTypeDropDown->addOption(RejectionTypeStr[NoRejection], this, SLOT(setNoRejection()));
     m_rejectionTypeDropDown->addOption(RejectionTypeStr[SigmaClipping], this, SLOT(setSigmaClip()));
@@ -38,11 +38,11 @@ OpIntegration::OpIntegration(Process *parent) :
     m_normalizationTypeDropDown->addOption(NormalizationTypeStr[HighestValue], this, SLOT(setHighestValue()));
     m_normalizationTypeDropDown->addOption(NormalizationTypeStr[Custom], this, SLOT(setCustom()));
 
-    m_parameters.push_back(m_rejectionTypeDropDown);
-    m_parameters.push_back(m_upper);
-    m_parameters.push_back(m_lower);
-    m_parameters.push_back(m_normalizationTypeDropDown);
-    m_parameters.push_back(m_customNormalization);
+    addParameter(m_rejectionTypeDropDown);
+    addParameter(m_upper);
+    addParameter(m_lower);
+    addParameter(m_normalizationTypeDropDown);
+    addParameter(m_customNormalization);
 }
 
 OpIntegration *OpIntegration::newInstance()

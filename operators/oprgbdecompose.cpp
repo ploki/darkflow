@@ -70,11 +70,11 @@ public:
 OpRGBDecompose::OpRGBDecompose(Process *parent) :
     Operator(OP_SECTION_COLOR, "LRGB Decompose", parent)
 {
-    m_inputs.push_back(new OperatorInput("Images set", "Images set", OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Luminance", "Luminance", this));
-    m_outputs.push_back(new OperatorOutput("Red", "Red", this));
-    m_outputs.push_back(new OperatorOutput("Green", "Green", this));
-    m_outputs.push_back(new OperatorOutput("Blue", "Blue", this));
+    addInput(new OperatorInput("Images set", "Images set", OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Luminance", "Luminance", this));
+    addOutput(new OperatorOutput("Red", "Red", this));
+    addOutput(new OperatorOutput("Green", "Green", this));
+    addOutput(new OperatorOutput("Blue", "Blue", this));
 }
 
 OpRGBDecompose *OpRGBDecompose::newInstance()

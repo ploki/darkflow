@@ -34,15 +34,15 @@ OpWhiteBalance::OpWhiteBalance(Process *parent) :
     m_safe(false),
     m_safeDialog(new OperatorParameterDropDown("safe","Range safe", "No", this))
 {
-    m_inputs.push_back(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    m_outputs.push_back(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
+    addOutput(new OperatorOutput("Images", "Images", this));
 
     m_safeDialog->addOption("No", this, SLOT(setUnsafe()));
     m_safeDialog->addOption("Yes", this, SLOT(setSafe()));
 
-    m_parameters.push_back(m_temperature);
-    m_parameters.push_back(m_tint);
-    m_parameters.push_back(m_safeDialog);
+    addParameter(m_temperature);
+    addParameter(m_tint);
+    addParameter(m_safeDialog);
 
 }
 

@@ -87,7 +87,7 @@ QByteArray RawConvert::convert(const QString &filename)
     }
     switch(m_loadraw->m_debayerValue) {
     case OperatorLoadRaw::NoDebayer:
-        arguments << "-D";
+        arguments << "-d";
         break;
     case OperatorLoadRaw::HalfSize:
         arguments << "-h";
@@ -109,11 +109,11 @@ QByteArray RawConvert::convert(const QString &filename)
     case OperatorLoadRaw::Linear:
         arguments << "-4";
         break;
-    case OperatorLoadRaw::IUT_BT_709:
-        arguments << "-6";
-        //passthrough
     case OperatorLoadRaw::sRGB:
         arguments << "-g" << "2.4" << "12.92";
+        //passthrough
+    case OperatorLoadRaw::IUT_BT_709:
+        arguments << "-6";
         break;
     }
     /* orientation */

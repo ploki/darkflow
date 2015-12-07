@@ -14,6 +14,7 @@ QT       += core gui
     QMAKE_CXXFLAGS_RELEASE += -O9 -march=native -mfpmath=sse
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_LFLAGS +=  -fopenmp
+    QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
 }
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -104,7 +105,10 @@ SOURCES +=\
     operators/opthreshold.cpp \
     algorithms/threshold.cpp \
     operators/opdeconvolution.cpp \
-    operators/workerdeconvolution.cpp
+    operators/workerdeconvolution.cpp \
+    operators/opdebayer.cpp \
+    operators/workerdebayer.cpp \
+    operators/bayer.c
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -186,7 +190,10 @@ HEADERS  += \
     operators/opthreshold.h \
     algorithms/threshold.h \
     operators/opdeconvolution.h \
-    operators/workerdeconvolution.h
+    operators/workerdeconvolution.h \
+    operators/opdebayer.h \
+    operators/workerdebayer.h \
+    operators/bayer.h
 
 FORMS    += \
     ui/aboutdialog.ui \

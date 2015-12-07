@@ -54,6 +54,7 @@
 #include "opblur.h"
 #include "opthreshold.h"
 #include "opdeconvolution.h"
+#include "opdebayer.h"
 
 QString Process::uuid()
 {
@@ -89,6 +90,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpWhiteBalance(this));
     m_availableOperators.push_back(new OpBlackBody(this));
+    m_availableOperators.push_back(new OpDebayer(this));
     m_availableOperators.push_back(new OpRGBDecompose(this));
     m_availableOperators.push_back(new OpRGBCompose(this));
     m_availableOperators.push_back(new OpColorFilter(this));

@@ -22,8 +22,10 @@ TreeOutputItem::TreeOutputItem(OperatorOutput *output,
 void TreeOutputItem::setCaption()
 {
     setFont(0, QFont("Sans", 12));
-    if ( Source == m_role )
+    if ( Source == m_role ) {
+        setBackground(0, QBrush(Qt::yellow));
         setText(0, m_caption);
+    }
     else if ( EnabledSink == m_role ) {
         setBackground(0, QBrush(Qt::yellow));
         setText(0, "☑ " + m_caption);

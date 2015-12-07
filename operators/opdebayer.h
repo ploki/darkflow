@@ -13,10 +13,13 @@ public:
     typedef enum {
         NoDebayer,
         HalfSize,
-        Low,
+        Simple,
+        Bilinear,
+        HQLinear,
+        /* DownSample is implemented by HalfSize */
+        //DownSample,
         VNG,
-        PPG,
-        AHD,
+        AHD
     } Debayer;
     OpDebayer(Process *parent);
     OpDebayer *newInstance();
@@ -25,9 +28,11 @@ public:
 public slots:
     void setDebayerNone();
     void setDebayerHalfSize();
-    void setDebayerLow();
+    void setDebayerSimple();
+    void setDebayerBilinear();
+    void setDebayerHQLinear();
+    //void setDebayerDownSample();
     void setDebayerVNG();
-    void setDebayerPPG();
     void setDebayerAHD();
 private:
     OperatorParameterDropDown *m_debayer;

@@ -101,124 +101,6 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
     return newPhoto;
 }
 
-void
-borderInterpolate(Photo& photo, u_int32_t filters, unsigned border)
-{
-    unsigned row, col, y, x, f, c, sum[8];
-    unsigned height = photo.image().rows();
-    unsigned width = photo.image().columns();
-    Magick::Image& image = photo.image();
-    image.modifyImage();
-    Magick::Pixels cache(image);
-    Magick::PixelPacket *pixel = cache.get(0, 0, width, height);
-    for (row=0; row < height; row++)
-        for (col=0; col < width; col++) {
-            if (col==border && row >= border && row < height-border)
-                col = width-border;
-            memset (sum, 0, sizeof sum);
-            for (y=row-1; y != row+2; y++)
-                for (x=col-1; x != col+2; x++)
-                    if (y < height && x < width) {
-                        f = FC(filters, y,x);
-                        switch (f) {
-                        case 0:
-                            sum[f] += pixel[y*width+x].red; break;
-                        case 1:
-                        case 3:
-                            sum[f] += pixel[y*width+x].green; break;
-                        case 2:
-                            sum[f] += pixel[y*width+x].blue; break;
-                        }
-                        sum[f+4]++;
-                    }
-            f = FC(filters, row,col);
-            for ( c = 0 ; c < 3 ; ++c ) {
-                if (c != f && sum[c+4]) {
-                    switch (c) {
-                    case 0:
-                        pixel[row*width+col].red = sum[c] / sum[c+4]; break;
-                    case 1:
-                    case 3:
-                        pixel[row*width+col].green = sum[c] / sum[c+4]; break;
-                    case 2:
-                        pixel[row*width+col].blue = sum[c] / sum[c+4]; break;
-                    default:
-                        Q_ASSERT(!"No!");
-                    }
-                }
-            }
-        }
-    cache.sync();
-}
-
-static void
-linInterpolate(Photo& photo, u_int32_t filters)
-{
-    int code[16][16][32], size=16, *ip, sum[4];
-    int f, c, i, x, y, row, col, shift, color;
-    Magick::Image& image = photo.image();
-    int width = image.columns();
-    int height = image.rows();
-    image.modifyImage();
-    Magick::Pixels cache(image);
-    Magick::PixelPacket *pixel = cache.get(0, 0, width, height);
-
-    for (row=0; row < size; row++)
-        for (col=0; col < size; col++) {
-            ip = code[row][col]+1;
-            f = FC(filters, row,col);
-            memset (sum, 0, sizeof sum);
-            for (y=-1; y <= 1; y++)
-                for (x=-1; x <= 1; x++) {
-                    shift = (y==0) + (x==0);
-                    color = FC(filters,row+y,col+x);
-                    if (color == f) continue;
-                    *ip++ = (width*y + x)*4 + color;
-                    *ip++ = shift;
-                    *ip++ = color;
-                    sum[color] += 1 << shift;
-                }
-            code[row][col][0] = (ip - code[row][col]) / 3;
-            for ( c = 0 ; c < 3 ; ++c )
-                if (c != f) {
-                    *ip++ = c;
-                    *ip++ = 256 / sum[c];
-                }
-        }
-    for (row=1; row < height-1; row++)
-        for (col=1; col < width-1; col++) {
-            ip = code[row % size][col % size];
-            memset (sum, 0, sizeof sum);
-            for (i=*ip++; i--; ip+=3) {
-                switch (((ip[0]%4)+4)%4) {
-                case 0:
-                    sum[ip[2]] += pixel[row*width+col+ip[0]/4].red << ip[1]; break;
-                case 1:
-                case 3:
-                    sum[ip[2]] += pixel[row*width+col+ip[0]/4].green << ip[1]; break;
-                case 2:
-                    sum[ip[2]] += pixel[row*width+col+ip[0]/4].blue << ip[1]; break;
-                default:
-                    Q_ASSERT(0);
-                }
-            }
-            for (i=3; --i; ip+=2) {
-                switch  (((ip[0]%4)+4)%4) {
-                case 0:
-                    pixel[row*width+col+ip[0]/4].red = sum[ip[0]] * ip[1] >> 8; break;
-                case 1:
-                case 3:
-                    pixel[row*width+col+ip[0]/4].green = sum[ip[0]] * ip[1] >> 8; break;
-                case 2:
-                    pixel[row*width+col+ip[0]/4].blue = sum[ip[0]] * ip[1] >> 8; break;
-                default:
-                    Q_ASSERT(0);
-                }
-            }
-        }
-    cache.sync();
-}
-
 // inspiration dc1394
 
 static dc1394color_filter_t
@@ -226,7 +108,7 @@ get_color_filter(const Photo& photo)
 {
     QString str = photo.getTag("Filter pattern");
     str = str.left(4);
-    if ( str == "RGGB ")
+    if ( str == "RGGB")
         return DC1394_COLOR_FILTER_RGGB;
     else if ( str == "GBRG" )
         return DC1394_COLOR_FILTER_GBRG;
@@ -241,37 +123,123 @@ get_color_filter(const Photo& photo)
 }
 
 static uint16_t *
-imageToBuffer(Photo &photo)
+newBayer(int w, int h)
 {
-    Magick::Image& image = photo.image();
-    int w = image.columns();
-    int h = image.rows();
-
+    return new uint16_t[w*h];
 }
 
+static uint16_t *
+newRGB(int w, int h)
+{
+    return new uint16_t[w*h*3];
+}
+
+static void deleteBuffer(uint16_t *buffer)
+{
+    delete[] buffer;
+}
+
+static uint16_t *
+imageToBayer(Magick::Image& image, u_int32_t filters)
+{
+    int w = image.columns();
+    int h = image.rows();
+    uint16_t *buffer = newBayer(w, h);
+    Magick::Pixels cache(image);
+    const Magick::PixelPacket *pixel = cache.getConst(0, 0, w, h);
+    for ( int y = 0 ; y < h ; ++y ) {
+        for (int x = 0 ; x < w ; ++x ) {
+            switch (FC(filters, y, x)) {
+            case 0:
+                buffer[y*w+x]=pixel[y*w+x].red; break;
+            case 1:
+            case 3:
+                buffer[y*w+x]=pixel[y*w+x].green; break;
+            case 2:
+                buffer[y*w+x]=pixel[y*w+x].blue; break;
+            }
+        }
+    }
+    return buffer;
+}
+
+static Magick::Image
+bufferToImage(uint16_t *buffer, int w, int h) {
+    Magick::Image image(Magick::Geometry(w,h), Magick::Color(0,0,0));
+    image.modifyImage();
+    int s = w * h;
+    Magick::Pixels cache(image);
+    Magick::PixelPacket *pixel = cache.get(0, 0, w, h);
+    for(int i = 0 ; i < s ; ++i) {
+        pixel[i].red = buffer[i*3+0];
+        pixel[i].green = buffer[i*3+1];
+        pixel[i].blue = buffer[i*3+2];
+    }
+    image.syncPixels();
+    return image;
+}
 
 
 Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
 {
     u_int32_t filters = getFilterPattern(photo);
+    dc1394color_filter_t dc_filters = get_color_filter(photo);
+    dc1394bayer_method_t method;
+    bool use_dc = true;
+
+
     Photo newPhoto;
     switch (m_quality) {
     case OpDebayer::NoDebayer:
+    default:
+        use_dc = false;
+        newPhoto = photo;
         break;
     case OpDebayer::HalfSize:
+        use_dc = false;
         newPhoto = debayerHalfSize(photo, filters);
         break;
-    case OpDebayer::Low:
-        newPhoto = photo;
-        //preInterpolate(newPhoto, filters);
-        borderInterpolate(newPhoto, filters, 0);
-        linInterpolate(newPhoto, filters);
+    case OpDebayer::Simple:
+        method = DC1394_BAYER_METHOD_SIMPLE;
         break;
+    case OpDebayer::Bilinear:
+        method = DC1394_BAYER_METHOD_BILINEAR;
+        break;
+    case OpDebayer::HQLinear:
+        method = DC1394_BAYER_METHOD_HQLINEAR;
+        break;
+        /*
+    case OpDebayer::DownSample:
+        method = DC1394_BAYER_METHOD_DOWNSAMPLE;
+        break;
+        */
     case OpDebayer::VNG:
-    case OpDebayer::PPG:
+        method = DC1394_BAYER_METHOD_VNG;
+        break;
     case OpDebayer::AHD:
-            default:
+        method = DC1394_BAYER_METHOD_AHD;
+        break;
+    }
+    if (use_dc) {
         newPhoto = photo;
+        Magick::Image &image = newPhoto.image();
+        int w = image.columns();
+        int h = image.rows();
+        uint16_t *bayer = imageToBayer(image, filters);
+        uint16_t *rgb = newRGB(w,h);
+        dc1394error_t err;
+        err = dc1394_bayer_decoding_16bit(bayer, rgb, w, h, dc_filters, method, 16);
+        if ( err == DC1394_SUCCESS ) {
+            /*
+            if ( m_quality == OpDebayer::DownSample ) {
+                w/=2;
+                h/=2;
+            }
+            */
+            image = bufferToImage(rgb, w, h);
+        }
+        deleteBuffer(rgb);
+        deleteBuffer(bayer);
     }
     newPhoto.removeTag("Filter pattern");
     return newPhoto;

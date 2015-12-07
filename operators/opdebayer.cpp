@@ -5,19 +5,29 @@
 #include "workerdebayer.h"
 
 static const char *DebayerStr[] = {
-    "None", "Half Size", "Low", "VNG", "PPG", "AHD"
+    "None",
+    "HalfSize",
+    "Simple",
+    "Bilinear",
+    "HQ Linear",
+    //"Down Sample",
+    "VNG",
+    "AHD"
 };
+
 
 OpDebayer::OpDebayer(Process *parent) :
     Operator(OP_SECTION_COLOR, "Debayer", parent),
-    m_debayer(new OperatorParameterDropDown("quality", "Quality", DebayerStr[NoDebayer], this)),
-    m_debayerValue(AHD)
+    m_debayer(new OperatorParameterDropDown("quality", "Quality", DebayerStr[Bilinear], this)),
+    m_debayerValue(Bilinear)
 {
     m_debayer->addOption(DebayerStr[NoDebayer], this, SLOT(setDebayerNone()));
     m_debayer->addOption(DebayerStr[HalfSize], this, SLOT(setDebayerHalfSize()));
-    m_debayer->addOption(DebayerStr[Low], this, SLOT(setDebayerLow()));
+    m_debayer->addOption(DebayerStr[Simple], this, SLOT(setDebayerSimple()));
+    m_debayer->addOption(DebayerStr[Bilinear], this, SLOT(setDebayerBilinear()));
+    m_debayer->addOption(DebayerStr[HQLinear], this, SLOT(setDebayerHQLinear()));
+    //m_debayer->addOption(DebayerStr[DownSample], this, SLOT(setDebayerDownSample()));
     m_debayer->addOption(DebayerStr[VNG], this, SLOT(setDebayerVNG()));
-    m_debayer->addOption(DebayerStr[PPG], this, SLOT(setDebayerPPG()));
     m_debayer->addOption(DebayerStr[AHD], this, SLOT(setDebayerAHD()));
     addParameter(m_debayer);
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
@@ -41,26 +51,44 @@ void OpDebayer::setDebayerHalfSize()
     }
 }
 
-void OpDebayer::setDebayerLow()
+void OpDebayer::setDebayerSimple()
 {
-    if ( m_debayerValue != Low ) {
-        m_debayerValue = Low;
+    if ( m_debayerValue != Simple ) {
+        m_debayerValue = Simple;
         setOutOfDate();
     }
 }
+
+void OpDebayer::setDebayerBilinear()
+{
+    if ( m_debayerValue != Bilinear ) {
+        m_debayerValue = Bilinear;
+        setOutOfDate();
+    }
+}
+
+void OpDebayer::setDebayerHQLinear()
+{
+    if ( m_debayerValue != HQLinear ) {
+        m_debayerValue = HQLinear;
+        setOutOfDate();
+    }
+}
+
+/*
+void OpDebayer::setDebayerDownSample()
+{
+    if ( m_debayerValue != DownSample ) {
+        m_debayerValue = DownSample;
+        setOutOfDate();
+    }
+}
+*/
 
 void OpDebayer::setDebayerVNG()
 {
     if ( m_debayerValue != VNG ) {
         m_debayerValue = VNG;
-        setOutOfDate();
-    }
-}
-
-void OpDebayer::setDebayerPPG()
-{
-    if ( m_debayerValue != PPG ) {
-        m_debayerValue = PPG;
         setOutOfDate();
     }
 }

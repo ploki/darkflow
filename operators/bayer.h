@@ -37,8 +37,9 @@ extern "C" {
 
     More details soon
 */
-
-#define restrict __restrict
+#ifndef restrict
+# define restrict __restrict
+#endif
 
 /**
  * A list of de-mosaicing techniques for Bayer-patterns.

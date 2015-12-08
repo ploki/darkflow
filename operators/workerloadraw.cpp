@@ -8,18 +8,18 @@
 
 #include <Magick++.h>
 
-#include "rawconvert.h"
+#include "workerloadraw.h"
 #include "rawinfo.h"
 #include "operatoroutput.h"
-#include "operatorloadraw.h"
+#include "oploadraw.h"
 #include "photo.h"
 
-RawConvert::RawConvert(QThread *thread, OperatorLoadRaw *op) :
+WorkerLoadRaw::WorkerLoadRaw(QThread *thread, OpLoadRaw *op) :
     OperatorWorker(thread, op),
     m_loadraw(op)
 {}
 
-void RawConvert::play()
+void WorkerLoadRaw::play()
 {
     QVector<QString> collection = m_loadraw->getCollection().toVector();
     int s = collection.count();
@@ -36,9 +36,9 @@ void RawConvert::play()
         Photo::Gamma gamma;
         switch(m_loadraw->m_colorSpaceValue) {
         default:
-        case OperatorLoadRaw::Linear: gamma = Photo::Linear; break;
-        case OperatorLoadRaw::IUT_BT_709: gamma = Photo::IUT_BT_709; break;
-        case OperatorLoadRaw::sRGB: gamma = Photo::sRGB; break;
+        case OpLoadRaw::Linear: gamma = Photo::Linear; break;
+        case OpLoadRaw::IUT_BT_709: gamma = Photo::IUT_BT_709; break;
+        case OpLoadRaw::sRGB: gamma = Photo::sRGB; break;
         }
         Photo photo(blob, gamma);
         if ( !photo.isComplete() ) {
@@ -66,53 +66,53 @@ void RawConvert::play()
 
 
 
-QByteArray RawConvert::convert(const QString &filename)
+QByteArray WorkerLoadRaw::convert(const QString &filename)
 {
     QString dcraw_executable("dcraw");
     QStringList arguments;
     QProcess dcraw;
     switch(m_loadraw->m_whiteBalanceValue ) {
-    case OperatorLoadRaw::NoWhiteBalance:
+    case OpLoadRaw::NoWhiteBalance:
         arguments << "-r" << "1" << "1" << "1" << "1";
         break;
-    case OperatorLoadRaw::RawColors:
+    case OpLoadRaw::RawColors:
         arguments << "-o" << "0";
         break;
-    case OperatorLoadRaw::Camera:
+    case OpLoadRaw::Camera:
         arguments << "-w";
         break;
-    case OperatorLoadRaw::Daylight:
+    case OpLoadRaw::Daylight:
         //it is the default
         break;
     }
     switch(m_loadraw->m_debayerValue) {
-    case OperatorLoadRaw::NoDebayer:
+    case OpLoadRaw::NoDebayer:
         arguments << "-d";
         break;
-    case OperatorLoadRaw::HalfSize:
+    case OpLoadRaw::HalfSize:
         arguments << "-h";
         break;
-    case OperatorLoadRaw::Low:
+    case OpLoadRaw::Low:
         arguments << "-q" << "0";
         break;
-    case OperatorLoadRaw::VNG:
+    case OpLoadRaw::VNG:
         arguments << "-q" << "1";
         break;
-    case OperatorLoadRaw::PPG:
+    case OpLoadRaw::PPG:
         arguments << "-q" << "2";
         break;
-    case OperatorLoadRaw::AHD:
+    case OpLoadRaw::AHD:
         arguments << "-q" << "3";
         break;
     }
     switch(m_loadraw->m_colorSpaceValue) {
-    case OperatorLoadRaw::Linear:
+    case OpLoadRaw::Linear:
         arguments << "-4";
         break;
-    case OperatorLoadRaw::sRGB:
+    case OpLoadRaw::sRGB:
         arguments << "-g" << "2.4" << "12.92";
         //passthrough
-    case OperatorLoadRaw::IUT_BT_709:
+    case OpLoadRaw::IUT_BT_709:
         arguments << "-6";
         break;
     }
@@ -132,7 +132,7 @@ QByteArray RawConvert::convert(const QString &filename)
     return data;
 }
 
-void RawConvert::setTags(const QString &filename, Photo &photo)
+void WorkerLoadRaw::setTags(const QString &filename, Photo &photo)
 {
     RawInfo info;
     QFileInfo finfo(filename);
@@ -153,7 +153,7 @@ void RawConvert::setTags(const QString &filename, Photo &photo)
     photo.setTag("Color Space", m_loadraw->getColorSpace());
     photo.setTag("Debayer", m_loadraw->getDebayer());
     photo.setTag("White Balance", m_loadraw->getWhiteBalance());
-    if ( m_loadraw->m_debayerValue == OperatorLoadRaw::NoDebayer ) {
+    if ( m_loadraw->m_debayerValue == OpLoadRaw::NoDebayer ) {
         photo.setTag("Pixels", "CFA");
     }
     else {

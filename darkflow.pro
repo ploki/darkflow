@@ -39,18 +39,13 @@ SOURCES +=\
     ui/projectproperties.cpp \
     ui/main.cpp \
     core/operator.cpp \
-    operators/operatorexnihilo.cpp \
     core/operatorinput.cpp \
-    operators/operatorloadraw.cpp \
     core/operatoroutput.cpp \
     core/operatorparameter.cpp \
     core/operatorparameterdropdown.cpp \
     core/operatorparameterfilescollection.cpp \
-    operators/operatorpassthrough.cpp \
     core/operatorworker.cpp \
     core/photo.cpp \
-    operators/rawconvert.cpp \
-    operators/rawinfo.cpp \
     ui/visualization.cpp \
     scene/process.cpp \
     ui/treephotoitem.cpp \
@@ -58,7 +53,6 @@ SOURCES +=\
     ui/slider.cpp \
     scene/processslider.cpp \
     core/operatorparameterslider.cpp \
-    operators/operatorrotate.cpp \
     algorithms/exposure.cpp \
     algorithms/igamma.cpp \
     algorithms/lutbased.cpp \
@@ -108,11 +102,17 @@ SOURCES +=\
     operators/workerdeconvolution.cpp \
     operators/opdebayer.cpp \
     operators/workerdebayer.cpp \
-    operators/bayer.c \
     operators/oploadimage.cpp \
     operators/workerloadimage.cpp \
     operators/opconvolution.cpp \
-    operators/workerconvolution.cpp
+    operators/workerconvolution.cpp \
+    operators/opexnihilo.cpp \
+    operators/oploadraw.cpp \
+    operators/oppassthrough.cpp \
+    operators/oprotate.cpp \
+    operators/workerloadraw.cpp \
+    algorithms/bayer.c \
+    algorithms/rawinfo.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -128,18 +128,13 @@ HEADERS  += \
     scene/processscene.h \
     ui/projectproperties.h \
     core/operator.h \
-    operators/operatorexnihilo.h \
     core/operatorinput.h \
     core/operatoroutput.h \
     core/operatorparameter.h \
     core/operatorparameterdropdown.h \
     core/operatorparameterfilescollection.h \
-    operators/operatorpassthrough.h \
-    operators/operatorloadraw.h \
     core/operatorworker.h \
     core/photo.h \
-    operators/rawconvert.h \
-    operators/rawinfo.h \
     ui/visualization.h \
     scene/process.h \
     ui/treephotoitem.h \
@@ -147,7 +142,6 @@ HEADERS  += \
     ui/slider.h \
     scene/processslider.h \
     core/operatorparameterslider.h \
-    operators/operatorrotate.h \
     algorithms/exposure.h \
     algorithms/igamma.h \
     algorithms/lutbased.h \
@@ -197,11 +191,17 @@ HEADERS  += \
     operators/workerdeconvolution.h \
     operators/opdebayer.h \
     operators/workerdebayer.h \
-    operators/bayer.h \
     operators/oploadimage.h \
     operators/workerloadimage.h \
     operators/opconvolution.h \
-    operators/workerconvolution.h
+    operators/workerconvolution.h \
+    operators/oploadraw.h \
+    operators/opexnihilo.h \
+    operators/oprotate.h \
+    operators/oppassthrough.h \
+    operators/workerloadraw.h \
+    algorithms/rawinfo.h \
+    algorithms/bayer.h
 
 FORMS    += \
     ui/aboutdialog.ui \

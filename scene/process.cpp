@@ -23,10 +23,10 @@
 #include "processfilescollection.h"
 #include "processslider.h"
 
-#include "operatorloadraw.h"
-#include "operatorexnihilo.h"
-#include "operatorpassthrough.h"
-#include "operatorrotate.h"
+#include "oploadraw.h"
+#include "opexnihilo.h"
+#include "oppassthrough.h"
+#include "oprotate.h"
 #include "opwhitebalance.h"
 #include "opexposure.h"
 #include "opmodulate.h"
@@ -83,7 +83,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
             this, SLOT(contextMenuSignal(QGraphicsSceneContextMenuEvent*)));
     m_scene->installEventFilter(this);
 
-    m_availableOperators.push_back(new OperatorLoadRaw(this));
+    m_availableOperators.push_back(new OpLoadRaw(this));
     m_availableOperators.push_back(new OpLoadImage(this));
     m_availableOperators.push_back(new OpLoadVideo(this));
 
@@ -117,7 +117,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpFlatFieldCorrection(this));
 
     m_availableOperators.push_back(new OpCrop(this));
-    m_availableOperators.push_back(new OperatorRotate(this));
+    m_availableOperators.push_back(new OpRotate(this));
 
     m_availableOperators.push_back(new OpDemultiplexer(2, this));
     m_availableOperators.push_back(new OpDemultiplexer(3, this));
@@ -131,8 +131,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
 
     m_availableOperators.push_back(new OpSubtract(this));
-    m_availableOperators.push_back(new OperatorExNihilo(this));
-    m_availableOperators.push_back(new OperatorPassThrough(this));
+    m_availableOperators.push_back(new OpExNihilo(this));
+    m_availableOperators.push_back(new OpPassThrough(this));
     addOperatorsToContextMenu();
 }
 

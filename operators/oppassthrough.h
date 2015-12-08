@@ -6,13 +6,13 @@
 
 class OperatorParameterSlider;
 
-class OperatorPassThrough : public Operator
+class OpPassThrough : public Operator
 {
     Q_OBJECT
 public:
-    OperatorPassThrough(Process *parent);
-    ~OperatorPassThrough();
-    OperatorPassThrough *newInstance();
+    OpPassThrough(Process *parent);
+    ~OpPassThrough();
+    OpPassThrough *newInstance();
 
     OperatorWorker *newWorker();
 private:

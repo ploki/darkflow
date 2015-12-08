@@ -7,13 +7,13 @@
 class Process;
 class OperatorParameterFilesCollection;
 class OperatorParameterDropDown;
-class OperatorLoadRaw : public Operator
+class OpLoadRaw : public Operator
 {
     Q_OBJECT
 public:
-    OperatorLoadRaw(Process *parent);
-    ~OperatorLoadRaw();
-    OperatorLoadRaw *newInstance();
+    OpLoadRaw(Process *parent);
+    ~OpLoadRaw();
+    OpLoadRaw *newInstance();
 
     typedef enum {
         Linear,
@@ -65,7 +65,7 @@ protected:
 
 
 private:
-    friend class RawConvert;
+    friend class WorkerLoadRaw;
     OperatorParameterFilesCollection *m_filesCollection;
     OperatorParameterDropDown *m_colorSpace;
     OperatorParameterDropDown *m_debayer;

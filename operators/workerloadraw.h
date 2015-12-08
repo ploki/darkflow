@@ -3,14 +3,14 @@
 #include <QString>
 #include "operatorworker.h"
 
-class OperatorLoadRaw;
+class OpLoadRaw;
 class Photo;
 
-class RawConvert : public OperatorWorker
+class WorkerLoadRaw : public OperatorWorker
 {
     Q_OBJECT
 public:
-    RawConvert(QThread *thread, OperatorLoadRaw *op);
+    WorkerLoadRaw(QThread *thread, OpLoadRaw *op);
 
     Photo process(const Photo &, int, int) { throw 0; }
 
@@ -25,7 +25,7 @@ signals:
 
 public slots:
 private:
-    OperatorLoadRaw *m_loadraw;
+    OpLoadRaw *m_loadraw;
 };
 
 #endif // RAWCONVERT_H

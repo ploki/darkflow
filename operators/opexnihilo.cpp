@@ -1,6 +1,6 @@
 #include <QVector>
 #include "operatoroutput.h"
-#include "operatorexnihilo.h"
+#include "opexnihilo.h"
 #include "operatorworker.h"
 #include "process.h"
 #include "photo.h"
@@ -10,7 +10,7 @@
 class ExNihilo : public OperatorWorker
 {
 public:
-    ExNihilo(QThread *thread, OperatorExNihilo *op) :
+    ExNihilo(QThread *thread, OpExNihilo *op) :
         OperatorWorker(thread, op)
     {}
 private slots:
@@ -51,23 +51,23 @@ private slots:
     }
 };
 
-OperatorExNihilo::OperatorExNihilo(Process *parent) :
+OpExNihilo::OpExNihilo(Process *parent) :
     Operator(OP_SECTION_DEPRECATED, "Ex Nihilo", parent)
 {
     addOutput(new OperatorOutput("Random image", "Random Image", this));
 }
 
-OperatorExNihilo::~OperatorExNihilo()
+OpExNihilo::~OpExNihilo()
 {
     //qDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
 }
 
-OperatorExNihilo *OperatorExNihilo::newInstance()
+OpExNihilo *OpExNihilo::newInstance()
 {
-    return new OperatorExNihilo(m_process);
+    return new OpExNihilo(m_process);
 }
 
-OperatorWorker *OperatorExNihilo::newWorker()
+OperatorWorker *OpExNihilo::newWorker()
 {
     return new ExNihilo(m_thread, this);
 }

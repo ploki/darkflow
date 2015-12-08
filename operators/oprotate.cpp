@@ -1,5 +1,5 @@
 #include "operatorworker.h"
-#include "operatorrotate.h"
+#include "oprotate.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "operatorparameterdropdown.h"
@@ -17,14 +17,14 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
     Q_UNUSED(p);
     Q_UNUSED(c);
     Photo newPhoto(photo);
-    qreal angle = dynamic_cast<OperatorRotate*>(m_operator)->angle();
+    qreal angle = dynamic_cast<OpRotate*>(m_operator)->angle();
 
     qDebug(QString("apply rotation of %0 °").arg(angle).toLatin1());
     newPhoto.image().rotate(angle);
     return newPhoto;
 }
 
-OperatorRotate::OperatorRotate(Process *parent) :
+OpRotate::OpRotate(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, "Rotation", parent),
     m_dropdown(new OperatorParameterDropDown("angle","angle","0°",this)),
     m_angle(0)
@@ -38,21 +38,21 @@ OperatorRotate::OperatorRotate(Process *parent) :
     addOutput(new OperatorOutput("Rotated", "Rotated", this));
 }
 
-OperatorRotate::~OperatorRotate()
+OpRotate::~OpRotate()
 {
 }
 
-OperatorRotate *OperatorRotate::newInstance()
+OpRotate *OpRotate::newInstance()
 {
-    return new OperatorRotate(m_process);
+    return new OpRotate(m_process);
 }
 
-OperatorWorker *OperatorRotate::newWorker()
+OperatorWorker *OpRotate::newWorker()
 {
     return new RotateWorker(m_thread, this);
 }
 
-void OperatorRotate::set0()
+void OpRotate::set0()
 {
     if ( m_angle != 0 ) {
         m_angle = 0;
@@ -60,7 +60,7 @@ void OperatorRotate::set0()
     }
 }
 
-void OperatorRotate::set90()
+void OpRotate::set90()
 {
     if ( m_angle != 90 ) {
         m_angle = 90;
@@ -68,7 +68,7 @@ void OperatorRotate::set90()
     }
 }
 
-void OperatorRotate::set180()
+void OpRotate::set180()
 {
     if ( m_angle != 180 ) {
         m_angle = 180;
@@ -76,7 +76,7 @@ void OperatorRotate::set180()
     }
 }
 
-void OperatorRotate::set270()
+void OpRotate::set270()
 {
     if ( m_angle != 270 ) {
         m_angle = 270;
@@ -84,7 +84,7 @@ void OperatorRotate::set270()
     }
 }
 
-qreal OperatorRotate::angle() const
+qreal OpRotate::angle() const
 {
     return m_angle;
 }

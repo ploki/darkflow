@@ -6,13 +6,13 @@
 
 class Process;
 
-class OperatorExNihilo : public Operator
+class OpExNihilo : public Operator
 {
     Q_OBJECT
 public:
-    OperatorExNihilo(Process *parent);
-    ~OperatorExNihilo();
-    OperatorExNihilo *newInstance();
+    OpExNihilo(Process *parent);
+    ~OpExNihilo();
+    OpExNihilo *newInstance();
 
     OperatorWorker* newWorker();
 

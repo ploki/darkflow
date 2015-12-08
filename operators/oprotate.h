@@ -6,14 +6,14 @@
 
 class OperatorParameterDropDown;
 
-class OperatorRotate : public Operator
+class OpRotate : public Operator
 {
     Q_OBJECT
 public:
-    OperatorRotate(Process *parent);
-    ~OperatorRotate();
+    OpRotate(Process *parent);
+    ~OpRotate();
 
-    OperatorRotate *newInstance();
+    OpRotate *newInstance();
     OperatorWorker *newWorker();
     qreal angle() const;
 

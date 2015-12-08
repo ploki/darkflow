@@ -1,9 +1,9 @@
 #include "process.h"
 #include "operatorparameterfilescollection.h"
 #include "operatorparameterdropdown.h"
-#include "operatorloadraw.h"
+#include "oploadraw.h"
 #include "operatoroutput.h"
-#include "rawconvert.h"
+#include "workerloadraw.h"
 
 static const char *ColorSpaceStr[] = {
   "Linear", "sRGB", "IUT BT.709"
@@ -15,7 +15,7 @@ static const char *WhiteBalanceStr[] = {
     "None", "Raw colors", "Camera", "Daylight"
 };
 
-OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
+OpLoadRaw::OpLoadRaw(Process *parent) :
     Operator(OP_SECTION_ASSETS, "Raw photos", parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "rawCollection",
@@ -57,36 +57,36 @@ OperatorLoadRaw::OperatorLoadRaw(Process *parent) :
     addOutput(new OperatorOutput("RAWs","RAW photos collection",this));
 }
 
-OperatorLoadRaw::~OperatorLoadRaw()
+OpLoadRaw::~OpLoadRaw()
 {
 }
 
-OperatorLoadRaw *OperatorLoadRaw::newInstance()
+OpLoadRaw *OpLoadRaw::newInstance()
 {
-    return new OperatorLoadRaw(m_process);
+    return new OpLoadRaw(m_process);
 }
 
-QStringList OperatorLoadRaw::getCollection() const
+QStringList OpLoadRaw::getCollection() const
 {
     return m_filesCollection->collection();
 }
 
-QString OperatorLoadRaw::getColorSpace() const
+QString OpLoadRaw::getColorSpace() const
 {
     return ColorSpaceStr[m_colorSpaceValue];
 }
 
-QString OperatorLoadRaw::getDebayer() const
+QString OpLoadRaw::getDebayer() const
 {
     return DebayerStr[m_debayerValue];
 }
 
-QString OperatorLoadRaw::getWhiteBalance() const
+QString OpLoadRaw::getWhiteBalance() const
 {
     return WhiteBalanceStr[m_whiteBalanceValue];
 }
 
-void OperatorLoadRaw::setColorSpaceLinear()
+void OpLoadRaw::setColorSpaceLinear()
 {
     if ( m_colorSpaceValue != Linear ) {
         m_colorSpaceValue = Linear;
@@ -94,7 +94,7 @@ void OperatorLoadRaw::setColorSpaceLinear()
     }
 }
 
-void OperatorLoadRaw::setColorSpacesRGB()
+void OpLoadRaw::setColorSpacesRGB()
 {
     if ( m_colorSpaceValue != sRGB ) {
         m_colorSpaceValue = sRGB;
@@ -102,7 +102,7 @@ void OperatorLoadRaw::setColorSpacesRGB()
     }
 }
 
-void OperatorLoadRaw::setColorSpaceIUT_BT_709()
+void OpLoadRaw::setColorSpaceIUT_BT_709()
 {
     if ( m_colorSpaceValue != IUT_BT_709 ) {
         m_colorSpaceValue = IUT_BT_709;
@@ -110,7 +110,7 @@ void OperatorLoadRaw::setColorSpaceIUT_BT_709()
     }
 }
 
-void OperatorLoadRaw::setDebayerNone()
+void OpLoadRaw::setDebayerNone()
 {
     if ( m_debayerValue != NoDebayer ) {
         m_debayerValue = NoDebayer;
@@ -118,7 +118,7 @@ void OperatorLoadRaw::setDebayerNone()
     }
 }
 
-void OperatorLoadRaw::setDebayerHalfSize()
+void OpLoadRaw::setDebayerHalfSize()
 {
     if ( m_debayerValue != HalfSize ) {
         m_debayerValue = HalfSize;
@@ -126,7 +126,7 @@ void OperatorLoadRaw::setDebayerHalfSize()
     }
 }
 
-void OperatorLoadRaw::setDebayerLow()
+void OpLoadRaw::setDebayerLow()
 {
     if ( m_debayerValue != Low ) {
         m_debayerValue = Low;
@@ -134,7 +134,7 @@ void OperatorLoadRaw::setDebayerLow()
     }
 }
 
-void OperatorLoadRaw::setDebayerVNG()
+void OpLoadRaw::setDebayerVNG()
 {
     if ( m_debayerValue != VNG ) {
         m_debayerValue = VNG;
@@ -142,7 +142,7 @@ void OperatorLoadRaw::setDebayerVNG()
     }
 }
 
-void OperatorLoadRaw::setDebayerPPG()
+void OpLoadRaw::setDebayerPPG()
 {
     if ( m_debayerValue != PPG ) {
         m_debayerValue = PPG;
@@ -150,7 +150,7 @@ void OperatorLoadRaw::setDebayerPPG()
     }
 }
 
-void OperatorLoadRaw::setDebayerAHD()
+void OpLoadRaw::setDebayerAHD()
 {
     if ( m_debayerValue != AHD ) {
         m_debayerValue = AHD;
@@ -158,7 +158,7 @@ void OperatorLoadRaw::setDebayerAHD()
     }
 }
 
-void OperatorLoadRaw::setWhiteBalanceNone()
+void OpLoadRaw::setWhiteBalanceNone()
 {
     if ( m_whiteBalanceValue != NoWhiteBalance ) {
         m_whiteBalanceValue = NoWhiteBalance;
@@ -166,7 +166,7 @@ void OperatorLoadRaw::setWhiteBalanceNone()
     }
 }
 
-void OperatorLoadRaw::setWhiteBalanceRawColors()
+void OpLoadRaw::setWhiteBalanceRawColors()
 {
     if ( m_whiteBalanceValue != RawColors ) {
         m_whiteBalanceValue = RawColors;
@@ -174,7 +174,7 @@ void OperatorLoadRaw::setWhiteBalanceRawColors()
     }
 }
 
-void OperatorLoadRaw::setWhiteBalanceCamera()
+void OpLoadRaw::setWhiteBalanceCamera()
 {
     if ( m_whiteBalanceValue != Camera ) {
         m_whiteBalanceValue = Camera;
@@ -182,7 +182,7 @@ void OperatorLoadRaw::setWhiteBalanceCamera()
     }
 }
 
-void OperatorLoadRaw::setWhiteBalanceDaylight()
+void OpLoadRaw::setWhiteBalanceDaylight()
 {
     if ( m_whiteBalanceValue != Daylight ) {
         m_whiteBalanceValue = Daylight;
@@ -190,11 +190,11 @@ void OperatorLoadRaw::setWhiteBalanceDaylight()
     }
 }
 
-void OperatorLoadRaw::filesCollectionChanged()
+void OpLoadRaw::filesCollectionChanged()
 {
     setOutOfDate();
 }
 
-OperatorWorker *OperatorLoadRaw::newWorker() {
-    return new RawConvert(m_thread, this);
+OperatorWorker *OpLoadRaw::newWorker() {
+    return new WorkerLoadRaw(m_thread, this);
 }

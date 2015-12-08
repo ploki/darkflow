@@ -1,5 +1,5 @@
 #include "operatorworker.h"
-#include "operatorpassthrough.h"
+#include "oppassthrough.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "photo.h"
@@ -18,7 +18,7 @@ public:
 
 
 
-OperatorPassThrough::OperatorPassThrough(Process *parent) :
+OpPassThrough::OpPassThrough(Process *parent) :
     Operator(OP_SECTION_DEPRECATED, "Pass Through", parent),
     m_slider(new OperatorParameterSlider("scale", "scale", "scale",
                                          Slider::ExposureValue, Slider::Logarithmic,
@@ -36,18 +36,18 @@ OperatorPassThrough::OperatorPassThrough(Process *parent) :
     addParameter(m_slider);
 }
 
-OperatorPassThrough::~OperatorPassThrough()
+OpPassThrough::~OpPassThrough()
 {
    // qDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
 }
 
 
-OperatorPassThrough *OperatorPassThrough::newInstance()
+OpPassThrough *OpPassThrough::newInstance()
 {
-    return new OperatorPassThrough(m_process);
+    return new OpPassThrough(m_process);
 }
 
-OperatorWorker *OperatorPassThrough::newWorker()
+OperatorWorker *OpPassThrough::newWorker()
 {
     return new PassThrough(m_thread, this);
 }

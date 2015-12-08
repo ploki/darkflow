@@ -1,17 +1,17 @@
-#include "opdeconvolution.h"
-#include "workerdeconvolution.h"
+#include "opconvolution.h"
+#include "workerconvolution.h"
 #include <list>
 #include "algorithm.h"
 
 using Magick::Quantum;
 
-WorkerDeconvolution::WorkerDeconvolution(qreal luminosity, QThread *thread, OpDeconvolution *op) :
+WorkerConvolution::WorkerConvolution(qreal luminosity, QThread *thread, OpConvolution *op) :
     OperatorWorker(thread, op),
     m_luminosity(luminosity)
 {
 }
 
-Photo WorkerDeconvolution::process(const Photo &photo, int, int)
+Photo WorkerConvolution::process(const Photo &photo, int, int)
 {
     return photo;
 }
@@ -64,7 +64,7 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
 
 }
 
-static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity)
+static void conv(Magick::Image& image, Magick::Image& kernel, qreal luminosity)
 {
 #ifdef USING_GRAPHICSMAGICK
     Q_UNUSED(image);
@@ -135,11 +135,11 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
            Q_UNUSED(Bm_pxl);
            Q_UNUSED(luminosity);
 #define RM(comp) \
-    Rm_pxl[x].comp = clamp( luminosity * double(Bm_pxl[x].comp) / double(Am_pxl[x].comp?:1))
+    Rm_pxl[x].comp = clamp( luminosity*double(Bm_pxl[x].comp)*double(Am_pxl[x].comp))
            RM(red); RM(green); RM(blue);
 #define mod(a,b) (a)%(b)
 #define RP(comp) \
-    Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) - quantum_t(Ap_pxl[x].comp)+ 65536+32768, 65536)
+    Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) + quantum_t(Ap_pxl[x].comp) + 32768, 65536)
            RP(red); RP(green); RP(blue);
        }
     }
@@ -150,7 +150,7 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
 #endif
 }
 
-void WorkerDeconvolution::play()
+void WorkerConvolution::play()
 {
     Q_ASSERT( m_inputs.count() == 2 );
 
@@ -167,7 +167,7 @@ void WorkerDeconvolution::play()
         Magick::Image& kernel = m_inputs[1][n%k_count].image();
         int w=image.columns();
         int h=image.rows();
-        deconv(image, kernel, m_luminosity);
+        conv(image, kernel, m_luminosity);
         image.page(Magick::Geometry(0,0,0,0));
         image.crop(Magick::Geometry(w, h));
         outputPush(0, photo);

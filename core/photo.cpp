@@ -514,6 +514,8 @@ void Photo::setSequenceNumber(int sequenceNumber)
 }
 
 bool Photo::operator<(const Photo &other) const {
+    if ( m_sequenceNumber == other.m_sequenceNumber )
+        return (m_identity < other.m_identity);
     return (m_sequenceNumber < other.m_sequenceNumber);
 }
 

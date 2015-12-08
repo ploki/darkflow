@@ -108,7 +108,11 @@ SOURCES +=\
     operators/workerdeconvolution.cpp \
     operators/opdebayer.cpp \
     operators/workerdebayer.cpp \
-    operators/bayer.c
+    operators/bayer.c \
+    operators/oploadimage.cpp \
+    operators/workerloadimage.cpp \
+    operators/opconvolution.cpp \
+    operators/workerconvolution.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -193,7 +197,11 @@ HEADERS  += \
     operators/workerdeconvolution.h \
     operators/opdebayer.h \
     operators/workerdebayer.h \
-    operators/bayer.h
+    operators/bayer.h \
+    operators/oploadimage.h \
+    operators/workerloadimage.h \
+    operators/opconvolution.h \
+    operators/workerconvolution.h
 
 FORMS    += \
     ui/aboutdialog.ui \

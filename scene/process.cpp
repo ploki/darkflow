@@ -55,6 +55,8 @@
 #include "opthreshold.h"
 #include "opdeconvolution.h"
 #include "opdebayer.h"
+#include "oploadimage.h"
+#include "opconvolution.h"
 
 QString Process::uuid()
 {
@@ -82,6 +84,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_scene->installEventFilter(this);
 
     m_availableOperators.push_back(new OperatorLoadRaw(this));
+    m_availableOperators.push_back(new OpLoadImage(this));
     m_availableOperators.push_back(new OpLoadVideo(this));
 
     m_availableOperators.push_back(new OpExposure(this));
@@ -103,6 +106,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpMicroContrasts(this));
     m_availableOperators.push_back(new OpUnsharpMask(this));
     m_availableOperators.push_back(new OpDeconvolution(this));
+    m_availableOperators.push_back(new OpConvolution(this));
 
     m_availableOperators.push_back(new OpInvert(this));
     m_availableOperators.push_back(new OpBlur(this));

@@ -11,7 +11,7 @@ public:
                 QThread *thread,
                 Operator *op);
     Photo process(const Photo &, int, int);
-    void play(QVector<QVector<Photo> > inputs, int n_outputs);
+    void play();
 
 private:
     OpBlend::BlendMode m_mode1;

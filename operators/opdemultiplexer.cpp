@@ -15,16 +15,15 @@ public:
     Photo process(const Photo &, int , int ) {
         throw 0;
     }
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
+    void play() {
+        int n_outputs = outputsCount();
         Q_ASSERT( n_outputs == m_ways );
         int i = 0,
-                s = inputs[0].count();
-        foreach(Photo photo, inputs[0]) {
+                s = m_inputs[0].count();
+        foreach(Photo photo, m_inputs[0]) {
             if (aborted())
                 continue;
-            m_outputs[i%n_outputs].push_back(photo);
+            outputPush(i%n_outputs, photo);
             emitProgress(i, s, 0, 1);
             ++i;
         }

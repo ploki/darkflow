@@ -15,11 +15,9 @@ public:
     {}
 private slots:
     Photo process(const Photo &, int, int) { throw 0; }
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
+    void play() {
         qDebug("play!!");
         Photo photo(Photo::Linear);
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
         photo.setIdentity(m_operator->uuid());
         photo.createImage(1000,1000);
         if (photo.isComplete()) {
@@ -44,7 +42,7 @@ private slots:
             }
             cache.sync();
             photo.setTag("Name", "Random Image");
-            m_outputs[0].push_back(photo);
+            outputPush(0, photo);
             emitSuccess();
         }
         else {

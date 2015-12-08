@@ -10,7 +10,7 @@ class WorkerDeconvolution : public OperatorWorker
 public:
     WorkerDeconvolution(qreal luminosity, QThread *thread, OpDeconvolution *op);
     Photo process(const Photo &, int, int);
-    void play(QVector<QVector<Photo> > inputs, int n_outputs);
+    void play();
 private:
     qreal m_luminosity;
 };

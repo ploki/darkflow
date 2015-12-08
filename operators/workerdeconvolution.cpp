@@ -162,29 +162,27 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
 #endif
 }
 
-void WorkerDeconvolution::play(QVector<QVector<Photo> > inputs, int n_outputs)
+void WorkerDeconvolution::play()
 {
-    Q_ASSERT( inputs.count() == 2 );
+    Q_ASSERT( m_inputs.count() == 2 );
 
-    if ( inputs[1].count() == 0 )
-        return OperatorWorker::play(inputs, n_outputs);
+    if ( m_inputs[1].count() == 0 )
+        return OperatorWorker::play();
 
-    int k_count = inputs[1].count();
-    m_inputs = inputs;
-    play_prepareOutputs(n_outputs);
-    int complete = qMin(1,k_count) * inputs[0].count();
+    int k_count = m_inputs[1].count();
+    int complete = qMin(1,k_count) * m_inputs[0].count();
     int n = 0;
-    foreach(Photo photo, inputs[0]) {
+    foreach(Photo photo, m_inputs[0]) {
         if (aborted())
             continue;
         Magick::Image& image = photo.image();
-        Magick::Image& kernel = inputs[1][n%k_count].image();
+        Magick::Image& kernel = m_inputs[1][n%k_count].image();
         int w=image.columns();
         int h=image.rows();
         deconv(image, kernel, m_luminosity);
         image.page(Magick::Geometry(0,0,0,0));
         image.crop(Magick::Geometry(w, h));
-        m_outputs[0].push_back(photo);
+        outputPush(0, photo);
         emitProgress(n,complete, 1, 1);
         ++n;
     }

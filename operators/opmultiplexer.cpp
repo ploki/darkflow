@@ -14,13 +14,11 @@ public:
     Photo process(const Photo &, int , int ) {
         throw 0;
     }
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
-        Q_ASSERT( inputs.count() == m_ways );
-        int photo_count = inputs[0].count();
-        for (int i = 1 ; i < inputs.count() ; ++i )
-            if ( inputs[i].count() != photo_count ) {
+    void play() {
+        Q_ASSERT( m_inputs.count() == m_ways );
+        int photo_count = m_inputs[0].count();
+        for (int i = 1 ; i < m_inputs.count() ; ++i )
+            if ( m_inputs[i].count() != photo_count ) {
                 qWarning("Uneven photo count in multiplexer");
                 emitFailure();
                 return;
@@ -29,7 +27,7 @@ public:
             for ( int j = 0 ; j < m_ways ; ++j ) {
                 if (aborted())
                     continue;
-                m_outputs[0].push_back(inputs[j][i]);
+                outputPush(0, m_inputs[j][i]);
                 emitProgress(j, m_ways, i, photo_count);
             }
         }

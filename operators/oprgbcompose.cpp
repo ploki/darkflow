@@ -13,13 +13,11 @@ public:
     Photo process(const Photo &, int , int ) {
         throw 0;
     }
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
-        int lab_count = inputs[0].count();
-        int photo_count = inputs[1].count();
+    void play() {
+        int lab_count = m_inputs[0].count();
+        int photo_count = m_inputs[1].count();
         for (int i = 2 ; i < 4 ; ++i )
-            if ( inputs[i].count() != photo_count ) {
+            if ( m_inputs[i].count() != photo_count ) {
                 qWarning("Uneven photo count in LRGB Compose");
                 emitFailure();
                 return;
@@ -32,9 +30,9 @@ public:
         for( int i = 0 ; i < photo_count ; ++i ) {
             if ( aborted() )
                 continue;
-            Photo pRed(inputs[1][i]);
-            Photo pGreen(inputs[2][i]);
-            Photo pBlue(inputs[3][i]);
+            Photo pRed(m_inputs[1][i]);
+            Photo pGreen(m_inputs[2][i]);
+            Photo pBlue(m_inputs[3][i]);
             Magick::Image& iRed = pRed.image();
             Magick::Image& iGreen = pGreen.image();
             Magick::Image& iBlue = pBlue.image();
@@ -56,12 +54,12 @@ public:
             }
             iRed_cache.sync();
             if ( lab_count ) {
-                Photo lPhoto(inputs[0][i]);
+                Photo lPhoto(m_inputs[0][i]);
                 iGamma& labGamma = iGamma::Lab();
                 labGamma.applyOn(lPhoto);
                 unLabize(pRed.image(), lPhoto.image());
             }
-            m_outputs[0].push_back(pRed);
+            outputPush(0, pRed);
             emitProgress(i, photo_count, 1, 1);
         }
         if (aborted())

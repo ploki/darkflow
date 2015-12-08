@@ -158,7 +158,7 @@ bool WorkerIntegration::play_onInput(int idx)
         }
     }
     newPhoto.setTag("Name", "Integration");
-    m_outputs[0].push_back(newPhoto);
+    outputPush(0, newPhoto);
     emitSuccess();
     return true;
 }

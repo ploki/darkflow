@@ -20,7 +20,7 @@ public:
     Photo process(const Photo &photo, int p, int c);
 
 private slots:
-    void play(QVector<QVector<Photo> > inputs, int n_outputs);
+    void play();
     bool decodeVideo(const QString& filename, int progress, int complete);
     void push_frame(AVFrame *picture,
                     const QString &filename, int progress, int complete, int n, int c);

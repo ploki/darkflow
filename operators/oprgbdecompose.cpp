@@ -13,13 +13,11 @@ public:
     Photo process(const Photo &, int , int ) {
         throw 0;
     }
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
+    void play() {
         iGamma &labGammaReverse = iGamma::reverse_Lab();
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
         int p = 0,
-                c = inputs[0].count();
-        foreach(Photo pRed, inputs[0]) {
+                c = m_inputs[0].count();
+        foreach(Photo pRed, m_inputs[0]) {
             if (aborted())
                 continue;
             Photo pGreen(pRed);
@@ -53,10 +51,10 @@ public:
             iRed_cache.sync();
             iGreen_cache.sync();
             iBlue_cache.sync();
-            m_outputs[0].push_back(pLuminance);
-            m_outputs[1].push_back(pRed);
-            m_outputs[2].push_back(pGreen);
-            m_outputs[3].push_back(pBlue);
+            outputPush(0, pLuminance);
+            outputPush(1, pRed);
+            outputPush(2, pGreen);
+            outputPush(3, pBlue);
             emitProgress(p, c, 1, 1);
             ++p;
         }

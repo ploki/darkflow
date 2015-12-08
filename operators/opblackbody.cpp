@@ -18,9 +18,7 @@ public:
     {}
 private slots:
     Photo process(const Photo &, int, int) { throw 0; }
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
+    void play() {
         Photo photo;
         photo.setIdentity(m_operator->uuid());
         photo.createImage(1,1);
@@ -44,7 +42,7 @@ private slots:
                         clamp<quantum_t>(rgb[2]*QuantumRange, 0, QuantumRange)));
             //qDebug(QString("r: %0, g: %1, b: %2").arg(rgb[0]).arg(rgb[1]).arg(rgb[2]).toLatin1());
             photo.setTag("Name", QString("Black Body %0 K").arg(m_temperature));
-            m_outputs[0].push_back(photo);
+            outputPush(0, photo);
             emitSuccess();
         }
     }

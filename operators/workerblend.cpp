@@ -140,25 +140,22 @@ blend(Magick::PixelPacket *a,
     a->blue = clamp(rgb[2]);
 }
 
-void WorkerBlend::play(QVector<QVector<Photo> > inputs, int n_outputs)
+void WorkerBlend::play()
 {
-    int b_count = inputs[1].count();
-    int c_count = inputs[2].count();
+    int b_count = m_inputs[1].count();
+    int c_count = m_inputs[2].count();
 
-    m_inputs = inputs;
-    play_prepareOutputs(n_outputs);
-
-    int complete = qMin(1,qMax(b_count, c_count)) * inputs[0].count();
+    int complete = qMin(1,qMax(b_count, c_count)) * m_inputs[0].count();
     int n = 0;
-    foreach(Photo photoA, inputs[0]) {
+    foreach(Photo photoA, m_inputs[0]) {
         if (aborted())
             continue;
         Photo *photoB = NULL;
         Photo *photoC = NULL;
         if ( b_count )
-            photoB = &inputs[1][n%b_count];
+            photoB = &m_inputs[1][n%b_count];
         if ( c_count )
-            photoC = &inputs[2][n%c_count];
+            photoC = &m_inputs[2][n%c_count];
 
         Photo underflow(photoA);
         Photo overflow(photoA);
@@ -237,10 +234,9 @@ void WorkerBlend::play(QVector<QVector<Photo> > inputs, int n_outputs)
             }
             curve_cache.sync();
         }
-
-        m_outputs[0].push_back(photoA);
-        m_outputs[1].push_back(overflow);
-        m_outputs[2].push_back(underflow);
+        outputPush(0, photoA);
+        outputPush(1, overflow);
+        outputPush(2, underflow);
         delete imageA_cache;
         delete imageB_cache;
         delete imageC_cache;

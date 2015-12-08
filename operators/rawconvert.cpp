@@ -19,10 +19,8 @@ RawConvert::RawConvert(QThread *thread, OperatorLoadRaw *op) :
     m_loadraw(op)
 {}
 
-void RawConvert::play(QVector<QVector<Photo> > inputs, int n_outputs)
+void RawConvert::play()
 {
-    m_inputs = inputs;
-    play_prepareOutputs(n_outputs);
     QVector<QString> collection = m_loadraw->getCollection().toVector();
     int s = collection.count();
     int p = 0;
@@ -53,14 +51,14 @@ void RawConvert::play(QVector<QVector<Photo> > inputs, int n_outputs)
 #pragma omp critical
         {
             emit progress(++p, s);
-            m_outputs[0].push_back(photo);
+            outputPush(0, photo);
         }
     }
     if ( failure ) {
         emitFailure();
     }
     else {
-        qSort(m_outputs[0]);
+        outputSort(0);
         emitSuccess();
     }
 

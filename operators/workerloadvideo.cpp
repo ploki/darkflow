@@ -29,10 +29,8 @@ Photo WorkerLoadVideo::process(const Photo &, int, int)
     throw 0;
 }
 
-void WorkerLoadVideo::play(QVector<QVector<Photo> > inputs, int n_outputs)
+void WorkerLoadVideo::play()
 {
-    m_inputs = inputs;
-    play_prepareOutputs(n_outputs);
     for ( int i = 0, s = m_collection.count() ;
           i < s ;
           ++i ) {
@@ -225,7 +223,7 @@ void WorkerLoadVideo::push_frame(AVFrame *picture,
     pixel_cache.sync();
     photo.setSequenceNumber(n);
     photo.setTag("Name",photo.getIdentity());
-    m_outputs[0].push_back(photo);
+    outputPush(0, photo);
     emitProgress(progress, complete, n%c, c);
 }
 

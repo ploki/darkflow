@@ -223,7 +223,7 @@ void Operator::play() {
     m_workerAboutToStart = true;
     m_worker = newWorker();
     setOutOfDate();
-    m_worker->start(collectInputs(), m_outputs.count());
+    m_worker->start(collectInputs(), m_outputStatus);
     m_workerAboutToStart = false;
     qDebug(QString("worker started for "+m_uuid).toLatin1());
 }

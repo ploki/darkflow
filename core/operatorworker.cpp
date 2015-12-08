@@ -17,23 +17,55 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     m_thread(thread),
     m_operator(op),
     m_inputs(),
-    m_n_outputs(0),
     m_outputs(),
+    m_outputStatus(),
     m_signalEmited(false)
 {
     moveToThread(thread);
     connect(m_thread, SIGNAL(finished()), this, SLOT(finished()));
-    connect(this, SIGNAL(start(QVector<QVector<Photo> >, int)), this, SLOT(play(QVector<QVector<Photo> >, int)));
+    connect(this, SIGNAL(doStart()), this, SLOT(play()));
     connect(this, SIGNAL(progress(int,int)), m_operator, SLOT(workerProgress(int,int)));
     connect(this, SIGNAL(success(QVector<QVector<Photo> >)), m_operator, SLOT(workerSuccess(QVector<QVector<Photo> >)));
     connect(this, SIGNAL(failure()), m_operator, SLOT(workerFailure()));
     m_thread->start();
 }
 
-void OperatorWorker::play(QVector<QVector<Photo> > inputs, int n_outputs)
+void OperatorWorker::start(QVector<QVector<Photo> > inputs, QVector<Operator::OperatorOutputStatus> outputStatus)
 {
     m_inputs = inputs;
-    play_prepareOutputs(n_outputs);
+    prepareOutputs(outputStatus);
+    emit doStart();
+}
+
+int OperatorWorker::outputsCount()
+{
+    return m_outputs.count();
+}
+
+void OperatorWorker::outputPush(int idx, const Photo &photo)
+{
+    if ( idx < m_outputs.count() ) {
+        if ( m_outputStatus[idx] == Operator::OutputEnabled )
+            m_outputs[idx].push_back(photo);
+    }
+    else {
+        qWarning("outputPush idx out of range");
+    }
+}
+
+void OperatorWorker::outputSort(int idx)
+{
+    if ( idx < m_outputs.count() ) {
+        if ( m_outputStatus[idx] == Operator::OutputEnabled )
+            qSort(m_outputs[idx]);
+    }
+    else {
+        qWarning("outputSort idx out of range");
+    }
+}
+
+void OperatorWorker::play()
+{
     qDebug("OperatorWorker::play()");
 
     if ( !play_inputsAvailable() )
@@ -97,16 +129,17 @@ bool OperatorWorker::play_inputsAvailable()
     return true;
 }
 
-void OperatorWorker::play_prepareOutputs(int n_outputs)
+void OperatorWorker::prepareOutputs(QVector<Operator::OperatorOutputStatus> outputStatus)
 {
+    m_outputStatus = outputStatus;
+    int n_outputs = outputStatus.count();
     for (int i = 0 ; i < n_outputs ; ++i )
         m_outputs.push_back(QVector<Photo>());
-    m_n_outputs = n_outputs;
 }
 
 bool OperatorWorker::play_outputsAvailable()
 {
-    if ( 0 == m_n_outputs ) {
+    if ( 0 == m_outputs.count() ) {
         qWarning("OperatorWorker::play() not overloaded for #output != 1");
         emitFailure();
         return false;
@@ -158,7 +191,7 @@ bool OperatorWorker::play_onInputParallel(int idx)
         Photo photo;
 #pragma omp critical
         {
-            photo= m_inputs[idx][i];
+            photo = m_inputs[idx][i];
         }
         Photo newPhoto = this->process(photo, p, c);
         if ( !newPhoto.isComplete() ) {

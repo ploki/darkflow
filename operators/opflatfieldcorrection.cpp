@@ -110,26 +110,24 @@ public:
         }
     }
 
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
-        Q_ASSERT( inputs.count() == 2 );
-        if ( inputs[1].count() == 0 )
-            return OperatorWorker::play(inputs, n_outputs);
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
+    void play() {
+        Q_ASSERT( m_inputs.count() == 2 );
+        if ( m_inputs[1].count() == 0 )
+            return OperatorWorker::play();
         play_analyseSources();
-        int n_photos = inputs[0].count() * inputs[1].count();
+        int n_photos = m_inputs[0].count() * m_inputs[1].count();
         int n = 0;
         int source_flatfield_idx = 0;
-        foreach(Photo flatfield, inputs[1]) {
-            foreach(Photo photo, inputs[0]) {
+        foreach(Photo flatfield, m_inputs[1]) {
+            foreach(Photo photo, m_inputs[0]) {
                 ++n;
                 if (aborted())
                     continue;
                 Photo overflow(photo);
                 correct(photo.image(), flatfield.image(),
                         overflow.image(), m_max[source_flatfield_idx]);
-                m_outputs[0].push_back(photo);
-                m_outputs[1].push_back(overflow);
+                outputPush(0, photo);
+                outputPush(1, overflow);
                 emit progress(n, n_photos);
             }
             ++source_flatfield_idx;

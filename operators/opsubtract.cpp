@@ -67,26 +67,24 @@ public:
         minuend_cache.sync();
     }
 
-    void play(QVector<QVector<Photo> > inputs, int n_outputs) {
-        Q_ASSERT( inputs.count() == 3 );
-        if ( inputs[1].count() == 0 )
-            return OperatorWorker::play(inputs, n_outputs);
-        m_inputs = inputs;
-        play_prepareOutputs(n_outputs);
-        int n_photos = inputs[0].count() * inputs[1].count();
+    void play() {
+        Q_ASSERT( m_inputs.count() == 3 );
+        if ( m_inputs[1].count() == 0 )
+            return OperatorWorker::play();
+        int n_photos = m_inputs[0].count() * m_inputs[1].count();
         int n = 0;
         int n_sub = 0;
-        foreach(Photo subtrahend, inputs[1]) {
-            foreach(Photo minuend, inputs[0]) {
+        foreach(Photo subtrahend, m_inputs[1]) {
+            foreach(Photo minuend, m_inputs[0]) {
                 ++n;
                 if (aborted())
                     continue;
                 Photo underflow(minuend);
                 Magick::Image *addend_image=NULL;
                 Magick::Image *addend_curve=NULL;
-                if ( n_sub < inputs[2].count() ) {
-                    addend_image = &inputs[2][n_sub].image();
-                    addend_curve = &inputs[2][n_sub].curve();
+                if ( n_sub < m_inputs[2].count() ) {
+                    addend_image = &m_inputs[2][n_sub].image();
+                    addend_curve = &m_inputs[2][n_sub].curve();
                 }
                 subtract(minuend.image(), subtrahend.image(), addend_image, underflow.image());
                 if ( subtrahend.image().columns() == 1 &&
@@ -94,8 +92,8 @@ public:
                     Photo dummy(minuend.curve(),Photo::Linear);
                     subtract(minuend.curve(), subtrahend.image(), addend_curve, dummy.image());
                 }
-                m_outputs[0].push_back(minuend);
-                m_outputs[1].push_back(underflow);
+                outputPush(0, minuend);
+                outputPush(1, underflow);
                 emit progress(n, n_photos);
             }
             ++n_sub;

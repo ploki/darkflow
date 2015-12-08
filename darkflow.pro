@@ -9,7 +9,7 @@ QT       += core gui
 *-g++* {
 # If you get linker errors about undefined references to symbols that
 # involve types in the std::__cxx11 namespace
-# -D_GLIBCXX_USE_CXX11_ABI=0
+    QMAKE_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
     QMAKE_CXXFLAGS_RELEASE += -O9 -march=native -mfpmath=sse
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
@@ -112,7 +112,9 @@ SOURCES +=\
     operators/oprotate.cpp \
     operators/workerloadraw.cpp \
     algorithms/bayer.c \
-    algorithms/rawinfo.cpp
+    algorithms/rawinfo.cpp \
+    operators/opcmydecompose.cpp \
+    operators/opcmycompose.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -201,7 +203,9 @@ HEADERS  += \
     operators/oppassthrough.h \
     operators/workerloadraw.h \
     algorithms/rawinfo.h \
-    algorithms/bayer.h
+    algorithms/bayer.h \
+    operators/opcmydecompose.h \
+    operators/opcmycompose.h
 
 FORMS    += \
     ui/aboutdialog.ui \

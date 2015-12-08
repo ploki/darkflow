@@ -45,6 +45,8 @@
 #include "opdemultiplexer.h"
 #include "oprgbdecompose.h"
 #include "oprgbcompose.h"
+#include "opcmydecompose.h"
+#include "opcmycompose.h"
 #include "opequalize.h"
 #include "opchannelmixer.h"
 #include "opcolorfilter.h"
@@ -96,6 +98,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpDebayer(this));
     m_availableOperators.push_back(new OpRGBDecompose(this));
     m_availableOperators.push_back(new OpRGBCompose(this));
+    m_availableOperators.push_back(new OpCMYDecompose(this));
+    m_availableOperators.push_back(new OpCMYCompose(this));
     m_availableOperators.push_back(new OpColorFilter(this));
     m_availableOperators.push_back(new OpChannelMixer(this));
     m_availableOperators.push_back(new OpThreshold(this));

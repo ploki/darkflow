@@ -9,6 +9,8 @@ class WorkerDebayer : public OperatorWorker
 public:
     WorkerDebayer(OpDebayer::Debayer quality, QThread *thread, Operator *op);
     Photo process(const Photo &photo, int p, int c);
+    bool play_onInput(int idx);
+
 private:
     OpDebayer::Debayer m_quality;
 };

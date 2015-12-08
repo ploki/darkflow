@@ -244,3 +244,8 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
     newPhoto.removeTag("Filter pattern");
     return newPhoto;
 }
+
+bool WorkerDebayer::play_onInput(int idx)
+{
+    return play_onInputParallel(idx);
+}

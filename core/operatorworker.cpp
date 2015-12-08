@@ -144,3 +144,43 @@ bool OperatorWorker::play_onInput(int idx)
     emitSuccess();
     return true;
 }
+
+bool OperatorWorker::play_onInputParallel(int idx)
+{
+    int c = 0;
+    int p = 0;
+    c = m_inputs[idx].count();
+
+#pragma omp parallel for
+    for (int i = 0 ; i < c ; ++i ) {
+        if ( aborted() )
+            continue;
+        Photo photo;
+#pragma omp critical
+        {
+            photo= m_inputs[idx][i];
+        }
+        Photo newPhoto = this->process(photo, p, c);
+        if ( !newPhoto.isComplete() ) {
+            qWarning("OperatorWorker: photo is not complete, sending failure");
+            continue;
+        }
+        newPhoto.setSequenceNumber(i);
+
+#pragma omp critical
+        {
+            emit progress(++p, c);
+            m_outputs[0].push_back(newPhoto);
+        }
+    }
+
+    if ( aborted() ) {
+        qDebug("OperatorWorker aborted, sending failure");
+        emitFailure();
+    }
+    else {
+        qSort(m_outputs[idx]);
+        emitSuccess();
+    }
+    return true;
+}

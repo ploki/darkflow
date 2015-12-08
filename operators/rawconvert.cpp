@@ -56,11 +56,13 @@ void RawConvert::play(QVector<QVector<Photo> > inputs, int n_outputs)
             m_outputs[0].push_back(photo);
         }
     }
-    qSort(m_outputs[0]);
-    if ( failure )
+    if ( failure ) {
         emitFailure();
-    else
+    }
+    else {
+        qSort(m_outputs[0]);
         emitSuccess();
+    }
 
 }
 

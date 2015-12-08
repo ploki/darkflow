@@ -43,6 +43,7 @@ protected:
     bool play_outputsAvailable();
     virtual void play_analyseSources();
     virtual bool play_onInput(int idx);
+    virtual bool play_onInputParallel(int idx);
 
 private:
     void play();

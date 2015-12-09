@@ -82,6 +82,10 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(ui->tree_photos, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             this, SLOT(treeWidgetItemDoubleClicked(QTreeWidgetItem*,int)));
     setWindowFlags(Qt::WindowStaysOnTopHint);
+    ui->graphicsView->setMouseTracking(true);
+    ui->value_EV_R->setAlignment(Qt::AlignRight);
+    ui->value_EV_G->setAlignment(Qt::AlignRight);
+    ui->value_EV_B->setAlignment(Qt::AlignRight);
 }
 
 Visualization::~Visualization()
@@ -373,6 +377,24 @@ void Visualization::transformView(qreal factor)
 
 }
 
+void Visualization::updateColorLabels(const QPointF& pos)
+{
+    using Magick::Quantum;
+    QVector<int> rgb(3);
+    if ( pos.x() >= 0 && pos.y() >= 0 && m_photo )
+        rgb = m_photo->pixelColor(pos.x(), pos.y());
+    ui->value_ADU_R->setText(QString("R: %0").arg(rgb[0], 5, 10, QChar(' ')));
+    ui->value_ADU_G->setText(QString("G: %0").arg(rgb[1], 5, 10, QChar(' ')));
+    ui->value_ADU_B->setText(QString("B: %0").arg(rgb[2], 5, 10, QChar(' ')));
+    qreal
+            r = rgb[0]?log2(qreal(rgb[0])/QuantumRange):-16,
+            g = rgb[1]?log2(qreal(rgb[1])/QuantumRange):-16,
+            b = rgb[2]?log2(qreal(rgb[2])/QuantumRange):-16;
+    ui->value_EV_R->setText(QString::number(r,'.',2)+" EV");
+    ui->value_EV_G->setText(QString::number(g,'.',2)+" EV");
+    ui->value_EV_B->setText(QString::number(b,'.',2)+" EV");
+}
+
 void Visualization::updateTagsTable()
 {
     if ( !m_photo )
@@ -543,8 +565,13 @@ void Visualization::updateTabsWithPhoto()
     histogramParamsChanged();
     updateVisualizationZoom();
     updateTagsTable();
+#if 0
+    QString geometry = QString::number(m_photo->image().columns()) + " x " + QString::number(m_photo->image().rows());
+    ui->value_size->setText(geometry);
+#else
     ui->value_width->setText(QString::number(m_photo->image().columns()));
     ui->value_height->setText(QString::number(m_photo->image().rows()));
+#endif
     if ( m_photoIsInput ) setInputControlEnabled(true);
     QString roiTag = m_photo->getTag("ROI");
     if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "ROI") ) {
@@ -613,6 +640,12 @@ void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
 bool Visualization::eventFilter(QObject *obj, QEvent *event)
 {
     switch(event->type()) {
+    case QEvent::GraphicsSceneMouseMove: {
+        QGraphicsSceneMouseEvent *me =
+                dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+        updateColorLabels(me->scenePos());
+        break;
+    }
     case QEvent::GraphicsSceneMousePress: {
         QGraphicsSceneMouseEvent *me =
                 dynamic_cast<QGraphicsSceneMouseEvent*>(event);

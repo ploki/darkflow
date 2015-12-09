@@ -46,6 +46,11 @@ public:
         Identified,
         Complete
     } Status;
+    typedef enum {
+        Regular,
+        Reference,
+        Discarded
+    } Usage;
     Photo(Gamma gamma = Linear, QObject *parent = 0);
     Photo(const Magick::Image& image, Gamma gamma, QObject *parent = 0);
     Photo(const Magick::Blob& blob, Gamma gamma, QObject *parent = 0);
@@ -61,6 +66,7 @@ public:
     void createImage(long width, long height);
     void createImageAlike(const Photo& photo);
 
+    QVector<int> pixelColor(unsigned x, unsigned y);
     const Magick::Image& image() const;
     Magick::Image& image();
     const Magick::Image &curve() const;

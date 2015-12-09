@@ -100,6 +100,7 @@ private:
     void updateVisualizationZoom();
     void updateVisualizationFitVisible();
     void transformView(qreal factor);
+    void updateColorLabels(const QPointF& pos);
     void updateTagsTable();
     void setInputControlEnabled(bool v);
     bool eventFilter(QObject *obj, QEvent *event);

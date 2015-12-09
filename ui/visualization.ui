@@ -249,56 +249,155 @@
                     </widget>
                    </item>
                    <item row="1" column="0">
+                    <widget class="QLabel" name="label">
+                     <property name="text">
+                      <string>Treatment:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QComboBox" name="comboBox">
+                     <item>
+                      <property name="text">
+                       <string>Regular</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Reference</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Discarded</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
                     <widget class="QLabel" name="label_width">
                      <property name="text">
                       <string>Width:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="1">
+                   <item row="2" column="1">
                     <widget class="QLabel" name="value_width">
                      <property name="text">
                       <string>0</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0">
+                   <item row="3" column="0">
                     <widget class="QLabel" name="label_height">
                      <property name="text">
                       <string>Height:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="1">
+                   <item row="3" column="1">
                     <widget class="QLabel" name="value_height">
                      <property name="text">
                       <string>0</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_bpp">
+                   <item row="4" column="0">
+                    <widget class="QLabel" name="value_ADU_R">
+                     <property name="font">
+                      <font>
+                       <family>Monospace</family>
+                      </font>
+                     </property>
                      <property name="text">
-                      <string>Bit depth:</string>
+                      <string>R:      0</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1">
-                    <widget class="QLabel" name="value_bpp">
+                   <item row="4" column="1">
+                    <widget class="QLabel" name="value_EV_R">
+                     <property name="font">
+                      <font>
+                       <family>Monospace</family>
+                      </font>
+                     </property>
                      <property name="text">
-                      <string>16</string>
+                      <string>-16.00</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="value_ADU_G">
+                     <property name="font">
+                      <font>
+                       <family>Monospace</family>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>G:      0</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="QLabel" name="value_EV_G">
+                     <property name="font">
+                      <font>
+                       <family>Monospace</family>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-16.00</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="value_ADU_B">
+                     <property name="font">
+                      <font>
+                       <family>Monospace</family>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>B:      0</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QLabel" name="value_EV_B">
+                     <property name="font">
+                      <font>
+                       <family>Monospace</family>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-16.00</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                      </property>
                     </widget>
                    </item>
                   </layout>
                   <zorder>label_width</zorder>
                   <zorder>value_width</zorder>
-                  <zorder>label_height</zorder>
-                  <zorder>value_height</zorder>
-                  <zorder>label_bpp</zorder>
-                  <zorder>value_bpp</zorder>
                   <zorder>label_tool</zorder>
                   <zorder>combo_tool</zorder>
+                  <zorder>label</zorder>
+                  <zorder>comboBox</zorder>
+                  <zorder>value_ADU_R</zorder>
+                  <zorder>value_height</zorder>
+                  <zorder>value_EV_R</zorder>
+                  <zorder>value_ADU_G</zorder>
+                  <zorder>value_ADU_B</zorder>
+                  <zorder>value_EV_G</zorder>
+                  <zorder>value_EV_B</zorder>
+                  <zorder>label_height</zorder>
                  </widget>
                 </item>
                 <item>
@@ -493,7 +592,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>568</width>
+                 <width>588</width>
                  <height>512</height>
                 </rect>
                </property>
@@ -617,7 +716,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>568</width>
+                 <width>588</width>
                  <height>512</height>
                 </rect>
                </property>

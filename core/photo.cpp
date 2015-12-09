@@ -141,6 +141,20 @@ void Photo::createImageAlike(const Photo& photo)
     createImage(photo.m_image.columns(), photo.m_image.rows());
 }
 
+QVector<int> Photo::pixelColor(unsigned x, unsigned y)
+{
+    QVector<int> rgb(3);
+
+    if ( x >= m_image.columns() ||
+         y >= m_image.rows() )
+        return rgb;
+    Magick::Color col = m_image.pixelColor(x,y);
+    rgb[0] = col.redQuantum();
+    rgb[1] = col.greenQuantum();
+    rgb[2] = col.blueQuantum();
+    return rgb;
+}
+
 const Magick::Image& Photo::image() const
 {
     return m_image;

@@ -84,9 +84,16 @@ public:
                 const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
                 for ( int x = 0 ; x < w ; ++x ) {
                     quantum_t rgb[3];
-                    rgb[0] =  - (pxl_Cyan?pxl_Cyan[x].red:0) + (pxl_Magenta?pxl_Magenta[x].green:0) + (pxl_Yellow?pxl_Yellow[x].blue:0);
-                    rgb[1] =    (pxl_Cyan?pxl_Cyan[x].red:0) - (pxl_Magenta?pxl_Magenta[x].green:0) + (pxl_Yellow?pxl_Yellow[x].blue:0);
-                    rgb[2] =    (pxl_Cyan?pxl_Cyan[x].red:0) + (pxl_Magenta?pxl_Magenta[x].green:0) - (pxl_Yellow?pxl_Yellow[x].blue:0);
+                    quantum_t cyan = 0;
+                    quantum_t magenta = 0;
+                    quantum_t yellow = 0;
+                    if ( pxl_Cyan ) cyan = (pxl_Cyan[x].green+pxl_Cyan[x].blue)/2;
+                    if ( pxl_Magenta ) magenta = (pxl_Magenta[x].red+pxl_Magenta[x].blue)/2;
+                    if ( pxl_Yellow) yellow = (pxl_Yellow[x].red+pxl_Yellow[x].green)/2;
+
+                    rgb[0] =  - cyan + magenta + yellow;
+                    rgb[1] =    cyan - magenta + yellow;
+                    rgb[2] =    cyan + magenta - yellow;
                     pxl[y*w+x].red = clamp(rgb[0]);
                     pxl[y*w+x].green = clamp(rgb[1]);
                     pxl[y*w+x].blue = clamp(rgb[2]);

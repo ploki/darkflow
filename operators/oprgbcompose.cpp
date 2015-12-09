@@ -5,6 +5,12 @@
 #include "cielab.h"
 #include "igamma.h"
 
+static Photo
+blackDot()
+{
+    return Photo(Magick::Image(Magick::Geometry(1,1), Magick::Color(0,0,0)), Photo::Linear);
+}
+
 class WorkerRGBCompose : public OperatorWorker {
 public:
     WorkerRGBCompose(QThread *thread, Operator *op) :
@@ -14,52 +20,81 @@ public:
         throw 0;
     }
     void play() {
-        int lab_count = m_inputs[0].count();
-        int photo_count = m_inputs[1].count();
-        for (int i = 2 ; i < 4 ; ++i )
-            if ( m_inputs[i].count() != photo_count ) {
-                qWarning("Uneven photo count in LRGB Compose");
-                emitFailure();
-                return;
-            }
-        if ( lab_count && lab_count != photo_count ) {
-            qWarning("Wrong number of Luminance photos in LRGB Compose");
-            emitFailure();
-            return;
-        }
+        int l_count = m_inputs[0].count();
+        int r_count = m_inputs[1].count();
+        int g_count = m_inputs[2].count();
+        int b_count = m_inputs[3].count();
+        int photo_count = qMax(qMax(qMax(l_count, r_count), g_count), b_count);
+
         for( int i = 0 ; i < photo_count ; ++i ) {
             if ( aborted() )
                 continue;
-            Photo pRed(m_inputs[1][i]);
-            Photo pGreen(m_inputs[2][i]);
-            Photo pBlue(m_inputs[3][i]);
+            Photo pLuminance;
+            Photo pRed;
+            Photo pGreen;
+            Photo pBlue;
+            if ( l_count )
+                pLuminance = m_inputs[0][i%l_count];
+            else
+                pLuminance = blackDot();
+
+            if ( r_count )
+                pRed = m_inputs[1][i%r_count];
+            else
+                pRed = blackDot();
+
+            if ( g_count )
+                pGreen = m_inputs[2][i%g_count];
+            else
+                pGreen = blackDot();
+
+            if ( b_count )
+                pBlue = m_inputs[3][i%b_count];
+            else
+                pBlue = blackDot();
+
+            Magick::Image& iLuminance = pLuminance.image();
             Magick::Image& iRed = pRed.image();
             Magick::Image& iGreen = pGreen.image();
             Magick::Image& iBlue = pBlue.image();
-            iRed.modifyImage();
+
+            int w = qMax(qMax(qMax(iLuminance.columns(),iRed.columns()), iGreen.columns()), iBlue.columns());
+            int h = qMax(qMax(qMax(iLuminance.rows(),iRed.rows()), iGreen.rows()), iBlue.rows());
+
+            iLuminance.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            iRed.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            iGreen.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            iBlue.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+
             Magick::Pixels iRed_cache(iRed);
             Magick::Pixels iGreen_cache(iGreen);
             Magick::Pixels iBlue_cache(iBlue);
-            int w = iRed.columns();
-            int h = iRed.rows();
+
+            Photo photo(Photo::Linear);
+            photo.createImage(w, h);
+            photo.setSequenceNumber(i);
+            photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
+            photo.setTag("Name", "LRGB Composition");
+            Magick::Pixels iPhoto_cache(photo.image());
+            Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
 #pragma omp parallel for
             for ( int y = 0 ; y < h ; ++y ) {
-                Magick::PixelPacket *pxl_Red = iRed_cache.get(0, y, w, 1);
+                const Magick::PixelPacket *pxl_Red = iRed_cache.getConst(0, y, w, 1);
                 const Magick::PixelPacket *pxl_Green = iGreen_cache.getConst(0, y, w, 1);
                 const Magick::PixelPacket *pxl_Blue = iBlue_cache.getConst(0, y, w, 1);
                 for ( int x = 0 ; x < w ; ++x ) {
-                    pxl_Red[x].green = pxl_Green[x].green;
-                    pxl_Red[x].blue = pxl_Blue[x].blue;
+                    pxl[y*w+x].red = pxl_Red?pxl_Red[x].red:0;
+                    pxl[y*w+x].green = pxl_Green?pxl_Green[x].green:0;
+                    pxl[y*w+x].blue = pxl_Blue?pxl_Blue[x].blue:0;
                 }
             }
-            iRed_cache.sync();
-            if ( lab_count ) {
-                Photo lPhoto(m_inputs[0][i]);
+            iPhoto_cache.sync();
+            if ( l_count ) {
                 iGamma& labGamma = iGamma::Lab();
-                labGamma.applyOn(lPhoto);
-                unLabize(pRed.image(), lPhoto.image());
+                labGamma.applyOn(pLuminance);
+                unLabize(photo.image(), pLuminance.image());
             }
-            outputPush(0, pRed);
+            outputPush(0, photo);
             emitProgress(i, photo_count, 1, 1);
         }
         if (aborted())

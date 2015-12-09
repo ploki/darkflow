@@ -34,19 +34,19 @@ private:
 OpShapeDynamicRange::OpShapeDynamicRange(Process *parent) :
     Operator(OP_SECTION_CURVE, "Shape DR.", parent),
     m_shape(ShapeDynamicRange::TanH),
-    m_shapeDialog(new OperatorParameterDropDown("shape", "Shape", "TanH", this)),
+    m_shapeDialog(new OperatorParameterDropDown("shape", "Shape", this, SLOT(selectShape(int)))),
     m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Shape Dynamic Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<12, 1<<10, 1, QuantumRange, Slider::FilterExposure, this)),
     m_exposure(new OperatorParameterSlider("exposure", "Exposure", "Shape Dynamic Range Exposure", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_labDomain(false),
-    m_labDomainDialog(new OperatorParameterDropDown("lab", "On L*", "No", this))
+    m_labDomainDialog(new OperatorParameterDropDown("lab", "On L*", this, SLOT(selectLab(int))))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));
 
-    m_shapeDialog->addOption("TanH", this, SLOT(selectShapeTanH()));
+    m_shapeDialog->addOption("TanH", ShapeDynamicRange::TanH, true);
 
-    m_labDomainDialog->addOption("No", this, SLOT(selectLabNo()));
-    m_labDomainDialog->addOption("Yes", this, SLOT(selectLabYes()));
+    m_labDomainDialog->addOption("No", false, true);
+    m_labDomainDialog->addOption("Yes", true);
 
     addParameter(m_shapeDialog);
     addParameter(m_dynamicRange);
@@ -65,26 +65,18 @@ OperatorWorker *OpShapeDynamicRange::newWorker()
   return new WorkerShapeDR(m_shape, m_dynamicRange->value(), m_exposure->value(), m_labDomain, m_thread, this);
 }
 
-void OpShapeDynamicRange::selectShapeTanH()
+void OpShapeDynamicRange::selectShape(int shape)
 {
-    if ( m_shape != ShapeDynamicRange::TanH ) {
-        m_shape = ShapeDynamicRange::TanH;
+    if ( m_shape != shape ) {
+        m_shape = ShapeDynamicRange::Shape(shape);
         setOutOfDate();
     }
 }
 
-void OpShapeDynamicRange::selectLabNo()
+void OpShapeDynamicRange::selectLab(int v)
 {
-    if ( m_labDomain ) {
-        m_labDomain = false;
-        setOutOfDate();
-    }
-}
-
-void OpShapeDynamicRange::selectLabYes()
-{
-    if ( !m_labDomain ) {
-        m_labDomain = true;
+    if ( m_labDomain != v ) {
+        m_labDomain = v;
         setOutOfDate();
     }
 }

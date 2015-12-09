@@ -30,14 +30,9 @@ public:
     OperatorWorker *newWorker();
 
 public slots:
-    void setNoRejection();
-    void setMedianPercentil();
-    void setSigmaClip();
-    void setWinsorized();
+    void setRejectionType(int type);
 
-    void setNoNormalization();
-    void setHighestValue();
-    void setCustom();
+    void setNormalizationType(int type);
 
 private:
     RejectionType m_rejectionType;

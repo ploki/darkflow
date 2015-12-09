@@ -31,38 +31,15 @@ public:
     }   BlendMode;
 
 public slots:
-    void mode1Multiply();
-    void mode1Screen();
-    void mode1Overlay();
-    void mode1HardLight();
-    void mode1SoftLight();
-    void mode1DivideBrighten();
-    void mode1Divide();
-    void mode1DivideDarken();
-    void mode1Addition();
-    void mode1Subtract();
-    void mode1Difference();
-    void mode1DarkenOnly();
-    void mode1LightenOnly();
-
-    void mode2Multiply();
-    void mode2Screen();
-    void mode2Overlay();
-    void mode2HardLight();
-    void mode2SoftLight();
-    void mode2DivideBrighten();
-    void mode2Divide();
-    void mode2DivideDarken();
-    void mode2Addition();
-    void mode2Subtract();
-    void mode2Difference();
-    void mode2DarkenOnly();
-    void mode2LightenOnly();
+    void selectMode1(int v);
+    void selectMode2(int v);
 private:
     OperatorParameterDropDown *m_mode1;
     OperatorParameterDropDown *m_mode2;
     BlendMode m_mode1Value;
     BlendMode m_mode2Value;
+
+    void registerOptions(OperatorParameterDropDown *mode);
 };
 
 #endif // OPBLEND_H

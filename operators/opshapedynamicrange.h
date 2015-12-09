@@ -15,9 +15,8 @@ public:
     OpShapeDynamicRange *newInstance();
     OperatorWorker *newWorker();
 private slots:
-    void selectShapeTanH();
-    void selectLabNo();
-    void selectLabYes();
+    void selectShape(int);
+    void selectLab(int v);
 
 private:
     ShapeDynamicRange::Shape m_shape;

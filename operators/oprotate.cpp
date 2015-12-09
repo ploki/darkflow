@@ -26,13 +26,13 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
 
 OpRotate::OpRotate(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, "Rotation", parent),
-    m_dropdown(new OperatorParameterDropDown("angle","angle","0°",this)),
+    m_dropdown(new OperatorParameterDropDown("angle","angle",this, SLOT(setAngle(int)))),
     m_angle(0)
 {
-    m_dropdown->addOption("0°", this, SLOT(set0()));
-    m_dropdown->addOption("90°", this, SLOT(set90()));
-    m_dropdown->addOption("180°", this, SLOT(set180()));
-    m_dropdown->addOption("270°", this, SLOT(set270()));
+    m_dropdown->addOption("0°", 0, true);
+    m_dropdown->addOption("90°", 90);
+    m_dropdown->addOption("180°", 180);
+    m_dropdown->addOption("270°", 270);
     addParameter(m_dropdown);
     addInput(new OperatorInput("Images","Image", OperatorInput::Set, this));
     addOutput(new OperatorOutput("Rotated", "Rotated", this));
@@ -52,34 +52,10 @@ OperatorWorker *OpRotate::newWorker()
     return new RotateWorker(m_thread, this);
 }
 
-void OpRotate::set0()
+void OpRotate::setAngle(int v)
 {
-    if ( m_angle != 0 ) {
-        m_angle = 0;
-        setOutOfDate();
-    }
-}
-
-void OpRotate::set90()
-{
-    if ( m_angle != 90 ) {
-        m_angle = 90;
-        setOutOfDate();
-    }
-}
-
-void OpRotate::set180()
-{
-    if ( m_angle != 180 ) {
-        m_angle = 180;
-        setOutOfDate();
-    }
-}
-
-void OpRotate::set270()
-{
-    if ( m_angle != 270 ) {
-        m_angle = 270;
+    if ( m_angle != v ) {
+        m_angle = v;
         setOutOfDate();
     }
 }

@@ -18,10 +18,7 @@ public:
     qreal angle() const;
 
 private slots:
-    void set0();
-    void set90();
-    void set180();
-    void set270();
+    void setAngle(int v);
 
 private:
     OperatorParameterDropDown *m_dropdown;

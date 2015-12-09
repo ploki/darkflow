@@ -19,24 +19,24 @@ using Magick::Quantum;
 OpIntegration::OpIntegration(Process *parent) :
     Operator(OP_SECTION_BLEND, "Integration", parent),
     m_rejectionType(NoRejection),
-    m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", "Rejection", RejectionTypeStr[NoRejection],this)),
+    m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", "Rejection", this, SLOT(setRejectionType(int)))),
     m_upper(new OperatorParameterSlider("upper", "Upper mul.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_lower(new OperatorParameterSlider("lower", "Lower div.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_normalizationType(NoNormalization),
-    m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", "Normalization", NormalizationTypeStr[NoNormalization], this)),
+    m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", "Normalization", this, SLOT(setNormalizationType(int)))),
     m_customNormalization(new OperatorParameterSlider("normalizationValue", "Custom Norm.", "Integration Custom Normalization", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Integrated Image", "Integrated Image", this));
 
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[NoRejection], this, SLOT(setNoRejection()));
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[SigmaClipping], this, SLOT(setSigmaClip()));
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[Winsorized], this, SLOT(setWinsorized()));
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[MedianPercentil], this, SLOT(setMedianPercentil()));
+    m_rejectionTypeDropDown->addOption(RejectionTypeStr[NoRejection], NoRejection, true);
+    m_rejectionTypeDropDown->addOption(RejectionTypeStr[SigmaClipping], SigmaClipping);
+    m_rejectionTypeDropDown->addOption(RejectionTypeStr[Winsorized], Winsorized);
+    m_rejectionTypeDropDown->addOption(RejectionTypeStr[MedianPercentil], MedianPercentil);
 
-    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[NoNormalization], this, SLOT(setNoNormalization()));
-    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[HighestValue], this, SLOT(setHighestValue()));
-    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[Custom], this, SLOT(setCustom()));
+    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[NoNormalization], NoNormalization, true);
+    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[HighestValue], HighestValue);
+    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[Custom], Custom);
 
     addParameter(m_rejectionTypeDropDown);
     addParameter(m_upper);
@@ -60,58 +60,18 @@ OperatorWorker *OpIntegration::newWorker()
                                  m_thread, this);
 }
 
-void OpIntegration::setNoRejection()
+void OpIntegration::setRejectionType(int type)
 {
-    if ( m_rejectionType != NoRejection ) {
-        m_rejectionType = NoRejection;
+    if ( m_rejectionType != type ) {
+        m_rejectionType = RejectionType(type);
         setOutOfDate();
     }
 }
 
-void OpIntegration::setMedianPercentil()
+void OpIntegration::setNormalizationType(int type)
 {
-    if ( m_rejectionType != MedianPercentil ) {
-        m_rejectionType = MedianPercentil;
-        setOutOfDate();
-    }
-}
-
-void OpIntegration::setSigmaClip()
-{
-    if ( m_rejectionType != SigmaClipping ) {
-        m_rejectionType = SigmaClipping;
-        setOutOfDate();
-    }
-}
-
-void OpIntegration::setWinsorized()
-{
-    if ( m_rejectionType != Winsorized ) {
-        m_rejectionType = Winsorized;
-        setOutOfDate();
-    }
-}
-
-void OpIntegration::setNoNormalization()
-{
-    if ( m_normalizationType != NoNormalization ) {
-        m_normalizationType = NoNormalization;
-        setOutOfDate();
-    }
-}
-
-void OpIntegration::setHighestValue()
-{
-    if ( m_normalizationType != HighestValue ) {
-        m_normalizationType = HighestValue;
-        setOutOfDate();
-    }
-}
-
-void OpIntegration::setCustom()
-{
-    if ( m_normalizationType != Custom ) {
-        m_normalizationType = Custom;
+    if ( m_normalizationType != type ) {
+        m_normalizationType = NormalizationType(type);
         setOutOfDate();
     }
 }

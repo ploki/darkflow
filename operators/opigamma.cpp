@@ -31,13 +31,13 @@ OpIGamma::OpIGamma(Process *parent) :
                                                Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
                                                1, 1<<12, 1./0.00304L, 1, 1<<16, Slider::FilterExposure, this)),
     m_revert(false),
-    m_revertDialog(new OperatorParameterDropDown("revert","Revert", "No", this))
+    m_revertDialog(new OperatorParameterDropDown("revert","Revert", this, SLOT(revert(int))))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));
 
-    m_revertDialog->addOption("No", this, SLOT(revertNo()));
-    m_revertDialog->addOption("Yes", this, SLOT(revertYes()));
+    m_revertDialog->addOption("No", false, true);
+    m_revertDialog->addOption("Yes", true);
 
     addParameter(m_gamma);
     addParameter(m_dynamicRange);
@@ -55,18 +55,10 @@ OperatorWorker *OpIGamma::newWorker()
     return new WorkerIGamma(m_gamma->value(), 1./m_dynamicRange->value(), m_revert, m_thread, this);
 }
 
-void OpIGamma::revertYes()
+void OpIGamma::revert(int v)
 {
-    if ( !m_revert ) {
-        m_revert = true;
-        setOutOfDate();
-    }
-}
-
-void OpIGamma::revertNo()
-{
-    if ( m_revert ) {
-        m_revert = false;
+    if ( m_revert != !!v ) {
+        m_revert = !!v;
         setOutOfDate();
     }
 }

@@ -42,20 +42,9 @@ public:
     QString getWhiteBalance() const;
 
 public slots:
-    void setColorSpaceLinear();
-    void setColorSpacesRGB();
-    void setColorSpaceIUT_BT_709();
-    void setDebayerNone();
-    void setDebayerHalfSize();
-    void setDebayerLow();
-    void setDebayerVNG();
-    void setDebayerPPG();
-    void setDebayerAHD();
-
-    void setWhiteBalanceNone();
-    void setWhiteBalanceRawColors();
-    void setWhiteBalanceCamera();
-    void setWhiteBalanceDaylight();
+    void setColorSpace(int v);
+    void setDebayer(int v);
+    void setWhiteBalance(int v);
 
     void filesCollectionChanged();
 

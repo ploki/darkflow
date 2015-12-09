@@ -17,8 +17,7 @@ public:
     OperatorWorker *newWorker();
 
 public slots:
-    void setUnsafe();
-    void setSafe();
+    void setSafe(int v);
 
 private:
     OperatorParameterSlider *m_temperature;

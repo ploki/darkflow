@@ -19,8 +19,7 @@ public:
 signals:
 
 public slots:
-    void revertYes();
-    void revertNo();
+    void revert(int b);
 
 private:
     OperatorParameterSlider *m_gamma;

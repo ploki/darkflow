@@ -26,28 +26,28 @@ OpLoadRaw::OpLoadRaw(Process *parent) :
                           /*"FITS Images (*.fits *.fit);;"*/
                           /*"TIFF Images (*.tif *.tiff);;"*/
                           "All Files (*.*)", this)),
-    m_colorSpace(new OperatorParameterDropDown("colorSpace", "Color Space", ColorSpaceStr[Linear], this)),
-    m_debayer(new OperatorParameterDropDown("debayer", "Debayer", DebayerStr[NoDebayer], this)),
-    m_whiteBalance(new OperatorParameterDropDown("whiteBalance", "White Balance", WhiteBalanceStr[Daylight], this)),
+    m_colorSpace(new OperatorParameterDropDown("colorSpace", "Color Space",this, SLOT(setColorSpace(int)))),
+    m_debayer(new OperatorParameterDropDown("debayer", "Debayer", this, SLOT(setDebayer(int)))),
+    m_whiteBalance(new OperatorParameterDropDown("whiteBalance", "White Balance", this, SLOT(setWhiteBalance(int)))),
     m_colorSpaceValue(Linear),
     m_debayerValue(NoDebayer),
     m_whiteBalanceValue(Daylight)
 {
-    m_colorSpace->addOption(ColorSpaceStr[Linear], this, SLOT(setColorSpaceLinear()));
-    m_colorSpace->addOption(ColorSpaceStr[sRGB], this, SLOT(setColorSpacesRGB()));
-    m_colorSpace->addOption(ColorSpaceStr[IUT_BT_709], this, SLOT(setColorSpaceIUT_BT_709()));
+    m_colorSpace->addOption(ColorSpaceStr[Linear], Linear, true);
+    m_colorSpace->addOption(ColorSpaceStr[sRGB], sRGB);
+    m_colorSpace->addOption(ColorSpaceStr[IUT_BT_709], IUT_BT_709);
 
-    m_debayer->addOption(DebayerStr[NoDebayer], this, SLOT(setDebayerNone()));
-    m_debayer->addOption(DebayerStr[HalfSize], this, SLOT(setDebayerHalfSize()));
-    m_debayer->addOption(DebayerStr[Low], this, SLOT(setDebayerLow()));
-    m_debayer->addOption(DebayerStr[VNG], this, SLOT(setDebayerVNG()));
-    m_debayer->addOption(DebayerStr[PPG], this, SLOT(setDebayerPPG()));
-    m_debayer->addOption(DebayerStr[AHD], this, SLOT(setDebayerAHD()));
+    m_debayer->addOption(DebayerStr[NoDebayer], NoDebayer, true);
+    m_debayer->addOption(DebayerStr[HalfSize], HalfSize);
+    m_debayer->addOption(DebayerStr[Low], Low);
+    m_debayer->addOption(DebayerStr[VNG], VNG);
+    m_debayer->addOption(DebayerStr[PPG], PPG);
+    m_debayer->addOption(DebayerStr[AHD], AHD);
 
-    m_whiteBalance->addOption(WhiteBalanceStr[NoWhiteBalance], this, SLOT(setWhiteBalanceNone()));
-    m_whiteBalance->addOption(WhiteBalanceStr[RawColors], this, SLOT(setWhiteBalanceRawColors()));
-    m_whiteBalance->addOption(WhiteBalanceStr[Camera], this, SLOT(setWhiteBalanceCamera()));
-    m_whiteBalance->addOption(WhiteBalanceStr[Daylight], this, SLOT(setWhiteBalanceDaylight()));
+    m_whiteBalance->addOption(WhiteBalanceStr[NoWhiteBalance], NoWhiteBalance);
+    m_whiteBalance->addOption(WhiteBalanceStr[RawColors], RawColors);
+    m_whiteBalance->addOption(WhiteBalanceStr[Camera], Camera);
+    m_whiteBalance->addOption(WhiteBalanceStr[Daylight], Daylight, true);
 
     addParameter(m_filesCollection);
     addParameter(m_colorSpace);
@@ -86,109 +86,30 @@ QString OpLoadRaw::getWhiteBalance() const
     return WhiteBalanceStr[m_whiteBalanceValue];
 }
 
-void OpLoadRaw::setColorSpaceLinear()
+void OpLoadRaw::setColorSpace(int v)
 {
-    if ( m_colorSpaceValue != Linear ) {
-        m_colorSpaceValue = Linear;
+    if ( m_colorSpaceValue != v ) {
+        m_colorSpaceValue = ColorSpace(v);
         setOutOfDate();
     }
 }
 
-void OpLoadRaw::setColorSpacesRGB()
+void OpLoadRaw::setDebayer(int v)
 {
-    if ( m_colorSpaceValue != sRGB ) {
-        m_colorSpaceValue = sRGB;
+    if ( m_debayerValue != v ) {
+        m_debayerValue = Debayer(v);
         setOutOfDate();
     }
 }
 
-void OpLoadRaw::setColorSpaceIUT_BT_709()
+void OpLoadRaw::setWhiteBalance(int v)
 {
-    if ( m_colorSpaceValue != IUT_BT_709 ) {
-        m_colorSpaceValue = IUT_BT_709;
+    if ( m_whiteBalanceValue != v ) {
+        m_whiteBalanceValue = WhiteBalance(v);
         setOutOfDate();
     }
 }
 
-void OpLoadRaw::setDebayerNone()
-{
-    if ( m_debayerValue != NoDebayer ) {
-        m_debayerValue = NoDebayer;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setDebayerHalfSize()
-{
-    if ( m_debayerValue != HalfSize ) {
-        m_debayerValue = HalfSize;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setDebayerLow()
-{
-    if ( m_debayerValue != Low ) {
-        m_debayerValue = Low;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setDebayerVNG()
-{
-    if ( m_debayerValue != VNG ) {
-        m_debayerValue = VNG;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setDebayerPPG()
-{
-    if ( m_debayerValue != PPG ) {
-        m_debayerValue = PPG;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setDebayerAHD()
-{
-    if ( m_debayerValue != AHD ) {
-        m_debayerValue = AHD;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setWhiteBalanceNone()
-{
-    if ( m_whiteBalanceValue != NoWhiteBalance ) {
-        m_whiteBalanceValue = NoWhiteBalance;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setWhiteBalanceRawColors()
-{
-    if ( m_whiteBalanceValue != RawColors ) {
-        m_whiteBalanceValue = RawColors;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setWhiteBalanceCamera()
-{
-    if ( m_whiteBalanceValue != Camera ) {
-        m_whiteBalanceValue = Camera;
-        setOutOfDate();
-    }
-}
-
-void OpLoadRaw::setWhiteBalanceDaylight()
-{
-    if ( m_whiteBalanceValue != Daylight ) {
-        m_whiteBalanceValue = Daylight;
-        setOutOfDate();
-    }
-}
 
 void OpLoadRaw::filesCollectionChanged()
 {

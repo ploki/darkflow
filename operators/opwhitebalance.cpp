@@ -32,13 +32,13 @@ OpWhiteBalance::OpWhiteBalance(Process *parent) :
                                        Slider::Percent, Slider::Logarithmic, Slider::Real,
                                        0.5, 2, 1, 0.01, 100, Slider::FilterNothing, this)),
     m_safe(false),
-    m_safeDialog(new OperatorParameterDropDown("safe","Range safe", "No", this))
+    m_safeDialog(new OperatorParameterDropDown("safe","Range safe", this, SLOT(setSafe(int))))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));
 
-    m_safeDialog->addOption("No", this, SLOT(setUnsafe()));
-    m_safeDialog->addOption("Yes", this, SLOT(setSafe()));
+    m_safeDialog->addOption("No", false, true);
+    m_safeDialog->addOption("Yes", true);
 
     addParameter(m_temperature);
     addParameter(m_tint);
@@ -56,18 +56,11 @@ OperatorWorker *OpWhiteBalance::newWorker()
     return new WorkerWhiteBalance(m_temperature->value(), m_tint->value(), m_safe, m_thread, this);
 }
 
-void OpWhiteBalance::setUnsafe()
-{
-    if ( m_safe ) {
-        m_safe = false;
-        setOutOfDate();
-    }
-}
 
-void OpWhiteBalance::setSafe()
+void OpWhiteBalance::setSafe(int v)
 {
-    if ( !m_safe ) {
-        m_safe = true;
+    if ( m_safe != !!v ) {
+        m_safe = !!v;
         setOutOfDate();
     }
 }

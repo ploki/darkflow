@@ -19,97 +19,32 @@ static const char *DebayerStr[] = {
 
 OpDebayer::OpDebayer(Process *parent) :
     Operator(OP_SECTION_COLOR, "Debayer", parent),
-    m_debayer(new OperatorParameterDropDown("quality", "Quality", DebayerStr[Bilinear], this)),
+    m_debayer(new OperatorParameterDropDown("quality", "Quality", this, SLOT(setDebayer(int)))),
     m_debayerValue(Bilinear)
 {
-    m_debayer->addOption(DebayerStr[NoDebayer], this, SLOT(setDebayerNone()));
-    m_debayer->addOption(DebayerStr[Mask], this, SLOT(setDebayerMask()));
-    m_debayer->addOption(DebayerStr[HalfSize], this, SLOT(setDebayerHalfSize()));
-    m_debayer->addOption(DebayerStr[Simple], this, SLOT(setDebayerSimple()));
-    m_debayer->addOption(DebayerStr[Bilinear], this, SLOT(setDebayerBilinear()));
-    m_debayer->addOption(DebayerStr[HQLinear], this, SLOT(setDebayerHQLinear()));
-    //m_debayer->addOption(DebayerStr[DownSample], this, SLOT(setDebayerDownSample()));
-    m_debayer->addOption(DebayerStr[VNG], this, SLOT(setDebayerVNG()));
-    m_debayer->addOption(DebayerStr[AHD], this, SLOT(setDebayerAHD()));
+    m_debayer->addOption(DebayerStr[NoDebayer], NoDebayer);
+    m_debayer->addOption(DebayerStr[Mask], Mask);
+    m_debayer->addOption(DebayerStr[HalfSize], HalfSize);
+    m_debayer->addOption(DebayerStr[Simple], Simple);
+    m_debayer->addOption(DebayerStr[Bilinear], Bilinear);
+    m_debayer->addOption(DebayerStr[HQLinear], HQLinear, true);
+    //m_debayer->addOption(DebayerStr[DownSample], DownSample);
+    m_debayer->addOption(DebayerStr[VNG], VNG);
+    m_debayer->addOption(DebayerStr[AHD], AHD);
     addParameter(m_debayer);
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));
 
 }
 
-void OpDebayer::setDebayerNone()
+void OpDebayer::setDebayer(int v)
 {
-    if ( m_debayerValue != NoDebayer ) {
-        m_debayerValue = NoDebayer;
+    if ( m_debayerValue != v ) {
+        m_debayerValue = Debayer(v);
         setOutOfDate();
     }
 }
 
-void OpDebayer::setDebayerMask()
-{
-    if ( m_debayerValue != Mask ) {
-        m_debayerValue = Mask;
-        setOutOfDate();
-    }
-}
-
-void OpDebayer::setDebayerHalfSize()
-{
-    if ( m_debayerValue != HalfSize ) {
-        m_debayerValue = HalfSize;
-        setOutOfDate();
-    }
-}
-
-void OpDebayer::setDebayerSimple()
-{
-    if ( m_debayerValue != Simple ) {
-        m_debayerValue = Simple;
-        setOutOfDate();
-    }
-}
-
-void OpDebayer::setDebayerBilinear()
-{
-    if ( m_debayerValue != Bilinear ) {
-        m_debayerValue = Bilinear;
-        setOutOfDate();
-    }
-}
-
-void OpDebayer::setDebayerHQLinear()
-{
-    if ( m_debayerValue != HQLinear ) {
-        m_debayerValue = HQLinear;
-        setOutOfDate();
-    }
-}
-
-/*
-void OpDebayer::setDebayerDownSample()
-{
-    if ( m_debayerValue != DownSample ) {
-        m_debayerValue = DownSample;
-        setOutOfDate();
-    }
-}
-*/
-
-void OpDebayer::setDebayerVNG()
-{
-    if ( m_debayerValue != VNG ) {
-        m_debayerValue = VNG;
-        setOutOfDate();
-    }
-}
-
-void OpDebayer::setDebayerAHD()
-{
-    if ( m_debayerValue != AHD ) {
-        m_debayerValue = AHD;
-        setOutOfDate();
-    }
-}
 OpDebayer *OpDebayer::newInstance()
 {
     return new OpDebayer(m_process);

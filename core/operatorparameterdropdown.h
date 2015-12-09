@@ -1,6 +1,7 @@
 #ifndef OPERATORPARAMETERDROPDOWN_H
 #define OPERATORPARAMETERDROPDOWN_H
 
+#include <QMap>
 #include <QString>
 #include <QPoint>
 
@@ -17,11 +18,11 @@ public:
     OperatorParameterDropDown(
             const QString& name,
             const QString& caption,
-            const QString& currentValue,
-            Operator *op);
+            Operator *op,
+            const char *slot);
     ~OperatorParameterDropDown();
 
-    void addOption(const QString& option, QObject *obj, const char *slot);
+    void addOption(const QString& option, int value, bool selected=false);
     void dropDown(const QPoint& pos);
 
     QString currentValue() const;
@@ -30,13 +31,19 @@ public:
     void load(const QJsonObject &obj);
 
 signals:
+    /* used to notify ProcessDropDown */
     void valueChanged(const QString& value);
 
+    /* used to notify Operator */
+    void itemSelected(int v);
+
 private slots:
+    /* called by QMenu */
     void actionTriggered(QAction *action);
 
 private:
     QMenu *m_menu;
+    QMap<QString, int> m_options;
     QString m_currentValue;
 };
 

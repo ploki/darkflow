@@ -27,15 +27,8 @@ public:
     OperatorWorker *newWorker();
 
 public slots:
-    void setDebayerNone();
-    void setDebayerMask();
-    void setDebayerHalfSize();
-    void setDebayerSimple();
-    void setDebayerBilinear();
-    void setDebayerHQLinear();
-    //void setDebayerDownSample();
-    void setDebayerVNG();
-    void setDebayerAHD();
+    void setDebayer(int v);
+
 private:
     OperatorParameterDropDown *m_debayer;
     Debayer m_debayerValue;

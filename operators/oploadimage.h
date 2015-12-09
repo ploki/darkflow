@@ -23,9 +23,7 @@ public:
 
 
 public slots:
-    void setColorSpaceLinear();
-    void setColorSpacesRGB();
-    void setColorSpaceIUT_BT_709();
+    void setColorSpace(int v);
     void filesCollectionChanged();
 private:
     OperatorParameterFilesCollection *m_filesCollection;

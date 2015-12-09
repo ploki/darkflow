@@ -4,12 +4,13 @@
 OperatorParameterDropDown::OperatorParameterDropDown(
         const QString& name,
         const QString& caption,
-        const QString& currentValue,
-        Operator *op) :
+        Operator *op,
+        const char *slot) :
     OperatorParameter(name, caption, op),
     m_menu(new QMenu),
-    m_currentValue(currentValue)
+    m_currentValue()
 {
+    connect(this, SIGNAL(itemSelected(int)), op,slot);
     connect(m_menu, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
 }
 
@@ -19,10 +20,13 @@ OperatorParameterDropDown::~OperatorParameterDropDown()
 }
 
 void OperatorParameterDropDown::addOption(const QString &option,
-                                          QObject *obj,
-                                          const char *slot)
+                                          int value,
+                                          bool selected)
 {
-    m_menu->addAction(QIcon(), option, obj, slot);
+    m_options[option] = value;
+    m_menu->addAction(QIcon(), option);
+    if (selected)
+        m_currentValue = option;
 }
 
 void OperatorParameterDropDown::dropDown(const QPoint& pos)
@@ -33,6 +37,7 @@ void OperatorParameterDropDown::dropDown(const QPoint& pos)
 void OperatorParameterDropDown::actionTriggered(QAction *action)
 {
     m_currentValue=action->text();
+    emit itemSelected(m_options[m_currentValue]);
     emit valueChanged(m_currentValue);
 }
 

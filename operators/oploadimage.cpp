@@ -20,12 +20,12 @@ OpLoadImage::OpLoadImage(Process *parent) :
                           "FITS Images (*.fits *.fit);;"
                           "TIFF Images (*.tif *.tiff);;"
                           "All Files (*.*)", this)),
-    m_colorSpace(new OperatorParameterDropDown("colorSpace", "Color Space", ColorSpaceStr[Linear], this)),
+    m_colorSpace(new OperatorParameterDropDown("colorSpace", "Color Space", this, SLOT(setColorSpace(int)))),
     m_colorSpaceValue(Linear)
 {
-    m_colorSpace->addOption(ColorSpaceStr[Linear], this, SLOT(setColorSpaceLinear()));
-    m_colorSpace->addOption(ColorSpaceStr[sRGB], this, SLOT(setColorSpacesRGB()));
-    m_colorSpace->addOption(ColorSpaceStr[IUT_BT_709], this, SLOT(setColorSpaceIUT_BT_709()));
+    m_colorSpace->addOption(ColorSpaceStr[Linear], Linear, true);
+    m_colorSpace->addOption(ColorSpaceStr[sRGB], sRGB);
+    m_colorSpace->addOption(ColorSpaceStr[IUT_BT_709], IUT_BT_709);
     addParameter(m_filesCollection);
     addParameter(m_colorSpace);
     addOutput(new OperatorOutput("Images","Images collection",this));
@@ -42,26 +42,10 @@ OperatorWorker *OpLoadImage::newWorker()
     return new WorkerLoadImage(filesCollection, m_colorSpaceValue, m_thread, this);
 }
 
-void OpLoadImage::setColorSpaceLinear()
+void OpLoadImage::setColorSpace(int v)
 {
-    if ( m_colorSpaceValue != Linear ) {
-        m_colorSpaceValue = Linear;
-        setOutOfDate();
-    }
-}
-
-void OpLoadImage::setColorSpacesRGB()
-{
-    if ( m_colorSpaceValue != sRGB ) {
-        m_colorSpaceValue = sRGB;
-        setOutOfDate();
-    }
-}
-
-void OpLoadImage::setColorSpaceIUT_BT_709()
-{
-    if ( m_colorSpaceValue != IUT_BT_709 ) {
-        m_colorSpaceValue = IUT_BT_709;
+    if ( m_colorSpaceValue != v ) {
+        m_colorSpaceValue = ColorSpace(v);
         setOutOfDate();
     }
 }

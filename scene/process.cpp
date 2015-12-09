@@ -59,6 +59,7 @@
 #include "opdebayer.h"
 #include "oploadimage.h"
 #include "opconvolution.h"
+#include "oproll.h"
 
 QString Process::uuid()
 {
@@ -122,6 +123,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpCrop(this));
     m_availableOperators.push_back(new OpRotate(this));
+    m_availableOperators.push_back(new OpRoll(this));
 
     m_availableOperators.push_back(new OpDemultiplexer(2, this));
     m_availableOperators.push_back(new OpDemultiplexer(3, this));

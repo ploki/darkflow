@@ -114,7 +114,8 @@ SOURCES +=\
     algorithms/bayer.c \
     algorithms/rawinfo.cpp \
     operators/opcmydecompose.cpp \
-    operators/opcmycompose.cpp
+    operators/opcmycompose.cpp \
+    operators/oproll.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -205,7 +206,8 @@ HEADERS  += \
     algorithms/rawinfo.h \
     algorithms/bayer.h \
     operators/opcmydecompose.h \
-    operators/opcmycompose.h
+    operators/opcmycompose.h \
+    operators/oproll.h
 
 FORMS    += \
     ui/aboutdialog.ui \

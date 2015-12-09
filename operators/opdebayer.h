@@ -12,6 +12,7 @@ class OpDebayer : public Operator
 public:
     typedef enum {
         NoDebayer,
+        Mask,
         HalfSize,
         Simple,
         Bilinear,
@@ -27,6 +28,7 @@ public:
 
 public slots:
     void setDebayerNone();
+    void setDebayerMask();
     void setDebayerHalfSize();
     void setDebayerSimple();
     void setDebayerBilinear();

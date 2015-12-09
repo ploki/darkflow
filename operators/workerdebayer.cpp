@@ -61,6 +61,36 @@ void bayerToPixel(const Magick::PixelPacket& src,
         qWarning("color index out of range");
     }
 }
+static Photo debayerMask(const Photo &photo, u_int32_t filters)
+{
+    Photo newPhoto(photo);
+    Magick::Image& dst = newPhoto.image();
+    dst.modifyImage();
+
+    int w = dst.columns();
+    int h = dst.rows();
+
+    dst.modifyImage();
+    Magick::Pixels dst_cache(dst);
+    Magick::PixelPacket *pixel = dst_cache.get(0, 0, w, h);
+#pragma omp parallel for
+    for (int y = 0 ; y < h ; ++y ) {
+        for (int x = 0 ; x < w ; ++x ) {
+            int c = FC(filters, y, x);
+            switch (c) {
+            case 0:
+                pixel[y*w+x].green = pixel[y*w+x].blue = 0; break;
+            case 1:
+            case 3:
+                pixel[y*w+x].red = pixel[y*w+x].blue = 0; break;
+            case 2:
+                pixel[y*w+x].red = pixel[y*w+x].green = 0; break;
+            }
+        }
+    }
+    dst_cache.sync();
+    return newPhoto;
+}
 
 static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
 {
@@ -194,6 +224,10 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
     default:
         use_dc = false;
         newPhoto = photo;
+        break;
+    case OpDebayer::Mask:
+        use_dc = false;
+        newPhoto = debayerMask(photo, filters);
         break;
     case OpDebayer::HalfSize:
         use_dc = false;

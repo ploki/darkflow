@@ -6,6 +6,7 @@
 
 static const char *DebayerStr[] = {
     "None",
+    "Mask",
     "HalfSize",
     "Simple",
     "Bilinear",
@@ -22,6 +23,7 @@ OpDebayer::OpDebayer(Process *parent) :
     m_debayerValue(Bilinear)
 {
     m_debayer->addOption(DebayerStr[NoDebayer], this, SLOT(setDebayerNone()));
+    m_debayer->addOption(DebayerStr[Mask], this, SLOT(setDebayerMask()));
     m_debayer->addOption(DebayerStr[HalfSize], this, SLOT(setDebayerHalfSize()));
     m_debayer->addOption(DebayerStr[Simple], this, SLOT(setDebayerSimple()));
     m_debayer->addOption(DebayerStr[Bilinear], this, SLOT(setDebayerBilinear()));
@@ -39,6 +41,14 @@ void OpDebayer::setDebayerNone()
 {
     if ( m_debayerValue != NoDebayer ) {
         m_debayerValue = NoDebayer;
+        setOutOfDate();
+    }
+}
+
+void OpDebayer::setDebayerMask()
+{
+    if ( m_debayerValue != Mask ) {
+        m_debayerValue = Mask;
         setOutOfDate();
     }
 }

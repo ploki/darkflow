@@ -196,12 +196,13 @@ QVector<QVector<Photo> > Operator::collectInputs()
                 QString identity = photo.getIdentity();
                 identity = identity.split('|').first();
                 int count = ++seen[identity];
-                if ( count > 1 ) {
+                if ( count > 1 )
                     identity+=QString("|%0").arg(count-1);
-                    photo.setIdentity(identity);
-                }
+                photo.setIdentity(identity);
+
                 overrideTags(photo);
-                inputs[i].push_back(photo);
+                if ( photo.getTag("TREAT") != "DISCARDED" )
+                    inputs[i].push_back(photo);
             }
         }
         ++i;

@@ -18,6 +18,7 @@ class Operator;
 class OperatorOutput;
 class Photo;
 class QTreeWidgetItem;
+class TreePhotoItem;
 
 class Visualization : public QMainWindow
 {
@@ -54,6 +55,7 @@ public slots:
     void tags_buttonRemoveClicked();
     void tags_buttonResetClicked();
     void toolChanged(int idx);
+    void treatmentChanged(int idx);
     void storePoints();
     void treeWidgetItemDoubleClicked(QTreeWidgetItem * item, int column);
 
@@ -75,6 +77,7 @@ private:
     QString m_currentPhoto;
     const OperatorOutput *m_currentOutput;
     bool m_photoIsInput;
+    TreePhotoItem *m_photoItem;
     QVector<TableTagsRow*> m_tags;
     QGraphicsScene *m_scene;
     QGraphicsPixmapItem *m_pixmapItem;

@@ -39,6 +39,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_currentPhoto(),
     m_currentOutput(0),
     m_photoIsInput(false),
+    m_photoItem(0),
     m_tags(),
     m_scene(new QGraphicsScene),
     m_pixmapItem(new QGraphicsPixmapItem),
@@ -60,6 +61,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(m_operator, SIGNAL(upToDate()), this, SLOT(upToDate()));
     connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()), Qt::QueuedConnection);
 
+    updateColorLabels(QPointF(-1,-1));
     updateTreeviewPhotos();
     updateVisualizationZoom();
     setInputControlEnabled(false);
@@ -320,6 +322,43 @@ void Visualization::toolChanged(int idx)
     }
 }
 
+void Visualization::treatmentChanged(int idx)
+{
+    TreePhotoItem::PhotoType type;
+    if ( !m_photo || (m_photo && !m_photoIsInput) )
+        return;
+    QString identity = m_photo->getIdentity();
+    bool from_photo = !m_operator->isTagOverrided(identity, "TREAT");
+    QString value;
+    switch(idx) {
+    case 0: value = ""; type = TreePhotoItem::InputEnabled; break;
+    case 1: value = "REFERENCE"; type = TreePhotoItem::InputReference; break;
+    case 2: value = "DISCARDED"; type = TreePhotoItem::InputDisabled; break;
+    }
+
+    QString treatTag = m_photo->getTag("TREAT");
+    if ( !from_photo ) {
+        treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), "TREAT");
+    }
+
+    if ( ( treatTag.isEmpty() && idx == 0 ) ||
+         ( treatTag == "REFERENCE" && idx == 1 ) ||
+         ( treatTag == "DISCARDED" && idx == 2 ) )
+        return;
+
+
+    if ( value.isEmpty() ) {
+        if ( from_photo )
+            m_operator->setTagOverride(identity, "TREAT", "");
+        else
+            m_operator->resetTagOverride(identity, "TREAT");
+    }
+    else {
+        m_operator->setTagOverride(identity, "TREAT", value);
+    }
+    m_photoItem->setType(type);
+}
+
 void Visualization::updateVisualizationZoom()
 {
     switch(m_zoomLevel) {
@@ -381,8 +420,13 @@ void Visualization::updateColorLabels(const QPointF& pos)
 {
     using Magick::Quantum;
     QVector<int> rgb(3);
-    if ( pos.x() >= 0 && pos.y() >= 0 && m_photo )
+    bool clearStatus = true;
+
+    if ( pos.x() >= 0 && pos.y() >= 0 && m_photo ) {
+        clearStatus = false;
         rgb = m_photo->pixelColor(pos.x(), pos.y());
+    }
+
     ui->value_ADU_R->setText(QString("R: %0").arg(rgb[0], 5, 10, QChar(' ')));
     ui->value_ADU_G->setText(QString("G: %0").arg(rgb[1], 5, 10, QChar(' ')));
     ui->value_ADU_B->setText(QString("B: %0").arg(rgb[2], 5, 10, QChar(' ')));
@@ -393,6 +437,17 @@ void Visualization::updateColorLabels(const QPointF& pos)
     ui->value_EV_R->setText(QString::number(r,'.',2)+" EV");
     ui->value_EV_G->setText(QString::number(g,'.',2)+" EV");
     ui->value_EV_B->setText(QString::number(b,'.',2)+" EV");
+    if ( m_tool != ToolROI ) {
+        if ( clearStatus )
+            ui->statusBar->showMessage("");
+        else
+            ui->statusBar->showMessage(QString("x:%0, y:%1, R:%2%, G:%3%, B:%4%")
+                                       .arg(int(pos.x()),5,10,QChar(' '))
+                                       .arg(int(pos.y()),5,10,QChar(' '))
+                                       .arg(100.*rgb[0]/QuantumRange, 5, 'f', 2)
+                                       .arg(100.*rgb[1]/QuantumRange,5, 'f', 2)
+                                       .arg(100.*rgb[2]/QuantumRange, 5, 'f', 2));
+    }
 }
 
 void Visualization::updateTagsTable()
@@ -466,11 +521,19 @@ void Visualization::updateTreeviewPhotos()
                 QString identity = photo.getIdentity();
                 identity = identity.split("|").first();
                 int count = ++seen[identity];
-                if ( count > 1 ) {
+                if ( count > 1 )
                     identity+=QString("|%0").arg(count-1);
-                    photo.setIdentity(identity);
-                }
-                TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Input, tree_source);
+                photo.setIdentity(identity);
+
+                QString treatTag = photo.getTag("TREAT");
+                if ( m_operator->isTagOverrided(identity, "TREAT") )
+                    treatTag = m_operator->getTagOverrided(identity, "TREAT");
+                TreePhotoItem::PhotoType type = TreePhotoItem::InputEnabled;
+                if ( treatTag == "DISCARDED" )
+                    type = TreePhotoItem::InputDisabled;
+                else if ( treatTag == "REFERENCE" )
+                    type = TreePhotoItem::InputReference;
+                TreePhotoItem *item = new TreePhotoItem(photo, type, tree_source);
                 if ( identity == m_currentPhoto &&
                      source == m_currentOutput ) {
                     item->setSelected(true);
@@ -522,6 +585,7 @@ void Visualization::photoSelectionChanged()
         switch(item->type()) {
         case TreePhotoItem::Type: {
             TreePhotoItem *photoItem = dynamic_cast<TreePhotoItem*>(item);
+            m_photoItem = photoItem;
             m_photo = &photoItem->photo();
             m_photoIsInput = photoItem->isInput();
             updateTabs();
@@ -546,7 +610,11 @@ void Visualization::clearAllTabs()
     m_output = NULL;
     m_photo = NULL;
     m_photoIsInput = false;
+    m_photoItem = NULL;
 
+    ui->value_width->setText("0");
+    ui->value_height->setText("0");
+    updateColorLabels(QPointF(-1,-1));
     clearPoints(ToolNone);
     clearTags();
     setInputControlEnabled(false);
@@ -572,7 +640,9 @@ void Visualization::updateTabsWithPhoto()
     ui->value_width->setText(QString::number(m_photo->image().columns()));
     ui->value_height->setText(QString::number(m_photo->image().rows()));
 #endif
-    if ( m_photoIsInput ) setInputControlEnabled(true);
+    if ( m_photoIsInput ) {
+        setInputControlEnabled(true);
+    }
     QString roiTag = m_photo->getTag("ROI");
     if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "ROI") ) {
         roiTag = m_operator->getTagOverrided(m_photo->getIdentity(), "ROI");
@@ -590,6 +660,22 @@ void Visualization::updateTabsWithPhoto()
     m_roi_p1.setX(0);
     m_roi_p1.setY(0);
     m_roi_p2 = m_roi_p1;
+
+    QString treatTag = m_photo->getTag("TREAT");
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "TREAT")) {
+        treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), "TREAT");
+    }
+    if ( treatTag == "REFERENCE" && ui->combo_treatment->currentIndex() != 1 ) {
+        bool state = ui->combo_treatment->blockSignals(true);
+        ui->combo_treatment->setCurrentIndex(1);
+        ui->combo_treatment->blockSignals(state);
+
+    }
+    else if ( treatTag == "DISCARDED" && ui->combo_treatment->currentIndex() != 2) {
+        bool state = ui->combo_treatment->blockSignals(true);
+        ui->combo_treatment->setCurrentIndex(2);
+        ui->combo_treatment->blockSignals(state);
+    }
 
     clearPoints(ToolNone);
     QString pointsTag = m_photo->getTag("POINTS");
@@ -612,8 +698,14 @@ void Visualization::updateTabsWithOutput()
 
 void Visualization::setInputControlEnabled(bool v)
 {
+    if (v)
+        toolChanged(ui->combo_tool->currentIndex());
+    else
+        toolChanged(0);
     ui->table_tags->setEnabled(v);
     ui->combo_tool->setEnabled(v);
+    ui->combo_treatment->setEnabled(v);
+    if ( !m_photo ) ui->combo_treatment->setCurrentIndex(0);
     ui->tag_buttonAdd->setEnabled(v);
     ui->tag_buttonRemove->setEnabled(v);
     ui->tag_buttonReset->setEnabled(v);
@@ -632,7 +724,7 @@ void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
         ui->statusBar->showMessage("");
     }
     else
-        ui->statusBar->showMessage(QString("Selection: x1=%0, y1=%1, x2=%2, y2=%3").arg(p1.x()).arg(p1.y()).arg(p2.x()).arg(p2.y()));
+        ui->statusBar->showMessage(QString("Selection: x1:%0, y1:%1, x2:%2, y2:%3").arg(p1.x()).arg(p1.y()).arg(p2.x()).arg(p2.y()));
     m_roi_p1 = p1;
     m_roi_p2 = p2;
 }
@@ -640,10 +732,15 @@ void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
 bool Visualization::eventFilter(QObject *obj, QEvent *event)
 {
     switch(event->type()) {
+    case QEvent::Leave: {
+        updateColorLabels(QPointF(-1,-1));
+        break;
+    }
     case QEvent::GraphicsSceneMouseMove: {
         QGraphicsSceneMouseEvent *me =
                 dynamic_cast<QGraphicsSceneMouseEvent*>(event);
-        updateColorLabels(me->scenePos());
+        if ( m_tool != ToolROI )
+            updateColorLabels(me->scenePos());
         break;
     }
     case QEvent::GraphicsSceneMousePress: {

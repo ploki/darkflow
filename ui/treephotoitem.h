@@ -9,7 +9,9 @@ class TreePhotoItem : public QTreeWidgetItem
 public:
     enum { Type = QTreeWidgetItem::UserType + 2 };
     typedef enum {
-        Input,
+        InputEnabled,
+        InputDisabled,
+        InputReference,
         Output,
     } PhotoType;
     explicit TreePhotoItem(const Photo& photo,
@@ -19,6 +21,7 @@ public:
     const Photo &photo() const;
     Photo &photo();
     bool isInput() const;
+    void setType(PhotoType type);
 
 private:
     Photo m_photo;

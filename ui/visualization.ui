@@ -256,7 +256,7 @@
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QComboBox" name="comboBox">
+                    <widget class="QComboBox" name="combo_treatment">
                      <item>
                       <property name="text">
                        <string>Regular</string>
@@ -389,7 +389,7 @@
                   <zorder>label_tool</zorder>
                   <zorder>combo_tool</zorder>
                   <zorder>label</zorder>
-                  <zorder>comboBox</zorder>
+                  <zorder>combo_treatment</zorder>
                   <zorder>value_ADU_R</zorder>
                   <zorder>value_height</zorder>
                   <zorder>value_EV_R</zorder>
@@ -592,8 +592,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>588</width>
-                 <height>512</height>
+                 <width>510</width>
+                 <height>510</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -716,8 +716,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>588</width>
-                 <height>512</height>
+                 <width>510</width>
+                 <height>510</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1130,6 +1130,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>combo_treatment</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>treatmentChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>523</x>
+     <y>568</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>387</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1149,5 +1165,6 @@
   <slot>tags_buttonResetClicked()</slot>
   <slot>toolChanged(int)</slot>
   <slot>fullScreenViewClicked()</slot>
+  <slot>treatmentChanged(int)</slot>
  </slots>
 </ui>

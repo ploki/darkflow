@@ -13,30 +13,32 @@ const char *FunctionStr[] = {
     "Scale"
 };
 const char *ResizeToStr[] = {
-    "To Specified",
-    "To Smallest Width",
-    "To Smallest Height"
-    "To Largest Width",
-    "To Largest height"
+    "Specified",
+    "Smallest W.",
+    "Smallest H.",
+    "Largest W.",
+    "Largest H.",
+    "Reference W.",
+    "Reference H."
 };
 
 class WorkerScale : public OperatorWorker {
 public:
-    WorkerScale(OpScale::Function function,
-                Magick::FilterTypes algorithm,
+    WorkerScale(Magick::FilterTypes algorithm,
                 OpScale::ResizeTo to,
                 qreal scale,
                 QThread *thread,
                 Operator *op) :
         OperatorWorker(thread, op),
-        m_function(function),
         m_algorithm(algorithm),
         m_to(to),
         m_scale(scale),
         max_w(0),
         max_h(0),
         min_w(0),
-        min_h(0)
+        min_h(0),
+        ref_w(0),
+        ref_h(0)
     {
     }
     void play_analyseSources() {
@@ -46,15 +48,26 @@ public:
              ++i ) {
             int w = m_inputs[0][i].image().columns();
             int h = m_inputs[0][i].image().rows();
-            if ( 0 == i ) {
-                min_w = max_w = w;
-                min_h = max_h = h;
+            if (m_to == OpScale::ToReferenceWidth ||
+                    m_to == OpScale::ToReferenceHeight ) {
+                QString treatTag = m_inputs[0][i].getTag("TREAT");
+                if ( treatTag == "REFERENCE" ) {
+                    ref_w = w;
+                    ref_h = h;
+                    break;
+                }
             }
             else {
-                if ( w < min_w ) min_w = w;
-                if ( w > max_w ) max_w = w;
-                if ( h < min_h ) min_h = h;
-                if ( h > max_h ) max_h = h;
+                if ( 0 == i ) {
+                    min_w = max_w = w;
+                    min_h = max_h = h;
+                }
+                else {
+                    if ( w < min_w ) min_w = w;
+                    if ( w > max_w ) max_w = w;
+                    if ( h < min_h ) min_h = h;
+                    if ( h > max_h ) max_h = h;
+                }
             }
         }
     }
@@ -85,48 +98,49 @@ public:
             w*=qreal(max_h)/h;
             h=max_h;
             break;
+        case OpScale::ToReferenceWidth:
+            h*=qreal(ref_w)/w;
+            w=ref_w;
+            break;
+        case OpScale::ToReferenceHeight:
+            w*=qreal(ref_h)/h;
+            h=ref_h;
+            break;
         }
-        switch (m_function) {
-        case OpScale::Resize:
+
+        if ( w != 0 && h != 0 ) {
             image.resize(Magick::Geometry(w,h));
-            break;
-        case OpScale::Sample:
-            image.sample(Magick::Geometry(w,h));
-            break;
-        case OpScale::Scale:
-            image.scale(Magick::Geometry(w,h));
-            break;
+
+            /* in some cases, image doesn't extend to specified geometry! */
+            image.extent(Magick::Geometry(w,h), Magick::NorthWestGravity);
+        }
+        else {
+            qWarning("zero size image!");
         }
         return newPhoto;
     }
 
 private:
-    OpScale::Function m_function;
     Magick::FilterTypes m_algorithm;
     OpScale::ResizeTo m_to;
     qreal m_scale;
     int max_w, max_h;
     int min_w, min_h;
+    int ref_w, ref_h;
 };
 
 
 OpScale::OpScale(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, "Scale", parent),
-    m_function(new OperatorParameterDropDown("function", "Function", this, SLOT(selectFunction(int)))),
-    m_functionValue(Resize),
     m_algorithm(new OperatorParameterDropDown("algorithm", "Algorithm", this, SLOT(selectAlgorithm(int)))),
     m_algorithmValue(Magick::UndefinedFilter),
     m_to(new OperatorParameterDropDown("resizeTo", "Resize to", this, SLOT(selectResizeTo(int)))),
     m_toValue(ToSpecified),
     m_scale(new OperatorParameterSlider("scale", "Scale", "Scale", Slider::Value, Slider::Logarithmic, Slider::Real, 1./4., 4, 1, 1./1024, 8, Slider::FilterPercent, this))
 {
-    m_function->addOption(FunctionStr[Resize], Resize, true);
-    m_function->addOption(FunctionStr[Sample], Sample);
-    m_function->addOption(FunctionStr[Scale], Scale);
-
-    m_algorithm->addOption("Undefined",Magick::UndefinedFilter, true);
+    m_algorithm->addOption("Box", Magick::BoxFilter, true);
     m_algorithm->addOption("Point", Magick::PointFilter);
-    m_algorithm->addOption("Box", Magick::BoxFilter);
+    m_algorithm->addOption("(auto)",Magick::UndefinedFilter);
     m_algorithm->addOption("Triangle", Magick::TriangleFilter);
     m_algorithm->addOption("Hermite", Magick::HermiteFilter);
     m_algorithm->addOption("Hanning", Magick::HanningFilter);
@@ -161,8 +175,9 @@ OpScale::OpScale(Process *parent) :
     m_to->addOption(ResizeToStr[ToSmallestHeight], ToSmallestHeight);
     m_to->addOption(ResizeToStr[ToLargestWidth], ToLargestWidth);
     m_to->addOption(ResizeToStr[ToLargestHeight], ToLargestHeight);
+    m_to->addOption(ResizeToStr[ToReferenceWidth], ToReferenceWidth);
+    m_to->addOption(ResizeToStr[ToReferenceHeight], ToReferenceHeight);
 
-    addParameter(m_function);
     addParameter(m_algorithm);
     addParameter(m_to);
     addParameter(m_scale);
@@ -177,7 +192,7 @@ OpScale *OpScale::newInstance()
 
 OperatorWorker *OpScale::newWorker()
 {
-    return new WorkerScale(m_functionValue, Magick::FilterTypes(m_algorithmValue), m_toValue, m_scale->value(), m_thread, this);
+    return new WorkerScale(Magick::FilterTypes(m_algorithmValue), m_toValue, m_scale->value(), m_thread, this);
 }
 
 void OpScale::selectResizeTo(int v)
@@ -195,12 +210,3 @@ void OpScale::selectAlgorithm(int v)
         setOutOfDate();
     }
 }
-
-void OpScale::selectFunction(int v)
-{
-    if ( m_functionValue!= v ) {
-        m_functionValue = Function(v);
-        setOutOfDate();
-    }
-}
-

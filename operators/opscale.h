@@ -12,16 +12,13 @@ class OpScale : public Operator
     Q_OBJECT
 public:
     typedef enum {
-        Resize,
-        Sample,
-        Scale,
-    } Function;
-    typedef enum {
         ToSpecified,
         ToSmallestWidth,
         ToSmallestHeight,
         ToLargestWidth,
         ToLargestHeight,
+        ToReferenceWidth,
+        ToReferenceHeight
     } ResizeTo;
     typedef Magick::FilterTypes ResizeAlgorithm;
     OpScale(Process *parent);
@@ -31,12 +28,8 @@ public:
 private slots:
     void selectResizeTo(int v);
     void selectAlgorithm(int v);
-    void selectFunction(int v);
-
 
 private:
-    OperatorParameterDropDown *m_function;
-    Function m_functionValue;
     OperatorParameterDropDown *m_algorithm;
     int m_algorithmValue;
     OperatorParameterDropDown *m_to;

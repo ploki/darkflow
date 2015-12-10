@@ -6,6 +6,7 @@
 #include "workerloadvideo.h"
 #include "oploadvideo.h"
 #include "algorithm.h"
+#include "operatorparameterslider.h"
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -16,7 +17,9 @@ extern "C" {
 
 WorkerLoadVideo::WorkerLoadVideo(QThread *thread, OpLoadVideo *op) :
     OperatorWorker(thread, op),
-    m_collection(op->getCollection().toVector())
+    m_collection(op->getCollection().toVector()),
+    m_skip(op->getSkip()),
+    m_count(op->getCount())
 {
 }
 
@@ -34,7 +37,11 @@ void WorkerLoadVideo::play()
     for ( int i = 0, s = m_collection.count() ;
           i < s ;
           ++i ) {
+        int skip = m_skip;
+        int count = m_count;
         bool res = decodeVideo(m_collection[i], i, s);
+        m_skip = skip;
+        m_count = count;
         if ( !res ) {
             emitFailure();
             return;
@@ -130,8 +137,9 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
              avpkt.size-=len;
              avpkt.data+=len;
              if (got_picture) {
-                 push_frame(picture, filename, progress, complete, frame, frame_count);
+                 bool cont = push_frame(picture, filename, progress, complete, frame, frame_count);
                  frame++;
+                 if ( !cont ) goto loop_exit;
              }
          }
          do {
@@ -176,55 +184,73 @@ static inline void yuv420_to_rgb(unsigned char y, unsigned char u, unsigned char
     b = clamp(298 * c + 516 * d + 128);
 }
 
-
-void WorkerLoadVideo::push_frame(AVFrame *picture,
+/**
+ * @brief WorkerLoadVideo::push_frame
+ * @param picture
+ * @param filename
+ * @param progress
+ * @param complete
+ * @param n
+ * @param c
+ * @return false if no more frame to grab because of m_count falls to 0
+ */
+bool WorkerLoadVideo::push_frame(AVFrame *picture,
                                  const QString &filename, int progress, int complete, int n, int c)
 {
-    int w = picture->width;
-    int h = picture->height;
-    int div = 1;
-    switch ( picture->format ) {
-    case AV_PIX_FMT_YUV420P:
-        div = 2; break;
-    case AV_PIX_FMT_YUV410P:
-        div = 4; break;
-    default:
-        qWarning("Unsupported pixel format");
-        return;
+    if ( m_skip ) {
+        --m_skip;
     }
+    else if ( m_count ) {
+        int w = picture->width;
+        int h = picture->height;
+        int div = 1;
+        switch ( picture->format ) {
+        case AV_PIX_FMT_YUV420P:
+            div = 2; break;
+        case AV_PIX_FMT_YUV410P:
+            div = 4; break;
+        default:
+            qWarning("Unsupported pixel format");
+            return false;
+        }
 
-    Photo photo(Photo::sRGB);
-    photo.setIdentity(QString("%0[%1]").arg(filename).arg(n));
-    photo.createImage(w, h);
-    Magick::Image& image=photo.image();
-    image.modifyImage();
-    Magick::Pixels pixel_cache(image);
+        Photo photo(Photo::sRGB);
+        photo.setIdentity(QString("%0[%1]").arg(filename).arg(n));
+        photo.createImage(w, h);
+        Magick::Image& image=photo.image();
+        image.modifyImage();
+        Magick::Pixels pixel_cache(image);
 #pragma omp parallel for
-    for ( int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
-        if (!pixels) {
-            qWarning("NULL pixels!");
-            continue;
-        }
-        for ( int x = 0 ; x < w ; ++x ) {
-            Q_ASSERT( x/div < picture->linesize[1] );
-            Q_ASSERT( x/div < picture->linesize[2] );
-            const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
-            const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
-            const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
+        for ( int y = 0 ; y < h ; ++y ) {
+            Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
+            if (!pixels) {
+                qWarning("NULL pixels!");
+                continue;
+            }
+            for ( int x = 0 ; x < w ; ++x ) {
+                Q_ASSERT( x/div < picture->linesize[1] );
+                Q_ASSERT( x/div < picture->linesize[2] );
+                const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
+                const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
+                const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
 
-            quantum_t r, g, b;
-            yuv420_to_rgb(c_y,c_u,c_v,r,g,b);
-            pixels[x].red = r;
-            pixels[x].green = g;
-            pixels[x].blue = b;
+                quantum_t r, g, b;
+                yuv420_to_rgb(c_y,c_u,c_v,r,g,b);
+                pixels[x].red = r;
+                pixels[x].green = g;
+                pixels[x].blue = b;
+            }
         }
+        pixel_cache.sync();
+        photo.setSequenceNumber(n);
+        photo.setTag("Name",photo.getIdentity());
+        outputPush(0, photo);
+        --m_count;
     }
-    pixel_cache.sync();
-    photo.setSequenceNumber(n);
-    photo.setTag("Name",photo.getIdentity());
-    outputPush(0, photo);
     emitProgress(progress, complete, n%c, c);
+    if ( m_count == 0 )
+        return false;
+    return true;
 }
 
 

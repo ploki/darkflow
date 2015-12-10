@@ -85,10 +85,12 @@ void OperatorWorker::play()
 void OperatorWorker::finished()
 {
     if ( !m_signalEmited) {
-        qDebug("OperatorWorker: not signal sent, sending failure");
+        qDebug("OperatorWorker::finished: no signal sent, sending failure");
         emitFailure();
     }
-    deleteLater();
+    else { //signal emited, safe to delete
+        deleteLater();
+    }
 }
 
 bool OperatorWorker::aborted() {

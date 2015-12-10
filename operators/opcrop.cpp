@@ -1,4 +1,5 @@
 #include <QStringList>
+#include <QRectF>
 
 #include "opcrop.h"
 
@@ -10,47 +11,33 @@
 class WorkerCrop : public OperatorWorker {
 public:
     WorkerCrop(QThread *thread, Operator *op) :
-        OperatorWorker(thread, op)
+        OperatorWorker(thread, op),
+        m_refROI()
     {}
+    void play_analyseSources() {
+        foreach(Photo photo, m_inputs[0]) {
+            m_refROI = photo.getROI();
+            if ( !m_refROI.isNull() )
+                break;
+        }
+    }
+
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
-        QString roiTag = newPhoto.getTag("ROI");
-        if ( roiTag.count() == 0 )
+        QRectF roi = m_refROI;
+        if ( roi.isNull() )
+            roi = newPhoto.getROI();
+        if ( roi.isNull() )
             return newPhoto;
         newPhoto.removeTag("ROI");
-        QStringList coord = roiTag.split(',');
-        if ( coord.size() == 4 ) {
-            qreal x1 = coord[0].toDouble();
-            qreal y1 = coord[1].toDouble();
-            qreal x2 = coord[2].toDouble();
-            qreal y2 = coord[3].toDouble();
-            if ( x1 < 0 ) x1 = 0;
-            if ( y1 < 0 ) y1 = 0;
-            if ( x2 < 0 ) x2 = 0;
-            if ( y2 < 0 ) y2 = 0;
-            if ( x1 > photo.image().columns() ) x1=photo.image().columns();
-            if ( y1 > photo.image().rows() ) y1=photo.image().rows();
-            if ( x2 > photo.image().columns() ) x2=photo.image().columns();
-            if ( y2 > photo.image().rows() ) y2=photo.image().rows();
-            qreal x=x1,y=y1,w=x2-x1,h=y2-y1;
-            if ( x1 > x2 ) {
-                x=x2; w=-w;
-            }
-            if ( y1 > y2 ) {
-                y=y2; h=-h;
-            }
-            qDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
-            qDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
-            Magick::Geometry geo(w,h,x,y);
-            //nasty kludge to prevent crop to miss the target (it's my understanding)
-            newPhoto.image().page(Magick::Geometry(0,0,0,0));
-            newPhoto.image().crop(geo);
-        }
-        else {
-            newPhoto.setTag("ROI", "##ERROR!");
-        }
+        Magick::Geometry geo(roi.width(),roi.height(),roi.x(),roi.y());
+        //nasty kludge to prevent crop to miss the target (it's my understanding)
+        newPhoto.image().page(Magick::Geometry(0,0,0,0));
+        newPhoto.image().crop(geo);
         return newPhoto;
     }
+private:
+    QRectF m_refROI;
 };
 
 OpCrop::OpCrop(Process *parent) :

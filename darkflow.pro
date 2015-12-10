@@ -116,7 +116,11 @@ SOURCES +=\
     operators/opcmydecompose.cpp \
     operators/opcmycompose.cpp \
     operators/oproll.cpp \
-    operators/opscale.cpp
+    operators/opscale.cpp \
+    operators/oplimereg.cpp \
+    operators/workerlimereg.cpp \
+    operators/opssdreg.cpp \
+    operators/workerssdreg.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -209,7 +213,11 @@ HEADERS  += \
     operators/opcmydecompose.h \
     operators/opcmycompose.h \
     operators/oproll.h \
-    operators/opscale.h
+    operators/opscale.h \
+    operators/oplimereg.h \
+    operators/workerlimereg.h \
+    operators/opssdreg.h \
+    operators/workerssdreg.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -221,5 +229,5 @@ FORMS    += \
     ui/fullscreenview.ui
 
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil
+unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil liblimereg
 #unix: PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil

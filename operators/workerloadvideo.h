@@ -22,10 +22,12 @@ public:
 private slots:
     void play();
     bool decodeVideo(const QString& filename, int progress, int complete);
-    void push_frame(AVFrame *picture,
+    bool push_frame(AVFrame *picture,
                     const QString &filename, int progress, int complete, int n, int c);
 private:
     QVector<QString> m_collection;
+    int m_skip;
+    int m_count;
 };
 
 #endif // WORKERLOADVIDEO_H

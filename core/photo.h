@@ -17,6 +17,7 @@ Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
 
 typedef int quantum_t;
 
+class QRectF;
 
 class Photo : public QObject
 {
@@ -95,6 +96,9 @@ public:
     bool isComplete() const;
 
     QVector<QPointF> getPoints() const;
+    void setPoints(const QVector<QPointF>& vec);
+    QRectF getROI() const;
+    void setROI(const QRectF& rect);
 
 private:
     Magick::Image m_image;

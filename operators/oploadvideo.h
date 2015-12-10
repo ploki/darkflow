@@ -5,6 +5,7 @@
 #include <QObject>
 
 class OperatorParameterFilesCollection;
+class OperatorParameterSlider;
 class Process;
 
 class OpLoadVideo : public Operator
@@ -17,12 +18,16 @@ public:
     OperatorWorker *newWorker();
 
     QStringList getCollection() const;
+    int getSkip() const;
+    int getCount() const;
 
 public slots:
     void filesCollectionChanged();
 
 private:
     OperatorParameterFilesCollection *m_filesCollection;
+    OperatorParameterSlider *m_skip;
+    OperatorParameterSlider *m_count;
 };
 
 #endif // OPLOADVIDEO_H

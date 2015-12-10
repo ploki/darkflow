@@ -79,34 +79,38 @@ public:
         int w = image.columns(), h = image.rows();
         switch (m_to) {
         case OpScale::ToSpecified:
-            w*=m_scale;
-            h*=m_scale;
             break;
         case OpScale::ToSmallestWidth:
-            h*=qreal(min_w)/w;
-            w=min_w;
+            m_scale=qreal(min_w)/w;
             break;
         case OpScale::ToSmallestHeight:
-            w*=qreal(min_h)/h;
-            h=min_h;
+            m_scale=qreal(min_h)/h;
             break;
         case OpScale::ToLargestWidth:
-            h*=qreal(max_w)/w;
-            w=max_w;
+            m_scale=qreal(max_w)/w;
             break;
         case OpScale::ToLargestHeight:
-            w*=qreal(max_h)/h;
-            h=max_h;
+            m_scale=qreal(max_h)/h;
             break;
         case OpScale::ToReferenceWidth:
-            h*=qreal(ref_w)/w;
-            w=ref_w;
+            m_scale=qreal(ref_w)/w;
             break;
         case OpScale::ToReferenceHeight:
-            w*=qreal(ref_h)/h;
+            m_scale=qreal(ref_h)/h;
             h=ref_h;
-            break;
         }
+
+        w*=m_scale;
+        h*=m_scale;
+
+        QVector<QPointF> points = newPhoto.getPoints();
+        for (int i = 0 ; i < points.size() ; ++i ) {
+            points[i] = points[i] * m_scale;
+        }
+        newPhoto.setPoints(points);
+
+        QRectF roi = newPhoto.getROI();
+        newPhoto.setROI(QRectF(roi.x()*m_scale, roi.y()*m_scale, roi.width()*m_scale, roi.height()*m_scale));
 
         if ( w != 0 && h != 0 ) {
             image.resize(Magick::Geometry(w,h));

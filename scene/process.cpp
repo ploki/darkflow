@@ -61,6 +61,8 @@
 #include "opconvolution.h"
 #include "oproll.h"
 #include "opscale.h"
+#include "oplimereg.h"
+#include "opssdreg.h"
 
 QString Process::uuid()
 {
@@ -126,6 +128,9 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpRotate(this));
     m_availableOperators.push_back(new OpScale(this));
     m_availableOperators.push_back(new OpRoll(this));
+
+    m_availableOperators.push_back(new OpLimereg(this));
+    m_availableOperators.push_back(new OpSsdReg(this));
 
     m_availableOperators.push_back(new OpDemultiplexer(2, this));
     m_availableOperators.push_back(new OpDemultiplexer(3, this));

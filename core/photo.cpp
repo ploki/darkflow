@@ -3,6 +3,7 @@
 #include <QString>
 #include <QImage>
 #include <QPixmap>
+#include <QRectF>
 #include <Magick++.h>
 #include <cmath>
 
@@ -598,6 +599,59 @@ QVector<QPointF> Photo::getPoints() const
         vec.push_back(QPointF(coords[0].toDouble(), coords[1].toDouble()));
     }
     return vec;
+}
+
+void Photo::setPoints(const QVector<QPointF>& vec)
+{
+    QString points;
+    foreach(QPointF p, vec) {
+        if ( !points.isEmpty() )
+            points+=";";
+        points+=QString::number(p.x())+","+QString::number(p.y());
+    }
+    setTag("POINTS", points);
+}
+
+QRectF Photo::getROI() const
+{
+    QString roiTag = getTag("ROI");
+    if ( !roiTag.isEmpty() ) {
+        QStringList coord = roiTag.split(',');
+        if ( coord.size() == 4 ) {
+            qreal x1 = coord[0].toDouble();
+            qreal y1 = coord[1].toDouble();
+            qreal x2 = coord[2].toDouble();
+            qreal y2 = coord[3].toDouble();
+            if ( x1 < 0 ) x1 = 0;
+            if ( y1 < 0 ) y1 = 0;
+            if ( x2 < 0 ) x2 = 0;
+            if ( y2 < 0 ) y2 = 0;
+            if ( x1 > image().columns() ) x1=image().columns();
+            if ( y1 > image().rows() ) y1=image().rows();
+            if ( x2 > image().columns() ) x2=image().columns();
+            if ( y2 > image().rows() ) y2=image().rows();
+            qreal x=x1,y=y1,w=x2-x1,h=y2-y1;
+            if ( x1 > x2 ) {
+                x=x2; w=-w;
+            }
+            if ( y1 > y2 ) {
+                y=y2; h=-h;
+            }
+            //qDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
+            //qDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
+            return QRectF(x,y,w,h);
+        }
+    }
+    return QRectF();
+}
+
+void Photo::setROI(const QRectF &rect)
+{
+    QString roi = QString::number(rect.x()) + "," +
+            QString::number(rect.y()) + "," +
+            QString::number(rect.x()+rect.width()) + "," +
+            QString::number(rect.y()+rect.height());
+    setTag("ROI",roi);
 }
 
 

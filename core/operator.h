@@ -20,6 +20,7 @@ class OperatorWorker;
 #define OP_SECTION_ASSETS "Assets"
 #define OP_SECTION_TOOLS "Tools"
 #define OP_SECTION_GEOMETRY "Geometry"
+#define OP_SECTION_REGISTRATION "Registration"
 #define OP_SECTION_COLOR "Color"
 #define OP_SECTION_CURVE "Curve"
 #define OP_SECTION_BLEND "Blend"

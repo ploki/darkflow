@@ -19,7 +19,7 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_parameters(),
     m_inputs(),
     m_outputs(),
-    m_waitingForParentUpToDate(false),
+    m_waitingParentFor(NotWaiting),
     m_uuid(Process::uuid()),
     m_classSection(classSection),
     m_classIdentifier(classIdentifier),
@@ -64,6 +64,15 @@ void Operator::clone()
     m_process->addOperator(op);
 }
 
+void Operator::refreshInputs()
+{
+    if ( isUpToDate() )
+        return;
+    play_parentDirty(WaitingForInputs);
+    if ( m_waitingParentFor != WaitingForInputs )
+        emit stateChanged();
+}
+
 void Operator::workerProgress(int p, int c)
 {
     emit progress(p,c);
@@ -73,7 +82,7 @@ void Operator::workerSuccess(QVector<QVector<Photo> > result)
 {
     m_thread->quit();
     m_worker=NULL;
-    m_waitingForParentUpToDate=false;
+    m_waitingParentFor = NotWaiting;
 
     int idx = 0;
     Q_ASSERT(m_outputs.count() == result.count());
@@ -93,15 +102,27 @@ void Operator::workerFailure()
 {
     m_thread->quit();
     m_worker=NULL;
-    m_waitingForParentUpToDate=false;
+    m_waitingParentFor = NotWaiting;
     setOutOfDate();
 }
 
 void Operator::parentUpToDate()
 {
-    if ( !m_waitingForParentUpToDate )
-        return;
-    play();
+    switch (m_waitingParentFor) {
+    case WaitingForInputs:
+        emit stateChanged();
+        play_parentDirty(WaitingForInputs);
+        break;
+    case WaitingForPlay:
+        play();
+        break;
+    default:
+        qWarning("Unknwon waiting reason");
+    case NotWaiting:
+        // emit permit to notif following operator of new inputs even if not waiting
+        emit stateChanged();
+        break;
+    }
 }
 
 QString Operator::getName() const
@@ -144,7 +165,7 @@ void Operator::setUuid(const QString &uuid)
 }
 
 
-bool Operator::play_parentDirty()
+bool Operator::play_parentDirty(WaitForParentReason reason)
 {
     bool dirty = false;
     foreach(OperatorInput *input, m_inputs)
@@ -152,12 +173,15 @@ bool Operator::play_parentDirty()
             if ( !parentOutput->m_operator->isUpToDate() ) {
                 dirty = true;
                 parentOutput->m_operator->play();
-                m_waitingForParentUpToDate = true;
+                m_waitingParentFor = reason;
             }
         }
-    if (dirty) {
+    if (dirty && reason == WaitingForPlay ) {
         //will be signaled later
         emit progress(0, 1);
+    }
+    else if ( !dirty && reason == WaitingForInputs ) {
+        m_waitingParentFor = NotWaiting;
     }
     return dirty;
 }
@@ -218,7 +242,7 @@ void Operator::play() {
     }
     if (isUpToDate())
         return;
-    if (play_parentDirty())
+    if (play_parentDirty(WaitingForPlay))
         return;
     qDebug(QString("play on "+m_uuid).toLatin1());
     m_workerAboutToStart = true;
@@ -346,6 +370,7 @@ void Operator::operator_connect(Operator *outputOperator, int outputIdx,
     input->addSource(output);
     connect(output->m_operator, SIGNAL(upToDate()), input->m_operator, SLOT(parentUpToDate()));
     input->m_operator->setOutOfDate();
+    emit inputOperator->stateChanged();
 }
 
 void Operator::operator_disconnect(Operator *outputOperator, int outputIdx,
@@ -357,6 +382,7 @@ void Operator::operator_disconnect(Operator *outputOperator, int outputIdx,
     output->removeSink(input);
     input->removeSource(output);
     input->m_operator->setOutOfDate();
+    emit inputOperator->stateChanged();
 }
 
 void Operator::save(QJsonObject &obj)

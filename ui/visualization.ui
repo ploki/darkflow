@@ -74,9 +74,23 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="button_getInputs">
+          <property name="text">
+           <string>Get Inputs</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="button_play">
           <property name="text">
            <string>Play</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar">
+          <property name="value">
+           <number>0</number>
           </property>
          </widget>
         </item>
@@ -1146,6 +1160,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_getInputs</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>getInputsClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>640</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>387</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1166,5 +1196,6 @@
   <slot>toolChanged(int)</slot>
   <slot>fullScreenViewClicked()</slot>
   <slot>treatmentChanged(int)</slot>
+  <slot>getInputsClicked()</slot>
  </slots>
 </ui>

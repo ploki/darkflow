@@ -37,6 +37,11 @@ public:
         OutputEnabled,
         OutputDisabled
     } OperatorOutputStatus;
+    typedef enum {
+        NotWaiting,
+        WaitingForPlay,
+        WaitingForInputs
+    } WaitForParentReason;
     explicit Operator(const QString& classSection, const QString& classIdentifier, Process *parent);
     virtual ~Operator();
 
@@ -79,7 +84,7 @@ public:
 
     bool spotLoop(const QString& uuid);
 
-    bool play_parentDirty();
+    bool play_parentDirty(WaitForParentReason reason);
     void addInput(OperatorInput* input);
     void addOutput(OperatorOutput* output);
     void addParameter(OperatorParameter* parameter);
@@ -101,6 +106,7 @@ public slots:
     void play();
     void stop();
     void clone();
+    void refreshInputs();
     void workerProgress(int p, int c);
     void workerSuccess(QVector<QVector<Photo> > result);
     void workerFailure();
@@ -133,7 +139,7 @@ private:
     QVector<OperatorOutput*> m_outputs;
     QVector<OperatorOutputStatus> m_outputStatus;
 protected:
-    bool m_waitingForParentUpToDate;
+    WaitForParentReason m_waitingParentFor;
     QString m_uuid;
     QString m_classSection;
     QString m_classIdentifier;

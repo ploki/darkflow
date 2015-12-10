@@ -60,7 +60,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(this, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
     connect(m_operator, SIGNAL(upToDate()), this, SLOT(upToDate()));
     connect(m_operator, SIGNAL(outOfDate()), this, SLOT(outOfDate()), Qt::QueuedConnection);
-
+    connect(m_operator, SIGNAL(progress(int,int)), this, SLOT(progress(int,int)));
     updateColorLabels(QPointF(-1,-1));
     updateTreeviewPhotos();
     updateVisualizationZoom();
@@ -197,7 +197,14 @@ void Visualization::stateChanged()
 
 void Visualization::playClicked()
 {
+    ui->checkBox_autoPlay->setChecked(true);
     m_operator->play();
+}
+
+void Visualization::getInputsClicked()
+{
+    ui->checkBox_autoPlay->setChecked(false);
+    m_operator->refreshInputs();
 }
 
 void Visualization::fullScreenViewClicked()
@@ -727,6 +734,11 @@ void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
         ui->statusBar->showMessage(QString("Selection: x1:%0, y1:%1, x2:%2, y2:%3").arg(p1.x()).arg(p1.y()).arg(p2.x()).arg(p2.y()));
     m_roi_p1 = p1;
     m_roi_p2 = p2;
+}
+
+void Visualization::progress(int p, int c)
+{
+    ui->progressBar->setValue(100.*p/c);
 }
 
 bool Visualization::eventFilter(QObject *obj, QEvent *event)

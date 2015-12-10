@@ -46,6 +46,7 @@ public slots:
     void outOfDate();
     void stateChanged();
     void playClicked();
+    void getInputsClicked();
     void fullScreenViewClicked();
 
     void histogramParamsChanged();
@@ -61,6 +62,7 @@ public slots:
 
 private slots:
     void rubberBandChanged(QRect rubberBandRect, QPointF fromScenePoint, QPointF toScenePoint);
+    void progress(int, int);
 private:
     Ui::Visualization *ui;
     Operator *m_operator;

@@ -17,9 +17,9 @@ WorkerLimereg::WorkerLimereg(qreal maxRotation, qreal maxTranslation, QThread *t
 {
 }
 
-Photo WorkerLimereg::process(const Photo &, int, int)
+Photo WorkerLimereg::process(const Photo &photo, int, int)
 {
-    throw 0;
+    return photo;
 }
 
 void WorkerLimereg::play_analyseSources()
@@ -93,6 +93,9 @@ bool WorkerLimereg::registerLimereg(Limereg_Image &lref,  Limereg_Image& limg, L
 bool WorkerLimereg::play_onInput(int idx)
 {
     Q_ASSERT(idx == 0);
+    if (m_inputs[0].count() == 0 )
+        return OperatorWorker::play_onInput(idx);
+
     Photo reference(m_inputs[0][m_refIdx]);
     Limereg_Image lref;
     ImageToLimereg_Image(reference.image(), lref);

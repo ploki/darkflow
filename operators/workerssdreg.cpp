@@ -122,6 +122,8 @@ void WorkerSsdReg::play_analyseSources()
 bool WorkerSsdReg::play_onInput(int idx)
 {
     Q_ASSERT( 0 == idx );
+    if (m_inputs[0].count() == 0 )
+        return OperatorWorker::play_onInput(idx);
     QRectF roi = m_inputs[0][m_refIdx].getROI();
     if ( roi.isNull() )
         return OperatorWorker::play_onInput(0);

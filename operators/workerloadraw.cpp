@@ -116,6 +116,28 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
         arguments << "-6";
         break;
     }
+    switch(m_loadraw->m_clippingValue) {
+    case OpLoadRaw::ClipAuto:
+        break;
+    case OpLoadRaw::Clip16bit:
+        arguments << "-S" << "65535";
+        break;
+    case OpLoadRaw::Clip15bit:
+        arguments << "-S" << "32767";
+        break;
+    case OpLoadRaw::Clip14bit:
+        arguments << "-S" << "16383";
+        break;
+    case OpLoadRaw::Clip13bit:
+        arguments << "-S" << "8191";
+        break;
+    case OpLoadRaw::Clip12bit:
+        arguments << "-S" << "4095";
+        break;
+    }
+
+    /* darkness to 0 */
+    arguments << "-k" << "0";
     /* orientation */
     arguments << "-t" << "0";
     /* write to standard output */

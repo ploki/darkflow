@@ -34,7 +34,14 @@ public:
         Camera,
         Daylight,
     } WhiteBalance;
-
+    typedef enum {
+        ClipAuto,
+        Clip16bit,
+        Clip15bit,
+        Clip14bit,
+        Clip13bit,
+        Clip12bit
+    } Clipping;
     QStringList getCollection() const;
 
     QString getColorSpace() const;
@@ -45,6 +52,7 @@ public slots:
     void setColorSpace(int v);
     void setDebayer(int v);
     void setWhiteBalance(int v);
+    void setClipping(int v);
 
     void filesCollectionChanged();
 
@@ -59,10 +67,12 @@ private:
     OperatorParameterDropDown *m_colorSpace;
     OperatorParameterDropDown *m_debayer;
     OperatorParameterDropDown *m_whiteBalance;
+    OperatorParameterDropDown *m_clipping;
 
     ColorSpace m_colorSpaceValue;
     Debayer m_debayerValue;
     WhiteBalance m_whiteBalanceValue;
+    Clipping m_clippingValue;
 
 };
 

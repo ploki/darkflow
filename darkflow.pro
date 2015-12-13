@@ -120,7 +120,8 @@ SOURCES +=\
     operators/oplimereg.cpp \
     operators/workerlimereg.cpp \
     operators/opssdreg.cpp \
-    operators/workerssdreg.cpp
+    operators/workerssdreg.cpp \
+    operators/opbracketing.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -217,7 +218,8 @@ HEADERS  += \
     operators/oplimereg.h \
     operators/workerlimereg.h \
     operators/opssdreg.h \
-    operators/workerssdreg.h
+    operators/workerssdreg.h \
+    operators/opbracketing.h
 
 FORMS    += \
     ui/aboutdialog.ui \

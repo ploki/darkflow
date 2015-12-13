@@ -63,6 +63,7 @@
 #include "opscale.h"
 #include "oplimereg.h"
 #include "opssdreg.h"
+#include "opbracketing.h"
 
 QString Process::uuid()
 {
@@ -123,6 +124,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpBlend(this));
     m_availableOperators.push_back(new OpIntegration(this));
     m_availableOperators.push_back(new OpFlatFieldCorrection(this));
+    m_availableOperators.push_back(new OpBracketing(this));
 
     m_availableOperators.push_back(new OpCrop(this));
     m_availableOperators.push_back(new OpRotate(this));
@@ -136,10 +138,12 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpDemultiplexer(3, this));
     m_availableOperators.push_back(new OpDemultiplexer(4, this));
     m_availableOperators.push_back(new OpDemultiplexer(5, this));
+    m_availableOperators.push_back(new OpDemultiplexer(6, this));
     m_availableOperators.push_back(new OpMultiplexer(2, this));
     m_availableOperators.push_back(new OpMultiplexer(3, this));
     m_availableOperators.push_back(new OpMultiplexer(4, this));
     m_availableOperators.push_back(new OpMultiplexer(5, this));
+    m_availableOperators.push_back(new OpMultiplexer(6, this));
 
 
 

@@ -110,6 +110,20 @@ bool WorkerIntegration::play_onInput(int idx)
         Magick::Pixels pixel_cache(image);
         int line = 0;
 
+        bool hdr = false;
+        QString hdrCompStr = photo.getTag("HDR_COMP");
+        QString hdrHighStr = photo.getTag("HDR_HIGH");
+        QString hdrLowStr = photo.getTag("HDR_LOW");
+        qreal hdrComp = 1,
+                hdrHigh,
+                hdrLow;
+        if ( ! hdrCompStr.isEmpty() && !hdrHighStr.isEmpty() && !hdrLowStr.isEmpty() ) {
+            hdr = true;
+            hdrComp = hdrCompStr.toDouble();
+            hdrHigh = hdrHighStr.toDouble() * QuantumRange;
+            hdrLow = hdrLowStr.toDouble() * QuantumRange;
+        }
+
 #define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
 #pragma omp parallel for
         for ( int y = 0 ; y < m_h ; ++y ) {
@@ -118,12 +132,33 @@ bool WorkerIntegration::play_onInput(int idx)
             if ( !pixels ) continue;
             for ( int x = 0 ; x < m_w ; ++x ) {
                 if ( x+cx < 0 || x+cx >= m_w ) continue;
-                SUBPXL(m_integrationPlane,x,y,0) += pixels[x+cx].red;
-                SUBPXL(m_integrationPlane,x,y,1) += pixels[x+cx].green;
-                SUBPXL(m_integrationPlane,x,y,2) += pixels[x+cx].blue;
-                ++SUBPXL(m_countPlane,x,y,0);
-                ++SUBPXL(m_countPlane,x,y,1);
-                ++SUBPXL(m_countPlane,x,y,2);
+
+                integration_plane_t
+                        red = pixels[x+cx].red,
+                        green = pixels[x+cx].green,
+                        blue = pixels[x+cx].blue;
+                if ( hdr ) {
+                    if ( red >= hdrLow && red <= hdrHigh ) {
+                        SUBPXL(m_integrationPlane,x,y,0) += red / hdrComp;
+                        ++SUBPXL(m_countPlane,x,y,0);
+                    }
+                    if ( green >= hdrLow && green <= hdrHigh ) {
+                        SUBPXL(m_integrationPlane,x,y,1) += green / hdrComp;
+                        ++SUBPXL(m_countPlane,x,y,1);
+                    }
+                    if ( blue >= hdrLow && blue <= hdrHigh ) {
+                        SUBPXL(m_integrationPlane,x,y,2) += blue / hdrComp;
+                        ++SUBPXL(m_countPlane,x,y,2);
+                    }
+                }
+                else {
+                    SUBPXL(m_integrationPlane,x,y,0) += red;
+                    SUBPXL(m_integrationPlane,x,y,1) += green;
+                    SUBPXL(m_integrationPlane,x,y,2) += blue;
+                    ++SUBPXL(m_countPlane,x,y,0);
+                    ++SUBPXL(m_countPlane,x,y,1);
+                    ++SUBPXL(m_countPlane,x,y,2);
+                }
             }
 #pragma omp critical
             {
@@ -167,9 +202,9 @@ void WorkerIntegration::createPlanes(Magick::Image &image)
 {
     m_w = image.columns();
     m_h = image.rows();
-    m_integrationPlane = new quantum_t[m_w*m_h*3];
+    m_integrationPlane = new integration_plane_t[m_w*m_h*3];
     m_countPlane = new int[m_w*m_h*3];
-    ::memset(m_integrationPlane, 0, m_w*m_h*3*sizeof(quantum_t));
+    ::memset(m_integrationPlane, 0, m_w*m_h*3*sizeof(integration_plane_t));
     ::memset(m_countPlane, 0, m_w*m_h*3*sizeof(int));
     qDebug(QString("Plane dim: w:%0, h:%1, sz:%2").arg(m_w).arg(m_h).arg(m_w*m_h*3).toLatin1());
     for ( int i = 0 ; i < m_w*m_h ; ++i ) {

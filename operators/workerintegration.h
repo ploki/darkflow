@@ -11,6 +11,7 @@ class Image;
 class WorkerIntegration : public OperatorWorker
 {
 public:
+    typedef double integration_plane_t;
     WorkerIntegration(OpIntegration::RejectionType rejectionType,
                       qreal upper,
                       qreal lower,
@@ -30,7 +31,7 @@ public slots:
     qreal m_lower;
     OpIntegration::NormalizationType m_normalizationType;
     qreal m_customNormalizationValue;
-    quantum_t *m_integrationPlane;
+    integration_plane_t *m_integrationPlane;
     int *m_countPlane;
     int m_w;
     int m_h;

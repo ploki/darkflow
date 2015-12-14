@@ -123,7 +123,9 @@ SOURCES +=\
     operators/workerssdreg.cpp \
     operators/opbracketing.cpp \
     operators/opgradientevaluation.cpp \
-    operators/workergradientevaluation.cpp
+    operators/workergradientevaluation.cpp \
+    operators/oplevel.cpp \
+    operators/oplevelpercentile.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -223,7 +225,9 @@ HEADERS  += \
     operators/workerssdreg.h \
     operators/opbracketing.h \
     operators/opgradientevaluation.h \
-    operators/workergradientevaluation.h
+    operators/workergradientevaluation.h \
+    operators/oplevel.h \
+    operators/oplevelpercentile.h
 
 FORMS    += \
     ui/aboutdialog.ui \

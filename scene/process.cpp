@@ -65,6 +65,8 @@
 #include "opssdreg.h"
 #include "opbracketing.h"
 #include "opgradientevaluation.h"
+#include "oplevel.h"
+#include "oplevelpercentile.h"
 
 QString Process::uuid()
 {
@@ -98,6 +100,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpExposure(this));
     m_availableOperators.push_back(new OpShapeDynamicRange(this));
     m_availableOperators.push_back(new OpIGamma(this));
+    m_availableOperators.push_back(new OpLevel(this));
+    m_availableOperators.push_back(new OpLevelPercentile(this));
 
     m_availableOperators.push_back(new OpWhiteBalance(this));
     m_availableOperators.push_back(new OpBlackBody(this));

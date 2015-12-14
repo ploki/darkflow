@@ -341,6 +341,9 @@ void Visualization::treatmentChanged(int idx)
     case 0: value = ""; type = TreePhotoItem::InputEnabled; break;
     case 1: value = "REFERENCE"; type = TreePhotoItem::InputReference; break;
     case 2: value = "DISCARDED"; type = TreePhotoItem::InputDisabled; break;
+    default:
+        qWarning("Unknown type");
+        type = TreePhotoItem::InputDisabled;
     }
 
     QString treatTag = m_photo->getTag("TREAT");

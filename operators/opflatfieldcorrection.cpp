@@ -8,13 +8,6 @@
 
 using Magick::Quantum;
 
-struct Triplet {
-    Triplet() : r(0), g(0), b(0) {}
-    quantum_t r;
-    quantum_t g;
-    quantum_t b;
-};
-
 class WorkerFlatField : public OperatorWorker {
 public:
     WorkerFlatField(QThread *thread, Operator *op) :
@@ -28,16 +21,16 @@ public:
             Magick::Pixels pixels_cache(image);
             int w = image.columns();
             int h = image.rows();
-            Triplet max;
+            Triplet<quantum_t> max;
             for ( int y = 0 ; y < h ; ++ y) {
                 Magick::PixelPacket * pixels = pixels_cache.get(0, y, w, 1);
                 for ( int x = 0 ; x < w ; ++x ) {
-                    if ( pixels[x].red > max.r )
-                        max.r = pixels[x].red;
-                    if ( pixels[x].green > max.g )
-                        max.g = pixels[x].green;
-                    if ( pixels[x].blue > max.b )
-                        max.b = pixels[x].blue;
+                    if ( pixels[x].red > max.red )
+                        max.red = pixels[x].red;
+                    if ( pixels[x].green > max.green )
+                        max.green = pixels[x].green;
+                    if ( pixels[x].blue > max.blue )
+                        max.blue = pixels[x].blue;
                 }
             }
             m_max.push_back(max);
@@ -47,7 +40,7 @@ public:
     void correct(Magick::Image &image,
                  Magick::Image& flatfield,
                  Magick::Image& overflow,
-                 Triplet& max) {
+                 Triplet<quantum_t> & max) {
         int w = image.columns();
         int h = image.rows();
         int f_w = flatfield.columns();
@@ -69,32 +62,32 @@ public:
             if ( !image_pixels ) continue;
             if ( !flatfield_pixels ) continue;
             for ( int x = 0 ; x < w ; ++x ) {
-                Triplet ff;
+                Triplet<quantum_t> ff;
                 bool singularity = false;
                 if ( flatfield_pixels[x].red )
-                    ff.r = flatfield_pixels[x].red;
+                    ff.red = flatfield_pixels[x].red;
                 else {
                     //continue;
-                    ff.r = 1;
+                    ff.red = 1;
                     singularity = true;
                 }
                 if ( flatfield_pixels[x].green )
-                    ff.g = flatfield_pixels[x].green;
+                    ff.green = flatfield_pixels[x].green;
                 else {
                     //continue;
-                    ff.g = 1;
+                    ff.green = 1;
                     singularity = true;
                 }
                 if ( flatfield_pixels[x].blue )
-                    ff.b = flatfield_pixels[x].blue;
+                    ff.blue = flatfield_pixels[x].blue;
                 else {
                     //continue;
-                    ff.b = 1;
+                    ff.blue = 1;
                     singularity = true;
                 }
-                quantum_t r = quantum_t(image_pixels[x].red) * max.r / ff.r;
-                quantum_t g = quantum_t(image_pixels[x].green) * max.g / ff.g;
-                quantum_t b = quantum_t(image_pixels[x].blue) * max.b / ff.b;
+                quantum_t r = quantum_t(image_pixels[x].red) * max.red / ff.red;
+                quantum_t g = quantum_t(image_pixels[x].green) * max.green / ff.green;
+                quantum_t b = quantum_t(image_pixels[x].blue) * max.blue / ff.blue;
                 overflow_pixels[x].red = overflow_pixels[x].green = overflow_pixels[x].blue =
                         ( singularity || r > QuantumRange || g > QuantumRange || b > QuantumRange )
                         ? QuantumRange
@@ -140,7 +133,7 @@ public:
 
     Photo process(const Photo &photo, int, int) { return Photo(photo); }
 private:
-    QVector<Triplet> m_max;
+    QVector<Triplet<quantum_t> > m_max;
 };
 
 OpFlatFieldCorrection::OpFlatFieldCorrection(Process *parent) :

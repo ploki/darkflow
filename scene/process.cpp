@@ -64,6 +64,7 @@
 #include "oplimereg.h"
 #include "opssdreg.h"
 #include "opbracketing.h"
+#include "opgradientevaluation.h"
 
 QString Process::uuid()
 {
@@ -109,6 +110,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpChannelMixer(this));
     m_availableOperators.push_back(new OpThreshold(this));
     m_availableOperators.push_back(new OpEqualize(this));
+    m_availableOperators.push_back(new OpGradientEvaluation(this));
 
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));

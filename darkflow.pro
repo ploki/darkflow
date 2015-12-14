@@ -121,7 +121,9 @@ SOURCES +=\
     operators/workerlimereg.cpp \
     operators/opssdreg.cpp \
     operators/workerssdreg.cpp \
-    operators/opbracketing.cpp
+    operators/opbracketing.cpp \
+    operators/opgradientevaluation.cpp \
+    operators/workergradientevaluation.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -219,7 +221,9 @@ HEADERS  += \
     operators/workerlimereg.h \
     operators/opssdreg.h \
     operators/workerssdreg.h \
-    operators/opbracketing.h
+    operators/opbracketing.h \
+    operators/opgradientevaluation.h \
+    operators/workergradientevaluation.h
 
 FORMS    += \
     ui/aboutdialog.ui \

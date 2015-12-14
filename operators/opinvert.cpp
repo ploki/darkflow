@@ -21,7 +21,7 @@ private:
 };
 
 OpInvert::OpInvert(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Invert", parent)
+    Operator(OP_SECTION_EFFECTS, "Invert", parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Negative images", "Negative Images", this));

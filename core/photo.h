@@ -17,6 +17,25 @@ Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
 
 typedef int quantum_t;
 
+template<typename T>
+class Triplet {
+public:
+    Triplet() : red(0), green(0), blue(0) {}
+    Triplet(T r, T g, T b) :
+        red(r), green(g), blue(b) {}
+    Triplet(const Triplet& t) :
+        red(t.red), green(t.green), blue(t.blue) {}
+    Triplet& operator=(const Triplet& t) {
+        red=t.red;
+        green=t.green;
+        blue=t.blue;
+        return *this;
+    }
+    T red;
+    T green;
+    T blue;
+};
+
 class QRectF;
 
 class Photo : public QObject

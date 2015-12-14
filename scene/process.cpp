@@ -67,6 +67,8 @@
 #include "opgradientevaluation.h"
 #include "oplevel.h"
 #include "oplevelpercentile.h"
+#include "opflip.h"
+#include "opflop.h"
 
 QString Process::uuid()
 {
@@ -133,6 +135,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpBracketing(this));
 
     m_availableOperators.push_back(new OpCrop(this));
+    m_availableOperators.push_back(new OpFlip(this));
+    m_availableOperators.push_back(new OpFlop(this));
     m_availableOperators.push_back(new OpRotate(this));
     m_availableOperators.push_back(new OpScale(this));
     m_availableOperators.push_back(new OpRoll(this));

@@ -125,7 +125,9 @@ SOURCES +=\
     operators/opgradientevaluation.cpp \
     operators/workergradientevaluation.cpp \
     operators/oplevel.cpp \
-    operators/oplevelpercentile.cpp
+    operators/oplevelpercentile.cpp \
+    operators/opflip.cpp \
+    operators/opflop.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -227,7 +229,9 @@ HEADERS  += \
     operators/opgradientevaluation.h \
     operators/workergradientevaluation.h \
     operators/oplevel.h \
-    operators/oplevelpercentile.h
+    operators/oplevelpercentile.h \
+    operators/opflip.h \
+    operators/opflop.h
 
 FORMS    += \
     ui/aboutdialog.ui \

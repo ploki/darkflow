@@ -58,12 +58,16 @@ public:
             Magick::Image& iMagenta = pMagenta.image();
             Magick::Image& iYellow = pYellow.image();
 
-            int w = qMax(qMax(qMax(iLuminance.columns(),iCyan.columns()), iMagenta.columns()), iYellow.columns());
-            int h = qMax(qMax(qMax(iLuminance.rows(),iCyan.rows()), iMagenta.rows()), iYellow.rows());
-            iLuminance.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-            iCyan.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-            iMagenta.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-            iYellow.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            unsigned w = qMax(qMax(qMax(iLuminance.columns(),iCyan.columns()), iMagenta.columns()), iYellow.columns());
+            unsigned h = qMax(qMax(qMax(iLuminance.rows(),iCyan.rows()), iMagenta.rows()), iYellow.rows());
+            if ( iLuminance.columns() != w || iLuminance.rows() != h )
+                iLuminance.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            if ( iCyan.columns() != w || iCyan.rows() != h )
+                iCyan.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            if ( iMagenta.columns() != w || iMagenta.rows() != h )
+                iMagenta.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
+            if ( iYellow.columns() != w || iYellow.rows() != h )
+                iYellow.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
 
             Magick::Pixels iCyan_cache(iCyan);
             Magick::Pixels iMagenta_cache(iMagenta);
@@ -77,12 +81,13 @@ public:
             photo.setTag("Name", "LCMY Composition");
             Magick::Pixels iPhoto_cache(photo.image());
             Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
+            int line = 0;
 #pragma omp parallel for
-            for ( int y = 0 ; y < h ; ++y ) {
+            for ( unsigned y = 0 ; y < h ; ++y ) {
                 const Magick::PixelPacket *pxl_Cyan = iCyan_cache.getConst(0, y, w, 1);
                 const Magick::PixelPacket *pxl_Magenta = iMagenta_cache.getConst(0, y, w, 1);
                 const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
-                for ( int x = 0 ; x < w ; ++x ) {
+                for ( unsigned x = 0 ; x < w ; ++x ) {
                     quantum_t rgb[3];
                     quantum_t cyan = 0;
                     quantum_t magenta = 0;
@@ -98,11 +103,16 @@ public:
                     pxl[y*w+x].green = clamp(rgb[1]);
                     pxl[y*w+x].blue = clamp(rgb[2]);
                 }
+#pragma omp critical
+                {
+                    emitProgress(i, photo_count,(line++)/2, h);
+                }
             }
             iPhoto_cache.sync();
             if ( l_count ) {
                 iGamma& labGamma = iGamma::Lab();
                 labGamma.applyOn(pLuminance);
+                emitProgress(i, photo_count, 3, 4);
                 unLabize(photo.image(), pLuminance.image());
             }
             outputPush(0, photo);

@@ -28,7 +28,11 @@ public:
             Magick::Image& iYellow = pYellow.image();
 
             Labize(pCyan.image(), pLuminance.image());
+            emitProgress(p, c, 1, 4);
+
             labGammaReverse.applyOnImage(pLuminance.image());
+            emitProgress(p, c, 2, 4);
+
             iCyan.modifyImage();
             iMagenta.modifyImage();
             iYellow.modifyImage();
@@ -37,6 +41,7 @@ public:
             Magick::Pixels iYellow_cache(iYellow);
             int w = iCyan.columns();
             int h = iCyan.rows();
+            int line = 0;
 #pragma omp parallel for
             for ( int y = 0 ; y < h ; ++y ) {
                 Magick::PixelPacket *pxl_Cyan = iCyan_cache.get(0, y, w, 1);
@@ -49,6 +54,10 @@ public:
                             (quantum_t(pxl_Magenta[x].red) + quantum_t(pxl_Magenta[x].blue))/2;
                     pxl_Yellow[x].green = pxl_Yellow[x].blue = pxl_Yellow[x].red =
                             (quantum_t(pxl_Yellow[x].red) + quantum_t(pxl_Yellow[x].green))/2;
+                }
+#pragma omp critical
+                {
+                    emitProgress(p, c, h/2+line++/2, h);
                 }
             }
             iCyan_cache.sync();

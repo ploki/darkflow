@@ -28,7 +28,11 @@ public:
             Magick::Image& iBlue = pBlue.image();
 
             Labize(pRed.image(), pLuminance.image());
+            emitProgress(p, c, 1, 4);
+
             labGammaReverse.applyOnImage(pLuminance.image());
+            emitProgress(p, c, 2, 4);
+
             iRed.modifyImage();
             iGreen.modifyImage();
             iBlue.modifyImage();
@@ -37,6 +41,7 @@ public:
             Magick::Pixels iBlue_cache(iBlue);
             int w = iRed.columns();
             int h = iRed.rows();
+            int line = 0;
 #pragma omp parallel for
             for ( int y = 0 ; y < h ; ++y ) {
                 Magick::PixelPacket *pxl_Red = iRed_cache.get(0, y, w, 1);
@@ -46,6 +51,10 @@ public:
                     pxl_Red[x].green = pxl_Red[x].blue = pxl_Red[x].red;
                     pxl_Green[x].red = pxl_Green[x].blue = pxl_Green[x].green;
                     pxl_Blue[x].red = pxl_Blue[x].green = pxl_Blue[x].blue;
+                }
+#pragma omp critical
+                {
+                    emitProgress(p, c, h/2+line++/2, h);
                 }
             }
             iRed_cache.sync();

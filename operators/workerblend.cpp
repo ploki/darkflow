@@ -91,8 +91,18 @@ blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
         rgb[1] = rgb[1]-quantum_t(p->green);
         rgb[2] = rgb[2]-quantum_t(p->blue);
         break;
-    case OpBlend::Difference:
+    case OpBlend::Difference: {
+        quantum_t r = rgb[0]-quantum_t(p->red);
+        quantum_t g = rgb[1]-quantum_t(p->green);
+        quantum_t b = rgb[2]-quantum_t(p->blue);
+        if ( r < 0 ) r=-r;
+        if ( g < 0 ) g=-g;
+        if ( b < 0 ) b=-b;
+        rgb[0] = r;
+        rgb[1] = g;
+        rgb[2] = b;
         break;
+    }
     case OpBlend::DarkenOnly:
         rgb[0] = qMin(rgb[0], quantum_t(p->red));
         rgb[1] = qMin(rgb[1], quantum_t(p->green));
@@ -126,14 +136,14 @@ blend(Magick::PixelPacket *a,
         blend(rgb, c, mode2);
     }
     if (u) {
-        if ( rgb[0] < 0 ) u->red = QuantumRange; else u->red = 0;
-        if ( rgb[1] < 0 ) u->green = QuantumRange; else u->green = 0;
-        if ( rgb[2] < 0 ) u->blue = QuantumRange; else u->blue = 0;
+        if ( rgb[0] < 0 ) u->red = -rgb[0]; else u->red = 0;
+        if ( rgb[1] < 0 ) u->green = -rgb[1]; else u->green = 0;
+        if ( rgb[2] < 0 ) u->blue = -rgb[2]; else u->blue = 0;
     }
     if (o) {
-        if ( rgb[0] > QuantumRange ) o->red = QuantumRange; else o->red = 0;
-        if ( rgb[1] > QuantumRange ) o->green = QuantumRange; else o->green = 0;
-        if ( rgb[2] > QuantumRange ) o->blue = QuantumRange; else o->blue = 0;
+        if ( rgb[0] > QuantumRange ) o->red = clamp(rgb[0]-QuantumRange); else o->red = 0;
+        if ( rgb[1] > QuantumRange ) o->green = clamp(rgb[1]-QuantumRange); else o->green = 0;
+        if ( rgb[2] > QuantumRange ) o->blue = clamp(rgb[2]-QuantumRange); else o->blue = 0;
     }
     a->red = clamp(rgb[0]);
     a->green = clamp(rgb[1]);

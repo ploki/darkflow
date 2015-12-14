@@ -127,7 +127,15 @@ SOURCES +=\
     operators/oplevel.cpp \
     operators/oplevelpercentile.cpp \
     operators/opflip.cpp \
-    operators/opflop.cpp
+    operators/opflop.cpp \
+    operators/openhance.cpp \
+    operators/opdespeckle.cpp \
+    operators/opnormalize.cpp \
+    operators/opadaptivethreshold.cpp \
+    operators/opreducenoise.cpp \
+    algorithms/hotpixels.cpp \
+    operators/ophotpixels.cpp \
+    operators/opcolor.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -231,7 +239,15 @@ HEADERS  += \
     operators/oplevel.h \
     operators/oplevelpercentile.h \
     operators/opflip.h \
-    operators/opflop.h
+    operators/opflop.h \
+    operators/openhance.h \
+    operators/opdespeckle.h \
+    operators/opnormalize.h \
+    operators/opadaptivethreshold.h \
+    operators/opreducenoise.h \
+    algorithms/hotpixels.h \
+    operators/ophotpixels.h \
+    operators/opcolor.h
 
 FORMS    += \
     ui/aboutdialog.ui \

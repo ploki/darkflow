@@ -19,7 +19,7 @@ public:
         int photo_count = m_inputs[0].count();
         for (int i = 1 ; i < m_inputs.count() ; ++i )
             if ( m_inputs[i].count() != photo_count ) {
-                qWarning("Uneven photo count in multiplexer");
+                dflError("Uneven photo count in multiplexer");
                 emitFailure();
                 return;
             }

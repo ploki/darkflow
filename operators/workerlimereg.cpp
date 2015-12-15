@@ -84,7 +84,7 @@ bool WorkerLimereg::registerLimereg(Limereg_Image &lref,  Limereg_Image& limg, L
                                 &iterationAmount, &iterationsPerLevel);
     if ( ret == LIMEREG_RET_SUCCESS )
         return true;
-    qDebug("failed with code %d", ret);
+    dflDebug("failed with code %d", ret);
     return false;
 }
 

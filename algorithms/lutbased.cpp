@@ -1,4 +1,5 @@
 #include "lutbased.h"
+#include "console.h"
 #include <Magick++.h>
 
 using Magick::Quantum;
@@ -26,7 +27,7 @@ void LutBased::applyOnImage(Magick::Image &image)
     for ( int y = 0 ; y < h ; ++y ) {
         Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
         if ( !pixels ) {
-            qWarning("NULL pixels !");
+            dflError("NULL pixels !");
             continue;
         }
         for ( int x = 0 ; x < w ; ++x ) {

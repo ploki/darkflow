@@ -46,7 +46,7 @@ public:
         int f_w = flatfield.columns();
         int f_h = flatfield.rows();
         if ( w != f_w || h != f_h ) {
-            qWarning("flatfiled: size mismatch");
+            dflError("size mismatch");
             return;
         }
         image.modifyImage();

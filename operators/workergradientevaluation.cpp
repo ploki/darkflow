@@ -58,7 +58,7 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
             color.blue/=count;
         }
         else {
-            qWarning("missed a color");
+            dflWarning("missed a color");
         }
 #pragma omp critical
         {

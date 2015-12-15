@@ -1,5 +1,8 @@
 #include <QThread>
 
+#include <cstdio>
+
+#include "console.h"
 #include "operatorworker.h"
 #include "operator.h"
 #include "operatorinput.h"
@@ -49,7 +52,7 @@ void OperatorWorker::outputPush(int idx, const Photo &photo)
             m_outputs[idx].push_back(photo);
     }
     else {
-        qWarning("outputPush idx out of range");
+        dflWarning("outputPush idx out of range");
     }
 }
 
@@ -60,13 +63,13 @@ void OperatorWorker::outputSort(int idx)
             qSort(m_outputs[idx]);
     }
     else {
-        qWarning("outputSort idx out of range");
+        dflWarning("outputSort idx out of range");
     }
 }
 
 void OperatorWorker::play()
 {
-    qDebug("OperatorWorker::play()");
+    dflDebug("OperatorWorker::play()");
 
     if ( !play_inputsAvailable() )
         return;
@@ -77,7 +80,7 @@ void OperatorWorker::play()
 
     play_onInput(0);
     if (!m_signalEmited) {
-        qWarning("BUG: No signal sent!!!");
+        dflCritical("BUG: No signal sent!!!");
         emitFailure();
     }
 }
@@ -85,7 +88,7 @@ void OperatorWorker::play()
 void OperatorWorker::finished()
 {
     if ( !m_signalEmited) {
-        qDebug("OperatorWorker::finished: no signal sent, sending failure");
+        dflDebug("OperatorWorker::finished: no signal sent, sending failure");
         emitFailure();
     }
     else { //signal emited, safe to delete
@@ -99,21 +102,26 @@ bool OperatorWorker::aborted() {
 
 void OperatorWorker::emitFailure() {
     m_signalEmited = true;
-    qDebug(QString("Worker of " + m_operator->uuid() + "emit progress(0, 1)").toLatin1());
+    dflDebug(QString("Worker of " + m_operator->uuid() + "emit progress(0, 1)"));
     emit progress(0, 1);
-    qDebug(QString("Worker of " + m_operator->uuid() + "emit failure").toLatin1());
+    dflDebug(QString("Worker of " + m_operator->uuid() + "emit failure"));
     emit failure();
-    qDebug(QString("Worker of " + m_operator->uuid() + "emit done").toLatin1());
+    dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
+    if ( aborted() )
+        dflInfo("aborted");
+    else
+        dflError("Worker emited failure");
 }
 
 void OperatorWorker::emitSuccess()
 {
     m_signalEmited = true;
-    qDebug(QString("Worker of " + m_operator->uuid() + "emit progress(1, 1)").toLatin1());
+    dflDebug(QString("Worker of " + m_operator->uuid() + "emit progress(1, 1)"));
     emit progress(1, 1);
-    qDebug(QString("Worker of " + m_operator->uuid() + "emit success").toLatin1());
+    dflDebug(QString("Worker of " + m_operator->uuid() + "emit success"));
     emit success(m_outputs);
-    qDebug(QString("Worker of " + m_operator->uuid() + "emit done").toLatin1());
+    dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
+    dflInfo("Worker emited success");
 }
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
@@ -124,7 +132,7 @@ void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
 bool OperatorWorker::play_inputsAvailable()
 {
     if ( 0 == m_inputs.size() ) {
-        qWarning("OperatorWorker::play() not overloaded for no input");
+        dflCritical("OperatorWorker::play() not overloaded for no input");
         emitFailure();
         return false;
     }
@@ -142,7 +150,7 @@ void OperatorWorker::prepareOutputs(QVector<Operator::OperatorOutputStatus> outp
 bool OperatorWorker::play_outputsAvailable()
 {
     if ( 0 == m_outputs.count() ) {
-        qWarning("OperatorWorker::play() not overloaded for #output != 1");
+        dflCritical("OperatorWorker::play() not overloaded for #output != 1");
         emitFailure();
         return false;
     }
@@ -162,14 +170,14 @@ bool OperatorWorker::play_onInput(int idx)
 
     foreach(Photo photo, m_inputs[idx]) {
         if ( aborted() ) {
-            qDebug("OperatorWorker aborted, sending failure");
+            dflError("OperatorWorker aborted, sending failure");
             emitFailure();
             return false;
         }
         emit progress(p, c);
         Photo newPhoto = this->process(photo, p++, c);
         if ( !newPhoto.isComplete() ) {
-            qWarning("OperatorWorker: photo is not complete, sending failure");
+            dflCritical("OperatorWorker: photo is not complete, sending failure");
             emitFailure();
             return false;
         }
@@ -197,7 +205,7 @@ bool OperatorWorker::play_onInputParallel(int idx)
         }
         Photo newPhoto = this->process(photo, p, c);
         if ( !newPhoto.isComplete() ) {
-            qWarning("OperatorWorker: photo is not complete, sending failure");
+            dflCritical("OperatorWorker: photo is not complete, sending failure");
             continue;
         }
         newPhoto.setSequenceNumber(i);
@@ -210,7 +218,7 @@ bool OperatorWorker::play_onInputParallel(int idx)
     }
 
     if ( aborted() ) {
-        qDebug("OperatorWorker aborted, sending failure");
+        dflError("OperatorWorker aborted, sending failure");
         emitFailure();
     }
     else {
@@ -218,4 +226,89 @@ bool OperatorWorker::play_onInputParallel(int idx)
         emitSuccess();
     }
     return true;
+}
+
+static void logMessage(Console::Level level, const QString& who, const QString& msg)
+{
+    dflMessage(level, who+"(Worker): "+msg);
+}
+
+void OperatorWorker::dflDebug(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Debug, m_operator->getName(), msg);
+    free(msg);
+}
+
+void OperatorWorker::dflInfo(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Info, m_operator->getName(), msg);
+    free(msg);
+}
+
+void OperatorWorker::dflWarning(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Warning, m_operator->getName(), msg);
+    free(msg);
+}
+
+void OperatorWorker::dflError(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Error, m_operator->getName(), msg);
+    free(msg);
+}
+
+void OperatorWorker::dflCritical(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Critical, m_operator->getName(), msg);
+    free(msg);
+}
+
+void OperatorWorker::dflDebug(const QString &msg) const
+{
+    logMessage(Console::Debug, m_operator->getName(), msg);
+}
+
+void OperatorWorker::dflInfo(const QString &msg) const
+{
+    logMessage(Console::Info, m_operator->getName(), msg);
+}
+
+void OperatorWorker::dflWarning(const QString &msg) const
+{
+    logMessage(Console::Warning, m_operator->getName(), msg);
+}
+
+void OperatorWorker::dflError(const QString &msg) const
+{
+    logMessage(Console::Error, m_operator->getName(), msg);
+}
+
+void OperatorWorker::dflCritical(const QString &msg) const
+{
+    logMessage(Console::Critical, m_operator->getName(), msg);
 }

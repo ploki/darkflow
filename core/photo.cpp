@@ -12,6 +12,7 @@
 #include "igamma.h"
 #include "exposure.h"
 #include "process.h"
+#include "console.h"
 
 using namespace Magick;
 
@@ -91,7 +92,7 @@ bool Photo::load(const QString &filename)
         m_status = Photo::Complete;
     }
     catch (std::exception *e) {
-        qWarning(e->what());
+        dflError(e->what());
         delete e;
         setUndefined();
         return false;
@@ -115,7 +116,7 @@ bool Photo::save(const QString &filename, const QString &magick)
         }
     }
     catch (std::exception *e) {
-        qWarning(e->what());
+        dflError(e->what());
         delete e;
         setUndefined();
         return false;
@@ -131,7 +132,7 @@ void Photo::createImage(long width, long height)
         m_status = Complete;
     }
     catch (std::exception *e) {
-        qWarning(e->what());
+        dflError(e->what());
         delete e;
         setUndefined();
     }
@@ -593,7 +594,7 @@ QVector<QPointF> Photo::getPoints() const
             continue;
         QStringList coords = point.split(',');
         if ( coords.count() != 2 ) {
-            qWarning("Invalid numbers in POINTS");
+            dflError("Photo: Invalid numbers in POINTS");
             continue;
         }
         vec.push_back(QPointF(coords[0].toDouble(), coords[1].toDouble()));
@@ -637,8 +638,8 @@ QRectF Photo::getROI() const
             if ( y1 > y2 ) {
                 y=y2; h=-h;
             }
-            //qDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
-            //qDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
+            //dflDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
+            //dflDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
             return QRectF(x,y,w,h);
         }
     }

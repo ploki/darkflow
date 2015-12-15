@@ -10,6 +10,7 @@ public:
   int w;
   int h;
   quantum_t *buffer;
+  WorkerSsdReg *m_worker;
 
   ~Region()
   {
@@ -17,7 +18,7 @@ public:
   }
 
 
-  static Region* get(Magick::Image &image, QRectF rect) {
+  static Region* get(WorkerSsdReg *worker, Magick::Image &image, QRectF rect) {
 
 
     int px = rect.x();
@@ -25,7 +26,7 @@ public:
     int w = rect.width();
     int h = rect.height();
     Magick::Pixels cache(image);
-    Region *region = new Region(w,h);
+    Region *region = new Region(worker, w, h);
     #pragma omp parallel for
     for (int y = 0 ; y < h ; ++y)
       {
@@ -41,7 +42,7 @@ public:
   }
 
 
-  QPointF lookup(Magick::Image &image) {
+  QPointF lookup(WorkerSsdReg *worker, Magick::Image &image) {
 
 
       int i_w = image.columns();
@@ -49,7 +50,7 @@ public:
       if ( w >= i_w || h >= i_h )
           return QPointF();
 
-      Region *haystack = Region::get(image, QRectF(0, 0, i_w, i_h));
+      Region *haystack = Region::get(worker, image, QRectF(0, 0, i_w, i_h));
       int dh = i_h-h;
       int dw = i_w-w;
       int ssd_sz = dh*dw;
@@ -79,16 +80,17 @@ public:
           }
       delete[] ssd;
       QPointF res(min_pos%dw,min_pos/dw);
-      qDebug("x=%f, y=%f",res.x(), res.y());
+      m_worker->dflDebug("x=%f, y=%f",res.x(), res.y());
       return res;
   }
 
 private:
   Q_DISABLE_COPY(Region)
-  Region(int w_, int h_) :
+  Region(WorkerSsdReg *worker, int w_, int h_) :
       w(w_),
       h(h_),
-      buffer(new quantum_t[w*h])
+      buffer(new quantum_t[w*h]),
+      m_worker(worker)
   {}
 
 };
@@ -128,12 +130,12 @@ bool WorkerSsdReg::play_onInput(int idx)
     if ( roi.isNull() )
         return OperatorWorker::play_onInput(0);
 
-    Region *needle = Region::get(m_inputs[0][m_refIdx].image(), roi);
+    Region *needle = Region::get(this, m_inputs[0][m_refIdx].image(), roi);
 
     for ( int i = 0, s = m_inputs[0].count() ; i < s ; ++i ) {
         if ( aborted() ) continue;
         Photo photo = m_inputs[0][i];
-        QPointF off = needle->lookup(photo.image());
+        QPointF off = needle->lookup(this, photo.image());
         QString points = QString::number(off.x()) +
                 "," + QString::number(off.y());
         photo.setTag("POINTS", points);

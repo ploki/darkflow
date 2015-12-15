@@ -27,6 +27,7 @@
 #include "tablewidgetitem.h"
 #include "vispoint.h"
 #include "fullscreenview.h"
+#include "console.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -99,7 +100,7 @@ Visualization::~Visualization()
 
 void Visualization::zoomFitVisible()
 {
-    //qDebug("action fit!");
+    //dflDebug("action fit!");
     m_zoomLevel=ZoomFitVisible;
     updateVisualizationZoom();
 }
@@ -152,7 +153,7 @@ void Visualization::expChanged()
         qreal gamma, x0;
         switch(ui->combo_gamma->currentIndex()) {
         default:
-            qWarning("Unknown combo_gamma selection");
+            dflWarning("Visualization: Unknown combo_gamma selection");
         case 0: //Linear
             gamma = 1.; x0 = 0; break;
         case 1: //sRGB
@@ -185,7 +186,7 @@ void Visualization::outOfDate()
         ++it;
     }
     if ( this->isVisible() && ui->checkBox_autoPlay->isChecked() ) {
-        qDebug(QString(m_operator->uuid() + " Vis requests play").toLatin1());
+        dflDebug(QString(m_operator->uuid() + " Vis requests play"));
         m_operator->play();
     }
 }
@@ -220,7 +221,7 @@ void Visualization::histogramParamsChanged()
         Photo::HistogramGeometry geometry;
         switch ( ui->combo_log->currentIndex()) {
         default:
-            qWarning("Unknown combo_log histogram selection");
+            dflWarning("Visualization: Unknown combo_log histogram selection");
         case 0:
             scale = Photo::HistogramLinear; break;
         case 1:
@@ -228,7 +229,7 @@ void Visualization::histogramParamsChanged()
         }
         switch ( ui->combo_surface->currentIndex()) {
         default:
-            qWarning("Unknown combo_surface selection");
+            dflWarning("Visualization: Unknown combo_surface selection");
         case 0:
             geometry = Photo::HistogramLines; break;
         case 1:
@@ -285,7 +286,7 @@ void Visualization::tags_buttonRemoveClicked()
                 m_tags.remove(idx);
             }
             else {
-                qWarning("row not found in m_tags");
+                dflWarning("Visualization: row not found in m_tags");
             }
         }
     }
@@ -305,7 +306,7 @@ void Visualization::toolChanged(int idx)
 {
     switch(idx) {
     default:
-        qWarning("Unknown tool combo index");
+        dflWarning("Visualization: Unknown tool combo index");
     case 0: m_tool = ToolNone; break;
     case 1: m_tool = ToolROI; break;
     case 2: m_tool = Tool1Point; break;
@@ -342,7 +343,7 @@ void Visualization::treatmentChanged(int idx)
     case 1: value = "REFERENCE"; type = TreePhotoItem::InputReference; break;
     case 2: value = "DISCARDED"; type = TreePhotoItem::InputDisabled; break;
     default:
-        qWarning("Unknown type");
+        dflWarning("Visualization: Unknown type");
         type = TreePhotoItem::InputDisabled;
     }
 
@@ -527,7 +528,7 @@ void Visualization::updateTreeviewPhotos()
             QTreeWidgetItem *tree_source = new TreeOutputItem(source, idx, TreeOutputItem::Source, tree_input);
             foreach(Photo photo, source->m_result) {
                 if ( !photo.isComplete() )
-                    qWarning("source photo is not complete");
+                    dflCritical("Visualization: source photo is not complete");
                 QString identity = photo.getIdentity();
                 identity = identity.split("|").first();
                 int count = ++seen[identity];
@@ -568,7 +569,7 @@ void Visualization::updateTreeviewPhotos()
         if (m_operator->m_outputStatus[idx] == Operator::OutputEnabled) {
             foreach(const Photo& photo, output->m_result) {
                 if ( !photo.isComplete() )
-                    qWarning("output photo is not complete");
+                    dflCritical("Visualization: output photo is not complete");
                 TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Output, tree_output);
                 if ( photo.getIdentity() == m_currentPhoto &&
                      output == m_currentOutput ) {
@@ -586,7 +587,7 @@ void Visualization::photoSelectionChanged()
     QList<QTreeWidgetItem*> items = ui->tree_photos->selectedItems();
 
     if ( items.count() > 1 ) {
-        qDebug(QString("Invalid photo selection in visualization tree view: sel count %0").arg(items.count()).toLatin1());
+        dflDebug(QString("Invalid photo selection in visualization tree view: sel count %0").arg(items.count()));
         return;
     }
 

@@ -5,6 +5,7 @@
 #include <QScreen>
 #include <cmath>
 
+#include "console.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "aboutdialog.h"
@@ -19,6 +20,7 @@ void MainWindow::showAboutDialog()
 
 void MainWindow::actionExit()
 {
+    Console::close();
     this->close();
 }
 
@@ -81,6 +83,11 @@ void MainWindow::actionSaveAs()
     projectProperties->modifyAndSave(process);
 }
 
+void MainWindow::actionConsole()
+{
+    Console::show();
+}
+
 void MainWindow::processStateChanged()
 {
     QString title = "DarkFlow";
@@ -106,6 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
     process(new Process(scene, this)),
     zoom(0)
 {
+    Console::init();
     ui->setupUi(this);
     QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
     resize( screenSize * 4 / 5);
@@ -129,6 +137,7 @@ MainWindow::~MainWindow()
     delete projectProperties;
     delete aboutDialog;
     delete ui;
+    Console::fini();
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
@@ -168,6 +177,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     } else {
         if (aboutDialog->isVisible())
             aboutDialog->close();
+        Console::close();
         event->accept();
         scene->clear();
     }

@@ -57,7 +57,7 @@ OpBlend *OpBlend::newInstance()
 
 OperatorWorker *OpBlend::newWorker()
 {
-    qDebug("mode1: %d, mode2: %d", m_mode1Value, m_mode2Value);
+    dflDebug("mode1: %d, mode2: %d", m_mode1Value, m_mode2Value);
     return new WorkerBlend(m_mode1Value, m_mode2Value, m_thread, this);
 }
 

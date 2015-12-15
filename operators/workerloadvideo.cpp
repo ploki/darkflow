@@ -7,6 +7,7 @@
 #include "oploadvideo.h"
 #include "algorithm.h"
 #include "operatorparameterslider.h"
+#include "console.h"
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -51,7 +52,7 @@ void WorkerLoadVideo::play()
     return;
 }
 static bool handle_error(const char *str) {
-    qWarning(str);
+    dflWarning("LoadVideo(Worker): %s", str);
     return false;
 }
 
@@ -132,7 +133,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
          while (avpkt.size > 0) {
              len = avcodec_decode_video2(pCodecCtx, picture, &got_picture, &avpkt);
              if (len < 0) {
-                 qDebug("Error while decoding frame");
+                 dflDebug("Error while decoding frame");
               }
              avpkt.size-=len;
              avpkt.data+=len;
@@ -210,7 +211,7 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
         case AV_PIX_FMT_YUV410P:
             div = 4; break;
         default:
-            qWarning("Unsupported pixel format");
+            dflWarning("LoadVideo(Worker): Unsupported pixel format");
             return false;
         }
 
@@ -224,7 +225,7 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
         for ( int y = 0 ; y < h ; ++y ) {
             Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
             if (!pixels) {
-                qWarning("NULL pixels!");
+                dflWarning("LoadVideo(Worker): NULL pixels!");
                 continue;
             }
             for ( int x = 0 ; x < w ; ++x ) {

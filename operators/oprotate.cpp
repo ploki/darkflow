@@ -19,7 +19,7 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
     Photo newPhoto(photo);
     qreal angle = dynamic_cast<OpRotate*>(m_operator)->angle();
 
-    qDebug(QString("apply rotation of %0 °").arg(angle).toLatin1());
+    dflDebug(QString("apply rotation of %0 °").arg(angle));
     newPhoto.image().rotate(angle);
     return newPhoto;
 }

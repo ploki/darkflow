@@ -119,7 +119,7 @@ public:
             image.extent(Magick::Geometry(w,h), Magick::NorthWestGravity);
         }
         else {
-            qWarning("zero size image!");
+            dflError("zero size image!");
         }
         return newPhoto;
     }

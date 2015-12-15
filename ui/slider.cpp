@@ -1,5 +1,7 @@
 #include "slider.h"
 #include "ui_slider.h"
+#include "console.h"
+
 #include <cmath>
 
 
@@ -32,11 +34,11 @@ Slider::Slider(const QString &windowCaption,
     m_range = ui->slider_value->maximum() - ui->slider_value->minimum();
 
     if ( m_hardMin > m_min ) {
-        qWarning("Slider hardMin > min");
+        dflWarning("Slider: hardMin > min");
         m_hardMin = m_min;
     }
     if ( m_hardMax < m_max ) {
-        qWarning("Slider hardMax < max");
+        dflWarning("Slider: hardMax < max");
         m_hardMax = m_max;
     }
 
@@ -49,11 +51,11 @@ Slider::Slider(const QString &windowCaption,
         ui->radio_ev->setEnabled(false);
         ui->radio_mag->setEnabled(false);
         if ( m_scale == Logarithmic ) {
-            qWarning("Slider: wrong scale for +/- value");
+            dflWarning("Slider: wrong scale for +/- value");
             m_scale = Linear;
         }
         if ( m_unit == ExposureValue || m_unit == Magnitude ) {
-            qWarning("Slider: wrong unit selected for linear scale");
+            dflWarning("Slider: wrong unit selected for linear scale");
             m_unit = Value;
         }
         ui->group_scale->hide();
@@ -375,7 +377,7 @@ void Slider::setUnit(Slider::Unit u)
 void Slider::clickUnit(Slider::Unit u)
 {
     switch(u) {
-    default:            qWarning("Unknown unit in Slider");
+    default:            dflWarning("Slider: Unknown unit");
     case Value:         ui->radio_value->click(); break;
     case Percent:       ui->radio_percent->click(); break;
     case ExposureValue: ui->radio_ev->click(); break;
@@ -386,7 +388,7 @@ void Slider::clickUnit(Slider::Unit u)
 void Slider::clickScale(Slider::Scale s)
 {
     switch(s) {
-    default:            qWarning("Unknown scale in Slider");
+    default:            dflWarning("Slider: Unknown scale");
     case Linear:        ui->radio_linear->click(); break;
     case Logarithmic:   ui->radio_logarithmic->click(); break;
     }
@@ -396,7 +398,7 @@ QString Slider::unitToString(Slider::Unit unit)
 {
     switch(unit) {
     default:
-        qWarning("Unknown unit");
+        dflWarning("Slider: Unknown unit");
     case Value: return "";
     case Percent: return "%";
     case ExposureValue: return "EV";
@@ -415,7 +417,7 @@ Slider::Unit Slider::unitFromString(const QString &unit)
     else if ( unit == "M" )
         return Magnitude;
     else {
-        qWarning("Unknown unit");
+        dflWarning("Slider: Unknown unit");
         return Value;
     }
 }
@@ -424,7 +426,7 @@ QString Slider::scaleToString(Slider::Scale scale)
 {
     switch(scale) {
     default:
-        qWarning("Unknown scale");
+        dflWarning("Slider: Unknown scale");
     case Linear:
         return "Linear";
     case Logarithmic:
@@ -439,7 +441,7 @@ Slider::Scale Slider::scaleFromString(const QString &scale)
     else if (scale == "Logarithmic")
         return Logarithmic;
     else {
-        qWarning("Unknown scale");
+        dflWarning("Slider: Unknown scale");
         return Linear;
     }
 }

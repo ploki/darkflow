@@ -135,7 +135,8 @@ SOURCES +=\
     operators/opreducenoise.cpp \
     algorithms/hotpixels.cpp \
     operators/ophotpixels.cpp \
-    operators/opcolor.cpp
+    operators/opcolor.cpp \
+    ui/console.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -247,7 +248,8 @@ HEADERS  += \
     operators/opreducenoise.h \
     algorithms/hotpixels.h \
     operators/ophotpixels.h \
-    operators/opcolor.h
+    operators/opcolor.h \
+    ui/console.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -256,7 +258,8 @@ FORMS    += \
     ui/projectproperties.ui \
     ui/visualization.ui \
     ui/slider.ui \
-    ui/fullscreenview.ui
+    ui/fullscreenview.ui \
+    ui/console.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil liblimereg

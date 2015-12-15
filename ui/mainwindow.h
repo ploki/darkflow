@@ -31,6 +31,7 @@ public slots:
     void actionSave();
     void actionLoad();
     void actionSaveAs();
+    void actionConsole();
 
 private slots:
     void processStateChanged();

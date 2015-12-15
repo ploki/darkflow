@@ -206,7 +206,7 @@ void WorkerIntegration::createPlanes(Magick::Image &image)
     m_countPlane = new int[m_w*m_h*3];
     ::memset(m_integrationPlane, 0, m_w*m_h*3*sizeof(integration_plane_t));
     ::memset(m_countPlane, 0, m_w*m_h*3*sizeof(int));
-    qDebug(QString("Plane dim: w:%0, h:%1, sz:%2").arg(m_w).arg(m_h).arg(m_w*m_h*3).toLatin1());
+    dflDebug(QString("Plane dim: w:%0, h:%1, sz:%2").arg(m_w).arg(m_h).arg(m_w*m_h*3));
     for ( int i = 0 ; i < m_w*m_h ; ++i ) {
         m_integrationPlane[i] = m_countPlane[i] = 0;
     }

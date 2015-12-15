@@ -26,7 +26,7 @@ public:
         if ( (w != s_w ||
               h != s_h) &&
              (s_w !=1 || s_h != 1 )) {
-            qWarning("Subtract: size mismatch");
+            dflError("size mismatch");
             return;
         }
         minuend.modifyImage();

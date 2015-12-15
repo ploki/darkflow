@@ -13,6 +13,7 @@ public:
     void play();
 private:
     qreal m_luminosity;
+    void conv(Magick::Image &image, Magick::Image &kernel, qreal luminosity);
 };
 
 #endif // WORKERCONVOLUTION_H

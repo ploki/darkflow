@@ -13,6 +13,7 @@ public:
     void play();
 private:
     qreal m_luminosity;
+    void deconv(Magick::Image &image, Magick::Image &kernel, qreal luminosity);
 };
 
 #endif // WORKERDECONVOLUTION_H

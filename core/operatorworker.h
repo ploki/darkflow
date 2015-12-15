@@ -53,6 +53,18 @@ protected:
     virtual bool play_onInput(int idx);
     virtual bool play_onInputParallel(int idx);
 
+public:
+    void dflDebug(const char* fmt, ...) const __attribute__((format(printf,2,3)));
+    void dflInfo(const char* fmt, ...) const __attribute__((format(printf,2,3)));
+    void dflWarning(const char* fmt, ...) const __attribute__((format(printf,2,3)));
+    void dflError(const char* fmt, ...) const __attribute__((format(printf,2,3)));
+    void dflCritical(const char* fmt, ...) const __attribute__((format(printf,2,3)));
+    void dflDebug(const QString& msg) const;
+    void dflInfo(const QString& msg) const;
+    void dflWarning(const QString& msg) const;
+    void dflError(const QString& msg) const;
+    void dflCritical(const QString& msg) const;
+
 private:
     void prepareOutputs(QVector<Operator::OperatorOutputStatus> outputStatus);
 };

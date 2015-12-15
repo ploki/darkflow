@@ -64,13 +64,13 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
 
 }
 
-static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity)
+void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity)
 {
 #ifdef USING_GRAPHICSMAGICK
     Q_UNUSED(image);
     Q_UNUSED(kernel);
     Q_UNUSED(luminosity);
-    qWarning("Fourier Transformation not available with GraphicsMagick");
+    dflCritical("Fourier Transformation not available with GraphicsMagick");
     return;
 #else
     std::list<Magick::Image> fft_image;
@@ -82,9 +82,9 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
 
     Magick::forwardFourierTransformImage(&fft_image, ni, true);
     Magick::forwardFourierTransformImage(&fft_kernel, nnk, true);
-    qDebug("fft_image.size = %ld", fft_image.size());
-    qDebug("fft_kernel.size = %ld", fft_kernel.size());
-    qDebug("w1=%ld, h1=%ld, w2=%ld, h2=%ld",
+    dflDebug("fft_image.size = %ld", fft_image.size());
+    dflDebug("fft_kernel.size = %ld", fft_kernel.size());
+    dflDebug("w1=%ld, h1=%ld, w2=%ld, h2=%ld",
            fft_image.front().columns(),
            fft_image.front().rows(),
            fft_image.back().columns(),
@@ -117,9 +117,9 @@ static void deconv(Magick::Image& image, Magick::Image& kernel, qreal luminosity
     quantum_t green = center_pxl[0].green;
     quantum_t blue = center_pxl[0].blue;
     Q_UNUSED(red); Q_UNUSED(green); Q_UNUSED(blue);
-    qDebug("comp.red=%d, luminosity=%f",red, 1./luminosity);
-    qDebug("comp.green=%d, luminosity=%f",green, 1./luminosity);
-    qDebug("comp.blue=%d, luminosity=%f",blue, 1./luminosity);
+    dflDebug("comp.red=%d, luminosity=%f",red, 1./luminosity);
+    dflDebug("comp.green=%d, luminosity=%f",green, 1./luminosity);
+    dflDebug("comp.blue=%d, luminosity=%f",blue, 1./luminosity);
 
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {

@@ -63,17 +63,17 @@
    </widget>
    <widget class="QMenu" name="menuPROCESS">
     <property name="title">
-     <string>PROCESS</string>
+     <string>&amp;EDIT</string>
     </property>
-    <addaction name="actionRUN"/>
-    <addaction name="actionI"/>
-    <addaction name="actionInterrupt"/>
+    <addaction name="actionConsole"/>
+    <addaction name="actionPrefs"/>
    </widget>
    <widget class="QMenu" name="menuHELP">
     <property name="title">
      <string>&amp;HELP</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionOnline_Documentation"/>
    </widget>
    <addaction name="menuProject"/>
    <addaction name="menuPROCESS"/>
@@ -113,17 +113,14 @@
     <string>&amp;Clear</string>
    </property>
   </action>
-  <action name="actionRUN">
+  <action name="actionConsole">
    <property name="text">
-    <string>&amp;Run</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>&amp;Message Console</string>
    </property>
   </action>
-  <action name="actionI">
+  <action name="actionPrefs">
    <property name="text">
-    <string>&amp;Pause</string>
+    <string>&amp;Preferences</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -153,6 +150,11 @@
   <action name="actionProperties">
    <property name="text">
     <string>&amp;Properties...</string>
+   </property>
+  </action>
+  <action name="actionOnline_Documentation">
+   <property name="text">
+    <string>&amp;Online Documentation...</string>
    </property>
   </action>
  </widget>
@@ -271,6 +273,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionConsole</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionConsole()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>591</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAboutDialog()</slot>
@@ -280,5 +298,6 @@
   <slot>actionSave()</slot>
   <slot>actionLoad()</slot>
   <slot>actionSaveAs()</slot>
+  <slot>actionConsole()</slot>
  </slots>
 </ui>

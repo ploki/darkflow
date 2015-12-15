@@ -1,5 +1,6 @@
 #include <QMenu>
 #include "operatorparameterdropdown.h"
+#include "console.h"
 
 OperatorParameterDropDown::OperatorParameterDropDown(
         const QString& name,
@@ -58,11 +59,11 @@ QJsonObject OperatorParameterDropDown::save()
 void OperatorParameterDropDown::load(const QJsonObject &obj)
 {
     if ( obj["type"].toString() != "dropdown" ) {
-        qWarning("invalid parameter type");
+        dflWarning("DropDown: invalid parameter type");
         return;
     }
     if ( obj["name"].toString() != m_name ) {
-        qWarning("invalid parameter name");
+        dflWarning("DropDown: invalid parameter name");
         return;
     }
     bool actionFound = false;
@@ -75,7 +76,7 @@ void OperatorParameterDropDown::load(const QJsonObject &obj)
         }
     }
     if (!actionFound)
-        qWarning("unknown value for dropdown");
+        dflWarning("DropDown: unknown value for dropdown");
 }
 
 

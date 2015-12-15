@@ -57,7 +57,7 @@ return new WorkerHotPixels(m_delta->value(),
 
 void OpHotPixels::selectAggressive(int v)
 {
-    qDebug("agg:%d, req:%d", m_aggressiveValue, v);
+    dflDebug("agg:%d, req:%d", m_aggressiveValue, v);
     if ( m_aggressiveValue != !!v) {
         m_aggressiveValue = !!v;
         setOutOfDate();
@@ -66,7 +66,7 @@ void OpHotPixels::selectAggressive(int v)
 
 void OpHotPixels::selectNaive(int v)
 {
-    qDebug("naive:%d, req:%d", m_naiveValue, v);
+    dflDebug("naive:%d, req:%d", m_naiveValue, v);
     if ( m_naiveValue != !!v) {
         m_naiveValue = !!v;
         setOutOfDate();

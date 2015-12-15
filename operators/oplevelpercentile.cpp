@@ -62,7 +62,7 @@ public:
                         break;
                 }
         }
-        qDebug("bp=%d, wp=%d, perc_bp=%f, perc_wp=%f", blackpoint, whitepoint, perc_bp, perc_wp);
+        dflDebug("bp=%d, wp=%d, perc_bp=%f, perc_wp=%f", blackpoint, whitepoint, perc_bp, perc_wp);
 
         newPhoto.image().level(blackpoint,
                                whitepoint,

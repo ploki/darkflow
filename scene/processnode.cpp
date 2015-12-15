@@ -26,6 +26,7 @@
 #include "processslider.h"
 
 #include "visualization.h"
+#include "console.h"
 
 #define PEN_WIDTH 2
 
@@ -103,7 +104,7 @@ void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal s
             new ProcessSlider(QRectF(x,y+size*i+offset, w, size),slider, m_process, this);
         }
         else {
-            qWarning("Unknown parameter type");
+            dflWarning("ProcessNode: Unknown parameter type");
         }
     }
 }

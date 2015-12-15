@@ -1,5 +1,7 @@
 #include "algorithm.h"
 #include "photo.h"
+#include "console.h"
+
 #include <Magick++.h>
 
 Algorithm::Algorithm(QObject *parent) :
@@ -17,7 +19,7 @@ Photo Algorithm::apply(const Photo &source)
 
 void Algorithm::applyOnImage(Magick::Image &)
 {
-    qWarning("Not Implemented");
+    dflWarning("Algorithm::applyOnImage Not Implemented");
 }
 
 void Algorithm::applyOn(Photo &photo)

@@ -1,8 +1,6 @@
 #include "workerdebayer.h"
 #include "bayer.h"
-
-
-
+#include "console.h"
 
 WorkerDebayer::WorkerDebayer(OpDebayer::Debayer quality, QThread *thread, Operator *op) :
     OperatorWorker(thread, op),
@@ -58,7 +56,7 @@ void bayerToPixel(const Magick::PixelPacket& src,
         ++count[2];
         break;
     default:
-        qWarning("color index out of range");
+        dflWarning("bayerToPixel: color index out of range");
     }
 }
 static Photo debayerMask(const Photo &photo, u_int32_t filters)
@@ -147,7 +145,7 @@ get_color_filter(const Photo& photo)
     else if ( str == "BGGR" )
         return DC1394_COLOR_FILTER_BGGR;
     else {
-        qWarning("Unknown color filter pattern");
+        dflWarning("ColorFilter: Unknown color filter pattern");
         return DC1394_COLOR_FILTER_RGGB;
     }
 }

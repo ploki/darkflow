@@ -1,6 +1,6 @@
 #include "operatorparameterslider.h"
 #include "slider.h"
-
+#include "console.h"
 
 OperatorParameterSlider::OperatorParameterSlider(const QString &name,
                                                  const QString &caption,
@@ -108,7 +108,7 @@ void OperatorParameterSlider::setMax(const qreal &max)
 void OperatorParameterSlider::setValue(const qreal &value)
 {
     m_value = value;
-    qDebug("Slider emit setOutOfDate()");
+    dflDebug("Slider: emit setOutOfDate()");
     emit setOutOfDate();
 }
 
@@ -128,11 +128,11 @@ QJsonObject OperatorParameterSlider::save()
 void OperatorParameterSlider::load(const QJsonObject &obj)
 {
     if ( obj["type"].toString() != "slider" ) {
-        qWarning("invalid parameter type");
+        dflWarning("Slider: invalid parameter type");
         return;
     }
     if ( obj["name"].toString() != m_name ) {
-        qWarning("invalid parameter name");
+        dflWarning("Slider: invalid parameter name");
         return;
     }
     m_unit = Slider::unitFromString(obj["unit"].toString());

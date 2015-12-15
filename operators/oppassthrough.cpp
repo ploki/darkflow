@@ -38,7 +38,7 @@ OpPassThrough::OpPassThrough(Process *parent) :
 
 OpPassThrough::~OpPassThrough()
 {
-   // qDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
+   // dflDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
 }
 
 

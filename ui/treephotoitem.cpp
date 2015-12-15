@@ -1,6 +1,6 @@
 #include "treephotoitem.h"
 #include "photo.h"
-
+#include "console.h"
 
 TreePhotoItem::TreePhotoItem(const Photo &photo,
                              PhotoType type,
@@ -12,10 +12,10 @@ TreePhotoItem::TreePhotoItem(const Photo &photo,
     setText(0, photo.getTag("Name"));
     setToolTip(0, photo.getIdentity());
     if ( !photo.isComplete() ) {
-        qWarning("photo is not complete");
+        dflCritical("TreePhotoItem: photo is not complete");
     }
     if ( !m_photo.isComplete() ) {
-        qWarning("m_photo is not complete");
+        dflCritical("TreePhotoItem: m_photo is not complete");
     }
     setType(type);
 }

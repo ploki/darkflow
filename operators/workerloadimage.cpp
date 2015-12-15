@@ -67,15 +67,15 @@ void WorkerLoadImage::play()
             }
         }
         catch(Magick::Exception *e) {
-            qDebug(e->what());
+            dflError(e->what());
             delete e;
         }
         catch(std::exception *e) {
-            qDebug(e->what());
+            dflError(e->what());
             delete e;
         }
         catch(...) {
-            qDebug("unknown exception");
+            dflError("unknown image exception");
         }
 
 #pragma omp critical

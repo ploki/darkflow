@@ -2,6 +2,9 @@
 #include <QJsonArray>
 #include <QStringList>
 
+#include <cstdio>
+
+#include "console.h"
 #include "operator.h"
 #include "process.h"
 #include "photo.h"
@@ -117,7 +120,7 @@ void Operator::parentUpToDate()
         play();
         break;
     default:
-        qWarning("Unknwon waiting reason");
+        dflWarning("Unknwon waiting reason");
     case NotWaiting:
         // emit permit to notif following operator of new inputs even if not waiting
         emit stateChanged();
@@ -237,31 +240,31 @@ QVector<QVector<Photo> > Operator::collectInputs()
 void Operator::play() {
     Q_ASSERT(QThread::currentThread() == thread());
     if (m_worker) {
-        qDebug("already playing");
+        dflDebug("already playing");
         return;
     }
     if (isUpToDate())
         return;
     if (play_parentDirty(WaitingForPlay))
         return;
-    qDebug(QString("play on "+m_uuid).toLatin1());
+    dflDebug("play on "+m_uuid);
     m_workerAboutToStart = true;
     m_worker = newWorker();
     setOutOfDate();
     m_worker->start(collectInputs(), m_outputStatus);
     m_workerAboutToStart = false;
-    qDebug(QString("worker started for "+m_uuid).toLatin1());
+    dflDebug("worker started for "+m_uuid);
 }
 
 bool Operator::isUpToDate() const
 {
-    qDebug(QString(m_uuid + " is up to date: %0").arg(m_upToDate && !m_worker).toLatin1());
+    dflDebug(QString(m_uuid + " is up to date: %0").arg(m_upToDate && !m_worker));
     return m_upToDate;
 }
 
 void Operator::setUpToDate()
 {
-    qDebug("setUpToDate()");
+    dflDebug("setUpToDate()");
     Q_ASSERT(QThread::currentThread() == thread());
     m_upToDate = true;
     emit progress(1, 1);
@@ -272,11 +275,11 @@ void Operator::setOutOfDate()
 {
     Q_ASSERT(QThread::currentThread() == thread());
     if ( m_worker && !m_workerAboutToStart ) {
-        qDebug("Sending 'stop' to worker");
+        dflDebug("Sending 'stop' to worker");
         stop();
         return;
     }
-    qDebug("setOutOfDate()");
+    dflDebug("setOutOfDate()");
     m_upToDate = false;
     foreach(OperatorOutput *output, m_outputs) {
         output->m_result.clear();
@@ -393,7 +396,7 @@ void Operator::save(QJsonObject &obj)
     obj["classIdentifier"] = getClassIdentifier();
     obj["name"] = getName();
     foreach(OperatorParameter *parameter, m_parameters) {
-        qDebug("saving a parameter");
+        dflDebug("saving a parameter");
         parameters.push_back(parameter->save());
     }
     obj["parameters"] = parameters;
@@ -449,3 +452,88 @@ void Operator::load(QJsonObject &obj)
     emit stateChanged();
 }
 
+
+static void logMessage(Console::Level level, const QString& who, const QString& msg)
+{
+    dflMessage(level, who+": "+msg);
+}
+
+void Operator::dflDebug(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Debug, getName(), msg);
+    free(msg);
+}
+
+void Operator::dflInfo(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Info, getName(), msg);
+    free(msg);
+}
+
+void Operator::dflWarning(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Warning, getName(), msg);
+    free(msg);
+}
+
+void Operator::dflError(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Error, getName(), msg);
+    free(msg);
+}
+
+void Operator::dflCritical(const char *fmt, ...) const
+{
+    va_list ap;
+    char *msg;
+    va_start(ap, fmt);
+    vasprintf(&msg, fmt, ap);
+    va_end(ap);
+    logMessage(Console::Critical, getName(), msg);
+    free(msg);
+}
+
+void Operator::dflDebug(const QString &msg) const
+{
+    logMessage(Console::Debug, getName(), msg);
+}
+
+void Operator::dflInfo(const QString &msg) const
+{
+    logMessage(Console::Info, getName(), msg);
+}
+
+void Operator::dflWarning(const QString &msg) const
+{
+    logMessage(Console::Warning, getName(), msg);
+}
+
+void Operator::dflError(const QString &msg) const
+{
+    logMessage(Console::Error, getName(), msg);
+}
+
+void Operator::dflCritical(const QString &msg) const
+{
+    logMessage(Console::Critical, getName(), msg);
+}

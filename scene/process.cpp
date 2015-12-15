@@ -23,6 +23,8 @@
 #include "processfilescollection.h"
 #include "processslider.h"
 
+#include "console.h"
+
 #include "oploadraw.h"
 #include "opexnihilo.h"
 #include "oppassthrough.h"
@@ -294,7 +296,7 @@ void Process::save()
     foreach (QGraphicsItem *item, m_scene->items()) {
         if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
             ProcessNode *node = dynamic_cast<ProcessNode *>(item);
-            qDebug("saving a node");
+            dflDebug("Process: saving a node");
             nodes.push_back(node->save());
         }
         else if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeConnection ) {
@@ -308,7 +310,7 @@ void Process::save()
     doc.setObject(obj);
     QFile saveFile(projectFile());
     if (!saveFile.open(QIODevice::WriteOnly)) {
-           qWarning("Couldn't open save file.");
+           dflWarning("Process: Couldn't open save file.");
        return;
     }
 
@@ -322,7 +324,7 @@ void Process::load(const QString& filename)
     QFile loadFile(filename);
     if (!loadFile.open(QIODevice::ReadOnly))
     {
-            qWarning("Couldn't open load file.");
+            dflWarning("Process: Couldn't open load file.");
             return;
     }
     QByteArray data = loadFile.readAll();
@@ -353,20 +355,20 @@ void Process::load(const QString& filename)
             }
         }
         if (!operatorFound) {
-            qWarning("Unknown operator");
+            dflWarning("Process: Unknown operator");
         }
     }
     foreach(QJsonValue val, obj["connections"].toArray()) {
         QJsonObject obj = val.toObject();
         ProcessNode *outNode = findNode(obj["outPortUuid"].toString());
         if ( NULL == outNode ) {
-            qWarning("unknown output node");
+            dflWarning("Process: unknown output node");
             continue;
         }
         int outIdx = obj["outPortIdx"].toInt();
         ProcessNode *inNode = findNode(obj["inPortUuid"].toString());
         if ( NULL == inNode ) {
-            qWarning("unknown input node");
+            dflWarning("Process: unknown input node");
             continue;
         }
         int inIdx = obj["inPortIdx"].toInt();
@@ -513,7 +515,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     }
 
 /*
- *     qDebug("it's a mouse event");
+ *     dflDebug("Process: it's a mouse event");
     m_scene->addRect(me->scenePos().x()-5,
                      me->scenePos().y()-5,
                      10,

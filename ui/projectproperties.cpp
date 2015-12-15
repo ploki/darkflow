@@ -51,8 +51,11 @@ void ProjectProperties::selectProjectFile()
                                                     base,
                                                     "Darkflow Project (*.dflow)",
                                                     0, 0);
-    if ( !filename.isEmpty())
-        ui->project_file->setText(filename);
+    if ( filename.isEmpty())
+        return;
+    if ( !filename.endsWith(".dflow",Qt::CaseInsensitive) )
+        filename+=".dflow";
+    ui->project_file->setText(filename);
 }
 
 void ProjectProperties::selectBaseDirectory()

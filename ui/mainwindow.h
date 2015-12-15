@@ -9,6 +9,7 @@ class MainWindow;
 }
 
 class AboutDialog;
+class Preferences;
 class ProjectProperties;
 class Process;
 class ProcessScene;
@@ -28,6 +29,7 @@ public slots:
     void actionExit();
     void actionNewProject();
     void actionProjectProperties();
+    void actionPreferences();
     void actionSave();
     void actionLoad();
     void actionSaveAs();
@@ -39,6 +41,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     AboutDialog *aboutDialog;
+    Preferences *preferences;
     ProjectProperties *projectProperties;
     ProcessScene *scene;
     Process *process;

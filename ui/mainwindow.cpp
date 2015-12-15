@@ -12,6 +12,7 @@
 #include "projectproperties.h"
 #include "process.h"
 #include "processscene.h"
+#include "preferences.h"
 
 void MainWindow::showAboutDialog()
 {
@@ -43,6 +44,11 @@ void MainWindow::actionNewProject()
 void MainWindow::actionProjectProperties()
 {
     projectProperties->modify(process);
+}
+
+void MainWindow::actionPreferences()
+{
+    preferences->show();
 }
 
 void MainWindow::actionSave()
@@ -108,12 +114,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     aboutDialog(new AboutDialog(this)),
+    preferences(0 /* defered because of console */ ),
     projectProperties(new ProjectProperties(this)),
     scene(new ProcessScene(this)),
     process(new Process(scene, this)),
     zoom(0)
 {
     Console::init();
+    preferences = new Preferences(this);
     ui->setupUi(this);
     QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
     resize( screenSize * 4 / 5);
@@ -135,6 +143,7 @@ MainWindow::~MainWindow()
     delete process;
     delete scene;
     delete projectProperties;
+    delete preferences;
     delete aboutDialog;
     delete ui;
     Console::fini();
@@ -178,6 +187,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         if (aboutDialog->isVisible())
             aboutDialog->close();
         Console::close();
+        preferences->close();
         event->accept();
         scene->clear();
     }

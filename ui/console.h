@@ -16,7 +16,8 @@ public:
         Info,
         Warning,
         Error,
-        Critical
+        Critical,
+        LastLevel
     } Level;
     static void init();
     static void fini();
@@ -24,6 +25,10 @@ public:
     static void close();
     static Level getLevel();
     static void setLevel(Level level);
+    static void setTrapLevel(Level level);
+    static void setRaiseLevel(Level level);
+    static void trap(Level level);
+
 
 private slots:
     void recvMessage(Level level, QString message);
@@ -33,6 +38,8 @@ signals:
 
 private:
     Level m_level;
+    Level m_raiseLevel;
+    Level m_trapLevel;
     explicit Console(QWidget *parent = 0);
     Ui::Console *ui;
     ~Console();

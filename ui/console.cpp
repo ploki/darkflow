@@ -3,11 +3,15 @@
 #include "ui_console.h"
 #include <QDateTime>
 
+#include <csignal>
+
 Console *console = NULL;
 
 Console::Console(QWidget *parent) :
     QMainWindow(parent),
     m_level(Info),
+    m_raiseLevel(Error),
+    m_trapLevel(LastLevel),
     ui(new Ui::Console)
 {
     ui->setupUi(this);
@@ -55,6 +59,22 @@ void Console::setLevel(Console::Level level)
     console->m_level = level;
 }
 
+void Console::setTrapLevel(Console::Level level)
+{
+    console->m_trapLevel = level;
+}
+
+void Console::setRaiseLevel(Console::Level level)
+{
+    console->m_raiseLevel = level;
+}
+
+void Console::trap(Console::Level level)
+{
+    if ( level >= console->m_trapLevel )
+        ::raise(SIGTRAP);
+}
+
 void Console::recvMessage(Console::Level level, QString message)
 {
     if ( level < m_level )
@@ -73,19 +93,25 @@ void Console::recvMessage(Console::Level level, QString message)
     case Console::Error:
         ui->textEdit->setTextColor(Qt::red);
         message = message;
-        show();
         break;
+    default:
+        message = "Unknown LogLevel!: " + message;
     case Console::Critical:
         ui->textEdit->setTextBackgroundColor(Qt::red);
         ui->textEdit->setTextColor(Qt::white);
         show();
         break;
     }
+    if ( level >= m_raiseLevel ) {
+        show();
+        raise();
+    }
     ui->textEdit->append(QDateTime::currentDateTime().toString("yyyy/MM/dd-HH:mm:ss")+": "+message);
 }
 
 static void message(Console::Level level, const char *fmt, va_list ap)
 {
+    Console::trap(level);
     char *msg;
     vasprintf(&msg, fmt, ap);
     emit console->message(level, msg);
@@ -139,6 +165,7 @@ void dflCritical(const char* fmt, ...)
 }
 
 void dflMessage(Console::Level level, const QString& msg) {
+    Console::trap(level);
     emit console->message(level, msg);
 }
 

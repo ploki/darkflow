@@ -136,7 +136,8 @@ SOURCES +=\
     algorithms/hotpixels.cpp \
     operators/ophotpixels.cpp \
     operators/opcolor.cpp \
-    ui/console.cpp
+    ui/console.cpp \
+    ui/preferences.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -249,7 +250,8 @@ HEADERS  += \
     algorithms/hotpixels.h \
     operators/ophotpixels.h \
     operators/opcolor.h \
-    ui/console.h
+    ui/console.h \
+    ui/preferences.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -259,7 +261,8 @@ FORMS    += \
     ui/visualization.ui \
     ui/slider.ui \
     ui/fullscreenview.ui \
-    ui/console.ui
+    ui/console.ui \
+    ui/preferences.ui
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil liblimereg

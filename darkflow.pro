@@ -117,8 +117,6 @@ SOURCES +=\
     operators/opcmycompose.cpp \
     operators/oproll.cpp \
     operators/opscale.cpp \
-    operators/oplimereg.cpp \
-    operators/workerlimereg.cpp \
     operators/opssdreg.cpp \
     operators/workerssdreg.cpp \
     operators/opbracketing.cpp \
@@ -231,8 +229,6 @@ HEADERS  += \
     operators/opcmycompose.h \
     operators/oproll.h \
     operators/opscale.h \
-    operators/oplimereg.h \
-    operators/workerlimereg.h \
     operators/opssdreg.h \
     operators/workerssdreg.h \
     operators/opbracketing.h \
@@ -265,5 +261,5 @@ FORMS    += \
     ui/preferences.ui
 
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil liblimereg
+unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil
 #unix: PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil

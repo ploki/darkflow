@@ -63,7 +63,6 @@
 #include "opconvolution.h"
 #include "oproll.h"
 #include "opscale.h"
-#include "oplimereg.h"
 #include "opssdreg.h"
 #include "opbracketing.h"
 #include "opgradientevaluation.h"
@@ -157,7 +156,6 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpScale(this));
     m_availableOperators.push_back(new OpRoll(this));
 
-    m_availableOperators.push_back(new OpLimereg(this));
     m_availableOperators.push_back(new OpSsdReg(this));
 
     m_availableOperators.push_back(new OpDemultiplexer(2, this));

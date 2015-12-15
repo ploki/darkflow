@@ -16,7 +16,7 @@ OpLoadImage::OpLoadImage(Process *parent) :
                           "imageCollection",
                           "Images",
                           tr("Select images to add to the collection"),
-                          m_process->outputDirectory(),
+                          m_process->baseDirectory(),
                           "FITS Images (*.fits *.fit);;"
                           "TIFF Images (*.tif *.tiff);;"
                           "All Files (*.*)", this)),

@@ -31,8 +31,7 @@ void ProjectProperties::modifyInternal(Process *process, bool andSave)
         ui->project_name->setText(process->projectName());
         ui->notes->setPlainText(process->notes());
         ui->project_file->setText(process->projectFile());
-        ui->output_directory->setText(process->outputDirectory());
-        ui->temporary_directory->setText(process->temporaryDirectory());
+        ui->valueBaseDir->setText(process->baseDirectory());
     }
     this->show();
 }
@@ -44,32 +43,26 @@ ProjectProperties::~ProjectProperties()
 
 void ProjectProperties::selectProjectFile()
 {
+    QString base = ui->project_file->text();
+    if (base.isEmpty())
+        base = ui->valueBaseDir->text();
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Select a project file"),
-                                                    ui->project_file->text(),
+                                                    base,
                                                     "Darkflow Project (*.dflow)",
                                                     0, 0);
     if ( !filename.isEmpty())
         ui->project_file->setText(filename);
 }
 
-void ProjectProperties::selectOutputDirectory()
+void ProjectProperties::selectBaseDirectory()
 {
-    QString outputDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                          ui->output_directory->text(),
+    QString baseDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                          ui->valueBaseDir->text(),
                                                           QFileDialog::ShowDirsOnly);
-    if ( !outputDir.isEmpty())
-        ui->output_directory->setText(outputDir);
+    if ( !baseDir.isEmpty())
+        ui->valueBaseDir->setText(baseDir);
 
-}
-
-void ProjectProperties::selectTemporaryDirectory()
-{
-    QString tmpDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                       ui->temporary_directory->text(),
-                                                       QFileDialog::ShowDirsOnly);
-    if ( !tmpDir.isEmpty())
-        ui->temporary_directory->setText(tmpDir);
 }
 
 void ProjectProperties::accept()
@@ -78,8 +71,7 @@ void ProjectProperties::accept()
         m_process->setProjectName(ui->project_name->text());
         m_process->setProjectFile(ui->project_file->text());
         m_process->setNotes(ui->notes->toPlainText());
-        m_process->setOutputDirectory(ui->output_directory->text());
-        m_process->setTemporaryDirectory(ui->temporary_directory->text());
+        m_process->setBaseDirectory(ui->valueBaseDir->text());
         if (m_andSave) {
             if ( m_process->projectFile().isEmpty())
                 QMessageBox::warning( this, this->objectName(),

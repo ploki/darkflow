@@ -31,6 +31,7 @@ public:
 
 #endif
 
+Preferences *preferences = NULL;
 
 Preferences::Preferences(QWidget *parent) :
     QDialog(parent),
@@ -65,6 +66,11 @@ Preferences::Preferences(QWidget *parent) :
 Preferences::~Preferences()
 {
     delete ui;
+}
+
+QString Preferences::baseDir()
+{
+    return ui->valueBaseDir->text();
 }
 
 void Preferences::getDefaultMagickResources()

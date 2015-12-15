@@ -78,6 +78,7 @@
 #include "opreducenoise.h"
 #include "ophotpixels.h"
 #include "opcolor.h"
+#include "preferences.h"
 
 QString Process::uuid()
 {
@@ -90,8 +91,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     QObject(parent),
     m_projectName(),
     m_notes(),
-    m_outputDirectory(),
-    m_temporaryDirectory(),
+    m_baseDirectory(),
     m_scene(scene),
     m_dirty(false),
     m_availableOperators(),
@@ -228,28 +228,15 @@ void Process::setNotes(const QString &notes)
     }
 }
 
-QString Process::outputDirectory() const
+QString Process::baseDirectory() const
 {
-    return m_outputDirectory;
+    return m_baseDirectory;
 }
 
-void Process::setOutputDirectory(const QString &outputDirectory)
+void Process::setBaseDirectory(const QString &baseDirectory)
 {
-    if ( m_outputDirectory != outputDirectory ) {
-        m_outputDirectory = outputDirectory;
-        setDirty(true);
-    }
-}
-
-QString Process::temporaryDirectory() const
-{
-    return m_temporaryDirectory;
-}
-
-void Process::setTemporaryDirectory(const QString &temporaryDirectory)
-{
-    if ( m_temporaryDirectory != temporaryDirectory ) {
-        m_temporaryDirectory = temporaryDirectory;
+    if ( m_baseDirectory != baseDirectory ) {
+        m_baseDirectory = baseDirectory;
         setDirty(true);
     }
 }
@@ -291,8 +278,7 @@ void Process::save()
     QJsonDocument doc;
     obj["projectName"]=projectName();
     obj["notes"]=notes();
-    obj["outputDirectory"]=outputDirectory();
-    obj["temporaryDirectory"]=temporaryDirectory();
+    obj["baseDirectory"]=baseDirectory();
     foreach (QGraphicsItem *item, m_scene->items()) {
         if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
             ProcessNode *node = dynamic_cast<ProcessNode *>(item);
@@ -334,8 +320,7 @@ void Process::load(const QString& filename)
     setProjectFile(filename);
     setProjectName(obj["projectName"].toString());
     setNotes(obj["notes"].toString());
-    setOutputDirectory(obj["outputDirectory"].toString());
-    setTemporaryDirectory(obj["temporaryDirectory"].toString());
+    setBaseDirectory(obj["outputDirectory"].toString());
 
     foreach(QJsonValue val, obj["nodes"].toArray()) {
         QJsonObject obj = val.toObject();
@@ -530,8 +515,7 @@ void Process::reset()
     setProjectName("");
     setNotes("");
     setProjectFile("");
-    setOutputDirectory(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    setTemporaryDirectory(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
+    setBaseDirectory(preferences->baseDir());
     m_scene->clear();
     setDirty(true);
 }

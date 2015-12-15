@@ -23,8 +23,7 @@ public:
 
 public slots:
     void selectProjectFile();
-    void selectOutputDirectory();
-    void selectTemporaryDirectory();
+    void selectBaseDirectory();
     void accept();
 
 private:

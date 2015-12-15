@@ -24,7 +24,7 @@ OpLoadRaw::OpLoadRaw(Process *parent) :
                           "rawCollection",
                           "RAW photos",
                           tr("Select RAW photos to add to the collection"),
-                          m_process->outputDirectory(),
+                          m_process->baseDirectory(),
                           "RAW photos (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;"
                           /*"FITS Images (*.fits *.fit);;"*/
                           /*"TIFF Images (*.tif *.tiff);;"*/

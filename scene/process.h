@@ -38,11 +38,8 @@ public:
     QString notes() const;
     void setNotes(const QString &notes);
 
-    QString outputDirectory() const;
-    void setOutputDirectory(const QString &outputDirectory);
-
-    QString temporaryDirectory() const;
-    void setTemporaryDirectory(const QString &temporaryDirectory);
+    QString baseDirectory() const;
+    void setBaseDirectory(const QString &outputDirectory);
 
     void reset();
     void save();
@@ -72,8 +69,7 @@ private:
     QString m_projectName;
     QString m_projectFile;
     QString m_notes;
-    QString m_outputDirectory;
-    QString m_temporaryDirectory;
+    QString m_baseDirectory;
     ProcessScene *m_scene;
     bool m_dirty;
     QVector<Operator*> m_availableOperators;

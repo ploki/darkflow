@@ -34,6 +34,7 @@ public slots:
     void actionLoad();
     void actionSaveAs();
     void actionConsole();
+    void actionOnlineDocumentation();
 
 private slots:
     void processStateChanged();
@@ -41,7 +42,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     AboutDialog *aboutDialog;
-    Preferences *preferences;
     ProjectProperties *projectProperties;
     ProcessScene *scene;
     Process *process;

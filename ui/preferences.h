@@ -16,6 +16,8 @@ public:
     explicit Preferences(QWidget *parent = 0);
     ~Preferences();
 
+    QString baseDir();
+
 private:
     void getDefaultMagickResources();
     void getMagickResources();
@@ -39,5 +41,7 @@ private:
     size_t m_defaultThreads;
 
 };
+
+extern Preferences *preferences;
 
 #endif // PREFERENCES_H

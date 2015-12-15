@@ -3,6 +3,8 @@
 #include <QScrollBar>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QDesktopServices>
+#include <QUrl>
 #include <cmath>
 
 #include "console.h"
@@ -73,7 +75,7 @@ void MainWindow::actionLoad()
     if (resBtn == QMessageBox::Yes) {
         QString filename = QFileDialog::getOpenFileName(this,
                                                         tr("Select a project file"),
-                                                        process->projectFile(),
+                                                        preferences->baseDir(),
                                                         "Darkflow Project (*.dflow)",
                                                         0, 0);
         if ( !filename.isEmpty()) {
@@ -92,6 +94,11 @@ void MainWindow::actionSaveAs()
 void MainWindow::actionConsole()
 {
     Console::show();
+}
+
+void MainWindow::actionOnlineDocumentation()
+{
+    QDesktopServices::openUrl(QUrl("http://darkflow.org/redirect/"));
 }
 
 void MainWindow::processStateChanged()
@@ -114,14 +121,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     aboutDialog(new AboutDialog(this)),
-    preferences(0 /* defered because of console */ ),
     projectProperties(new ProjectProperties(this)),
     scene(new ProcessScene(this)),
-    process(new Process(scene, this)),
+    process(0 /* postponed because of preferences */),
     zoom(0)
 {
     Console::init();
     preferences = new Preferences(this);
+    process = new Process(scene, this);
     ui->setupUi(this);
     QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
     resize( screenSize * 4 / 5);

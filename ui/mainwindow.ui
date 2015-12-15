@@ -305,6 +305,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOnline_Documentation</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>actionOnlineDocumentation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>591</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAboutDialog()</slot>
@@ -316,5 +332,6 @@
   <slot>actionSaveAs()</slot>
   <slot>actionConsole()</slot>
   <slot>actionPreferences()</slot>
+  <slot>actionOnlineDocumentation()</slot>
  </slots>
 </ui>

@@ -43,6 +43,7 @@ private:
 protected:
     bool m_signalEmited;
     mutable bool m_error;
+    bool m_earlyFinished;
 
     bool aborted();
     void emitFailure();

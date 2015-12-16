@@ -56,7 +56,7 @@ void bayerToPixel(const Magick::PixelPacket& src,
         ++count[2];
         break;
     default:
-        dflWarning("bayerToPixel: color index out of range");
+        dflError("bayerToPixel: color index out of range");
     }
 }
 static Photo debayerMask(const Photo &photo, u_int32_t filters)
@@ -105,20 +105,24 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
     Magick::Pixels dst_cache(dst);
     const Magick::PixelPacket *image_pixels = image_cache.getConst(0, 0, w*2, h*2);
     Magick::PixelPacket *pixels = dst_cache.get(0, 0, w, h);
+    bool failure = false;
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
         for ( int x = 0 ; x < w ; ++x ) {
+            if ( failure ) continue;
             int count[3] = {};
             quantum_t rgb[3] = {};
             bayerToPixel(image_pixels[(y*2+0)*w*2+(x*2+0)], rgb, filters, y*2+0, x*2+0, count);
             bayerToPixel(image_pixels[(y*2+0)*w*2+(x*2+1)], rgb, filters, y*2+0, x*2+1, count);
             bayerToPixel(image_pixels[(y*2+1)*w*2+(x*2+0)], rgb, filters, y*2+1, x*2+0, count);
             bayerToPixel(image_pixels[(y*2+1)*w*2+(x*2+1)], rgb, filters, y*2+1, x*2+1, count);
-            Q_ASSERT(count[0]==1);
-            Q_ASSERT(count[1]==2);
-            Q_ASSERT(count[2]==1);
             for ( int i = 0 ; i < 3 ; ++i ) {
-                rgb[i] /= count[i];
+                if ( count[i] == 0 ) {
+                    failure = true;
+                }
+                else {
+                    rgb[i] /= count[i];
+                }
             }
             pixels[y*w+x].red=rgb[0];
             pixels[y*w+x].green=rgb[1];
@@ -126,6 +130,12 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
         }
     }
     dst_cache.sync();
+    if ( failure ) {
+        dflError("Debayer(Worker): missing color component");
+        Photo dummy;
+        dummy.setUndefined();
+        return dummy;
+    }
     return newPhoto;
 }
 
@@ -145,8 +155,7 @@ get_color_filter(const Photo& photo)
     else if ( str == "BGGR" )
         return DC1394_COLOR_FILTER_BGGR;
     else {
-        dflWarning("ColorFilter: Unknown color filter pattern");
-        return DC1394_COLOR_FILTER_RGGB;
+        return DARKFLOW_COLOR_FILTER_UNKNOWN;
     }
 }
 
@@ -215,6 +224,10 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
     dc1394bayer_method_t method;
     bool use_dc = true;
 
+    if ( dc_filters == DARKFLOW_COLOR_FILTER_UNKNOWN) {
+        setError(photo, "Unknown color filter pattern");
+        return photo;
+    }
 
     Photo newPhoto;
     switch (m_quality) {
@@ -230,6 +243,10 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
     case OpDebayer::HalfSize:
         use_dc = false;
         newPhoto = debayerHalfSize(photo, filters);
+        if ( newPhoto.isUndefined() ) {
+            setError(photo, "Half Size debayer failed");
+
+        }
         break;
     case OpDebayer::Simple:
         method = DC1394_BAYER_METHOD_SIMPLE;

@@ -231,8 +231,12 @@ QVector<QVector<Photo> > Operator::collectInputs()
                 overrideTags(photo);
                 QString treatTag = photo.getTag("TREAT");
                 if ( treatTag != "DISCARDED" &&
-                     treatTag != "ERROR")
+                     treatTag != "ERROR") {
                     inputs[i].push_back(photo);
+                }
+                else if ( treatTag == "ERROR" ) {
+                    dflWarning("Photo: " + photo.getIdentity() + " discarded because of error");
+                }
             }
         }
         ++i;

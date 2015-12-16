@@ -23,7 +23,8 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     m_outputs(),
     m_outputStatus(),
     m_signalEmited(false),
-    m_error(false)
+    m_error(false),
+    m_earlyFinished(false)
 {
     moveToThread(thread);
     connect(m_thread, SIGNAL(finished()), this, SLOT(finished()));
@@ -90,6 +91,7 @@ void OperatorWorker::finished()
 {
     if ( !m_signalEmited) {
         dflDebug("OperatorWorker::finished: no signal sent, sending failure");
+        m_earlyFinished = true;
         emitFailure();
     }
     else { //signal emited, safe to delete
@@ -108,10 +110,10 @@ void OperatorWorker::emitFailure() {
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit failure"));
     emit failure();
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
-    if ( aborted() && !m_error )
-        dflInfo("aborted");
+    if ( ( m_earlyFinished || aborted() ) && !m_error )
+        dflDebug("Aborted");
     else
-        dflError("Worker emited failure");
+        dflError("Failure");
 }
 
 void OperatorWorker::emitSuccess()
@@ -122,7 +124,7 @@ void OperatorWorker::emitSuccess()
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit success"));
     emit success(m_outputs);
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
-    dflInfo("Worker emited success");
+    dflInfo("Success");
 }
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
@@ -169,19 +171,14 @@ bool OperatorWorker::play_onInput(int idx)
     int p = 0;
     c = m_inputs[idx].count();
 
-    if ( 0 == c ) {
-        dflWarning("0 images in input[%d]", idx);
-        emitFailure();
-        return false;
-    }
     foreach(Photo photo, m_inputs[idx]) {
         if ( m_error ) {
-            dflError("OperatorWorker in error, sending failure");
+            dflDebug("in error, sending failure");
             emitFailure();
             return false;
         }
         if ( aborted() ) {
-            dflError("OperatorWorker aborted, sending failure");
+            dflDebug("aborted, sending failure");
             emitFailure();
             return false;
         }
@@ -189,7 +186,8 @@ bool OperatorWorker::play_onInput(int idx)
         try {
             Photo newPhoto = this->process(photo, p++, c);
             if ( !newPhoto.isComplete() ) {
-                dflCritical("OperatorWorker: photo is not complete, sending failure");
+                dflDebug("photo is not complete, sending failure");
+                m_error = true;
                 emitFailure();
                 return false;
             }
@@ -216,11 +214,6 @@ bool OperatorWorker::play_onInputParallel(int idx)
     int c = 0;
     int p = 0;
     c = m_inputs[idx].count();
-    if ( 0 == c ) {
-        dflWarning("0 images in input[%d]", idx);
-        emitFailure();
-        return false;
-    }
 
 #pragma omp parallel for
     for (int i = 0 ; i < c ; ++i ) {
@@ -240,7 +233,8 @@ bool OperatorWorker::play_onInputParallel(int idx)
             continue;
         }
         if ( !newPhoto.isComplete() ) {
-            dflCritical("OperatorWorker: photo is not complete, sending failure");
+            dflDebug("photo is not complete, sending failure");
+            m_error = true;
             continue;
         }
         newPhoto.setSequenceNumber(i);
@@ -254,11 +248,11 @@ bool OperatorWorker::play_onInputParallel(int idx)
         }
     }
     if ( m_error ) {
-        dflError("OperatorWorker in error");
+        dflDebug("in error, sending failure");
         emitFailure();
     }
     else if ( aborted() ) {
-        dflError("OperatorWorker aborted, sending failure");
+        dflDebug("aborted, sending failure");
         emitFailure();
     }
     else {
@@ -355,6 +349,7 @@ void OperatorWorker::dflCritical(const QString &msg) const
 
 void OperatorWorker::setError(const Photo &photo, const QString &msg) const
 {
+    dflError("Photo: " + photo.getIdentity() + ", Error: " + msg);
     emit m_operator->setError(photo.getIdentity(), msg);
     m_error = true;
     m_operator->stop();

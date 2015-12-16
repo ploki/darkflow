@@ -70,6 +70,7 @@ as
  * and similarly for other filters.
  */
 typedef enum {
+    DARKFLOW_COLOR_FILTER_UNKNOWN = 0,
     DC1394_COLOR_FILTER_RGGB = 512,
     DC1394_COLOR_FILTER_GBRG,
     DC1394_COLOR_FILTER_GRBG,

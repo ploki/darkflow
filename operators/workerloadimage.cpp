@@ -66,21 +66,19 @@ void WorkerLoadImage::play()
                 ++plane;
             }
         }
-        catch(Magick::Exception *e) {
-            dflError(e->what());
-            delete e;
-        }
-        catch(std::exception *e) {
-            dflError(e->what());
-            delete e;
+        catch(std::exception &e) {
+            dflError(e.what());
+            failure = true;
         }
         catch(...) {
             dflError("unknown image exception");
+            failure = true;
         }
 
 #pragma omp critical
         {
-            emit progress(++p, s);
+            if ( !failure )
+                emit progress(++p, s);
         }
     }
     if ( failure ) {

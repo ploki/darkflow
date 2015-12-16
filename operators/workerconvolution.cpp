@@ -163,16 +163,22 @@ void WorkerConvolution::play()
     foreach(Photo photo, m_inputs[0]) {
         if (aborted())
             continue;
-        Magick::Image& image = photo.image();
-        Magick::Image& kernel = m_inputs[1][n%k_count].image();
-        int w=image.columns();
-        int h=image.rows();
-        conv(image, kernel, m_luminosity);
-        image.page(Magick::Geometry(0,0,0,0));
-        image.crop(Magick::Geometry(w, h));
-        outputPush(0, photo);
-        emitProgress(n,complete, 1, 1);
-        ++n;
+        try {
+            Magick::Image& image = photo.image();
+            Magick::Image& kernel = m_inputs[1][n%k_count].image();
+            int w=image.columns();
+            int h=image.rows();
+            conv(image, kernel, m_luminosity);
+            image.page(Magick::Geometry(0,0,0,0));
+            image.crop(Magick::Geometry(w, h));
+            outputPush(0, photo);
+            emitProgress(n,complete, 1, 1);
+            ++n;
+        }
+        catch (std::exception &e) {
+            setError(photo, e.what());
+            setError(m_inputs[1][n%k_count], e.what());
+        }
     }
     if ( aborted() )
         emitFailure();

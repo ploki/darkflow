@@ -37,7 +37,10 @@ bool TreePhotoItem::isInput() const
 
 void TreePhotoItem::setType(TreePhotoItem::PhotoType type)
 {
-    if ( type == InputDisabled ) {
+    if ( type == InputError ) {
+        setForeground(0, Qt::red);
+    }
+    else if ( type == InputDisabled ) {
         setForeground(0, Qt::gray);
     }
     else if ( type == InputReference ) {

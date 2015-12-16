@@ -173,80 +173,90 @@ void WorkerBlend::play()
         Magick::Image *imageB = NULL;
         Magick::Image *imageC = NULL;
 
-        imageA->modifyImage();
-        underflow.image().modifyImage();
-        overflow.image().modifyImage();
-
-        Magick::Pixels *imageA_cache = imageA?new Magick::Pixels(*imageA):NULL;
+        Magick::Pixels *imageA_cache = NULL;
         Magick::Pixels *imageB_cache = NULL;
         Magick::Pixels *imageC_cache = NULL;
-        Magick::Pixels underflow_cache(underflow.image());
-        Magick::Pixels overflow_cache(overflow.image());
-        int w = imageA->columns();
-        int h = imageA->rows();
-        int b_w = 0;
-        int b_h = 0;
-        int c_w = 0;
-        int c_h = 0;
-        if ( photoB ) {
-            imageB = &photoB->image();
-            imageB_cache = new Magick::Pixels(*imageB);
-            b_w = imageB->columns();
-            b_h = imageB->rows();
-        }
-        if ( photoC ) {
-            imageC = &photoC->image();
-            imageC_cache = new Magick::Pixels(*imageC);
-            c_w = imageC->columns();
-            c_h = imageC->rows();
-        }
-#pragma omp parallel for
-        for ( int y = 0 ; y < h ; ++y ) {
-            Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
-            Magick::PixelPacket *pxl_o = overflow_cache.get(0, y, w, 1);
-            Magick::PixelPacket *pxl_A = imageA_cache->get(0, y, w, 1);
-            const Magick::PixelPacket *pxl_B = NULL;
-            const Magick::PixelPacket *pxl_C = NULL;
-            if ( imageB_cache )
-                pxl_B = imageB_cache->getConst(0, y%b_h, b_w, 1);
-            if ( imageC_cache )
-                pxl_C = imageC_cache->getConst(0, y%c_h, c_w, 1);
-            for ( int x = 0 ; x < w ; ++x ) {
-                const Magick::PixelPacket *pB = NULL;
-                const Magick::PixelPacket *pC = NULL;
-                if ( pxl_B ) pB = pxl_B+(x%b_w);
-                if ( pxl_C ) pC = pxl_C+(x%c_w);
-                blend(pxl_A+x,
-                      pB, pC,
-                      pxl_u+x,
-                      pxl_o+x,
-                      m_mode1,
-                      m_mode2);
-            }
-        }
-        imageA_cache->sync();
-        underflow_cache.sync();
-        overflow_cache.sync();
+        try {
+            imageA->modifyImage();
+            underflow.image().modifyImage();
+            overflow.image().modifyImage();
 
-        if ( b_h == 1 && b_w == 1 &&
-             c_h == 1 && c_w == 1 ) {
-            photoA.curve().modifyImage();
-            Magick::Pixels curve_cache(photoA.curve());
-            Magick::PixelPacket *pxl_A = curve_cache.get(0, 0, 65536, 1);
-            const Magick::PixelPacket *pxl_B = NULL;
-            const Magick::PixelPacket *pxl_C = NULL;
-            if ( imageB_cache )
-                pxl_B = imageB_cache->getConst(0, 0, 1, 1);
-            if ( imageC_cache )
-                pxl_C = imageC_cache->getConst(0, 0, 1, 1);
-            for ( int x = 0; x < 65536 ; ++x ) {
-                blend(pxl_A+x, pxl_B, pxl_C, NULL, NULL, m_mode1, m_mode2);
+            imageA_cache = imageA?new Magick::Pixels(*imageA):NULL;
+            Magick::Pixels underflow_cache(underflow.image());
+            Magick::Pixels overflow_cache(overflow.image());
+            int w = imageA->columns();
+            int h = imageA->rows();
+            int b_w = 0;
+            int b_h = 0;
+            int c_w = 0;
+            int c_h = 0;
+            if ( photoB ) {
+                imageB = &photoB->image();
+                imageB_cache = new Magick::Pixels(*imageB);
+                b_w = imageB->columns();
+                b_h = imageB->rows();
             }
-            curve_cache.sync();
+            if ( photoC ) {
+                imageC = &photoC->image();
+                imageC_cache = new Magick::Pixels(*imageC);
+                c_w = imageC->columns();
+                c_h = imageC->rows();
+            }
+#pragma omp parallel for
+            for ( int y = 0 ; y < h ; ++y ) {
+                Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
+                Magick::PixelPacket *pxl_o = overflow_cache.get(0, y, w, 1);
+                Magick::PixelPacket *pxl_A = imageA_cache->get(0, y, w, 1);
+                const Magick::PixelPacket *pxl_B = NULL;
+                const Magick::PixelPacket *pxl_C = NULL;
+                if ( imageB_cache )
+                    pxl_B = imageB_cache->getConst(0, y%b_h, b_w, 1);
+                if ( imageC_cache )
+                    pxl_C = imageC_cache->getConst(0, y%c_h, c_w, 1);
+                for ( int x = 0 ; x < w ; ++x ) {
+                    const Magick::PixelPacket *pB = NULL;
+                    const Magick::PixelPacket *pC = NULL;
+                    if ( pxl_B ) pB = pxl_B+(x%b_w);
+                    if ( pxl_C ) pC = pxl_C+(x%c_w);
+                    blend(pxl_A+x,
+                          pB, pC,
+                          pxl_u+x,
+                          pxl_o+x,
+                          m_mode1,
+                          m_mode2);
+                }
+            }
+            imageA_cache->sync();
+            underflow_cache.sync();
+            overflow_cache.sync();
+
+            if ( b_h == 1 && b_w == 1 &&
+                 c_h == 1 && c_w == 1 ) {
+                photoA.curve().modifyImage();
+                Magick::Pixels curve_cache(photoA.curve());
+                Magick::PixelPacket *pxl_A = curve_cache.get(0, 0, 65536, 1);
+                const Magick::PixelPacket *pxl_B = NULL;
+                const Magick::PixelPacket *pxl_C = NULL;
+                if ( imageB_cache )
+                    pxl_B = imageB_cache->getConst(0, 0, 1, 1);
+                if ( imageC_cache )
+                    pxl_C = imageC_cache->getConst(0, 0, 1, 1);
+                for ( int x = 0; x < 65536 ; ++x ) {
+                    blend(pxl_A+x, pxl_B, pxl_C, NULL, NULL, m_mode1, m_mode2);
+                }
+                curve_cache.sync();
+            }
+            outputPush(0, photoA);
+            outputPush(1, overflow);
+            outputPush(2, underflow);
         }
-        outputPush(0, photoA);
-        outputPush(1, overflow);
-        outputPush(2, underflow);
+        catch (std::exception &e) {
+            setError(photoA, e.what());
+            if (photoB)
+                setError(*photoB, e.what());
+            if (photoC)
+                setError(*photoC, e.what());
+        }
         delete imageA_cache;
         delete imageB_cache;
         delete imageC_cache;

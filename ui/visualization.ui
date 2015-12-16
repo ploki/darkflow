@@ -286,6 +286,11 @@
                        <string>Discarded</string>
                       </property>
                      </item>
+                     <item>
+                      <property name="text">
+                       <string>In Error</string>
+                      </property>
+                     </item>
                     </widget>
                    </item>
                    <item row="2" column="0">
@@ -606,7 +611,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
+                 <width>588</width>
                  <height>510</height>
                 </rect>
                </property>
@@ -730,7 +735,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
+                 <width>588</width>
                  <height>510</height>
                 </rect>
                </property>

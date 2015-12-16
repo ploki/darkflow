@@ -91,9 +91,8 @@ bool Photo::load(const QString &filename)
         m_image = Image(blob);
         m_status = Photo::Complete;
     }
-    catch (std::exception *e) {
-        dflError(e->what());
-        delete e;
+    catch (std::exception& e) {
+        dflError(e.what());
         setUndefined();
         return false;
     }
@@ -115,9 +114,8 @@ bool Photo::save(const QString &filename, const QString &magick)
             return false;
         }
     }
-    catch (std::exception *e) {
-        dflError(e->what());
-        delete e;
+    catch (std::exception& e) {
+        dflError(e.what());
         setUndefined();
         return false;
     }
@@ -131,9 +129,8 @@ void Photo::createImage(long width, long height)
         m_image.quantizeColorSpace(Magick::RGBColorspace);
         m_status = Complete;
     }
-    catch (std::exception *e) {
-        dflError(e->what());
-        delete e;
+    catch (std::exception &e) {
+        dflError(e.what());
         setUndefined();
     }
 }
@@ -149,21 +146,27 @@ QVector<int> Photo::pixelColor(unsigned x, unsigned y)
     if ( x >= m_image.columns() ||
          y >= m_image.rows() )
         return rgb;
+    try {
 #if 0
-    /* This doesn't work as expected with palletized images */
-    Magick::Color col = m_image.pixelColor(x,y);
-    rgb[0] = col.redQuantum();
-    rgb[1] = col.greenQuantum();
-    rgb[2] = col.blueQuantum();
+        /* This doesn't work as expected with palletized images */
+        Magick::Color col = m_image.pixelColor(x,y);
+        rgb[0] = col.redQuantum();
+        rgb[1] = col.greenQuantum();
+        rgb[2] = col.blueQuantum();
 #else
-    Magick::Pixels cache(m_image);
-    const Magick::PixelPacket *pixel = cache.getConst(x,y,1,1);
-    if (pixel) {
-        rgb[0] = pixel->red;
-        rgb[1] = pixel->green;
-        rgb[2] = pixel->blue;
-    }
+        Magick::Pixels cache(m_image);
+        const Magick::PixelPacket *pixel = cache.getConst(x,y,1,1);
+        if (pixel) {
+            rgb[0] = pixel->red;
+            rgb[1] = pixel->green;
+            rgb[2] = pixel->blue;
+        }
 #endif
+    }
+    catch (std::exception &e) {
+        dflError("Unable to get pixel color: %s", e.what());
+    }
+
     return rgb;
 }
 

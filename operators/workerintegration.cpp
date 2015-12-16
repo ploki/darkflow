@@ -103,97 +103,112 @@ bool WorkerIntegration::play_onInput(int idx)
         int cx = round(lcx - ff_x);
         int cy = round(lcy - ff_y);
 
-        Magick::Image& image = photo.image();
-        if ( ! m_integrationPlane ) {
-            createPlanes(image);
-        }
-        Magick::Pixels pixel_cache(image);
-        int line = 0;
+        try {
+            Magick::Image& image = photo.image();
+            if ( ! m_integrationPlane ) {
+                createPlanes(image);
+            }
+            Magick::Pixels pixel_cache(image);
+            int line = 0;
 
-        bool hdr = false;
-        QString hdrCompStr = photo.getTag("HDR_COMP");
-        QString hdrHighStr = photo.getTag("HDR_HIGH");
-        QString hdrLowStr = photo.getTag("HDR_LOW");
-        qreal hdrComp = 1,
-                hdrHigh,
-                hdrLow;
-        if ( ! hdrCompStr.isEmpty() && !hdrHighStr.isEmpty() && !hdrLowStr.isEmpty() ) {
-            hdr = true;
-            hdrComp = hdrCompStr.toDouble();
-            hdrHigh = hdrHighStr.toDouble() * QuantumRange;
-            hdrLow = hdrLowStr.toDouble() * QuantumRange;
-        }
+            bool hdr = false;
+            QString hdrCompStr = photo.getTag("HDR_COMP");
+            QString hdrHighStr = photo.getTag("HDR_HIGH");
+            QString hdrLowStr = photo.getTag("HDR_LOW");
+            qreal hdrComp = 1,
+                    hdrHigh,
+                    hdrLow;
+            if ( ! hdrCompStr.isEmpty() && !hdrHighStr.isEmpty() && !hdrLowStr.isEmpty() ) {
+                hdr = true;
+                hdrComp = hdrCompStr.toDouble();
+                hdrHigh = hdrHighStr.toDouble() * QuantumRange;
+                hdrLow = hdrLowStr.toDouble() * QuantumRange;
+            }
 
 #define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
 #pragma omp parallel for
-        for ( int y = 0 ; y < m_h ; ++y ) {
-            if ( y+cy < 0 || y+cy >= m_h ) continue;
-            Magick::PixelPacket *pixels = pixel_cache.get(0, y+cy, m_w, 1);
-            if ( !pixels ) continue;
-            for ( int x = 0 ; x < m_w ; ++x ) {
-                if ( x+cx < 0 || x+cx >= m_w ) continue;
+            for ( int y = 0 ; y < m_h ; ++y ) {
+                if ( y+cy < 0 || y+cy >= m_h ) continue;
+                Magick::PixelPacket *pixels = pixel_cache.get(0, y+cy, m_w, 1);
+                if ( !pixels ) continue;
+                for ( int x = 0 ; x < m_w ; ++x ) {
+                    if ( x+cx < 0 || x+cx >= m_w ) continue;
 
-                integration_plane_t
-                        red = pixels[x+cx].red,
-                        green = pixels[x+cx].green,
-                        blue = pixels[x+cx].blue;
-                if ( hdr ) {
-                    if ( red >= hdrLow && red <= hdrHigh ) {
-                        SUBPXL(m_integrationPlane,x,y,0) += red / hdrComp;
+                    integration_plane_t
+                            red = pixels[x+cx].red,
+                            green = pixels[x+cx].green,
+                            blue = pixels[x+cx].blue;
+                    if ( hdr ) {
+                        if ( red >= hdrLow && red <= hdrHigh ) {
+                            SUBPXL(m_integrationPlane,x,y,0) += red / hdrComp;
+                            ++SUBPXL(m_countPlane,x,y,0);
+                        }
+                        if ( green >= hdrLow && green <= hdrHigh ) {
+                            SUBPXL(m_integrationPlane,x,y,1) += green / hdrComp;
+                            ++SUBPXL(m_countPlane,x,y,1);
+                        }
+                        if ( blue >= hdrLow && blue <= hdrHigh ) {
+                            SUBPXL(m_integrationPlane,x,y,2) += blue / hdrComp;
+                            ++SUBPXL(m_countPlane,x,y,2);
+                        }
+                    }
+                    else {
+                        SUBPXL(m_integrationPlane,x,y,0) += red;
+                        SUBPXL(m_integrationPlane,x,y,1) += green;
+                        SUBPXL(m_integrationPlane,x,y,2) += blue;
                         ++SUBPXL(m_countPlane,x,y,0);
-                    }
-                    if ( green >= hdrLow && green <= hdrHigh ) {
-                        SUBPXL(m_integrationPlane,x,y,1) += green / hdrComp;
                         ++SUBPXL(m_countPlane,x,y,1);
-                    }
-                    if ( blue >= hdrLow && blue <= hdrHigh ) {
-                        SUBPXL(m_integrationPlane,x,y,2) += blue / hdrComp;
                         ++SUBPXL(m_countPlane,x,y,2);
                     }
                 }
-                else {
-                    SUBPXL(m_integrationPlane,x,y,0) += red;
-                    SUBPXL(m_integrationPlane,x,y,1) += green;
-                    SUBPXL(m_integrationPlane,x,y,2) += blue;
-                    ++SUBPXL(m_countPlane,x,y,0);
-                    ++SUBPXL(m_countPlane,x,y,1);
-                    ++SUBPXL(m_countPlane,x,y,2);
+#pragma omp critical
+                {
+                    ++line;
+                    if ( 0 == line % 100 )
+                        emitProgress(photoN, photoCount, line, m_h);
                 }
             }
-#pragma omp critical
-            {
-                ++line;
-                if ( 0 == line % 100 )
-                    emitProgress(photoN, photoCount, line, m_h);
+            ++photoN;
+        }
+        catch (std::exception &e) {
+            setError(photo, e.what());
+            emitFailure();
+            return false;
+        }
+    }
+    try {
+        Photo newPhoto;
+        newPhoto.setIdentity(m_operator->uuid());
+        newPhoto.createImage(m_w, m_h);
+        Magick::Image& newImage = newPhoto.image();
+        newImage.modifyImage();
+        Magick::Pixels pixel_cache(newImage);
+        qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );
+#pragma omp parallel for
+        for ( int y = 0 ; y < m_h ; ++y ) {
+            Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
+            for ( int x = 0 ; x < m_w ; ++x ) {
+                Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
+                if ( m_countPlane[y*m_w*3+x*3+0] )
+                    pixels[x].red   =
+                            clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
+                if ( m_countPlane[y*m_w*3+x*3+1] )
+                    pixels[x].green =
+                            clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
+                if ( m_countPlane[y*m_w*3+x*3+2] )
+                    pixels[x].blue  =
+                            clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
             }
         }
-        ++photoN;
+        newPhoto.setTag("Name", "Integration");
+        outputPush(0, newPhoto);
     }
-    Photo newPhoto;
-    newPhoto.setIdentity(m_operator->uuid());
-    newPhoto.createImage(m_w, m_h);
-    Magick::Image& newImage = newPhoto.image();
-    newImage.modifyImage();
-    Magick::Pixels pixel_cache(newImage);
-    qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );
-#pragma omp parallel for
-    for ( int y = 0 ; y < m_h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
-        for ( int x = 0 ; x < m_w ; ++x ) {
-            Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
-            if ( m_countPlane[y*m_w*3+x*3+0] )
-                pixels[x].red   =
-                        clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
-            if ( m_countPlane[y*m_w*3+x*3+1] )
-                pixels[x].green =
-                        clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
-            if ( m_countPlane[y*m_w*3+x*3+2] )
-                pixels[x].blue  =
-                        clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
-        }
+    catch (std::exception &e) {
+        dflError(e.what());
+        emitFailure();
+        return false;
     }
-    newPhoto.setTag("Name", "Integration");
-    outputPush(0, newPhoto);
+
     emitSuccess();
     return true;
 }

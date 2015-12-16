@@ -22,7 +22,8 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     m_inputs(),
     m_outputs(),
     m_outputStatus(),
-    m_signalEmited(false)
+    m_signalEmited(false),
+    m_error(false)
 {
     moveToThread(thread);
     connect(m_thread, SIGNAL(finished()), this, SLOT(finished()));
@@ -107,7 +108,7 @@ void OperatorWorker::emitFailure() {
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit failure"));
     emit failure();
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
-    if ( aborted() )
+    if ( aborted() && !m_error )
         dflInfo("aborted");
     else
         dflError("Worker emited failure");
@@ -168,22 +169,44 @@ bool OperatorWorker::play_onInput(int idx)
     int p = 0;
     c = m_inputs[idx].count();
 
+    if ( 0 == c ) {
+        dflWarning("0 images in input[%d]", idx);
+        emitFailure();
+        return false;
+    }
     foreach(Photo photo, m_inputs[idx]) {
+        if ( m_error ) {
+            dflError("OperatorWorker in error, sending failure");
+            emitFailure();
+            return false;
+        }
         if ( aborted() ) {
             dflError("OperatorWorker aborted, sending failure");
             emitFailure();
             return false;
         }
         emit progress(p, c);
-        Photo newPhoto = this->process(photo, p++, c);
-        if ( !newPhoto.isComplete() ) {
-            dflCritical("OperatorWorker: photo is not complete, sending failure");
+        try {
+            Photo newPhoto = this->process(photo, p++, c);
+            if ( !newPhoto.isComplete() ) {
+                dflCritical("OperatorWorker: photo is not complete, sending failure");
+                emitFailure();
+                return false;
+            }
+            if ( !m_error )
+                m_outputs[0].push_back(newPhoto);
+        }
+        catch(std::exception &e) {
+            setError(photo, e.what());
             emitFailure();
             return false;
         }
-        m_outputs[0].push_back(newPhoto);
     }
 
+    if ( m_error || aborted() ) {
+        emitFailure();
+        return false;
+    }
     emitSuccess();
     return true;
 }
@@ -193,17 +216,29 @@ bool OperatorWorker::play_onInputParallel(int idx)
     int c = 0;
     int p = 0;
     c = m_inputs[idx].count();
+    if ( 0 == c ) {
+        dflWarning("0 images in input[%d]", idx);
+        emitFailure();
+        return false;
+    }
 
 #pragma omp parallel for
     for (int i = 0 ; i < c ; ++i ) {
-        if ( aborted() )
+        if ( m_error || aborted() )
             continue;
         Photo photo;
 #pragma omp critical
         {
             photo = m_inputs[idx][i];
         }
-        Photo newPhoto = this->process(photo, p, c);
+        Photo newPhoto;
+        try {
+            newPhoto = this->process(photo, p, c);
+        }
+        catch (std::exception &e) {
+            setError(photo, e.what());
+            continue;
+        }
         if ( !newPhoto.isComplete() ) {
             dflCritical("OperatorWorker: photo is not complete, sending failure");
             continue;
@@ -212,12 +247,17 @@ bool OperatorWorker::play_onInputParallel(int idx)
 
 #pragma omp critical
         {
-            emit progress(++p, c);
-            m_outputs[0].push_back(newPhoto);
+            if ( !m_error ) {
+                emit progress(++p, c);
+                m_outputs[0].push_back(newPhoto);
+            }
         }
     }
-
-    if ( aborted() ) {
+    if ( m_error ) {
+        dflError("OperatorWorker in error");
+        emitFailure();
+    }
+    else if ( aborted() ) {
         dflError("OperatorWorker aborted, sending failure");
         emitFailure();
     }
@@ -311,4 +351,11 @@ void OperatorWorker::dflError(const QString &msg) const
 void OperatorWorker::dflCritical(const QString &msg) const
 {
     logMessage(Console::Critical, m_operator->getName(), msg);
+}
+
+void OperatorWorker::setError(const Photo &photo, const QString &msg) const
+{
+    emit m_operator->setError(photo.getIdentity(), msg);
+    m_error = true;
+    m_operator->stop();
 }

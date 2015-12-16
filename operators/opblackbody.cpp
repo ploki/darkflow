@@ -45,6 +45,8 @@ private slots:
             outputPush(0, photo);
             emitSuccess();
         }
+        else
+            emitFailure();
     }
 
 private:

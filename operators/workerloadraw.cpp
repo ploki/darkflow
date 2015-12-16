@@ -32,26 +32,36 @@ void WorkerLoadRaw::play()
             continue;
         }
         QByteArray data = convert(collection[i]);
-        Magick::Blob blob(data.data(),data.length());
-        Photo::Gamma gamma;
-        switch(m_loadraw->m_colorSpaceValue) {
-        default:
-        case OpLoadRaw::Linear: gamma = Photo::Linear; break;
-        case OpLoadRaw::IUT_BT_709: gamma = Photo::IUT_BT_709; break;
-        case OpLoadRaw::sRGB: gamma = Photo::sRGB; break;
-        }
-        Photo photo(blob, gamma);
-        if ( !photo.isComplete() ) {
-            failure = true;
-            continue;
-        }
-        photo.setIdentity(collection[i]);
-        setTags(collection[i], photo);
-        photo.setSequenceNumber(i);
+        try {
+            Magick::Blob blob(data.data(),data.length());
+            Photo::Gamma gamma;
+            switch(m_loadraw->m_colorSpaceValue) {
+            default:
+            case OpLoadRaw::Linear: gamma = Photo::Linear; break;
+            case OpLoadRaw::IUT_BT_709: gamma = Photo::IUT_BT_709; break;
+            case OpLoadRaw::sRGB: gamma = Photo::sRGB; break;
+            }
+            Photo photo(blob, gamma);
+            if ( !photo.isComplete() ) {
+                failure = true;
+                continue;
+            }
+            photo.setIdentity(collection[i]);
+            setTags(collection[i], photo);
+            photo.setSequenceNumber(i);
 #pragma omp critical
-        {
-            emit progress(++p, s);
-            outputPush(0, photo);
+            {
+                emit progress(++p, s);
+                outputPush(0, photo);
+            }
+        }
+        catch (std::exception &e) {
+            dflError(e.what());
+            failure = true;
+        }
+        catch (...) {
+            dflError("Unknown exception");
+            failure = true;
         }
     }
     if ( failure ) {

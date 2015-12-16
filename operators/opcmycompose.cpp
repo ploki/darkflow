@@ -33,6 +33,7 @@ public:
             Photo pCyan;
             Photo pMagenta;
             Photo pYellow;
+
             if ( l_count )
                 pLuminance = m_inputs[0][i%l_count];
             else
@@ -69,54 +70,68 @@ public:
             if ( iYellow.columns() != w || iYellow.rows() != h )
                 iYellow.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
 
-            Magick::Pixels iCyan_cache(iCyan);
-            Magick::Pixels iMagenta_cache(iMagenta);
-            Magick::Pixels iYellow_cache(iYellow);
+            try {
+                Magick::Pixels iCyan_cache(iCyan);
+                Magick::Pixels iMagenta_cache(iMagenta);
+                Magick::Pixels iYellow_cache(iYellow);
 
 
-            Photo photo(Photo::Linear);
-            photo.createImage(w, h);
-            photo.setSequenceNumber(i);
-            photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
-            photo.setTag("Name", "LCMY Composition");
-            Magick::Pixels iPhoto_cache(photo.image());
-            Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
-            int line = 0;
+                Photo photo(Photo::Linear);
+                photo.createImage(w, h);
+                photo.setSequenceNumber(i);
+                photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
+                photo.setTag("Name", "LCMY Composition");
+                Magick::Pixels iPhoto_cache(photo.image());
+                Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
+                int line = 0;
 #pragma omp parallel for
-            for ( unsigned y = 0 ; y < h ; ++y ) {
-                const Magick::PixelPacket *pxl_Cyan = iCyan_cache.getConst(0, y, w, 1);
-                const Magick::PixelPacket *pxl_Magenta = iMagenta_cache.getConst(0, y, w, 1);
-                const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
-                for ( unsigned x = 0 ; x < w ; ++x ) {
-                    quantum_t rgb[3];
-                    quantum_t cyan = 0;
-                    quantum_t magenta = 0;
-                    quantum_t yellow = 0;
-                    if ( pxl_Cyan ) cyan = (pxl_Cyan[x].green+pxl_Cyan[x].blue)/2;
-                    if ( pxl_Magenta ) magenta = (pxl_Magenta[x].red+pxl_Magenta[x].blue)/2;
-                    if ( pxl_Yellow) yellow = (pxl_Yellow[x].red+pxl_Yellow[x].green)/2;
+                for ( unsigned y = 0 ; y < h ; ++y ) {
+                    const Magick::PixelPacket *pxl_Cyan = iCyan_cache.getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Magenta = iMagenta_cache.getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
+                    for ( unsigned x = 0 ; x < w ; ++x ) {
+                        quantum_t rgb[3];
+                        quantum_t cyan = 0;
+                        quantum_t magenta = 0;
+                        quantum_t yellow = 0;
+                        if ( pxl_Cyan ) cyan = (pxl_Cyan[x].green+pxl_Cyan[x].blue)/2;
+                        if ( pxl_Magenta ) magenta = (pxl_Magenta[x].red+pxl_Magenta[x].blue)/2;
+                        if ( pxl_Yellow) yellow = (pxl_Yellow[x].red+pxl_Yellow[x].green)/2;
 
-                    rgb[0] =  - cyan + magenta + yellow;
-                    rgb[1] =    cyan - magenta + yellow;
-                    rgb[2] =    cyan + magenta - yellow;
-                    pxl[y*w+x].red = clamp(rgb[0]);
-                    pxl[y*w+x].green = clamp(rgb[1]);
-                    pxl[y*w+x].blue = clamp(rgb[2]);
-                }
+                        rgb[0] =  - cyan + magenta + yellow;
+                        rgb[1] =    cyan - magenta + yellow;
+                        rgb[2] =    cyan + magenta - yellow;
+                        pxl[y*w+x].red = clamp(rgb[0]);
+                        pxl[y*w+x].green = clamp(rgb[1]);
+                        pxl[y*w+x].blue = clamp(rgb[2]);
+                    }
 #pragma omp critical
-                {
-                    emitProgress(i, photo_count,(line++)/2, h);
+                    {
+                        emitProgress(i, photo_count,(line++)/2, h);
+                    }
                 }
+                iPhoto_cache.sync();
+                if ( l_count ) {
+                    iGamma& labGamma = iGamma::Lab();
+                    labGamma.applyOn(pLuminance);
+                    emitProgress(i, photo_count, 3, 4);
+                    unLabize(photo.image(), pLuminance.image());
+                }
+                outputPush(0, photo);
+                emitProgress(i, photo_count, 1, 1);
             }
-            iPhoto_cache.sync();
-            if ( l_count ) {
-                iGamma& labGamma = iGamma::Lab();
-                labGamma.applyOn(pLuminance);
-                emitProgress(i, photo_count, 3, 4);
-                unLabize(photo.image(), pLuminance.image());
+            catch (std::exception &e) {
+                if (l_count)
+                    setError(pLuminance, e.what());
+                if (c_count)
+                    setError(pCyan, e.what());
+                if (m_count)
+                    setError(pMagenta, e.what());
+                if (y_count)
+                    setError(pYellow, e.what());
+                emitFailure();
+                return;
             }
-            outputPush(0, photo);
-            emitProgress(i, photo_count, 1, 1);
         }
         if (aborted())
             emitFailure();

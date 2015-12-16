@@ -17,23 +17,29 @@ public:
     void play_analyseSources() {
         Q_ASSERT(m_inputs.count() == 2);
         foreach(Photo photo, m_inputs[1]) {
-            Magick::Image& image = photo.image();
-            Magick::Pixels pixels_cache(image);
-            int w = image.columns();
-            int h = image.rows();
-            Triplet<quantum_t> max;
-            for ( int y = 0 ; y < h ; ++ y) {
-                Magick::PixelPacket * pixels = pixels_cache.get(0, y, w, 1);
-                for ( int x = 0 ; x < w ; ++x ) {
-                    if ( pixels[x].red > max.red )
-                        max.red = pixels[x].red;
-                    if ( pixels[x].green > max.green )
-                        max.green = pixels[x].green;
-                    if ( pixels[x].blue > max.blue )
-                        max.blue = pixels[x].blue;
+            try  {
+                Magick::Image& image = photo.image();
+                Magick::Pixels pixels_cache(image);
+                int w = image.columns();
+                int h = image.rows();
+                Triplet<quantum_t> max;
+                for ( int y = 0 ; y < h ; ++ y) {
+                    Magick::PixelPacket * pixels = pixels_cache.get(0, y, w, 1);
+                    for ( int x = 0 ; x < w ; ++x ) {
+                        if ( pixels[x].red > max.red )
+                            max.red = pixels[x].red;
+                        if ( pixels[x].green > max.green )
+                            max.green = pixels[x].green;
+                        if ( pixels[x].blue > max.blue )
+                            max.blue = pixels[x].blue;
+                    }
                 }
+                m_max.push_back(max);
             }
-            m_max.push_back(max);
+            catch (std::exception &e) {
+                setError(photo, e.what());
+                emitFailure();
+            }
         }
     }
 
@@ -116,12 +122,20 @@ public:
                 ++n;
                 if (aborted())
                     continue;
-                Photo overflow(photo);
-                correct(photo.image(), flatfield.image(),
-                        overflow.image(), m_max[source_flatfield_idx]);
-                outputPush(0, photo);
-                outputPush(1, overflow);
-                emit progress(n, n_photos);
+                try {
+                    Photo overflow(photo);
+                    correct(photo.image(), flatfield.image(),
+                            overflow.image(), m_max[source_flatfield_idx]);
+                    outputPush(0, photo);
+                    outputPush(1, overflow);
+                    emit progress(n, n_photos);
+                }
+                catch (std::exception &e) {
+                    setError(flatfield, e.what());
+                    setError(photo, e.what());
+                    emitFailure();
+                    return;
+                }
             }
             ++source_flatfield_idx;
         }

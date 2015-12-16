@@ -134,13 +134,19 @@ bool WorkerSsdReg::play_onInput(int idx)
 
     for ( int i = 0, s = m_inputs[0].count() ; i < s ; ++i ) {
         if ( aborted() ) continue;
+
         Photo photo = m_inputs[0][i];
-        QPointF off = needle->lookup(this, photo.image());
-        QString points = QString::number(off.x()) +
-                "," + QString::number(off.y());
-        photo.setTag("POINTS", points);
-        outputPush(0, photo);
-        emitProgress(i, s, 0, 1);
+        try {
+            QPointF off = needle->lookup(this, photo.image());
+            QString points = QString::number(off.x()) +
+                    "," + QString::number(off.y());
+            photo.setTag("POINTS", points);
+            outputPush(0, photo);
+            emitProgress(i, s, 0, 1);
+        }
+        catch (std::exception &e) {
+            setError(photo, e.what());
+        }
     }
     delete needle;
     if ( aborted() )

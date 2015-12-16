@@ -12,6 +12,7 @@ public:
         InputEnabled,
         InputDisabled,
         InputReference,
+        InputError,
         Output,
     } PhotoType;
     explicit TreePhotoItem(const Photo& photo,

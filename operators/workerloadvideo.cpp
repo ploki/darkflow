@@ -20,7 +20,8 @@ WorkerLoadVideo::WorkerLoadVideo(QThread *thread, OpLoadVideo *op) :
     OperatorWorker(thread, op),
     m_collection(op->getCollection().toVector()),
     m_skip(op->getSkip()),
-    m_count(op->getCount())
+    m_count(op->getCount()),
+    m_error(false)
 {
 }
 
@@ -169,7 +170,7 @@ loop_exit:
      avcodec_close(pCodecCtx);
      av_free(pCodecCtx);
      av_free(picture);
-     return true;
+     return !m_error;
 }
 
 static inline void yuv420_to_rgb(unsigned char y, unsigned char u, unsigned char v,
@@ -198,6 +199,9 @@ static inline void yuv420_to_rgb(unsigned char y, unsigned char u, unsigned char
 bool WorkerLoadVideo::push_frame(AVFrame *picture,
                                  const QString &filename, int progress, int complete, int n, int c)
 {
+    if ( m_error )
+        return false;
+
     if ( m_skip ) {
         --m_skip;
     }
@@ -215,38 +219,45 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             return false;
         }
 
-        Photo photo(Photo::sRGB);
-        photo.setIdentity(QString("%0[%1]").arg(filename).arg(n));
-        photo.createImage(w, h);
-        Magick::Image& image=photo.image();
-        image.modifyImage();
-        Magick::Pixels pixel_cache(image);
+        try {
+            Photo photo(Photo::sRGB);
+            photo.setIdentity(QString("%0[%1]").arg(filename).arg(n));
+            photo.createImage(w, h);
+            Magick::Image& image=photo.image();
+            image.modifyImage();
+            Magick::Pixels pixel_cache(image);
 #pragma omp parallel for
-        for ( int y = 0 ; y < h ; ++y ) {
-            Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
-            if (!pixels) {
-                dflWarning("LoadVideo(Worker): NULL pixels!");
-                continue;
-            }
-            for ( int x = 0 ; x < w ; ++x ) {
-                Q_ASSERT( x/div < picture->linesize[1] );
-                Q_ASSERT( x/div < picture->linesize[2] );
-                const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
-                const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
-                const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
+            for ( int y = 0 ; y < h ; ++y ) {
+                Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
+                if (!pixels) {
+                    dflWarning("LoadVideo(Worker): NULL pixels!");
+                    continue;
+                }
+                for ( int x = 0 ; x < w ; ++x ) {
+                    Q_ASSERT( x/div < picture->linesize[1] );
+                    Q_ASSERT( x/div < picture->linesize[2] );
+                    const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
+                    const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
+                    const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
 
-                quantum_t r, g, b;
-                yuv420_to_rgb(c_y,c_u,c_v,r,g,b);
-                pixels[x].red = r;
-                pixels[x].green = g;
-                pixels[x].blue = b;
+                    quantum_t r, g, b;
+                    yuv420_to_rgb(c_y,c_u,c_v,r,g,b);
+                    pixels[x].red = r;
+                    pixels[x].green = g;
+                    pixels[x].blue = b;
+                }
             }
+            pixel_cache.sync();
+            photo.setSequenceNumber(n);
+            photo.setTag("Name",photo.getIdentity());
+            outputPush(0, photo);
+            --m_count;
         }
-        pixel_cache.sync();
-        photo.setSequenceNumber(n);
-        photo.setTag("Name",photo.getIdentity());
-        outputPush(0, photo);
-        --m_count;
+        catch (std::exception &e) {
+            dflError(e.what());
+            m_error = true;
+            return false;
+        }
     }
     emitProgress(progress, complete, n%c, c);
     if ( m_count == 0 )

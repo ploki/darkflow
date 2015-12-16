@@ -28,6 +28,7 @@ private:
     QVector<QString> m_collection;
     int m_skip;
     int m_count;
+    bool m_error;
 };
 
 #endif // WORKERLOADVIDEO_H

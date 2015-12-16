@@ -42,6 +42,7 @@ private:
     QVector<Operator::OperatorOutputStatus> m_outputStatus;
 protected:
     bool m_signalEmited;
+    mutable bool m_error;
 
     bool aborted();
     void emitFailure();
@@ -64,6 +65,8 @@ public:
     void dflWarning(const QString& msg) const;
     void dflError(const QString& msg) const;
     void dflCritical(const QString& msg) const;
+
+    void setError(const Photo& photo, const QString &msg) const;
 
 private:
     void prepareOutputs(QVector<Operator::OperatorOutputStatus> outputStatus);

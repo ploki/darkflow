@@ -66,11 +66,6 @@ public:
         Identified,
         Complete
     } Status;
-    typedef enum {
-        Regular,
-        Reference,
-        Discarded
-    } Usage;
     Photo(Gamma gamma = Linear, QObject *parent = 0);
     Photo(const Magick::Image& image, Gamma gamma, QObject *parent = 0);
     Photo(const Magick::Blob& blob, Gamma gamma, QObject *parent = 0);

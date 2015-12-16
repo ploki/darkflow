@@ -98,6 +98,7 @@ signals:
     void upToDate();
     void outOfDate();
     void stateChanged();
+    void setError(const QString& photoIdentity, const QString& msg);
 
 public:
     virtual OperatorWorker* newWorker() = 0;
@@ -114,6 +115,7 @@ public slots:
     void setName(const QString &name);
     void setUpToDate();
     void setOutOfDate();
+    void setErrorTag(const QString& photoIdentity, const QString& msg);
     void setTagOverride(const QString& photoIdentity,
                         const QString& key,
                         const QString& value);

@@ -342,6 +342,7 @@ void Visualization::treatmentChanged(int idx)
     case 0: value = ""; type = TreePhotoItem::InputEnabled; break;
     case 1: value = "REFERENCE"; type = TreePhotoItem::InputReference; break;
     case 2: value = "DISCARDED"; type = TreePhotoItem::InputDisabled; break;
+    case 3: value = "ERROR"; type = TreePhotoItem::InputError; break;
     default:
         dflWarning("Visualization: Unknown type");
         type = TreePhotoItem::InputDisabled;
@@ -354,7 +355,8 @@ void Visualization::treatmentChanged(int idx)
 
     if ( ( treatTag.isEmpty() && idx == 0 ) ||
          ( treatTag == "REFERENCE" && idx == 1 ) ||
-         ( treatTag == "DISCARDED" && idx == 2 ) )
+         ( treatTag == "DISCARDED" && idx == 2 ) ||
+         ( treatTag == "ERROR"     && idx == 3 ) )
         return;
 
 
@@ -544,6 +546,8 @@ void Visualization::updateTreeviewPhotos()
                     type = TreePhotoItem::InputDisabled;
                 else if ( treatTag == "REFERENCE" )
                     type = TreePhotoItem::InputReference;
+                else if ( treatTag == "ERROR" )
+                    type = TreePhotoItem::InputError;
                 TreePhotoItem *item = new TreePhotoItem(photo, type, tree_source);
                 if ( identity == m_currentPhoto &&
                      source == m_currentOutput ) {
@@ -685,6 +689,11 @@ void Visualization::updateTabsWithPhoto()
     else if ( treatTag == "DISCARDED" && ui->combo_treatment->currentIndex() != 2) {
         bool state = ui->combo_treatment->blockSignals(true);
         ui->combo_treatment->setCurrentIndex(2);
+        ui->combo_treatment->blockSignals(state);
+    }
+    else if ( treatTag == "ERROR" && ui->combo_treatment->currentData() != 3 ) {
+        bool state = ui->combo_treatment->blockSignals(true);
+        ui->combo_treatment->setCurrentIndex(3);
         ui->combo_treatment->blockSignals(state);
     }
 

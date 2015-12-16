@@ -31,6 +31,7 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_thread(new QThread(this)),
     m_worker(NULL)
 {
+    connect(this, SIGNAL(setError(QString,QString)), this, SLOT(setErrorTag(QString,QString)), Qt::QueuedConnection);
 }
 
 Operator::~Operator()
@@ -228,7 +229,9 @@ QVector<QVector<Photo> > Operator::collectInputs()
                 photo.setIdentity(identity);
 
                 overrideTags(photo);
-                if ( photo.getTag("TREAT") != "DISCARDED" )
+                QString treatTag = photo.getTag("TREAT");
+                if ( treatTag != "DISCARDED" &&
+                     treatTag != "ERROR")
                     inputs[i].push_back(photo);
             }
         }
@@ -289,6 +292,12 @@ void Operator::setOutOfDate()
     if ( !m_workerAboutToStart )
         emit outOfDate();
     emit progress(0, 1);
+}
+
+void Operator::setErrorTag(const QString &photoIdentity, const QString &msg)
+{
+    setTagOverride(photoIdentity, "TREAT", "ERROR");
+    setTagOverride(photoIdentity, "ERROR", msg);
 }
 
 void Operator::setTagOverride(const QString &photoIdentity, const QString &key, const QString &value)

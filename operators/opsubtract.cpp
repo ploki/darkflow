@@ -86,12 +86,23 @@ public:
                     addend_image = &m_inputs[2][n_sub].image();
                     addend_curve = &m_inputs[2][n_sub].curve();
                 }
-                subtract(minuend.image(), subtrahend.image(), addend_image, underflow.image());
-                if ( subtrahend.image().columns() == 1 &&
-                     subtrahend.image().rows() == 1 ) {
-                    Photo dummy(minuend.curve(),Photo::Linear);
-                    subtract(minuend.curve(), subtrahend.image(), addend_curve, dummy.image());
+                try {
+                    subtract(minuend.image(), subtrahend.image(), addend_image, underflow.image());
+                    if ( subtrahend.image().columns() == 1 &&
+                         subtrahend.image().rows() == 1 ) {
+                        Photo dummy(minuend.curve(),Photo::Linear);
+                        subtract(minuend.curve(), subtrahend.image(), addend_curve, dummy.image());
+                    }
                 }
+                catch (std::exception &e) {
+                    setError(subtrahend, e.what());
+                    setError(minuend, e.what());
+                    if (addend_image)
+                        setError(m_inputs[2][n_sub], e.what());
+                    emitFailure();
+                    return;
+                }
+
                 outputPush(0, minuend);
                 outputPush(1, underflow);
                 emit progress(n, n_photos);

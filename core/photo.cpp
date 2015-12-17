@@ -30,7 +30,7 @@ Photo::Photo(Photo::Gamma gamma, QObject *parent) :
 
 Photo::Photo(const Blob &blob, Photo::Gamma gamma, QObject *parent) :
     QObject(parent),
-    m_image(Magick::Image(blob)),
+    m_image(blob),
     m_curve(newCurve(gamma)),
     m_gamma(gamma),
     m_status(Photo::Complete),

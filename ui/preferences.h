@@ -7,6 +7,9 @@ namespace Ui {
 class Preferences;
 }
 class QAbstractButton;
+class QSemaphore;
+class QMutex;
+class OperatorWorker;
 
 class Preferences : public QDialog
 {
@@ -18,11 +21,14 @@ public:
 
     QString baseDir();
 
+    bool acquireWorker(OperatorWorker *worker);
+    void releaseWorker();
+
 private:
     void getDefaultMagickResources();
     void getMagickResources();
     void setMagickResources();
-    void load();
+    bool load(bool create=true);
     void save();
 
 public slots:
@@ -39,6 +45,11 @@ private:
     size_t m_defaultMap;
     size_t m_defaultDisk;
     size_t m_defaultThreads;
+    QSemaphore *m_sem;
+    QMutex *m_mutex;
+    size_t m_currentMaxWorkers;
+    size_t m_scheduledMaxWorkers;
+    size_t m_OpenMPThreads;
 
 };
 

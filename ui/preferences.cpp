@@ -5,12 +5,17 @@
 #include <QDir>
 #include <QAbstractButton>
 #include <QFileDialog>
+#include <QSemaphore>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include "preferences.h"
 #include "ui_preferences.h"
 #include "console.h"
-
+#include "operatorworker.h"
 #include <Magick++.h>
+
+#include <omp.h>
 
 #ifndef QuantumRange
 namespace Magick {
@@ -31,6 +36,18 @@ public:
 
 #endif
 
+static int dfl_max_threads() {
+#if 0
+    return omp_get_max_threads();
+#else
+    int n = 0;
+#pragma omp parallel reduction(+:n)
+    n += 1;
+    return n;
+#endif
+}
+#define N_WORKERS 4
+
 Preferences *preferences = NULL;
 
 Preferences::Preferences(QWidget *parent) :
@@ -40,31 +57,49 @@ Preferences::Preferences(QWidget *parent) :
   m_defaultMemory(0),
   m_defaultMap(0),
   m_defaultDisk(0),
-  m_defaultThreads(0)
+  m_defaultThreads(0),
+  m_sem(new QSemaphore(N_WORKERS)),
+  m_mutex(new QMutex),
+  m_currentMaxWorkers(N_WORKERS),
+  m_scheduledMaxWorkers(N_WORKERS),
+  m_OpenMPThreads(dfl_max_threads())
 {
     ui->setupUi(this);
 
-    ui->comboResourcesUnit->setCurrentIndex(1);
+    Magick::InitializeMagick("darkflow");
     getDefaultMagickResources();
-    getMagickResources();
 
-    ui->valueTmpDir->setText(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
-    ui->valueBaseDir->setText(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+    ui->defaultDflThreads->setText(QString::number(m_OpenMPThreads));
+    ui->defaultDflWorkers->setText(QString::number(m_scheduledMaxWorkers));
 
-    ui->comboLogLevel->setCurrentIndex(Console::Info);
-    ui->comboRaiseOn->setCurrentIndex(Console::Error);
-    ui->comboTrapOn->setCurrentIndex(Console::LastLevel);
-    Console::setLevel(Console::Info);
-    Console::setRaiseLevel(Console::Error);
-    Console::setTrapLevel(Console::LastLevel);
-    MagickCore::ExceptionInfo *exception = MagickCore::AcquireExceptionInfo();
-    MagickCore::SetImageRegistry(MagickCore::StringRegistryType, "temporary-path", (const void*)ui->valueTmpDir->text().toLocal8Bit(), exception);
+    omp_set_dynamic(0);
+    bool loaded = load(false);
 
+    if ( !loaded ) {
+        getMagickResources();
+
+        ui->valueDflThreads->setText(QString::number(m_OpenMPThreads));
+        ui->valueDflWorkers->setText(QString::number(m_scheduledMaxWorkers));
+
+        ui->valueTmpDir->setText(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
+        ui->valueBaseDir->setText(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+
+        ui->comboLogLevel->setCurrentIndex(Console::Info);
+        ui->comboRaiseOn->setCurrentIndex(Console::Error);
+        ui->comboTrapOn->setCurrentIndex(Console::LastLevel);
+        Console::setLevel(Console::Info);
+        Console::setRaiseLevel(Console::Error);
+        Console::setTrapLevel(Console::LastLevel);
+        MagickCore::ExceptionInfo *exception = MagickCore::AcquireExceptionInfo();
+        MagickCore::SetImageRegistry(MagickCore::StringRegistryType, "temporary-path", (const void*)ui->valueTmpDir->text().toLocal8Bit(), exception);
+    }
     load();
 }
 
 Preferences::~Preferences()
 {
+    delete m_mutex;
+    delete m_sem;
     delete ui;
 }
 
@@ -73,14 +108,47 @@ QString Preferences::baseDir()
     return ui->valueBaseDir->text();
 }
 
+bool Preferences::acquireWorker(OperatorWorker *worker)
+{
+    bool success;
+    do {
+        int toClaim = 1;
+        int currentMaxWorkers = m_currentMaxWorkers;
+        {
+            QMutexLocker lock(m_mutex);
+            if ( m_currentMaxWorkers > m_scheduledMaxWorkers ) {
+                toClaim += m_currentMaxWorkers - m_scheduledMaxWorkers;
+                m_currentMaxWorkers = m_scheduledMaxWorkers;
+            }
+        }
+        success = m_sem->tryAcquire(toClaim, 50);
+        if ( !success) {
+            QMutexLocker lock(m_mutex);
+            m_currentMaxWorkers = currentMaxWorkers;
+            if ( worker->aborted())
+                break;
+        }
+    }
+    while (!success);
+    return success;
+}
+
+void Preferences::releaseWorker()
+{
+    int toRelease = 1;
+    {
+        QMutexLocker lock(m_mutex);
+        if ( m_currentMaxWorkers < m_scheduledMaxWorkers ) {
+            toRelease += m_scheduledMaxWorkers - m_currentMaxWorkers;
+            m_currentMaxWorkers = m_scheduledMaxWorkers;
+        }
+    }
+    m_sem->release(toRelease);
+}
+
 void Preferences::getDefaultMagickResources()
 {
-    int unit = ui->comboResourcesUnit->currentIndex();
-    size_t div;
-    if ( unit == 0 )
-        div = 1<<20;
-    else
-        div = 1<<30;
+    const size_t div = 1<<30;
     m_defaultArea    = Magick::ResourceLimits::area();
     m_defaultMemory  = Magick::ResourceLimits::memory();
     m_defaultMap     = Magick::ResourceLimits::map();
@@ -95,12 +163,7 @@ void Preferences::getDefaultMagickResources()
 
 void Preferences::getMagickResources()
 {
-    int unit = ui->comboResourcesUnit->currentIndex();
-    size_t div;
-    if ( unit == 0 )
-        div = 1<<20;
-    else
-        div = 1<<30;
+    const size_t div = 1<<30;
     size_t currentArea    = Magick::ResourceLimits::area();
     size_t currentMemory  = Magick::ResourceLimits::memory();
     size_t currentMap     = Magick::ResourceLimits::map();
@@ -115,12 +178,7 @@ void Preferences::getMagickResources()
 
 void Preferences::setMagickResources()
 {
-    int unit = ui->comboResourcesUnit->currentIndex();
-    size_t div;
-    if ( unit == 0 )
-        div = 1<<20;
-    else
-        div = 1<<30;
+    const size_t div = 1<<30;
     size_t currentArea    = ui->valueArea->text().toDouble()*div;
     size_t currentMemory  = ui->valueMemory->text().toDouble()*div;
     size_t currentMap     = ui->valueMap->text().toDouble()*div;
@@ -134,22 +192,19 @@ void Preferences::setMagickResources()
     getMagickResources();
 }
 
-void Preferences::load()
+bool Preferences::load(bool create)
 {
-    int unit = ui->comboResourcesUnit->currentIndex();
-    qreal mul;
-    if ( unit == 0 )
-        mul = 1./(1<<20);
-    else
-        mul = 1./(1<<30);
+    const qreal mul = 1./(1<<30);
 
     QString filename = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)
             + "/config.json";
     QFile file(filename);
     if ( !file.open(QIODevice::ReadOnly)) {
-        dflWarning("Configuration file doesn't exist, creating one");
-        save();
-        return;
+        if (create) {
+            dflWarning("Configuration file doesn't exist, creating one");
+            save();
+        }
+        return false;
     }
     QByteArray data = file.readAll();
     QJsonDocument doc(QJsonDocument::fromJson(data));
@@ -157,6 +212,22 @@ void Preferences::load()
     QJsonObject resources = obj["resources"].toObject();
     QJsonObject path = obj["path"].toObject();
     QJsonObject logging = obj["logging"].toObject();
+
+    int dflWorkers = resources["darkflowWorkers"].toInt();
+    int dflThreads = resources["darkflowThreads"].toInt();
+    if ( dflWorkers < 1 )
+        dflWorkers = 1;
+    if ( dflThreads < 1)
+        dflThreads = 1;
+    if ( dflThreads > 1024 )
+        dflThreads = 1024;
+    omp_set_num_threads(dflThreads);
+    {
+        QMutexLocker lock(m_mutex);
+        m_scheduledMaxWorkers = dflWorkers;
+    }
+    ui->valueDflThreads->setText(QString::number(dfl_max_threads()));
+    ui->valueDflWorkers->setText(QString::number(dflWorkers));
 
     ssize_t area = resources["area"].toDouble();
     ssize_t memory = resources["memory"].toDouble();
@@ -199,6 +270,7 @@ void Preferences::load()
     Console::setLevel(Console::Level(logging["level"].toInt()));
     Console::setRaiseLevel(Console::Level(logging["raise"].toInt()));
     Console::setTrapLevel(Console::Level(logging["trap"].toInt()));
+    return true;
 }
 
 void Preferences::save()
@@ -213,18 +285,22 @@ void Preferences::save()
     QString diskStr = ui->valueDisk->text();
     QString threadsStr = ui->valueThreads->text();
 
-    int unit = ui->comboResourcesUnit->currentIndex();
-    size_t mul;
-    if ( unit == 0 )
-        mul = 1<<20;
-    else
-        mul = 1<<30;
+    const size_t mul = 1<<30;
 
     resources["area"] =  qint64((areaStr.isEmpty()||areaStr=="unlimited")?-1:areaStr.toDouble()*mul);
     resources["memory"] = qint64((memoryStr.isEmpty()||memoryStr=="unlimited")?-1:memoryStr.toDouble()*mul);
     resources["map"] = qint64((mapStr.isEmpty()||mapStr=="unlimited")?-1:mapStr.toDouble()*mul);
     resources["disk"] = qint64((diskStr.isEmpty()||diskStr=="unlimited")?-1:diskStr.toDouble()*mul);
     resources["threads"] = qint64((threadsStr.isEmpty()||threadsStr=="unlimited")?-1:threadsStr.toLongLong());
+
+    qint64 dflThreads = ui->valueDflThreads->text().toLong();
+    qint64 dflWorkers = ui->valueDflWorkers->text().toLong();
+    if ( dflThreads < 1 )
+        dflThreads = 1;
+    if ( dflWorkers < 1 )
+        dflWorkers = 1;
+    resources["darkflowWorkers"] = dflWorkers;
+    resources["darkflowThreads"] = dflThreads;
 
     path["tmp"] = ui->valueTmpDir->text();
     path["base"] = ui->valueBaseDir->text();

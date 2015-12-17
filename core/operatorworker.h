@@ -22,8 +22,11 @@ public:
     void outputPush(int idx, const Photo& photo);
     void outputSort(int idx);
 
-protected slots:
+    bool aborted();
+
     virtual void play();
+protected slots:
+    void started();
     virtual Photo process(const Photo &photo, int p, int c) = 0;
     void finished();
 
@@ -43,9 +46,8 @@ private:
 protected:
     bool m_signalEmited;
     mutable bool m_error;
-    bool m_earlyFinished;
+    bool m_earlyAbort;
 
-    bool aborted();
     void emitFailure();
     void emitSuccess();
     void emitProgress(int p, int c, int sub_p, int sub_c);

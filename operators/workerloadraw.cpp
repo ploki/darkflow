@@ -34,6 +34,10 @@ void WorkerLoadRaw::play()
         QByteArray data = convert(collection[i]);
         try {
             Magick::Blob blob(data.data(),data.length());
+            if ( blob.data() == 0 || data.length() == 0 ) {
+                failure = true;
+                continue;
+            }
             Photo::Gamma gamma;
             switch(m_loadraw->m_colorSpaceValue) {
             default:
@@ -64,7 +68,7 @@ void WorkerLoadRaw::play()
             failure = true;
         }
     }
-    if ( failure ) {
+    if ( failure || aborted() ) {
         emitFailure();
     }
     else {
@@ -160,7 +164,10 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
     dcraw.start(dcraw_executable, arguments, QProcess::ReadOnly);
     QByteArray data;
     dcraw.waitForFinished();
-    data = dcraw.readAllStandardOutput();
+    int rc = dcraw.exitCode();
+    if ( 0 == rc )
+        data = dcraw.readAllStandardOutput();
+    dflDebug("dcraw bytes read: %d", data.size());
     return data;
 }
 

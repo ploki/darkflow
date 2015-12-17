@@ -8,6 +8,7 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "photo.h"
+#include "preferences.h"
 
 static struct AtStart {
     AtStart() {
@@ -24,11 +25,11 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     m_outputStatus(),
     m_signalEmited(false),
     m_error(false),
-    m_earlyFinished(false)
+    m_earlyAbort(false)
 {
     moveToThread(thread);
     connect(m_thread, SIGNAL(finished()), this, SLOT(finished()));
-    connect(this, SIGNAL(doStart()), this, SLOT(play()));
+    connect(this, SIGNAL(doStart()), this, SLOT(started()));
     connect(this, SIGNAL(progress(int,int)), m_operator, SLOT(workerProgress(int,int)));
     connect(this, SIGNAL(success(QVector<QVector<Photo> >)), m_operator, SLOT(workerSuccess(QVector<QVector<Photo> >)));
     connect(this, SIGNAL(failure()), m_operator, SLOT(workerFailure()));
@@ -40,6 +41,15 @@ void OperatorWorker::start(QVector<QVector<Photo> > inputs, QVector<Operator::Op
     m_inputs = inputs;
     prepareOutputs(outputStatus);
     emit doStart();
+}
+void OperatorWorker::started()
+{
+    bool ret = preferences->acquireWorker(this);
+    if ( !ret ) {
+        emitFailure();
+        return;
+    }
+    play();
 }
 
 int OperatorWorker::outputsCount()
@@ -91,12 +101,13 @@ void OperatorWorker::finished()
 {
     if ( !m_signalEmited) {
         dflDebug("OperatorWorker::finished: no signal sent, sending failure");
-        m_earlyFinished = true;
+        m_earlyAbort = true;
         emitFailure();
     }
     else { //signal emited, safe to delete
         deleteLater();
     }
+    preferences->releaseWorker();
 }
 
 bool OperatorWorker::aborted() {
@@ -110,7 +121,7 @@ void OperatorWorker::emitFailure() {
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit failure"));
     emit failure();
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
-    if ( ( m_earlyFinished || aborted() ) && !m_error )
+    if ( ( m_earlyAbort || aborted() ) && !m_error )
         dflDebug("Aborted");
     else
         dflError("Failure");

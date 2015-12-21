@@ -15,7 +15,7 @@ WorkerDebayer::WorkerDebayer(OpDebayer::Debayer quality, QThread *thread, Operat
 static u_int32_t
 getFilterPattern(const Photo &photo)
 {
-    QString str = photo.getTag("Filter pattern");
+    QString str = photo.getTag(TAG_FILTER_PATTERN);
     u_int32_t filters = 0;
     if ( str == "BGGRBGGRBGGRBGGR" )
         filters=0x16161616;
@@ -144,7 +144,7 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
 static dc1394color_filter_t
 get_color_filter(const Photo& photo)
 {
-    QString str = photo.getTag("Filter pattern");
+    QString str = photo.getTag(TAG_FILTER_PATTERN);
     str = str.left(4);
     if ( str == "RGGB")
         return DC1394_COLOR_FILTER_RGGB;
@@ -290,7 +290,7 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
         deleteBuffer(rgb);
         deleteBuffer(bayer);
     }
-    newPhoto.removeTag("Filter pattern");
+    newPhoto.removeTag(TAG_FILTER_PATTERN);
     return newPhoto;
 }
 

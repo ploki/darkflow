@@ -290,6 +290,57 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Display</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelTransformTarget">
+         <property name="text">
+          <string>Transform target:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboTransformTarget">
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>sRGB</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>IUT BT.709</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Square Root</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>298</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_path">
       <attribute name="title">
        <string>Path</string>
@@ -513,8 +564,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -529,8 +580,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -545,8 +596,8 @@
    <slot>clicked(QAbstractButton*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>288</y>
+     <x>186</x>
+     <y>411</y>
     </hint>
     <hint type="destinationlabel">
      <x>177</x>
@@ -561,8 +612,8 @@
    <slot>baseDirClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>54</y>
+     <x>119</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel">
      <x>177</x>
@@ -577,8 +628,8 @@
    <slot>tmpDirClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>82</y>
+     <x>119</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
      <x>177</x>

@@ -43,10 +43,12 @@ class Photo : public QObject
     Q_OBJECT
 public:    
     typedef enum {
-        Linear,
-        Sqrt,
-        IUT_BT_709,
-        sRGB,
+        Linear     = 1,
+        NonLinear  = 2,
+        Sqrt       = 4|NonLinear,
+        IUT_BT_709 = 8|NonLinear,
+        sRGB       = 16|NonLinear,
+        HDR        = 32,
     } Gamma;
     typedef enum {
         sRGB_EV,
@@ -66,7 +68,8 @@ public:
         Identified,
         Complete
     } Status;
-    Photo(Gamma gamma = Linear, QObject *parent = 0);
+
+    Photo(Gamma gamma = HDR, QObject *parent = 0);
     Photo(const Magick::Image& image, Gamma gamma, QObject *parent = 0);
     Photo(const Magick::Blob& blob, Gamma gamma, QObject *parent = 0);
     Photo(const Photo& photo);
@@ -113,11 +116,12 @@ public:
     void setPoints(const QVector<QPointF>& vec);
     QRectF getROI() const;
     void setROI(const QRectF& rect);
+    void setScale(Gamma gamma);
+    Gamma getScale() const;
 
 private:
     Magick::Image m_image;
     Magick::Image m_curve;
-    Gamma m_gamma;
     Status m_status;
     QMap<QString, QString> m_tags;
     QString m_identity;
@@ -127,4 +131,36 @@ private:
     static Magick::Image newCurve(Gamma gamma);
 };
 
+#define TAG_NAME "Name"
+#define TAG_DIRECTORY "Directory"
+#define TAG_ISO_SPEED "ISO Speed"
+#define TAG_SHUTTER "Shutter"
+#define TAG_APERTURE "Aperture"
+#define TAG_FOCAL_LENGTH "Focal length"
+#define TAG_D65_R_MULTIPLIER "D65 R multiplier"
+#define TAG_D65_G_MULTIPLIER "D65 G multiplier"
+#define TAG_D65_B_MULTIPLIER "D65 B multiplier"
+#define TAG_CAMERA "Camera"
+#define TAG_TIMESTAMP "TimeStamp"
+#define TAG_FILTER_PATTERN "Filter pattern"
+#define TAG_COLOR_SPACE "Color Space"
+#define TAG_DEBAYER "Debayer"
+#define TAG_WHITE_BALANCE "White Balance"
+#define TAG_PIXELS "Pixels"
+#define TAG_PIXELS_CFA "CFA"
+#define TAG_PIXELS_RGB "RGB"
+#define TAG_TREAT "Treat"
+#define TAG_TREAT_REGULAR ""
+#define TAG_TREAT_REFERENCE "Reference"
+#define TAG_TREAT_DISCARDED "Discarded"
+#define TAG_TREAT_ERROR "ERROR"
+#define TAG_POINTS "Points"
+#define TAG_ROI "ROI"
+#define TAG_HDR_COMP "HDR compensation"
+#define TAG_HDR_HIGH "HDR high threshold"
+#define TAG_HDR_LOW "HDR low threshold"
+#define TAG_SCALE "Scale"
+#define TAG_SCALE_LINEAR "Linear"
+#define TAG_SCALE_NONLINEAR "Non-linear"
+#define TAG_SCALE_HDR "HDR"
 #endif // IMAGE_H

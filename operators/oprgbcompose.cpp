@@ -79,7 +79,7 @@ public:
                 photo.createImage(w, h);
                 photo.setSequenceNumber(i);
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
-                photo.setTag("Name", "LRGB Composition");
+                photo.setTag(TAG_NAME, "LRGB Composition");
                 Magick::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 int line = 0;

@@ -114,7 +114,7 @@ void WorkerSsdReg::play_analyseSources()
     for (int i = 0, s = m_inputs[0].count() ;
             i < s ;
             ++i ) {
-        if ( m_inputs[0][i].getTag("TREAT") == "REFERENCE" ) {
+        if ( m_inputs[0][i].getTag(TAG_TREAT) == TAG_TREAT_REFERENCE ) {
             m_refIdx=i;
             break;
         }
@@ -140,7 +140,7 @@ bool WorkerSsdReg::play_onInput(int idx)
             QPointF off = needle->lookup(this, photo.image());
             QString points = QString::number(off.x()) +
                     "," + QString::number(off.y());
-            photo.setTag("POINTS", points);
+            photo.setTag(TAG_POINTS, points);
             outputPush(0, photo);
             emitProgress(i, s, 0, 1);
         }

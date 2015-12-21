@@ -28,6 +28,7 @@
 #include "vispoint.h"
 #include "fullscreenview.h"
 #include "console.h"
+#include "preferences.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -78,6 +79,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->table_tags->horizontalHeader()->setStretchLastSection(true);
     ui->graphicsView->setScene(m_scene);
     ui->graphicsView->adjustSize();
+    ui->combo_gamma->setCurrentIndex(preferences->getCurrentTarget());
     m_scene->addItem(m_pixmapItem);
     m_scene->installEventFilter(this);
     ui->graphicsView->installEventFilter(this);
@@ -148,13 +150,13 @@ void Visualization::zoomMinus()
 void Visualization::expChanged()
 {
     if ( m_photo && m_photo->isComplete() ) {
-        ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
         int exposure = ui->slider_exp->value();
-        qreal gamma, x0;
+        qreal gamma = 1., x0 = 0;
+        ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
         switch(ui->combo_gamma->currentIndex()) {
         default:
             dflWarning("Visualization: Unknown combo_gamma selection");
-        case 0: //Linear
+        case 0: //As Input
             gamma = 1.; x0 = 0; break;
         case 1: //sRGB
             gamma = 2.4L; x0 = 0.00304L; break;
@@ -336,40 +338,55 @@ void Visualization::treatmentChanged(int idx)
     if ( !m_photo || (m_photo && !m_photoIsInput) )
         return;
     QString identity = m_photo->getIdentity();
-    bool from_photo = !m_operator->isTagOverrided(identity, "TREAT");
+    bool from_photo = !m_operator->isTagOverrided(identity, TAG_TREAT);
     QString value;
     switch(idx) {
-    case 0: value = ""; type = TreePhotoItem::InputEnabled; break;
-    case 1: value = "REFERENCE"; type = TreePhotoItem::InputReference; break;
-    case 2: value = "DISCARDED"; type = TreePhotoItem::InputDisabled; break;
-    case 3: value = "ERROR"; type = TreePhotoItem::InputError; break;
+    case 0: value = TAG_TREAT_REGULAR; type = TreePhotoItem::InputEnabled; break;
+    case 1: value = TAG_TREAT_REFERENCE; type = TreePhotoItem::InputReference; break;
+    case 2: value = TAG_TREAT_DISCARDED; type = TreePhotoItem::InputDisabled; break;
+    case 3: value = TAG_TREAT_ERROR; type = TreePhotoItem::InputError; break;
     default:
         dflWarning("Visualization: Unknown type");
         type = TreePhotoItem::InputDisabled;
     }
 
-    QString treatTag = m_photo->getTag("TREAT");
+    QString treatTag = m_photo->getTag(TAG_TREAT);
     if ( !from_photo ) {
         treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), "TREAT");
     }
 
-    if ( ( treatTag.isEmpty() && idx == 0 ) ||
-         ( treatTag == "REFERENCE" && idx == 1 ) ||
-         ( treatTag == "DISCARDED" && idx == 2 ) ||
-         ( treatTag == "ERROR"     && idx == 3 ) )
+    if ( ( treatTag == TAG_TREAT_REGULAR   && idx == 0 ) ||
+         ( treatTag == TAG_TREAT_REFERENCE && idx == 1 ) ||
+         ( treatTag == TAG_TREAT_DISCARDED && idx == 2 ) ||
+         ( treatTag == TAG_TREAT_ERROR     && idx == 3 ) )
         return;
 
 
-    if ( value.isEmpty() ) {
+    if ( value == TAG_TREAT_REGULAR ) {
         if ( from_photo )
-            m_operator->setTagOverride(identity, "TREAT", "");
+            m_operator->setTagOverride(identity, TAG_TREAT, TAG_TREAT_REGULAR);
         else
-            m_operator->resetTagOverride(identity, "TREAT");
+            m_operator->resetTagOverride(identity, TAG_TREAT);
     }
     else {
-        m_operator->setTagOverride(identity, "TREAT", value);
+        m_operator->setTagOverride(identity, TAG_TREAT, value);
     }
     m_photoItem->setType(type);
+}
+
+void Visualization::inputTypeChanged(int idx)
+{
+    if ( !m_photo || (m_photo && !m_photoIsInput) )
+        return;
+    QString value;
+    switch(idx) {
+    default:
+        dflWarning("Unknown pixel scale idx");
+    case 0: value = TAG_SCALE_LINEAR; break;
+    case 1: value = TAG_SCALE_NONLINEAR; break;
+    case 2: value = TAG_SCALE_HDR; break;
+    }
+    m_operator->setTagOverride(m_photo->getIdentity(), TAG_SCALE, value);
 }
 
 void Visualization::updateVisualizationZoom()
@@ -538,15 +555,15 @@ void Visualization::updateTreeviewPhotos()
                     identity+=QString("|%0").arg(count-1);
                 photo.setIdentity(identity);
 
-                QString treatTag = photo.getTag("TREAT");
-                if ( m_operator->isTagOverrided(identity, "TREAT") )
-                    treatTag = m_operator->getTagOverrided(identity, "TREAT");
+                QString treatTag = photo.getTag(TAG_TREAT);
+                if ( m_operator->isTagOverrided(identity, TAG_TREAT) )
+                    treatTag = m_operator->getTagOverrided(identity, TAG_TREAT);
                 TreePhotoItem::PhotoType type = TreePhotoItem::InputEnabled;
-                if ( treatTag == "DISCARDED" )
+                if ( treatTag == TAG_TREAT_DISCARDED )
                     type = TreePhotoItem::InputDisabled;
-                else if ( treatTag == "REFERENCE" )
+                else if ( treatTag == TAG_TREAT_REFERENCE )
                     type = TreePhotoItem::InputReference;
-                else if ( treatTag == "ERROR" )
+                else if ( treatTag == TAG_TREAT_ERROR )
                     type = TreePhotoItem::InputError;
                 TreePhotoItem *item = new TreePhotoItem(photo, type, tree_source);
                 if ( identity == m_currentPhoto &&
@@ -643,6 +660,33 @@ void Visualization::updateTabs()
 
 void Visualization::updateTabsWithPhoto()
 {
+    bool asInput = false;
+    QString typeTag = m_photo->getTag(TAG_SCALE);
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_SCALE)) {
+        typeTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_SCALE);
+    }
+    if ( (typeTag.isEmpty() || typeTag == TAG_SCALE_LINEAR ) && ui->combo_input->currentIndex() != 0 ) {
+        bool state = ui->combo_input->blockSignals(true);
+        ui->combo_input->setCurrentIndex(0);
+        ui->combo_input->blockSignals(state);
+    }
+    else if ( typeTag == TAG_SCALE_NONLINEAR && ui->combo_input->currentIndex() != 1 ) {
+        bool state = ui->combo_input->blockSignals(true);
+        ui->combo_input->setCurrentIndex(1);
+        ui->combo_input->blockSignals(state);
+        asInput = true;
+    }
+    else if ( typeTag == TAG_SCALE_HDR && ui->combo_input->currentIndex() != 2 ) {
+        bool state = ui->combo_input->blockSignals(true);
+        ui->combo_input->setCurrentIndex(2);
+        ui->combo_input->blockSignals(state);
+    }
+    if ( asInput ) {
+        bool state = ui->combo_gamma->blockSignals(true);
+        ui->combo_gamma->setCurrentIndex(0);
+        ui->combo_gamma->blockSignals(state);
+    }
+
     expChanged();
     curveParamsChanged();
     histogramParamsChanged();
@@ -658,9 +702,9 @@ void Visualization::updateTabsWithPhoto()
     if ( m_photoIsInput ) {
         setInputControlEnabled(true);
     }
-    QString roiTag = m_photo->getTag("ROI");
-    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "ROI") ) {
-        roiTag = m_operator->getTagOverrided(m_photo->getIdentity(), "ROI");
+    QString roiTag = m_photo->getTag(TAG_ROI);
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_ROI) ) {
+        roiTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_ROI);
     }
     if ( roiTag.count() ) {
         QStringList coord = roiTag.split(',');
@@ -676,31 +720,30 @@ void Visualization::updateTabsWithPhoto()
     m_roi_p1.setY(0);
     m_roi_p2 = m_roi_p1;
 
-    QString treatTag = m_photo->getTag("TREAT");
-    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "TREAT")) {
-        treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), "TREAT");
+    QString treatTag = m_photo->getTag(TAG_TREAT);
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_TREAT)) {
+        treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_TREAT);
     }
-    if ( treatTag == "REFERENCE" && ui->combo_treatment->currentIndex() != 1 ) {
+    if ( treatTag == TAG_TREAT_REFERENCE && ui->combo_treatment->currentIndex() != 1 ) {
         bool state = ui->combo_treatment->blockSignals(true);
         ui->combo_treatment->setCurrentIndex(1);
         ui->combo_treatment->blockSignals(state);
-
     }
-    else if ( treatTag == "DISCARDED" && ui->combo_treatment->currentIndex() != 2) {
+    else if ( treatTag == TAG_TREAT_DISCARDED && ui->combo_treatment->currentIndex() != 2) {
         bool state = ui->combo_treatment->blockSignals(true);
         ui->combo_treatment->setCurrentIndex(2);
         ui->combo_treatment->blockSignals(state);
     }
-    else if ( treatTag == "ERROR" && ui->combo_treatment->currentData() != 3 ) {
+    else if ( treatTag == TAG_TREAT_ERROR && ui->combo_treatment->currentData() != 3 ) {
         bool state = ui->combo_treatment->blockSignals(true);
         ui->combo_treatment->setCurrentIndex(3);
         ui->combo_treatment->blockSignals(state);
     }
 
     clearPoints(ToolNone);
-    QString pointsTag = m_photo->getTag("POINTS");
-    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), "POINTS") ) {
-        pointsTag = m_operator->getTagOverrided(m_photo->getIdentity(), "POINTS");
+    QString pointsTag = m_photo->getTag(TAG_POINTS);
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_POINTS) ) {
+        pointsTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_POINTS);
     }
     QStringList coords = pointsTag.split(';');
     foreach(QString coord, coords) {
@@ -729,6 +772,7 @@ void Visualization::setInputControlEnabled(bool v)
     ui->tag_buttonAdd->setEnabled(v);
     ui->tag_buttonRemove->setEnabled(v);
     ui->tag_buttonReset->setEnabled(v);
+    ui->combo_input->setEnabled(v);
 }
 void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
 {
@@ -835,7 +879,7 @@ void Visualization::storeROI()
             .arg(m_roi_p1.y())
             .arg(m_roi_p2.x())
             .arg(m_roi_p2.y());
-    m_operator->setTagOverride(m_photo->getIdentity(),"ROI", roiTag);
+    m_operator->setTagOverride(m_photo->getIdentity(),TAG_ROI, roiTag);
 }
 
 void Visualization::clearPoints(Tool tool)
@@ -903,9 +947,9 @@ void Visualization::storePoints()
                 QString::number(point->mapToScene(point->boundingRect().center()).y());
     }
     if ( pointsTag.count() )
-        m_operator->setTagOverride(m_photo->getIdentity(),"POINTS", pointsTag);
+        m_operator->setTagOverride(m_photo->getIdentity(),TAG_POINTS, pointsTag);
     else
-        m_operator->resetTagOverride(m_photo->getIdentity(),"POINTS");
+        m_operator->resetTagOverride(m_photo->getIdentity(),TAG_POINTS);
 }
 
 void Visualization::treeWidgetItemDoubleClicked(QTreeWidgetItem *item, int)

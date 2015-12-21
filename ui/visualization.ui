@@ -139,7 +139,7 @@
               <widget class="QWidget" name="layoutWidget">
                <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
-                 <spacer name="horizontalSpacer">
+                 <spacer name="horizontalSpacer_2">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -444,18 +444,18 @@
                    <string>Display assist</string>
                   </property>
                   <layout class="QFormLayout" name="formLayout">
-                   <item row="0" column="0">
+                   <item row="1" column="0">
                     <widget class="QLabel" name="label_gamma">
                      <property name="text">
-                      <string>Gamma:</string>
+                      <string>Display:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
+                   <item row="1" column="1">
                     <widget class="QComboBox" name="combo_gamma">
                      <item>
                       <property name="text">
-                       <string>Linear</string>
+                       <string>As Input</string>
                       </property>
                      </item>
                      <item>
@@ -475,14 +475,14 @@
                      </item>
                     </widget>
                    </item>
-                   <item row="1" column="0">
+                   <item row="2" column="0">
                     <widget class="QLabel" name="label_slider">
                      <property name="text">
                       <string>Exp:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="1">
+                   <item row="2" column="1">
                     <widget class="QSlider" name="slider_exp">
                      <property name="minimum">
                       <number>0</number>
@@ -510,29 +510,75 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0">
+                   <item row="3" column="0">
                     <widget class="QLabel" name="label_exp">
                      <property name="text">
                       <string>Exp:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="1">
+                   <item row="3" column="1">
                     <widget class="QLabel" name="value_exp">
                      <property name="text">
                       <string>0 EV</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1">
+                   <item row="4" column="0" colspan="2">
                     <widget class="QPushButton" name="button_fullScreen">
                      <property name="text">
                       <string>Full Screen</string>
                      </property>
                     </widget>
                    </item>
+                   <item row="5" column="0" colspan="2">
+                    <widget class="QPushButton" name="button_saveView">
+                     <property name="text">
+                      <string>Save View...</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_input">
+                     <property name="text">
+                      <string>Photo:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QComboBox" name="combo_input">
+                     <item>
+                      <property name="text">
+                       <string>Linear</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Non-Linear</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>HDR</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
                   </layout>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </widget>
@@ -624,8 +670,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>588</width>
-                 <height>512</height>
+                 <width>510</width>
+                 <height>510</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -748,8 +794,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>588</width>
-                 <height>512</height>
+                 <width>510</width>
+                 <height>510</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1194,6 +1240,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>combo_input</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>Visualization</receiver>
+   <slot>inputTypeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>703</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>387</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1215,5 +1277,6 @@
   <slot>fullScreenViewClicked()</slot>
   <slot>treatmentChanged(int)</slot>
   <slot>getInputsClicked()</slot>
+  <slot>inputTypeChanged(int)</slot>
  </slots>
 </ui>

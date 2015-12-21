@@ -19,7 +19,7 @@ public:
 private slots:
     Photo process(const Photo &, int, int) { throw 0; }
     void play() {
-        Photo photo;
+        Photo photo(Photo::Linear);
         photo.setIdentity(m_operator->uuid());
         photo.createImage(1,1);
         if ( photo.isComplete() ) {
@@ -41,7 +41,7 @@ private slots:
                         clamp<quantum_t>(rgb[1]*QuantumRange, 0, QuantumRange),
                         clamp<quantum_t>(rgb[2]*QuantumRange, 0, QuantumRange)));
             //dflDebug(QString("r: %0, g: %1, b: %2").arg(rgb[0]).arg(rgb[1]).arg(rgb[2]).toLatin1());
-            photo.setTag("Name", QString("Black Body %0 K").arg(m_temperature));
+            photo.setTag(TAG_NAME, QString("Black Body %0 K").arg(m_temperature));
             outputPush(0, photo);
             emitSuccess();
         }

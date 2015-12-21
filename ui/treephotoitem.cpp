@@ -9,7 +9,7 @@ TreePhotoItem::TreePhotoItem(const Photo &photo,
     m_photo(photo),
     m_type(type)
 {
-    setText(0, photo.getTag("Name"));
+    setText(0, photo.getTag(TAG_NAME));
     setToolTip(0, photo.getIdentity());
     if ( !photo.isComplete() ) {
         dflCritical("TreePhotoItem: photo is not complete");

@@ -16,6 +16,14 @@ class Preferences : public QDialog
     Q_OBJECT
 
 public:
+    typedef enum {
+        Linear,
+        sRGB,
+        IUT_BT_709,
+        SquareRoot,
+        TargetNone
+    } TransformTarget;
+
     explicit Preferences(QWidget *parent = 0);
     ~Preferences();
 
@@ -23,6 +31,8 @@ public:
 
     bool acquireWorker(OperatorWorker *worker);
     void releaseWorker();
+
+    TransformTarget getCurrentTarget() const;
 
 private:
     void getDefaultMagickResources();
@@ -50,6 +60,7 @@ private:
     size_t m_currentMaxWorkers;
     size_t m_scheduledMaxWorkers;
     size_t m_OpenMPThreads;
+    TransformTarget m_currentTarget;
 
 };
 

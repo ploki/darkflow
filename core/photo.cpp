@@ -20,43 +20,42 @@ Photo::Photo(Photo::Gamma gamma, QObject *parent) :
     QObject(parent),
     m_image(),
     m_curve(newCurve(gamma)),
-    m_gamma(gamma),
     m_status(Photo::Undefined),
     m_tags(),
     m_identity(Process::uuid()),
     m_sequenceNumber(0)
 {
+    setScale(gamma);
 }
 
 Photo::Photo(const Blob &blob, Photo::Gamma gamma, QObject *parent) :
     QObject(parent),
     m_image(blob),
     m_curve(newCurve(gamma)),
-    m_gamma(gamma),
     m_status(Photo::Complete),
     m_tags(),
     m_identity(Process::uuid()),
     m_sequenceNumber(0)
 {
+    setScale(gamma);
 }
 
 Photo::Photo(const Magick::Image& image, Photo::Gamma gamma, QObject *parent) :
     QObject(parent),
     m_image(image),
     m_curve(newCurve(gamma)),
-    m_gamma(gamma),
     m_status(Photo::Complete),
     m_tags(),
     m_identity(Process::uuid()),
     m_sequenceNumber(0)
 {
+    setScale(gamma);
 }
 
 Photo::Photo(const Photo &photo) :
     QObject(photo.parent()),
     m_image(photo.m_image),
     m_curve(photo.m_curve),
-    m_gamma(photo.m_gamma),
     m_status(photo.m_status),
     m_tags(photo.m_tags),
     m_identity(photo.m_identity),
@@ -72,7 +71,6 @@ Photo &Photo::operator=(const Photo &photo)
 {
     m_image = photo.m_image;
     m_curve = photo.m_curve;
-    m_gamma = photo.m_gamma;
     m_tags = photo.m_tags;
     m_identity = photo.m_identity;
     m_sequenceNumber = photo.m_sequenceNumber;
@@ -97,7 +95,7 @@ bool Photo::load(const QString &filename)
         return false;
     }
     m_tags.clear();
-    m_tags["Name"] = filename;
+    m_tags[TAG_NAME] = filename;
     setIdentity(filename);
     return true;
 }
@@ -225,6 +223,12 @@ Image Photo::newCurve(Photo::Gamma gamma)
         pixels[i].red = pixels[i].green = pixels[i].blue = i;
     switch(gamma) {
     default:
+    case NonLinear:
+        dflWarning("Unable to create curve for NonLinear");
+        break;
+    case HDR:
+        dflWarning("HDR Curve not implemented");
+        break;
     case Linear:
         break;
     case Sqrt:
@@ -589,7 +593,7 @@ bool Photo::isComplete() const
 QVector<QPointF> Photo::getPoints() const
 {
     QVector<QPointF> vec;
-    QStringList points = getTag("POINTS").split(';');
+    QStringList points = getTag(TAG_POINTS).split(';');
     if ( points.count() == 1 && points[0].count() == 0 )
         return vec;
     foreach(QString point, points) {
@@ -597,7 +601,7 @@ QVector<QPointF> Photo::getPoints() const
             continue;
         QStringList coords = point.split(',');
         if ( coords.count() != 2 ) {
-            dflError("Photo: Invalid numbers in POINTS");
+            dflError("Photo: Invalid numbers in " TAG_POINTS);
             continue;
         }
         vec.push_back(QPointF(coords[0].toDouble(), coords[1].toDouble()));
@@ -613,12 +617,12 @@ void Photo::setPoints(const QVector<QPointF>& vec)
             points+=";";
         points+=QString::number(p.x())+","+QString::number(p.y());
     }
-    setTag("POINTS", points);
+    setTag(TAG_POINTS, points);
 }
 
 QRectF Photo::getROI() const
 {
-    QString roiTag = getTag("ROI");
+    QString roiTag = getTag(TAG_ROI);
     if ( !roiTag.isEmpty() ) {
         QStringList coord = roiTag.split(',');
         if ( coord.size() == 4 ) {
@@ -655,7 +659,33 @@ void Photo::setROI(const QRectF &rect)
             QString::number(rect.y()) + "," +
             QString::number(rect.x()+rect.width()) + "," +
             QString::number(rect.y()+rect.height());
-    setTag("ROI",roi);
+    setTag(TAG_ROI,roi);
+}
+
+void Photo::setScale(Photo::Gamma gamma)
+{
+    if ( gamma & Linear ) {
+        setTag(TAG_SCALE, TAG_SCALE_LINEAR);
+    } else if ( gamma & NonLinear ) {
+        setTag(TAG_SCALE, TAG_SCALE_NONLINEAR);
+    } else if ( gamma & HDR ) {
+        setTag(TAG_SCALE, TAG_SCALE_HDR);
+    }
+}
+
+Photo::Gamma Photo::getScale() const
+{
+    QString scale = getTag(TAG_SCALE);
+    if  ( scale == TAG_SCALE_LINEAR )
+        return Linear;
+    else if ( scale == TAG_SCALE_NONLINEAR )
+        return NonLinear;
+    else if ( scale == TAG_SCALE_HDR )
+        return HDR;
+    else {
+        dflWarning("Unknown photo scale");
+        return Linear;
+    }
 }
 
 

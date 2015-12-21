@@ -25,15 +25,15 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         QRectF roi = m_refROI;
-        newPhoto.removeTag("ROI");
+        newPhoto.removeTag(TAG_ROI);
         if ( roi.isNull() )
             roi = newPhoto.getROI();
         if ( roi.isNull() ) {
-            setError(photo, "ROI not defined");
+            setError(photo, TAG_ROI" not defined");
             return newPhoto;
         }
         if ( roi.height() < 1 || roi.width() < 1 ) {
-            setError(photo, "ROI too small");
+            setError(photo, TAG_ROI" too small");
             return newPhoto;
         }
         Magick::Geometry geo(roi.width(),roi.height(),roi.x(),roi.y());

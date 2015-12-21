@@ -88,7 +88,9 @@ bool WorkerIntegration::play_onInput(int idx)
             emitFailure();
             return false;
         }
-
+        if ( photo.getScale() != Photo::Linear ) {
+            dflWarning(photo.getIdentity()+" not linear");
+        }
         QVector<QPointF> points = photo.getPoints();
         qreal lcx=0, lcy=0;
         if ( points.count() > 0 ) {
@@ -112,9 +114,9 @@ bool WorkerIntegration::play_onInput(int idx)
             int line = 0;
 
             bool hdr = false;
-            QString hdrCompStr = photo.getTag("HDR_COMP");
-            QString hdrHighStr = photo.getTag("HDR_HIGH");
-            QString hdrLowStr = photo.getTag("HDR_LOW");
+            QString hdrCompStr = photo.getTag(TAG_HDR_COMP);
+            QString hdrHighStr = photo.getTag(TAG_HDR_HIGH);
+            QString hdrLowStr = photo.getTag(TAG_HDR_LOW);
             qreal hdrComp = 1,
                     hdrHigh,
                     hdrLow;
@@ -177,9 +179,10 @@ bool WorkerIntegration::play_onInput(int idx)
         }
     }
     try {
-        Photo newPhoto;
+        Photo newPhoto(Photo::Linear);
         newPhoto.setIdentity(m_operator->uuid());
         newPhoto.createImage(m_w, m_h);
+        newPhoto.setTag(TAG_NAME, "Integration");
         Magick::Image& newImage = newPhoto.image();
         newImage.modifyImage();
         Magick::Pixels pixel_cache(newImage);
@@ -200,7 +203,6 @@ bool WorkerIntegration::play_onInput(int idx)
                             clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
             }
         }
-        newPhoto.setTag("Name", "Integration");
         outputPush(0, newPhoto);
     }
     catch (std::exception &e) {

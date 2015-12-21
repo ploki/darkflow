@@ -229,12 +229,12 @@ QVector<QVector<Photo> > Operator::collectInputs()
                 photo.setIdentity(identity);
 
                 overrideTags(photo);
-                QString treatTag = photo.getTag("TREAT");
-                if ( treatTag != "DISCARDED" &&
-                     treatTag != "ERROR") {
+                QString treatTag = photo.getTag(TAG_TREAT);
+                if ( treatTag != TAG_TREAT_DISCARDED &&
+                     treatTag != TAG_TREAT_ERROR) {
                     inputs[i].push_back(photo);
                 }
-                else if ( treatTag == "ERROR" ) {
+                else if ( treatTag == TAG_TREAT_ERROR ) {
                     dflWarning("Photo: " + photo.getIdentity() + " discarded because of error");
                 }
             }
@@ -300,8 +300,8 @@ void Operator::setOutOfDate()
 
 void Operator::setErrorTag(const QString &photoIdentity, const QString &msg)
 {
-    setTagOverride(photoIdentity, "TREAT", "ERROR");
-    setTagOverride(photoIdentity, "ERROR", msg);
+    setTagOverride(photoIdentity, TAG_TREAT, TAG_TREAT_ERROR);
+    setTagOverride(photoIdentity, TAG_TREAT_ERROR, msg);
 }
 
 void Operator::setTagOverride(const QString &photoIdentity, const QString &key, const QString &value)

@@ -57,6 +57,7 @@ public slots:
     void tags_buttonResetClicked();
     void toolChanged(int idx);
     void treatmentChanged(int idx);
+    void inputTypeChanged(int idx);
     void storePoints();
     void treeWidgetItemDoubleClicked(QTreeWidgetItem * item, int column);
 

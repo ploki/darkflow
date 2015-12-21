@@ -1,3 +1,4 @@
+#include <QFileInfo>
 #include <list>
 
 #include "workerloadimage.h"
@@ -52,13 +53,16 @@ void WorkerLoadImage::play()
                     failure = true;
                     continue;
                 }
-                QString identity = collection[i];
+                QFileInfo finfo(collection[i]);
+                QString identity = finfo.fileName();
                 if ( count > 1 )
                     identity += ":" + QString::number(plane);
-                photo.setIdentity(identity);
-                //setTags(collection[i], photo);
-                photo.setTag("Name", identity);
+                photo.setIdentity(m_operator->uuid()+"/"+identity);
+                photo.setTag(TAG_NAME, identity);
                 photo.setSequenceNumber(i);
+                photo.setTag(TAG_SCALE, gamma == Photo::Linear
+                             ? TAG_SCALE_LINEAR
+                             : TAG_SCALE_NONLINEAR);
 #pragma omp critical
                 {
                     outputPush(0, photo);

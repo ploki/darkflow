@@ -50,8 +50,8 @@ public:
             int h = m_inputs[0][i].image().rows();
             if (m_to == OpScale::ToReferenceWidth ||
                     m_to == OpScale::ToReferenceHeight ) {
-                QString treatTag = m_inputs[0][i].getTag("TREAT");
-                if ( treatTag == "REFERENCE" ) {
+                QString treatTag = m_inputs[0][i].getTag(TAG_TREAT);
+                if ( treatTag == TAG_TREAT_REFERENCE ) {
                     ref_w = w;
                     ref_h = h;
                     break;

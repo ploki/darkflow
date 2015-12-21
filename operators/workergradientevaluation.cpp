@@ -107,6 +107,6 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
     out_cache.sync();
 
     outPhoto.setPoints(QVector<QPointF>());
-    outPhoto.setTag("Name", "Background of "+outPhoto.getTag("Name"));
+    outPhoto.setTag(TAG_NAME, "Background of "+outPhoto.getTag(TAG_NAME));
     return outPhoto;
 }

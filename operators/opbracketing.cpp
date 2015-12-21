@@ -17,9 +17,9 @@ public:
     {}
     Photo process(const Photo &photo, int , int ) {
         Photo newPhoto(photo);
-        newPhoto.setTag("HDR_COMP",QString::number(m_compensation));
-        newPhoto.setTag("HDR_HIGH",QString::number(m_high));
-        newPhoto.setTag("HDR_LOW",QString::number(m_low));
+        newPhoto.setTag(TAG_HDR_COMP,QString::number(m_compensation));
+        newPhoto.setTag(TAG_HDR_HIGH,QString::number(m_high));
+        newPhoto.setTag(TAG_HDR_LOW,QString::number(m_low));
         return newPhoto;
     }
 

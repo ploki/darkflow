@@ -62,7 +62,8 @@ Preferences::Preferences(QWidget *parent) :
   m_mutex(new QMutex),
   m_currentMaxWorkers(N_WORKERS),
   m_scheduledMaxWorkers(N_WORKERS),
-  m_OpenMPThreads(dfl_max_threads())
+  m_OpenMPThreads(dfl_max_threads()),
+  m_currentTarget(sRGB)
 {
     ui->setupUi(this);
 
@@ -92,6 +93,8 @@ Preferences::Preferences(QWidget *parent) :
         Console::setTrapLevel(Console::LastLevel);
         MagickCore::ExceptionInfo *exception = MagickCore::AcquireExceptionInfo();
         MagickCore::SetImageRegistry(MagickCore::StringRegistryType, "temporary-path", (const void*)ui->valueTmpDir->text().toLocal8Bit(), exception);
+
+        ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
     }
     load();
 }
@@ -212,6 +215,7 @@ bool Preferences::load(bool create)
     QJsonObject resources = obj["resources"].toObject();
     QJsonObject path = obj["path"].toObject();
     QJsonObject logging = obj["logging"].toObject();
+    QJsonObject display = obj["display"].toObject();
 
     int dflWorkers = resources["darkflowWorkers"].toInt();
     int dflThreads = resources["darkflowThreads"].toInt();
@@ -257,6 +261,9 @@ bool Preferences::load(bool create)
 
     setMagickResources();
 
+    m_currentTarget = TransformTarget(display["transformTarget"].toInt());
+    ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
+
     ui->valueTmpDir->setText(path["tmp"].toString());
     ui->valueBaseDir->setText(path["base"].toString());
 
@@ -276,6 +283,7 @@ bool Preferences::load(bool create)
 void Preferences::save()
 {
     QJsonObject resources;
+    QJsonObject display;
     QJsonObject path;
     QJsonObject logging;
 
@@ -302,6 +310,9 @@ void Preferences::save()
     resources["darkflowWorkers"] = dflWorkers;
     resources["darkflowThreads"] = dflThreads;
 
+    m_currentTarget = TransformTarget(ui->comboTransformTarget->currentIndex());
+    display["transformTarget"] = m_currentTarget;
+
     path["tmp"] = ui->valueTmpDir->text();
     path["base"] = ui->valueBaseDir->text();
 
@@ -311,6 +322,7 @@ void Preferences::save()
 
     QJsonObject obj;
     obj["resources"] = resources;
+    obj["display"] = display;
     obj["path"] = path;
     obj["logging"] = logging;
     QJsonDocument doc;
@@ -389,4 +401,9 @@ void Preferences::baseDirClicked()
                                                           QFileDialog::ShowDirsOnly);
     if ( !baseDir.isEmpty())
         ui->valueBaseDir->setText(baseDir);
+}
+
+Preferences::TransformTarget Preferences::getCurrentTarget() const
+{
+    return m_currentTarget;
 }

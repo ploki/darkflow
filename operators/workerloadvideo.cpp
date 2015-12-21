@@ -1,4 +1,5 @@
 #include <QObject>
+#include <QFileInfo>
 #include <QStringList>
 
 #include <Magick++.h>
@@ -221,8 +222,13 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
 
         try {
             Photo photo(Photo::sRGB);
-            photo.setIdentity(QString("%0[%1]").arg(filename).arg(n));
             photo.createImage(w, h);
+            QFileInfo finfo(filename);
+            QString name = QString("%0[%1]").arg(finfo.fileName()).arg(n);
+            photo.setIdentity(m_operator->uuid() + "/" + name);
+            photo.setTag(TAG_NAME,name);
+            photo.setSequenceNumber(n);
+            photo.setTag(TAG_SCALE, TAG_SCALE_NONLINEAR);
             Magick::Image& image=photo.image();
             image.modifyImage();
             Magick::Pixels pixel_cache(image);
@@ -248,8 +254,6 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
                 }
             }
             pixel_cache.sync();
-            photo.setSequenceNumber(n);
-            photo.setTag("Name",photo.getIdentity());
             outputPush(0, photo);
             --m_count;
         }

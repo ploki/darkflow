@@ -50,7 +50,6 @@ void WorkerLoadRaw::play()
                 failure = true;
                 continue;
             }
-            photo.setIdentity(collection[i]);
             setTags(collection[i], photo);
             photo.setSequenceNumber(i);
 #pragma omp critical
@@ -177,25 +176,29 @@ void WorkerLoadRaw::setTags(const QString &filename, Photo &photo)
     QFileInfo finfo(filename);
     info.probeFile(filename);
     //photo.writeJPG("/tmp/"+finfo.fileName()+".jpg");
-    photo.setTag("Name", finfo.fileName());
-    photo.setTag("Directory", finfo.dir().path());
-    photo.setTag("ISO Speed", QString("%0").arg(info.isoSpeed()));
-    photo.setTag("Shutter", QString("%0").arg(info.shutterSpeed()));
-    photo.setTag("Aperture", QString("%0").arg(info.aperture()));
-    photo.setTag("Focal length", QString("%0").arg(info.focal()));
-    photo.setTag("D65 R multiplier", QString("%0").arg(info.daylightMultipliers().r));
-    photo.setTag("D65 G multiplier", QString("%0").arg(info.daylightMultipliers().g));
-    photo.setTag("D65 B multiplier", QString("%0").arg(info.daylightMultipliers().b));
-    photo.setTag("Camera", info.camera());
-    photo.setTag("TimeStamp", info.timestamp());
-    photo.setTag("Filter pattern", info.filterPattern());
-    photo.setTag("Color Space", m_loadraw->getColorSpace());
-    photo.setTag("Debayer", m_loadraw->getDebayer());
-    photo.setTag("White Balance", m_loadraw->getWhiteBalance());
+    photo.setIdentity(m_operator->uuid()+"/"+finfo.fileName());
+    photo.setTag(TAG_NAME, finfo.fileName());
+    photo.setTag(TAG_DIRECTORY, finfo.dir().path());
+    photo.setTag(TAG_ISO_SPEED, QString("%0").arg(info.isoSpeed()));
+    photo.setTag(TAG_SHUTTER, QString("%0").arg(info.shutterSpeed()));
+    photo.setTag(TAG_APERTURE, QString("%0").arg(info.aperture()));
+    photo.setTag(TAG_FOCAL_LENGTH, QString("%0").arg(info.focal()));
+    photo.setTag(TAG_D65_R_MULTIPLIER, QString("%0").arg(info.daylightMultipliers().r));
+    photo.setTag(TAG_D65_G_MULTIPLIER, QString("%0").arg(info.daylightMultipliers().g));
+    photo.setTag(TAG_D65_B_MULTIPLIER, QString("%0").arg(info.daylightMultipliers().b));
+    photo.setTag(TAG_CAMERA, info.camera());
+    photo.setTag(TAG_TIMESTAMP, info.timestamp());
+    photo.setTag(TAG_FILTER_PATTERN, info.filterPattern());
+    photo.setTag(TAG_COLOR_SPACE, m_loadraw->getColorSpace());
+    photo.setTag(TAG_SCALE, m_loadraw->m_colorSpaceValue == OpLoadRaw::Linear
+                 ? TAG_SCALE_LINEAR
+                 : TAG_SCALE_NONLINEAR);
+    photo.setTag(TAG_DEBAYER, m_loadraw->getDebayer());
+    photo.setTag(TAG_WHITE_BALANCE, m_loadraw->getWhiteBalance());
     if ( m_loadraw->m_debayerValue == OpLoadRaw::NoDebayer ) {
-        photo.setTag("Pixels", "CFA");
+        photo.setTag(TAG_PIXELS, TAG_PIXELS_CFA);
     }
     else {
-        photo.setTag("Pixels", "RGB");
+        photo.setTag(TAG_PIXELS, TAG_PIXELS_RGB);
     }
 }

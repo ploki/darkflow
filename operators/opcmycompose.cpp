@@ -2,8 +2,7 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "cielab.h"
-#include "igamma.h"
+#include "algorithm.h"
 
 static Photo
 blackDot()
@@ -74,6 +73,7 @@ public:
                 Magick::Pixels iCyan_cache(iCyan);
                 Magick::Pixels iMagenta_cache(iMagenta);
                 Magick::Pixels iYellow_cache(iYellow);
+                Magick::Pixels iLuminance_cache(iLuminance);
 
 
                 Photo photo(Photo::Linear);
@@ -89,6 +89,7 @@ public:
                     const Magick::PixelPacket *pxl_Cyan = iCyan_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Magenta = iMagenta_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Luminance = iLuminance_cache.getConst(0, y, w, 1);
                     for ( unsigned x = 0 ; x < w ; ++x ) {
                         quantum_t rgb[3];
                         quantum_t cyan = 0;
@@ -101,22 +102,28 @@ public:
                         rgb[0] =  - cyan + magenta + yellow;
                         rgb[1] =    cyan - magenta + yellow;
                         rgb[2] =    cyan + magenta - yellow;
+                        if ( l_count ) {
+                            double lum = .2126L*(pxl_Luminance?pxl_Luminance[x].red:0) +
+                                    .7152L*(pxl_Luminance?pxl_Luminance[x].green:0) +
+                                    .0722L*(pxl_Luminance?pxl_Luminance[x].blue:0);
+                            double cur = .2126L*rgb[0] +
+                                    .7152L*rgb[1] +
+                                    .0722L*rgb[2];
+                            double mul = lum/cur;
+                            rgb[0] = round(mul*rgb[0]);
+                            rgb[1] = round(mul*rgb[1]);
+                            rgb[2] = round(mul*rgb[2]);
+                        }
                         pxl[y*w+x].red = clamp(rgb[0]);
                         pxl[y*w+x].green = clamp(rgb[1]);
                         pxl[y*w+x].blue = clamp(rgb[2]);
                     }
 #pragma omp critical
                     {
-                        emitProgress(i, photo_count,(line++)/2, h);
+                        emitProgress(i, photo_count,line++, h);
                     }
                 }
                 iPhoto_cache.sync();
-                if ( l_count ) {
-                    iGamma& labGamma = iGamma::Lab();
-                    labGamma.applyOn(pLuminance);
-                    emitProgress(i, photo_count, 3, 4);
-                    unLabize(photo.image(), pLuminance.image());
-                }
                 outputPush(0, photo);
                 emitProgress(i, photo_count, 1, 1);
             }
@@ -141,7 +148,7 @@ public:
 };
 
 OpCMYCompose::OpCMYCompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, "LCMY Compose", parent)
+    Operator(OP_SECTION_COLOR, "LCMY Compose", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
     addInput(new OperatorInput("Cyan", "Cyan", OperatorInput::Set, this));

@@ -12,7 +12,7 @@ public:
                           bool safe,
                           QObject *parent = 0);
 
-    void applyOnImage(Magick::Image& image);
+    void applyOnImage(Magick::Image& image, bool hdr);
 
     static void Temperature_to_RGB(qreal T, qreal RGB[3]);
 signals:

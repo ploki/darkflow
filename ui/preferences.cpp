@@ -63,7 +63,8 @@ Preferences::Preferences(QWidget *parent) :
   m_currentMaxWorkers(N_WORKERS),
   m_scheduledMaxWorkers(N_WORKERS),
   m_OpenMPThreads(dfl_max_threads()),
-  m_currentTarget(sRGB)
+  m_currentTarget(sRGB),
+  m_incompatibleAction(Error)
 {
     ui->setupUi(this);
 
@@ -215,7 +216,7 @@ bool Preferences::load(bool create)
     QJsonObject resources = obj["resources"].toObject();
     QJsonObject path = obj["path"].toObject();
     QJsonObject logging = obj["logging"].toObject();
-    QJsonObject display = obj["display"].toObject();
+    QJsonObject pixels = obj["pixels"].toObject();
 
     int dflWorkers = resources["darkflowWorkers"].toInt();
     int dflThreads = resources["darkflowThreads"].toInt();
@@ -261,8 +262,10 @@ bool Preferences::load(bool create)
 
     setMagickResources();
 
-    m_currentTarget = TransformTarget(display["transformTarget"].toInt());
+    m_currentTarget = TransformTarget(pixels["transformTarget"].toInt());
     ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
+    m_incompatibleAction = IncompatibleAction(pixels["incompatibleAction"].toInt());
+    ui->comboIncompatibleScale->setCurrentIndex(m_incompatibleAction);
 
     ui->valueTmpDir->setText(path["tmp"].toString());
     ui->valueBaseDir->setText(path["base"].toString());
@@ -283,7 +286,7 @@ bool Preferences::load(bool create)
 void Preferences::save()
 {
     QJsonObject resources;
-    QJsonObject display;
+    QJsonObject pixels;
     QJsonObject path;
     QJsonObject logging;
 
@@ -311,7 +314,9 @@ void Preferences::save()
     resources["darkflowThreads"] = dflThreads;
 
     m_currentTarget = TransformTarget(ui->comboTransformTarget->currentIndex());
-    display["transformTarget"] = m_currentTarget;
+    pixels["transformTarget"] = m_currentTarget;
+    m_incompatibleAction = IncompatibleAction(ui->comboIncompatibleScale->currentIndex());
+    pixels["incompatibleAction"] = m_incompatibleAction;
 
     path["tmp"] = ui->valueTmpDir->text();
     path["base"] = ui->valueBaseDir->text();
@@ -322,7 +327,7 @@ void Preferences::save()
 
     QJsonObject obj;
     obj["resources"] = resources;
-    obj["display"] = display;
+    obj["pixels"] = pixels;
     obj["path"] = path;
     obj["logging"] = logging;
     QJsonDocument doc;
@@ -406,4 +411,9 @@ void Preferences::baseDirClicked()
 Preferences::TransformTarget Preferences::getCurrentTarget() const
 {
     return m_currentTarget;
+}
+
+Preferences::IncompatibleAction Preferences::getIncompatibleAction() const
+{
+    return m_incompatibleAction;
 }

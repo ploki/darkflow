@@ -3,14 +3,14 @@
 #include "photo.h"
 #include <Magick++.h>
 #include "cielab.h"
-
+#include "hdr.h"
 using Magick::Quantum;
 
 DesaturateShadows::DesaturateShadows(qreal highlightLimit,
                                      qreal range,
                                      qreal saturation,
                                      QObject *parent) :
-    Algorithm(parent),
+    Algorithm(false, parent),
     m_lut(new double[QuantumRange+1]),
     m_highlightLimit(highlightLimit),
     m_range(range),
@@ -40,7 +40,7 @@ DesaturateShadows::~DesaturateShadows()
     delete[] m_lut;
 }
 
-void DesaturateShadows::applyOnImage(Magick::Image& image)
+void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
 {
     int h = image.rows(),
             w = image.columns();
@@ -52,22 +52,36 @@ void DesaturateShadows::applyOnImage(Magick::Image& image)
         Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
         if ( !pixels ) continue;
         for ( int x = 0 ; x < w ; ++x ) {
-            quantum_t rgb[3];
-            rgb[0]=pixels[x].red;
-            rgb[1]=pixels[x].green;
-            rgb[2]=pixels[x].blue;
+            double rgb[3];
+            if (hdr) {
+                rgb[0]=fromHDR(pixels[x].red);
+                rgb[1]=fromHDR(pixels[x].green);
+                rgb[2]=fromHDR(pixels[x].blue);
+            }
+            else {
+                rgb[0]=pixels[x].red;
+                rgb[1]=pixels[x].green;
+                rgb[2]=pixels[x].blue;
+            }
             double lab[3];
             RGB_to_LinearLab(rgb,lab);
-            quantum_t L=lab[0]*QuantumRange;
+            quantum_t L= round(lab[0]*QuantumRange);
             if ( L > QuantumRange ) L=QuantumRange;
             if ( ! equals(m_lut[L],1.) )
             {
                 lab[1]*=m_lut[L];
                 lab[2]*=m_lut[L];
                 LinearLab_to_RGB(lab,rgb);
-                pixels[x].red=rgb[0];
-                pixels[x].green=rgb[1];
-                pixels[x].blue=rgb[2];
+                if (hdr) {
+                    pixels[x].red = toHDR(rgb[0]);
+                    pixels[x].green = toHDR(rgb[1]);
+                    pixels[x].blue = toHDR(rgb[2]);
+                }
+                else {
+                    pixels[x].red = round(rgb[0]);
+                    pixels[x].green = round(rgb[1]);
+                    pixels[x].blue = round(rgb[2]);
+                }
             }
         }
     }

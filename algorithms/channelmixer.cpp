@@ -1,9 +1,10 @@
 #include "channelmixer.h"
 #include "photo.h"
 #include <Magick++.h>
+#include "hdr.h"
 
 ChannelMixer::ChannelMixer(qreal r, qreal g, qreal b, QObject *parent) :
-    Algorithm(parent),
+    Algorithm(true, parent),
     m_rgb()
 {
     m_rgb[0] = r;
@@ -11,7 +12,7 @@ ChannelMixer::ChannelMixer(qreal r, qreal g, qreal b, QObject *parent) :
     m_rgb[2] = b;
 }
 
-void ChannelMixer::applyOnImage(Magick::Image &image)
+void ChannelMixer::applyOnImage(Magick::Image &image, bool hdr)
 {
     image.modifyImage();
     int h = image.rows(),
@@ -23,9 +24,22 @@ void ChannelMixer::applyOnImage(Magick::Image &image)
         if ( !pixels ) continue;
         for (int x = 0 ; x < w ; ++x ) {
             using Magick::Quantum;
-            pixels[x].red=
-            pixels[x].green=
-            pixels[x].blue=clamp<double>(pixels[x].red*m_rgb[0]+pixels[x].green*m_rgb[1]+pixels[x].blue*m_rgb[2],0,QuantumRange);
+            if (hdr) {
+                pixels[x].red=
+                pixels[x].green=
+                pixels[x].blue=clamp<quantum_t>(
+                            toHDR(m_rgb[0]*fromHDR(pixels[x].red) +
+                                  m_rgb[1]*fromHDR(pixels[x].green) +
+                                  m_rgb[2]+fromHDR(pixels[x].blue)));
+            }
+            else {
+                pixels[x].red=
+                pixels[x].green=
+                pixels[x].blue=clamp<quantum_t>(
+                            round(m_rgb[0]*pixels[x].red +
+                                  m_rgb[1]*pixels[x].green +
+                                  m_rgb[2]*pixels[x].blue));
+            }
         }
     }
     pixel_cache.sync();

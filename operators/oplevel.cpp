@@ -33,7 +33,7 @@ private:
 };
 
 OpLevel::OpLevel(Process *parent) :
-    Operator(OP_SECTION_CURVE, "Level", parent),
+    Operator(OP_SECTION_CURVE, "Level", Operator::NonHDR, parent),
     m_blackPoint(new OperatorParameterSlider("blackPoint", "Black Point", "Level Black Point", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1./(1<<16), 1./(1<<16), 1, Slider::FilterExposureFromOne, this)),
     m_whitePoint(new OperatorParameterSlider("blackPoint", "White Point", "Level White Point", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1, 1./(1<<16), 1, Slider::FilterExposureFromOne, this)),
     m_gamma(new OperatorParameterSlider("gamma", "Gamma", "Level Gamma", Slider::Value, Slider::Logarithmic, Slider::Real, 0.1, 10, 1, 0.01, 10, Slider::FilterNothing, this))

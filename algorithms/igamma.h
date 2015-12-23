@@ -14,6 +14,9 @@ public:
     static iGamma& reverse_sRGB();
     static iGamma& reverse_BT709();
     static iGamma& reverse_Lab();
+
+    void applyOn(Photo &photo);
+
 private:
     qreal m_gamma;
     qreal m_x0;

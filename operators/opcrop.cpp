@@ -47,7 +47,7 @@ private:
 };
 
 OpCrop::OpCrop(Process *parent) :
-    Operator(OP_SECTION_GEOMETRY, "Crop", parent)
+    Operator(OP_SECTION_GEOMETRY, "Crop", Operator::All, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Cropped", "Cropped", this));

@@ -69,7 +69,7 @@ public:
         Complete
     } Status;
 
-    Photo(Gamma gamma = HDR, QObject *parent = 0);
+    Photo(Gamma gamma = Linear, QObject *parent = 0);
     Photo(const Magick::Image& image, Gamma gamma, QObject *parent = 0);
     Photo(const Magick::Blob& blob, Gamma gamma, QObject *parent = 0);
     Photo(const Photo& photo);

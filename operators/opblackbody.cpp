@@ -56,7 +56,7 @@ private:
 };
 
 OpBlackBody::OpBlackBody(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Black Body", parent),
+    Operator(OP_SECTION_COLOR, "Black Body", Operator::NA, parent),
     m_temperature(new OperatorParameterSlider("temperature", "Temperature", "Black Body Temperature",
                                               Slider::Value, Slider::Logarithmic, Slider::Integer,
                                               2000, 12000, 6500, 2000, 12000, Slider::FilterNothing,this)),

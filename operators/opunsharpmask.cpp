@@ -34,7 +34,7 @@ private:
 };
 
 OpUnsharpMask::OpUnsharpMask(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Unsharp Mask", parent),
+    Operator(OP_SECTION_COSMETIC, "Unsharp Mask", Operator::NonHDR, parent),
     m_radius(new OperatorParameterSlider("radius", "Radius", "Unsharp Mask Radius", Slider::Value, Slider::Logarithmic, Slider::Real, .1, 100, 1, .1, 1000, Slider::FilterPixels, this)),
     m_sigma(new OperatorParameterSlider("sigma", "Sigma", "Unsharp Mask Sigma", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 1, 0, 1, Slider::FilterPercent, this)),
     m_amount(new OperatorParameterSlider("amount", "Amount", "Unsharp Mask Amount", Slider::Percent, Slider::Logarithmic, Slider::Real, 0.1, 10, 1, 0.01, 100, Slider::FilterPercent, this)),

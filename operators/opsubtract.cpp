@@ -120,7 +120,7 @@ public:
 
 
 OpSubtract::OpSubtract(Process *parent) :
-    Operator(OP_SECTION_DEPRECATED, "Subtract", parent)
+    Operator(OP_SECTION_DEPRECATED, "Subtract", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Minuend","Minuend",OperatorInput::Set, this));
     addInput(new OperatorInput("Subtrahend","Subtrahend",OperatorInput::Set, this));

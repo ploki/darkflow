@@ -1,13 +1,17 @@
 #include "workerblend.h"
 #include <Magick++.h>
 #include "algorithm.h"
+#include "hdr.h"
 
 using Magick::Quantum;
 
-WorkerBlend::WorkerBlend(OpBlend::BlendMode mode1, OpBlend::BlendMode mode2, QThread *thread, Operator *op) :
+typedef float real;
+
+WorkerBlend::WorkerBlend(OpBlend::BlendMode mode1, OpBlend::BlendMode mode2, bool outputHDR, QThread *thread, Operator *op) :
     OperatorWorker(thread, op),
     m_mode1(mode1),
-    m_mode2(mode2)
+    m_mode2(mode2),
+    m_outputHDR(outputHDR)
 {}
 
 Photo WorkerBlend::process(const Photo &, int, int)
@@ -15,35 +19,38 @@ Photo WorkerBlend::process(const Photo &, int, int)
     throw 0;
 }
 
-static void
-blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
+static inline void
+blend(WorkerBlend *self, real *rgb, const real *p, OpBlend::BlendMode mode)
 {
     switch ( mode ) {
     case OpBlend::Multiply:
         //f(a,b) = a*b
-        rgb[0] = (double(rgb[0])/QuantumRange * double(p->red)/QuantumRange) * QuantumRange;
-        rgb[1] = (double(rgb[1])/QuantumRange * double(p->green)/QuantumRange) * QuantumRange;
-        rgb[2] = (double(rgb[2])/QuantumRange * double(p->blue)/QuantumRange) * QuantumRange;
+        rgb[0] = (rgb[0] * p[0]) / QuantumRange;
+        rgb[1] = (rgb[1] * p[1]) / QuantumRange;
+        rgb[2] = (rgb[2] * p[2]) / QuantumRange;
         break;
     case OpBlend::Screen:
         //f(a,b) = 1-(1-a)(1-b)
-        rgb[0] = QuantumRange-(1.-double(rgb[0])/QuantumRange)*(1.-double(p->red)/QuantumRange)*QuantumRange;
-        rgb[1] = QuantumRange-(1.-double(rgb[1])/QuantumRange)*(1.-double(p->green)/QuantumRange)*QuantumRange;
-        rgb[2] = QuantumRange-(1.-double(rgb[2])/QuantumRange)*(1.-double(p->blue)/QuantumRange)*QuantumRange;
+        rgb[0] = QuantumRange-(1.-rgb[0]/QuantumRange)*(1.-p[0]/QuantumRange)*QuantumRange;
+        rgb[1] = QuantumRange-(1.-rgb[1]/QuantumRange)*(1.-p[1]/QuantumRange)*QuantumRange;
+        rgb[2] = QuantumRange-(1.-rgb[2]/QuantumRange)*(1.-p[2]/QuantumRange)*QuantumRange;
         break;
     case OpBlend::Overlay:
         //f(a,b) = a<.5 ? 2ab : 1-2(1-a)(1-b)
+        self->dflError("Not Implemented");
         break;
     case OpBlend::HardLight:
+        self->dflError("Not Implemented");
         break;
     case OpBlend::SoftLight:
+        self->dflError("Not Implemented");
         break;
     case OpBlend::DivideBrighten: {
         //f(a,b) = a*(1-b)
-        double mul[3] = {
-            p->red?double(QuantumRange)/double(p->red):0,
-            p->green?double(QuantumRange)/double(p->green):0,
-            p->blue?double(QuantumRange)/double(p->blue):0
+        real mul[3] = {
+            p[0]!=0?real(QuantumRange)/p[0]:0,
+            p[1]!=0?real(QuantumRange)/p[1]:0,
+            p[2]!=0?real(QuantumRange)/p[2]:0
         };
         rgb[0] = mul[0]*rgb[0];
         rgb[1] = mul[1]*rgb[1];
@@ -52,12 +59,12 @@ blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
         break;
     case OpBlend::Divide: {
         //f(a,b) = a*(1-b)
-        double mul[3] = {
-            p->red?double(QuantumRange)/double(p->red):0,
-            p->green?double(QuantumRange)/double(p->green):0,
-            p->blue?double(QuantumRange)/double(p->blue):0
+        real mul[3] = {
+            p[0]!=0?real(QuantumRange)/p[0]:0,
+            p[1]!=0?real(QuantumRange)/p[1]:0,
+            p[2]!=0?real(QuantumRange)/p[2]:0
         };
-        double max = 0;
+        real max = 0;
         if ( mul[0] > max) max = mul[0];
         if ( mul[1] > max) max = mul[1];
         if ( mul[2] > max) max = mul[2];
@@ -71,10 +78,10 @@ blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
         break;
     case OpBlend::DivideDarken: {
         //f(a,b) = a*(1-b)
-        double mul[3] = {
-            p->red?1/double(p->red):0,
-            p->green?1/double(p->green):0,
-            p->blue?1/double(p->blue):0
+        real mul[3] = {
+            (p[0]!=0)?real(1)/p[0]:0,
+            (p[1]!=0)?real(1)/p[1]:0,
+            (p[2]!=0)?real(1)/p[2]:0
         };
         rgb[0] = mul[0]*rgb[0];
         rgb[1] = mul[1]*rgb[1];
@@ -82,19 +89,19 @@ blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
     }
         break;
     case OpBlend::Addition:
-        rgb[0] = rgb[0]+quantum_t(p->red);
-        rgb[1] = rgb[1]+quantum_t(p->green);
-        rgb[2] = rgb[2]+quantum_t(p->blue);
+        rgb[0] = rgb[0]+p[0];
+        rgb[1] = rgb[1]+p[1];
+        rgb[2] = rgb[2]+p[2];
         break;
     case OpBlend::Subtract:
-        rgb[0] = rgb[0]-quantum_t(p->red);
-        rgb[1] = rgb[1]-quantum_t(p->green);
-        rgb[2] = rgb[2]-quantum_t(p->blue);
+        rgb[0] = rgb[0]-p[0];
+        rgb[1] = rgb[1]-p[1];
+        rgb[2] = rgb[2]-p[2];
         break;
     case OpBlend::Difference: {
-        quantum_t r = rgb[0]-quantum_t(p->red);
-        quantum_t g = rgb[1]-quantum_t(p->green);
-        quantum_t b = rgb[2]-quantum_t(p->blue);
+        real r = rgb[0]-p[0];
+        real g = rgb[1]-p[1];
+        real b = rgb[2]-p[2];
         if ( r < 0 ) r=-r;
         if ( g < 0 ) g=-g;
         if ( b < 0 ) b=-b;
@@ -104,36 +111,48 @@ blend(quantum_t *rgb, const Magick::PixelPacket *p, OpBlend::BlendMode mode)
         break;
     }
     case OpBlend::DarkenOnly:
-        rgb[0] = qMin(rgb[0], quantum_t(p->red));
-        rgb[1] = qMin(rgb[1], quantum_t(p->green));
-        rgb[2] = qMin(rgb[2], quantum_t(p->blue));
+        rgb[0] = qMin(rgb[0], p[0]);
+        rgb[1] = qMin(rgb[1], p[1]);
+        rgb[2] = qMin(rgb[2], p[2]);
         break;
     case OpBlend::LightenOnly:
-        rgb[0] = qMax(rgb[0], quantum_t(p->red));
-        rgb[1] = qMax(rgb[1], quantum_t(p->green));
-        rgb[2] = qMax(rgb[2], quantum_t(p->blue));
+        rgb[0] = qMax(rgb[0], p[0]);
+        rgb[1] = qMax(rgb[1], p[1]);
+        rgb[2] = qMax(rgb[2], p[2]);
         break;
     }
 }
 
-static void
-blend(Magick::PixelPacket *a,
+static inline void
+blend(WorkerBlend *self,
+      Magick::PixelPacket *a,
+      bool aHdr,
       const Magick::PixelPacket *b,
+      bool bHdr,
       const Magick::PixelPacket *c,
+      bool cHdr,
       Magick::PixelPacket *u,
       Magick::PixelPacket *o,
       OpBlend::BlendMode mode1,
-      OpBlend::BlendMode mode2)
+      OpBlend::BlendMode mode2,
+      bool outputHDR)
 {
-    quantum_t rgb[3] = {0, 0, 0};
+    real rgb[3] = {0, 0, 0};
     if ( a ) {
-        blend(rgb, a, OpBlend::Addition);
+        if (!aHdr) { rgb[0] = a->red; rgb[1] = a->green; rgb[2] = a->blue; }
+        else { rgb[0] = fromHDR(a->red); rgb[1] = fromHDR(a->green); rgb[2] = fromHDR(a->blue); }
     }
     if ( b ) {
-        blend(rgb, b, mode1);
+        real p[3];
+        if (!bHdr) { p[0] = b->red; p[1] = b->green; p[2] = b->blue; }
+        else { p[0] = fromHDR(b->red); p[1] = fromHDR(b->green); p[2] = fromHDR(b->blue); }
+        blend(self, rgb, p, mode1);
     }
     if ( c ) {
-        blend(rgb, c, mode2);
+        real p[3];
+        if (!cHdr) { p[0] = c->red; p[1] = c->green; p[2] = c->blue; }
+        else { p[0] = fromHDR(c->red); p[1] = fromHDR(c->green); p[2] = fromHDR(c->blue); }
+        blend(self, rgb, p, mode2);
     }
     if (u) {
         if ( rgb[0] < 0 ) u->red = -rgb[0]; else u->red = 0;
@@ -145,13 +164,21 @@ blend(Magick::PixelPacket *a,
         if ( rgb[1] > QuantumRange ) o->green = clamp(rgb[1]-QuantumRange); else o->green = 0;
         if ( rgb[2] > QuantumRange ) o->blue = clamp(rgb[2]-QuantumRange); else o->blue = 0;
     }
-    a->red = clamp(rgb[0]);
-    a->green = clamp(rgb[1]);
-    a->blue = clamp(rgb[2]);
+    if ( outputHDR ) {
+        a->red = clamp(toHDR(rgb[0]));
+        a->green = clamp(toHDR(rgb[1]));
+        a->blue = clamp(toHDR(rgb[2]));
+    }
+    else {
+        a->red = clamp(rgb[0]);
+        a->green = clamp(rgb[1]);
+        a->blue = clamp(rgb[2]);
+    }
 }
 
 void WorkerBlend::play()
 {
+    int a_count = m_inputs[0].count();
     int b_count = m_inputs[1].count();
     int c_count = m_inputs[2].count();
 
@@ -202,6 +229,7 @@ void WorkerBlend::play()
                 c_w = imageC->columns();
                 c_h = imageC->rows();
             }
+            int line = 0;
 #pragma omp parallel for
             for ( int y = 0 ; y < h ; ++y ) {
                 Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
@@ -218,12 +246,19 @@ void WorkerBlend::play()
                     const Magick::PixelPacket *pC = NULL;
                     if ( pxl_B ) pB = pxl_B+(x%b_w);
                     if ( pxl_C ) pC = pxl_C+(x%c_w);
-                    blend(pxl_A+x,
-                          pB, pC,
+                    blend(this,
+                          pxl_A+x, (photoA.getScale() == Photo::HDR),
+                          pB, (photoB?(photoB->getScale() == Photo::HDR): false),
+                          pC, (photoC?(photoC->getScale() == Photo::HDR): false),
                           pxl_u+x,
                           pxl_o+x,
                           m_mode1,
-                          m_mode2);
+                          m_mode2,
+                          m_outputHDR);
+                }
+#pragma omp critical
+                {
+                    emitProgress(n, a_count, line++, h);
                 }
             }
             imageA_cache->sync();
@@ -242,10 +277,18 @@ void WorkerBlend::play()
                 if ( imageC_cache )
                     pxl_C = imageC_cache->getConst(0, 0, 1, 1);
                 for ( int x = 0; x < 65536 ; ++x ) {
-                    blend(pxl_A+x, pxl_B, pxl_C, NULL, NULL, m_mode1, m_mode2);
+                    blend(this,
+                          pxl_A+x, (photoA.getScale() == Photo::HDR),
+                          pxl_B, (photoB?(photoB->getScale() == Photo::HDR): false),
+                          pxl_C, (photoC?(photoC->getScale() == Photo::HDR): false),
+                          NULL, NULL, m_mode1, m_mode2, m_outputHDR);
                 }
                 curve_cache.sync();
             }
+            if ( m_outputHDR )
+                photoA.setScale(Photo::HDR);
+            else if ( photoA.getScale() == Photo::HDR )
+                photoA.setScale(Photo::Linear);
             outputPush(0, photoA);
             outputPush(1, overflow);
             outputPush(2, underflow);

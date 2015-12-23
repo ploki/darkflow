@@ -25,7 +25,7 @@ private:
 };
 
 OpRoll::OpRoll(Process *parent) :
-    Operator(OP_SECTION_GEOMETRY, "Roll", parent),
+    Operator(OP_SECTION_GEOMETRY, "Roll", Operator::All, parent),
     m_columns(new OperatorParameterSlider("columns", "Columns", "Roll Columns", Slider::Value, Slider::Linear, Slider::Integer, -10, 10, 0, -32768, 32768, Slider::FilterPixels, this)),
     m_rows(new OperatorParameterSlider("rows", "Rows", "Roll Rows", Slider::Value, Slider::Linear, Slider::Integer, -10, 10, 0, -32768, 32768, Slider::FilterPixels, this))
 {

@@ -9,18 +9,19 @@
 
 class WorkerIGamma : public OperatorWorker {
 public:
-    WorkerIGamma(qreal gamma, qreal x0, qreal invert, QThread *thread, OpIGamma *op) :
+    WorkerIGamma(qreal gamma, qreal x0, bool invert, QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
         m_iGamma(gamma, x0, invert),
         m_invert(invert)
     {}
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
-        newPhoto.setScale( m_invert
-                           ? Photo::Linear
-                           : Photo::NonLinear);
+        if ( m_invert && photo.getScale() != Photo::NonLinear )
+            dflWarning(photo.getIdentity()+": must be Non-linear");
+        if ( !m_invert && photo.getScale() == Photo::NonLinear)
+            dflWarning(photo.getIdentity()+": must be Linear or HDR");
+
         m_iGamma.applyOn(newPhoto);
-        m_iGamma.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 private:
@@ -29,7 +30,7 @@ private:
 };
 
 OpIGamma::OpIGamma(Process *parent) :
-    Operator(OP_SECTION_CURVE, "iGamma", parent),
+    Operator(OP_SECTION_CURVE, "iGamma", Operator::All, parent),
     m_gamma(0),
     m_dynamicRange(0),
     m_revert(false),

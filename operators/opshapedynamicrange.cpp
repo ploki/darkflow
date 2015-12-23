@@ -23,7 +23,6 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         m_shapeDR.applyOn(newPhoto);
-        m_shapeDR.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 
@@ -32,7 +31,7 @@ private:
 };
 
 OpShapeDynamicRange::OpShapeDynamicRange(Process *parent) :
-    Operator(OP_SECTION_CURVE, "Shape DR.", parent),
+    Operator(OP_SECTION_CURVE, "Shape DR.", Operator::All, parent),
     m_shape(ShapeDynamicRange::TanH),
     m_shapeDialog(new OperatorParameterDropDown("shape", "Shape", this, SLOT(selectShape(int)))),
     m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Shape Dynamic Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<12, 1<<10, 1, QuantumRange, Slider::FilterExposure, this)),

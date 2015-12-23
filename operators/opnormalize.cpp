@@ -17,7 +17,7 @@ public:
 };
 
 OpNormalize::OpNormalize(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Normalize", parent)
+    Operator(OP_SECTION_COLOR, "Normalize", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));

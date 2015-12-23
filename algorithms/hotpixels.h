@@ -9,7 +9,7 @@ class HotPixels : public Algorithm
     Q_OBJECT
 public:
     HotPixels(double delta, bool aggressive, bool  naive, QObject *parent = 0);
-    void applyOnImage(Magick::Image &image);
+    void applyOnImage(Magick::Image &image, bool hdr);
 private:
     double m_delta;
     bool m_aggressive;

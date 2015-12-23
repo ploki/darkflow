@@ -4,7 +4,7 @@
 #include "operator.h"
 #include <QObject>
 
-class Process;
+class OperatorParameterDropDown;
 
 class OpFlatFieldCorrection : public Operator
 {
@@ -18,6 +18,11 @@ public:
 signals:
 
 public slots:
+    void setOutputHDR(int type);
+private:
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
+
 };
 
 #endif // OPFLATFIELDCORRECTION_H

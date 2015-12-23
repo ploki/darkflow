@@ -2,6 +2,7 @@
 #include <Magick++.h>
 #include "igamma.h"
 #include "photo.h"
+#include "hdr.h"
 
 using Magick::Quantum;
 
@@ -11,8 +12,6 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
     m_x0(x0),
     m_invert(invert)
 {
-    //FIXME doesn't work in this model
-    //if ( gamma == 1.0L ) return;
     double a = - ( gamma - 1.L)*pow(x0,1.L/gamma)/((gamma-1.L)*pow(x0,1.L/gamma)-gamma);
     double p=0;
     if ( invert ) {
@@ -39,6 +38,24 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
             m_lut[i]=p*xx*double(QuantumRange);
         }
     }
+// reverse and hdr are not compatible
+#pragma omp parallel for
+    for ( unsigned int i = 0 ; i <= QuantumRange ; ++i ) {
+
+        double xx= double(fromHDR(i))/double(QuantumRange);
+        if ( xx > x0 ) {
+            if ( invert ) {
+                m_hdrLut[i]=pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
+            }
+            else {
+                m_hdrLut[i]= ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
+            }
+        }
+        else {
+            m_hdrLut[i]=p*xx*double(QuantumRange);
+        }
+    }
+
 
 }
 
@@ -76,5 +93,17 @@ iGamma& iGamma::reverse_Lab()
 {
     static iGamma g(3.0L, 0.008856L, true);
     return g;
+}
+
+void iGamma::applyOn(Photo &photo)
+{
+    bool hdr = photo.getScale() == Photo::HDR;
+    applyOnImage(photo.image(), hdr);
+    if (m_alterCurve)
+        applyOnImage(photo.curve(), hdr);
+    photo.setTag(TAG_SCALE,
+                 m_invert
+                 ? TAG_SCALE_LINEAR
+                 : TAG_SCALE_NONLINEAR );
 }
 

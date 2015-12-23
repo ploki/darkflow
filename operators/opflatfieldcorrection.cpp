@@ -2,36 +2,42 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
+#include "operatorparameterdropdown.h"
 #include "photo.h"
 #include <Magick++.h>
 #include "algorithm.h"
+#include "hdr.h"
 
 using Magick::Quantum;
 
+typedef float real;
+
 class WorkerFlatField : public OperatorWorker {
 public:
-    WorkerFlatField(QThread *thread, Operator *op) :
+    WorkerFlatField(bool outputHDR, QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
+        m_outputHDR(outputHDR),
         m_max()
     {}
     void play_analyseSources() {
         Q_ASSERT(m_inputs.count() == 2);
         foreach(Photo photo, m_inputs[1]) {
+            bool hdr = photo.getScale() == Photo::HDR;
             try  {
                 Magick::Image& image = photo.image();
                 Magick::Pixels pixels_cache(image);
                 int w = image.columns();
                 int h = image.rows();
-                Triplet<quantum_t> max;
+                Triplet<real> max;
                 for ( int y = 0 ; y < h ; ++ y) {
-                    Magick::PixelPacket * pixels = pixels_cache.get(0, y, w, 1);
+                    const Magick::PixelPacket * pixels = pixels_cache.getConst(0, y, w, 1);
                     for ( int x = 0 ; x < w ; ++x ) {
                         if ( pixels[x].red > max.red )
-                            max.red = pixels[x].red;
+                            max.red = hdr?fromHDR(pixels[x].red):pixels[x].red;
                         if ( pixels[x].green > max.green )
-                            max.green = pixels[x].green;
+                            max.green = hdr?fromHDR(pixels[x].green):pixels[x].green;
                         if ( pixels[x].blue > max.blue )
-                            max.blue = pixels[x].blue;
+                            max.blue = hdr?fromHDR(pixels[x].blue):pixels[x].blue;
                     }
                 }
                 m_max.push_back(max);
@@ -43,10 +49,10 @@ public:
         }
     }
 
-    void correct(Magick::Image &image,
-                 Magick::Image& flatfield,
+    void correct(Magick::Image &image, bool imageIsHDR,
+                 Magick::Image& flatfield, bool flatfieldIsHDR,
                  Magick::Image& overflow,
-                 Triplet<quantum_t> & max) {
+                 Triplet<real> & max) {
         int w = image.columns();
         int h = image.rows();
         int f_w = flatfield.columns();
@@ -68,7 +74,7 @@ public:
             if ( !image_pixels ) continue;
             if ( !flatfield_pixels ) continue;
             for ( int x = 0 ; x < w ; ++x ) {
-                Triplet<quantum_t> ff;
+                Triplet<real> ff;
                 bool singularity = false;
                 if ( flatfield_pixels[x].red )
                     ff.red = flatfield_pixels[x].red;
@@ -91,20 +97,42 @@ public:
                     ff.blue = 1;
                     singularity = true;
                 }
-                quantum_t r = quantum_t(image_pixels[x].red) * max.red / ff.red;
-                quantum_t g = quantum_t(image_pixels[x].green) * max.green / ff.green;
-                quantum_t b = quantum_t(image_pixels[x].blue) * max.blue / ff.blue;
+                if ( flatfieldIsHDR ) {
+                    ff.red = fromHDR(ff.red);
+                    ff.green = fromHDR(ff.green);
+                    ff.blue = fromHDR(ff.blue);
+                }
+                real r = image_pixels[x].red;
+                real g = image_pixels[x].green;
+                real b = image_pixels[x].blue;
+                if ( imageIsHDR ) {
+                    r = fromHDR(r);
+                    g = fromHDR(g);
+                    b = fromHDR(b);
+                }
+                r = r * max.red  / ff.red;
+                g = g * max.green / ff.green;
+                b = b * max.blue / ff.blue;
                 overflow_pixels[x].red = overflow_pixels[x].green = overflow_pixels[x].blue =
                         ( singularity || r > QuantumRange || g > QuantumRange || b > QuantumRange )
                         ? QuantumRange
                         : 0;
-
-                image_pixels[x].red =
-                        clamp<quantum_t>(r, 0, QuantumRange);
-                image_pixels[x].green =
-                        clamp<quantum_t>(g, 0, QuantumRange);
-                image_pixels[x].blue =
-                        clamp<quantum_t>(b, 0, QuantumRange);
+                if ( m_outputHDR ) {
+                    image_pixels[x].red =
+                            clamp<quantum_t>(toHDR(r));
+                    image_pixels[x].green =
+                            clamp<quantum_t>(toHDR(g));
+                    image_pixels[x].blue =
+                            clamp<quantum_t>(toHDR(b));
+                }
+                else {
+                    image_pixels[x].red =
+                            clamp<quantum_t>(r);
+                    image_pixels[x].green =
+                            clamp<quantum_t>(g);
+                    image_pixels[x].blue =
+                            clamp<quantum_t>(b);
+                }
             }
         }
     }
@@ -124,8 +152,14 @@ public:
                     continue;
                 try {
                     Photo overflow(photo);
-                    correct(photo.image(), flatfield.image(),
-                            overflow.image(), m_max[source_flatfield_idx]);
+                    correct(photo.image(), photo.getScale() == Photo::HDR,
+                            flatfield.image(), flatfield.getScale() == Photo::HDR,
+                            overflow.image(),
+                            m_max[source_flatfield_idx]);
+                    if ( m_outputHDR )
+                        photo.setScale(Photo::HDR);
+                    else if ( photo.getScale() == Photo::HDR )
+                        photo.setScale(Photo::Linear);
                     outputPush(0, photo);
                     outputPush(1, overflow);
                     emit progress(n, n_photos);
@@ -147,16 +181,23 @@ public:
 
     Photo process(const Photo &photo, int, int) { return Photo(photo); }
 private:
-    QVector<Triplet<quantum_t> > m_max;
+    bool m_outputHDR;
+    QVector<Triplet<real> > m_max;
 };
 
 OpFlatFieldCorrection::OpFlatFieldCorrection(Process *parent) :
-    Operator(OP_SECTION_BLEND, "Flat-Field Correction", parent)
+    Operator(OP_SECTION_BLEND, "Flat-Field Correction", Operator::All, parent),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", "Output HDR", this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(false)
 {
+    m_outputHDR->addOption("No", false, true);
+    m_outputHDR->addOption("Yes", true);
+
     addInput(new OperatorInput("Uneven images","Uneven images",OperatorInput::Set, this));
     addInput(new OperatorInput("Flat-field","Flat-field",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Flattened", "Flattened", this));
     addOutput(new OperatorOutput("Overflow", "Overflow", this));
+    addParameter(m_outputHDR);
 }
 
 OpFlatFieldCorrection *OpFlatFieldCorrection::newInstance()
@@ -166,5 +207,13 @@ OpFlatFieldCorrection *OpFlatFieldCorrection::newInstance()
 
 OperatorWorker *OpFlatFieldCorrection::newWorker()
 {
-    return new WorkerFlatField(m_thread, this);
+    return new WorkerFlatField(m_outputHDR, m_thread, this);
+}
+
+void OpFlatFieldCorrection::setOutputHDR(int type)
+{
+    if ( m_outputHDRValue != !!type ) {
+        m_outputHDRValue = !!type;
+        setOutOfDate();
+    }
 }

@@ -33,11 +33,14 @@ public:
 public slots:
     void selectMode1(int v);
     void selectMode2(int v);
+    void setOutputHDR(int type);
 private:
     OperatorParameterDropDown *m_mode1;
     OperatorParameterDropDown *m_mode2;
     BlendMode m_mode1Value;
     BlendMode m_mode2Value;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 
     void registerOptions(OperatorParameterDropDown *mode);
 };

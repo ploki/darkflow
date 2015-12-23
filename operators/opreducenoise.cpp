@@ -23,7 +23,7 @@ private:
 };
 
 OpReduceNoise::OpReduceNoise(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Reduce Noise", parent),
+    Operator(OP_SECTION_COSMETIC, "Reduce Noise", Operator::NonHDR, parent),
     m_order(new OperatorParameterSlider("order", "order", "Reduce Noise Order", Slider::Value, Slider::Linear, Slider::Real, 0, 20, 3, 0, 100, Slider::FilterNothing, this))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));

@@ -17,7 +17,7 @@ public:
 };
 
 OpFlop::OpFlop(Process *parent) :
-    Operator(OP_SECTION_GEOMETRY, "Flop", parent)
+    Operator(OP_SECTION_GEOMETRY, "Flop", Operator::All, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));

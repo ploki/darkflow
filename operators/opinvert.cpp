@@ -13,7 +13,6 @@ public:
     Photo process(const Photo& photo, int, int) {
         Photo newPhoto(photo);
         m_invert.applyOn(newPhoto);
-        m_invert.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 private:
@@ -21,7 +20,7 @@ private:
 };
 
 OpInvert::OpInvert(Process *parent) :
-    Operator(OP_SECTION_EFFECTS, "Invert", parent)
+    Operator(OP_SECTION_EFFECTS, "Invert", Operator::All, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Negative images", "Negative Images", this));

@@ -42,7 +42,7 @@ private:
 };
 
 OpMultiplexer::OpMultiplexer(int ways, Process *parent) :
-    Operator(OP_SECTION_TOOLS, QString("%0-way Multiplexer").arg(ways),parent),
+    Operator(OP_SECTION_TOOLS, QString("%0-way Multiplexer").arg(ways), Operator::All, parent),
     m_ways(ways)
 {
     for (int i = 1 ; i <= m_ways ; ++i ) {

@@ -2,9 +2,7 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "cielab.h"
-#include "igamma.h"
-
+#include "algorithm.h"
 static Photo
 blackDot()
 {
@@ -74,6 +72,7 @@ public:
                 Magick::Pixels iRed_cache(iRed);
                 Magick::Pixels iGreen_cache(iGreen);
                 Magick::Pixels iBlue_cache(iBlue);
+                Magick::Pixels iLuminance_cache(iLuminance);
 
                 Photo photo(Photo::Linear);
                 photo.createImage(w, h);
@@ -88,23 +87,34 @@ public:
                     const Magick::PixelPacket *pxl_Red = iRed_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Green = iGreen_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Blue = iBlue_cache.getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Luminance = iLuminance_cache.getConst(0, y, w, 1);
                     for ( unsigned x = 0 ; x < w ; ++x ) {
-                        pxl[y*w+x].red = pxl_Red?pxl_Red[x].red:0;
-                        pxl[y*w+x].green = pxl_Green?pxl_Green[x].green:0;
-                        pxl[y*w+x].blue = pxl_Blue?pxl_Blue[x].blue:0;
+                        quantum_t red = pxl_Red?pxl_Red[x].red:0;
+                        quantum_t green = pxl_Green?pxl_Green[x].green:0;
+                        quantum_t blue = pxl_Blue?pxl_Blue[x].blue:0;
+
+                        if ( l_count ) {
+                            double lum = .2126L*(pxl_Luminance?pxl_Luminance[x].red:0) +
+                                    .7152L*(pxl_Luminance?pxl_Luminance[x].green:0) +
+                                    .0722L*(pxl_Luminance?pxl_Luminance[x].blue:0);
+                            double cur = .2126L*red +
+                                    .7152L*green +
+                                    .0722L*blue;
+                            double mul = lum/cur;
+                            red = clamp<quantum_t>(round(mul*red));
+                            green =  clamp<quantum_t>(round(mul*green));
+                            blue = clamp<quantum_t>(round(mul*blue));
+                        }
+                        pxl[y*w+x].red=red;
+                        pxl[y*w+x].green=green;
+                        pxl[y*w+x].blue=blue;
                     }
 #pragma omp critical
                     {
-                        emitProgress(i, photo_count,(line++)/2, h);
+                        emitProgress(i, photo_count,line++, h);
                     }
                 }
                 iPhoto_cache.sync();
-                if ( l_count ) {
-                    iGamma& labGamma = iGamma::Lab();
-                    labGamma.applyOn(pLuminance);
-                    emitProgress(i, photo_count, 3, 4);
-                    unLabize(photo.image(), pLuminance.image());
-                }
                 outputPush(0, photo);
                 emitProgress(i, photo_count, 1, 1);
             }
@@ -129,7 +139,7 @@ public:
 };
 
 OpRGBCompose::OpRGBCompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, "LRGB Compose", parent)
+    Operator(OP_SECTION_COLOR, "LRGB Compose", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
     addInput(new OperatorInput("Red", "Red", OperatorInput::Set, this));

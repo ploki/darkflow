@@ -3,6 +3,7 @@
 #include "operatoroutput.h"
 #include "photo.h"
 #include "algorithm.h"
+#include "hdr.h"
 #include <Magick++.h>
 #include <cmath>
 
@@ -17,6 +18,7 @@ WorkerIntegration::WorkerIntegration(OpIntegration::RejectionType rejectionType,
                                      qreal lower,
                                      OpIntegration::NormalizationType normalizationType,
                                      qreal customNormalizationValue,
+                                     bool outputHDR,
                                      QThread *thread,
                                      OpIntegration *op) :
     OperatorWorker(thread, op),
@@ -25,6 +27,7 @@ WorkerIntegration::WorkerIntegration(OpIntegration::RejectionType rejectionType,
     m_lower(lower),
     m_normalizationType(normalizationType),
     m_customNormalizationValue(customNormalizationValue),
+    m_outputHDR(outputHDR),
     m_integrationPlane(0),
     m_countPlane(0),
     m_w(0),
@@ -88,8 +91,8 @@ bool WorkerIntegration::play_onInput(int idx)
             emitFailure();
             return false;
         }
-        if ( photo.getScale() != Photo::Linear ) {
-            dflWarning(photo.getIdentity()+" not linear");
+        if ( photo.getScale() == Photo::NonLinear ) {
+            dflWarning(photo.getIdentity()+" is non-linear");
         }
         QVector<QPointF> points = photo.getPoints();
         qreal lcx=0, lcy=0;
@@ -113,7 +116,8 @@ bool WorkerIntegration::play_onInput(int idx)
             Magick::Pixels pixel_cache(image);
             int line = 0;
 
-            bool hdr = false;
+            bool hdr = photo.getScale() == Photo::HDR;
+            bool hdrExposureAltered = false;
             QString hdrCompStr = photo.getTag(TAG_HDR_COMP);
             QString hdrHighStr = photo.getTag(TAG_HDR_HIGH);
             QString hdrLowStr = photo.getTag(TAG_HDR_LOW);
@@ -121,7 +125,7 @@ bool WorkerIntegration::play_onInput(int idx)
                     hdrHigh,
                     hdrLow;
             if ( ! hdrCompStr.isEmpty() && !hdrHighStr.isEmpty() && !hdrLowStr.isEmpty() ) {
-                hdr = true;
+                hdrExposureAltered = true;
                 hdrComp = hdrCompStr.toDouble();
                 hdrHigh = hdrHighStr.toDouble() * QuantumRange;
                 hdrLow = hdrLowStr.toDouble() * QuantumRange;
@@ -136,11 +140,18 @@ bool WorkerIntegration::play_onInput(int idx)
                 for ( int x = 0 ; x < m_w ; ++x ) {
                     if ( x+cx < 0 || x+cx >= m_w ) continue;
 
-                    integration_plane_t
-                            red = pixels[x+cx].red,
-                            green = pixels[x+cx].green,
-                            blue = pixels[x+cx].blue;
+                    integration_plane_t red, green, blue;
                     if ( hdr ) {
+                     red = fromHDR(pixels[x+cx].red);
+                     green = fromHDR(pixels[x+cx].green);
+                     blue = fromHDR(pixels[x+cx].blue);
+                    }
+                    else {
+                        red = pixels[x+cx].red;
+                        green = pixels[x+cx].green;
+                        blue = pixels[x+cx].blue;
+                    }
+                    if ( hdrExposureAltered ) {
                         if ( red >= hdrLow && red <= hdrHigh ) {
                             SUBPXL(m_integrationPlane,x,y,0) += red / hdrComp;
                             ++SUBPXL(m_countPlane,x,y,0);
@@ -192,17 +203,32 @@ bool WorkerIntegration::play_onInput(int idx)
             Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
             for ( int x = 0 ; x < m_w ; ++x ) {
                 Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
-                if ( m_countPlane[y*m_w*3+x*3+0] )
-                    pixels[x].red   =
-                            clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
-                if ( m_countPlane[y*m_w*3+x*3+1] )
-                    pixels[x].green =
-                            clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
-                if ( m_countPlane[y*m_w*3+x*3+2] )
-                    pixels[x].blue  =
-                            clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
+                if (m_outputHDR) {
+                    if ( m_countPlane[y*m_w*3+x*3+0] )
+                        pixels[x].red   =
+                                clamp<quantum_t>(toHDR(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0]), 0, QuantumRange);
+                    if ( m_countPlane[y*m_w*3+x*3+1] )
+                        pixels[x].green =
+                                clamp<quantum_t>(toHDR(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1]), 0, QuantumRange);
+                    if ( m_countPlane[y*m_w*3+x*3+2] )
+                        pixels[x].blue  =
+                                clamp<quantum_t>(toHDR(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2]), 0, QuantumRange);
+                }
+                else {
+                    if ( m_countPlane[y*m_w*3+x*3+0] )
+                        pixels[x].red   =
+                                clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
+                    if ( m_countPlane[y*m_w*3+x*3+1] )
+                        pixels[x].green =
+                                clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
+                    if ( m_countPlane[y*m_w*3+x*3+2] )
+                        pixels[x].blue  =
+                                clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
+                }
             }
         }
+        if (m_outputHDR)
+            newPhoto.setScale(Photo::HDR);
         outputPush(0, newPhoto);
     }
     catch (std::exception &e) {

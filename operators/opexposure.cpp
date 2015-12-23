@@ -18,7 +18,6 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         m_exposure.applyOn(newPhoto);
-        m_exposure.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 private:
@@ -26,7 +25,7 @@ private:
 };
 
 OpExposure::OpExposure(Process *parent) :
-    Operator(OP_SECTION_CURVE, "Exposure", parent),
+    Operator(OP_SECTION_CURVE, "Exposure", Operator::All, parent),
     m_value(new OperatorParameterSlider("value", "Exposure", "Modulate Exposure",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));

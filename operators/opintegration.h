@@ -33,6 +33,7 @@ public slots:
     void setRejectionType(int type);
 
     void setNormalizationType(int type);
+    void setOutputHDR(int type);
 
 private:
     RejectionType m_rejectionType;
@@ -42,6 +43,8 @@ private:
     NormalizationType m_normalizationType;
     OperatorParameterDropDown *m_normalizationTypeDropDown;
     OperatorParameterSlider *m_customNormalization;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 
 };
 

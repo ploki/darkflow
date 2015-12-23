@@ -14,7 +14,9 @@ public:
     {
     }
     Photo process(const Photo &photo, int , int ) {
-        return m_hotPixels.apply(photo);
+        Photo newPhoto(photo);
+        m_hotPixels.applyOn(newPhoto);
+        return newPhoto;
     }
 
 private:
@@ -22,7 +24,7 @@ private:
 };
 
 OpHotPixels::OpHotPixels(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Hot Pixels", parent),
+    Operator(OP_SECTION_COSMETIC, "Hot Pixels", Operator::NonHDR, parent),
     m_delta(new OperatorParameterSlider("delta", "Delta", "Hot Pixels Delta", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, M_SQRT2l, 1, 1<<16, Slider::FilterExposureFromOne, this)),
     m_aggressive(new OperatorParameterDropDown("aggressive", "Aggressive", this, SLOT(selectAggressive(int)))),
     m_naive(new OperatorParameterDropDown("naive", "Naive", this, SLOT(selectNaive(int)))),

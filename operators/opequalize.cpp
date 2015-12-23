@@ -21,7 +21,7 @@ public:
 };
 
 OpEqualize::OpEqualize(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Equalize", parent)
+    Operator(OP_SECTION_COLOR, "Equalize", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));

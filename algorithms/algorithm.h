@@ -22,15 +22,16 @@ class Algorithm : public QObject
 {
     Q_OBJECT
 public:
-    explicit Algorithm(QObject *parent = 0);
+    explicit Algorithm(bool alterCurve, QObject *parent);
 
-    virtual Photo apply(const Photo& source);
-    virtual void applyOnImage(Magick::Image& image);
+    virtual void applyOnImage(Magick::Image& image, bool hdr);
     virtual void applyOn(Photo& photo);
 
 signals:
 
 public slots:
+protected:
+    bool m_alterCurve;
 private:
     Q_DISABLE_COPY(Algorithm);
 };

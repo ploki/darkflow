@@ -19,7 +19,6 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         m_threshold.applyOn(newPhoto);
-        m_threshold.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 
@@ -28,7 +27,7 @@ private:
 };
 
 OpThreshold::OpThreshold(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Threshold", parent),
+    Operator(OP_SECTION_COLOR, "Threshold", Operator::NonHDR, parent),
     m_high(new OperatorParameterSlider("high", "High", "Threshold High",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this)),
     m_low(new OperatorParameterSlider("low", "Low", "Threshold Low",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
 {

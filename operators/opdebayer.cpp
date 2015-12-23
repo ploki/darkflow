@@ -18,7 +18,7 @@ static const char *DebayerStr[] = {
 
 
 OpDebayer::OpDebayer(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Debayer", parent),
+    Operator(OP_SECTION_COLOR, "Debayer", Operator::All, parent),
     m_debayer(new OperatorParameterDropDown("quality", "Quality", this, SLOT(setDebayer(int)))),
     m_debayerValue(Bilinear)
 {

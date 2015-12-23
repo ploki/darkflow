@@ -1,19 +1,19 @@
 #include "hotpixels.h"
 #include <Magick++.h>
-
+#include "hdr.h"
 using Magick::Quantum;
 
-typedef int extended_quantum_t;
+typedef double extended_quantum_t;
 
 HotPixels::HotPixels(double delta, bool aggressive, bool naive, QObject *parent) :
-    Algorithm(parent),
+    Algorithm(false, parent),
     m_delta(delta),
     m_aggressive(aggressive),
     m_naive(naive)
 {
 }
 
-void HotPixels::applyOnImage(Magick::Image &image)
+void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
 {
     Magick::Image input(image);
     image.modifyImage();
@@ -41,9 +41,16 @@ void HotPixels::applyOnImage(Magick::Image &image)
             extended_quantum_t nrgb[3];
             extended_quantum_t other_channels=0;
 
-            rgb[0]=input_pixels[1][x].red;
-            rgb[1]=input_pixels[1][x].green;
-            rgb[2]=input_pixels[1][x].blue;
+            if (hdr) {
+                rgb[0]=round(fromHDR(input_pixels[1][x].red));
+                rgb[1]=round(fromHDR(input_pixels[1][x].green));
+                rgb[2]=round(fromHDR(input_pixels[1][x].blue));
+            }
+            else {
+                rgb[0]=input_pixels[1][x].red;
+                rgb[1]=input_pixels[1][x].green;
+                rgb[2]=input_pixels[1][x].blue;
+            }
 
 #define color_op_naive(q) \
     sum_rgb[q]+=nrgb[q];
@@ -129,11 +136,16 @@ void HotPixels::applyOnImage(Magick::Image &image)
 #undef color_op2_naive_aggressive
             //end of loops unroll
 
-
-            output_pixels[x].red=rgb[0]>QuantumRange?QuantumRange:rgb[0];
-            output_pixels[x].green=rgb[1]>QuantumRange?QuantumRange:rgb[1];
-            output_pixels[x].blue=rgb[2]>QuantumRange?QuantumRange:rgb[2];
-
+            if (hdr) {
+                output_pixels[x].red=toHDR(rgb[0]>QuantumRange?QuantumRange:rgb[0]);
+                output_pixels[x].green=toHDR(rgb[1]>QuantumRange?QuantumRange:rgb[1]);
+                output_pixels[x].blue=toHDR(rgb[2]>QuantumRange?QuantumRange:rgb[2]);
+            }
+            else {
+                output_pixels[x].red=rgb[0]>QuantumRange?QuantumRange:rgb[0];
+                output_pixels[x].green=rgb[1]>QuantumRange?QuantumRange:rgb[1];
+                output_pixels[x].blue=rgb[2]>QuantumRange?QuantumRange:rgb[2];
+            }
         }
     }
 #pragma omp barrier

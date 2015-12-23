@@ -34,7 +34,7 @@ public:
 };
 
 OpMicroContrasts::OpMicroContrasts(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Micro Contrasts", parent)
+    Operator(OP_SECTION_COSMETIC, "Micro Contrasts", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));

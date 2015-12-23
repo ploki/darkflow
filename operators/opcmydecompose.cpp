@@ -2,8 +2,6 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "cielab.h"
-#include "igamma.h"
 
 class WorkerCMYDecompose : public OperatorWorker {
 public:
@@ -14,7 +12,6 @@ public:
         throw 0;
     }
     void play() {
-        iGamma &labGammaReverse = iGamma::reverse_Lab();
         int p = 0,
                 c = m_inputs[0].count();
         foreach(Photo pCyan, m_inputs[0]) {
@@ -26,20 +23,17 @@ public:
             Magick::Image& iCyan = pCyan.image();
             Magick::Image& iMagenta = pMagenta.image();
             Magick::Image& iYellow = pYellow.image();
+            Magick::Image& iLuminance = pLuminance.image();
 
             try {
-                Labize(pCyan.image(), pLuminance.image());
-                emitProgress(p, c, 1, 4);
-
-                labGammaReverse.applyOnImage(pLuminance.image());
-                emitProgress(p, c, 2, 4);
-
                 iCyan.modifyImage();
                 iMagenta.modifyImage();
                 iYellow.modifyImage();
+                iLuminance.modifyImage();
                 Magick::Pixels iCyan_cache(iCyan);
                 Magick::Pixels iMagenta_cache(iMagenta);
                 Magick::Pixels iYellow_cache(iYellow);
+                Magick::Pixels iLuminance_cache(iLuminance);
                 int w = iCyan.columns();
                 int h = iCyan.rows();
                 int line = 0;
@@ -48,7 +42,14 @@ public:
                     Magick::PixelPacket *pxl_Cyan = iCyan_cache.get(0, y, w, 1);
                     Magick::PixelPacket *pxl_Magenta = iMagenta_cache.get(0, y, w, 1);
                     Magick::PixelPacket *pxl_Yellow = iYellow_cache.get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Luminance = iLuminance_cache.get(0, y, w, 1);
                     for ( int x = 0 ; x < w ; ++x ) {
+                        pxl_Luminance[x].red =
+                                pxl_Luminance[x].green =
+                                pxl_Luminance[x].blue =
+                                        round(.2126L * pxl_Cyan[x].red +
+                                              .7152L * pxl_Cyan[x].green +
+                                              .0722L * pxl_Cyan[x].blue);
                         pxl_Cyan[x].green = pxl_Cyan[x].blue = pxl_Cyan[x].red =
                                 (quantum_t(pxl_Cyan[x].green) + quantum_t(pxl_Cyan[x].blue))/2;
                         pxl_Magenta[x].green = pxl_Magenta[x].blue = pxl_Magenta[x].red =
@@ -58,12 +59,13 @@ public:
                     }
 #pragma omp critical
                     {
-                        emitProgress(p, c, h/2+line++/2, h);
+                        emitProgress(p, c, line++, h);
                     }
                 }
                 iCyan_cache.sync();
                 iMagenta_cache.sync();
                 iYellow_cache.sync();
+                iLuminance_cache.sync();
                 outputPush(0, pLuminance);
                 outputPush(1, pCyan);
                 outputPush(2, pMagenta);
@@ -85,7 +87,7 @@ public:
 };
 
 OpCMYDecompose::OpCMYDecompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, "LCMY Decompose", parent)
+    Operator(OP_SECTION_COLOR, "LCMY Decompose", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Images set", "Images set", OperatorInput::Set, this));
     addOutput(new OperatorOutput("Luminance", "Luminance", this));

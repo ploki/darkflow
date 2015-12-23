@@ -15,7 +15,6 @@ public:
     Photo process(const Photo& photo, int, int) {
         Photo newPhoto(photo);
         m_whitebalance.applyOn(newPhoto);
-        m_whitebalance.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 
@@ -24,7 +23,7 @@ private:
 };
 
 OpWhiteBalance::OpWhiteBalance(Process *parent) :
-    Operator(OP_SECTION_COLOR, "White Balance", parent),
+    Operator(OP_SECTION_COLOR, "White Balance", Operator::All, parent),
     m_temperature(new OperatorParameterSlider("temperature", "Temperature", "White Balance Temperature",
                                               Slider::Value, Slider::Logarithmic, Slider::Integer,
                                               2000, 12000, 6500, 2000, 12000, Slider::FilterNothing,this)),

@@ -195,12 +195,28 @@ bool OperatorWorker::play_onInput(int idx)
         }
         emit progress(p, c);
         try {
-            Photo newPhoto = this->process(photo, p++, c);
-            if ( !newPhoto.isComplete() ) {
-                dflDebug("photo is not complete, sending failure");
-                m_error = true;
-                emitFailure();
-                return false;
+            Photo newPhoto;
+            if ( !m_operator->isCompatible(photo) ) {
+                switch ( preferences->getIncompatibleAction()) {
+                case Preferences::Ignore:
+                    break;
+                case Preferences::Warning:
+                    dflWarning(photo.getIdentity() + ": Incompatible pixel scale");
+                    break;
+                default:
+                case Preferences::Error:
+                    setError(photo, "Incompatible pixel scale");
+                    break;
+                }
+            }
+            if (!m_error) {
+                newPhoto = this->process(photo, p++, c);
+                if ( !newPhoto.isComplete() ) {
+                    dflDebug("photo is not complete, sending failure");
+                    m_error = true;
+                    emitFailure();
+                    return false;
+                }
             }
             if ( !m_error )
                 m_outputs[0].push_back(newPhoto);
@@ -236,20 +252,34 @@ bool OperatorWorker::play_onInputParallel(int idx)
             photo = m_inputs[idx][i];
         }
         Photo newPhoto;
-        try {
-            newPhoto = this->process(photo, p, c);
+        if ( !m_operator->isCompatible(photo) ) {
+            switch ( preferences->getIncompatibleAction()) {
+            case Preferences::Ignore:
+                break;
+            case Preferences::Warning:
+                dflWarning(photo.getIdentity() + ": Incompatible pixel scale");
+                break;
+            default:
+            case Preferences::Error:
+                setError(photo, "Incompatible pixel scale");
+                break;
+            }
         }
-        catch (std::exception &e) {
-            setError(photo, e.what());
-            continue;
+        if (!m_error) {
+            try {
+                newPhoto = this->process(photo, p, c);
+            }
+            catch (std::exception &e) {
+                setError(photo, e.what());
+                continue;
+            }
+            if ( !newPhoto.isComplete() ) {
+                dflDebug("photo is not complete, sending failure");
+                m_error = true;
+                continue;
+            }
+            newPhoto.setSequenceNumber(i);
         }
-        if ( !newPhoto.isComplete() ) {
-            dflDebug("photo is not complete, sending failure");
-            m_error = true;
-            continue;
-        }
-        newPhoto.setSequenceNumber(i);
-
 #pragma omp critical
         {
             if ( !m_error ) {

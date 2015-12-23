@@ -17,7 +17,7 @@ public:
 };
 
 OpEnhance::OpEnhance(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Enhance", parent)
+    Operator(OP_SECTION_COSMETIC, "Enhance", Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));

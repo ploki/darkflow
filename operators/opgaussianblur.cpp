@@ -28,7 +28,7 @@ private:
 };
 
 OpGaussianBlur::OpGaussianBlur(Process *parent) :
-    Operator(OP_SECTION_EFFECTS, "Gaussian Blur", parent),
+    Operator(OP_SECTION_EFFECTS, "Gaussian Blur", Operator::NonHDR, parent),
     m_radius(new OperatorParameterSlider("radius", "Radius", "Gaussian Blur Radius", Slider::Value, Slider::Logarithmic, Slider::Real, .1, 100, 1, .1, 1000, Slider::FilterPixels, this)),
     m_sigma(new OperatorParameterSlider("sigma", "Sigma", "Gaussian Blur Sigma", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 1, 0, 1, Slider::FilterPercent, this))
 

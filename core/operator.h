@@ -42,7 +42,18 @@ public:
         WaitingForPlay,
         WaitingForInputs
     } WaitForParentReason;
-    explicit Operator(const QString& classSection, const QString& classIdentifier, Process *parent);
+    typedef enum {
+        NA        = 0,
+        Linear    = (1<<0),
+        NonLinear = (1<<1),
+        HDR       = (1<<2),
+        NonHDR    = (Linear|NonLinear),
+        All       = (NonHDR|HDR),
+    } ScaleCompatibility;
+    explicit Operator(const QString& classSection,
+                      const QString& classIdentifier,
+                      int compatibility,
+                      Process *parent);
     virtual ~Operator();
 
     /**
@@ -89,6 +100,8 @@ public:
     void addOutput(OperatorOutput* output);
     void addParameter(OperatorParameter* parameter);
     void setOutputStatus(int idx, OperatorOutputStatus status);
+    bool isCompatible(const Photo& photo) const;
+    bool isCompatible(const ScaleCompatibility& comp) const;
 
 private:
     QVector<QVector<Photo> > collectInputs();
@@ -153,6 +166,7 @@ private:
     QVector<OperatorInput*> m_inputs;
     QVector<OperatorOutput*> m_outputs;
     QVector<OperatorOutputStatus> m_outputStatus;
+    ScaleCompatibility m_scaleCompatibility;
 protected:
     WaitForParentReason m_waitingParentFor;
     QString m_uuid;

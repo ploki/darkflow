@@ -77,6 +77,7 @@
 #include "opreducenoise.h"
 #include "ophotpixels.h"
 #include "opcolor.h"
+#include "ophdr.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -110,6 +111,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpExposure(this));
     m_availableOperators.push_back(new OpShapeDynamicRange(this));
     m_availableOperators.push_back(new OpIGamma(this));
+    m_availableOperators.push_back(new OpHDR(this));
     m_availableOperators.push_back(new OpLevel(this));
     m_availableOperators.push_back(new OpLevelPercentile(this));
 
@@ -184,8 +186,23 @@ void Process::addOperatorsToContextMenu() {
         if ( sections.find(op->getClassSection()) == sections.end() ) {
             sections[op->getClassSection()] = m_contextMenu->addMenu(QIcon(), op->getClassSection());
         }
-        sections[op->getClassSection()]->addAction(QIcon(), op->getClassIdentifier(), op, SLOT(clone()));
-        all->addAction(QIcon(), op->getClassIdentifier(), op, SLOT(clone()));
+        QString caption = op->getClassIdentifier() + " (";
+        if ( op->isCompatible(Operator::Linear) )
+            caption+="L";
+        else
+            caption+=".";
+        if ( op->isCompatible(Operator::NonLinear) )
+            caption+="N";
+        else
+            caption+=".";
+        if ( op->isCompatible(Operator::HDR) )
+            caption += "H";
+        else
+            caption+=".";
+        caption += ")";
+
+        sections[op->getClassSection()]->addAction(QIcon(), caption, op, SLOT(clone()));
+        all->addAction(QIcon(), caption, op, SLOT(clone()));
     }
     m_contextMenu->addMenu(all);
 }

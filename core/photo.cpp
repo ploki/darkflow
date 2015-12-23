@@ -1,7 +1,6 @@
 #include "photo.h"
 #include <QFile>
 #include <QString>
-#include <QImage>
 #include <QPixmap>
 #include <QRectF>
 #include <Magick++.h>
@@ -10,6 +9,7 @@
 #include <string>
 
 #include "igamma.h"
+#include "hdr.h"
 #include "exposure.h"
 #include "process.h"
 #include "console.h"
@@ -226,19 +226,20 @@ Image Photo::newCurve(Photo::Gamma gamma)
     case NonLinear:
         dflWarning("Unable to create curve for NonLinear");
         break;
-    case HDR:
-        dflWarning("HDR Curve not implemented");
+    case HDR: {
+        ::HDR(false).applyOnImage(curve,false);
         break;
+    }
     case Linear:
         break;
     case Sqrt:
-        iGamma(2,0).applyOnImage(curve);
+        iGamma(2,0).applyOnImage(curve, false);
         break;
     case IUT_BT_709:
-        iGamma::BT709().applyOnImage(curve);
+        iGamma::BT709().applyOnImage(curve, false);
         break;
     case sRGB:
-        iGamma::sRGB().applyOnImage(curve);
+        iGamma::sRGB().applyOnImage(curve, false);
         break;
     }
     return curve;
@@ -248,23 +249,33 @@ static QPixmap convert(Magick::Image& image) {
     int h = image.rows(),
             w = image.columns();
     Magick::Pixels pixel_cache(image);
-    QImage qImage(w, h, QImage::Format_RGB32);
-    //#pragma omp parallel for
+    unsigned char pgm_header[256];
+    int header_size = snprintf((char*)pgm_header, sizeof pgm_header,
+             "P6\n%d %d\n%d\n",w,h,255);
+    unsigned char *buf = (unsigned char *)malloc(header_size+w*h*3*1);
+    memcpy(buf, pgm_header, header_size);
+#pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,y,w,1);
         if ( !pixels ) continue;
         for ( int x = 0 ; x < w ; ++x ) {
-            qImage.setPixel(x,y,qRgb(
-                                (pixels[x].red/256),
-                                (pixels[x].green/256),
-                                (pixels[x].blue/256)));
+            buf[header_size+y*w*3+x*3+0]=pixels[x].red/256;
+            buf[header_size+y*w*3+x*3+1]=pixels[x].green/256;
+            buf[header_size+y*w*3+x*3+2]=pixels[x].blue/256;
         }
     }
-    return QPixmap::fromImage(qImage,Qt::AutoColor|Qt::AvoidDither);
+  QPixmap pix(w,h);
+   bool ret = pix.loadFromData(buf, header_size+w*h*3*1, "PPM", Qt::AutoColor|Qt::AvoidDither);
+   if ( !ret )
+       dflError("pixmap conversion failed");
+   free(buf);
+   return pix;
 }
 
 QPixmap Photo::imageToPixmap(double gamma, double x0, double exposureBoost)
 {
+    Q_UNUSED(gamma);
+    Q_UNUSED(x0);
     Q_ASSERT( m_status == Complete );
     Photo photo(*this);
     Exposure(exposureBoost).applyOn(photo);
@@ -293,6 +304,12 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     Magick::Image image("512x512", "black");
     Magick::Image curve(this->curve());
     Magick::Pixels image_cache(image);
+
+    if ( getScale() == HDR ) {
+        ::HDR hdrRevert(true);
+        hdrRevert.applyOnImage(curve, true);
+    }
+
     Magick::PixelPacket *pixels = image_cache.get(0,0, 512, 512);
     iGamma& g = iGamma::sRGB();
     const bool zoneV_18=false;
@@ -304,7 +321,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
         //      if ( x == 512 - 9*32 ) c*=2;
         if ( x == 512 - 12*32 ) c*=1.5;
 #else
-        quantum_t c = g.applyOnQuantum(pow(2,double(x)/32));
+        quantum_t c = g.applyOnQuantum(pow(2,double(x)/32), false);
 #endif
         for ( int y = 0 ; y < 512 ; y++ ) {
             PXL(x+(zoneV_18?16:0),y).red = c;
@@ -321,7 +338,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
         if ( il == 9 ) c*=2;   //practical limit
         if ( il == 12 ) c*=1.5; //theorical limit
 #else
-        quantum_t c = g.applyOnQuantum(pow(2,16-il));
+        quantum_t c = g.applyOnQuantum(pow(2,16-il), false);
 #endif
         //double v=1.L/pow(2.L,16-il);
         int y=128;
@@ -346,7 +363,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     }
     //curve
     if ( cv == sRGB_EV )
-        iGamma::reverse_sRGB().applyOnImage(curve);
+        iGamma::reverse_sRGB().applyOnImage(curve, false);
     else if ( cv == Log2 )
         curve.gamma(1.L/2.2L);
 
@@ -410,7 +427,14 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
 {
     Q_ASSERT( m_status == Complete );
     Magick::Image image;
-    Magick::Image& photo = this->image();
+    Magick::Image photo = this->image();
+
+    /*
+    if ( getScale() == HDR ) {
+        ::HDR hdrRevert(true);
+        hdrRevert.applyOnImage(photo, true);
+    }
+   */
 
     bool adt = (geometry == HistogramLines);
     bool hlog = (scale == HistogramLogarithmic);
@@ -493,29 +517,93 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
         Magick::Pixels image_cache(image);
         Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
         iGamma& g = iGamma::sRGB();
-        int marks[] = { g.applyOnQuantum(1<<15)/128,
-                        g.applyOnQuantum(1<<14)/128,
-                        g.applyOnQuantum(1<<13)/128,
-                        g.applyOnQuantum(1<<12)/128,
-                        g.applyOnQuantum(1<<11)/128,
-                        g.applyOnQuantum(1<<10)/128,
-                        g.applyOnQuantum(1<<9)/128,
-                        g.applyOnQuantum(1<<8)/128,
-                        g.applyOnQuantum(1<<7)/128,
-                        g.applyOnQuantum(1<<6)/128,
-                        0 };
+        int marks_non_linear[] = { g.applyOnQuantum(1<<15, false)/128,
+                                   g.applyOnQuantum(1<<14, false)/128,
+                                   g.applyOnQuantum(1<<13, false)/128,
+                                   g.applyOnQuantum(1<<12, false)/128,
+                                   g.applyOnQuantum(1<<11, false)/128,
+                                   g.applyOnQuantum(1<<10, false)/128,
+                                   g.applyOnQuantum(1<<9, false)/128,
+                                   g.applyOnQuantum(1<<8, false)/128,
+                                   g.applyOnQuantum(1<<7, false)/128,
+                                   g.applyOnQuantum(1<<6, false)/128,
+                                   0 };
+        int marks_linear[] = {
+            (1<<15)/  128,
+            (1<<14)/  128,
+            (1<<13)/  128,
+            (1<<12)/  128,
+            (1<<11)/  128,
+            (1<<10)/  128,
+            (1<<9)/  128,
+            (1<<8)/  128,
+            0
+        };
+        int marks_hdr[] = {
+            32*1,
+            32*2,
+            32*3,
+            32*4,
+            32*5,
+            32*6,
+            32*7,
+            32*8,
+            32*9,
+            32*10,
+            32*11,
+            32*12,
+            32*13,
+            32*14,
+            32*15,
+            0
+        };
+        int *marks;
+        enum { C_hdr,
+               C_linear,
+               C_nonlinear } c;
+
+        if ( getScale() == HDR ) {
+            marks=marks_hdr;
+            c = C_hdr;
+        }
+        else if ( getScale() == Linear ) {
+            marks=marks_linear;
+            c = C_linear;
+        }
+        else if ( getScale() == NonLinear ) {
+            marks=marks_non_linear;
+            c = C_nonlinear;
+        }
+        else {
+            dflError("unknown scale");
+            marks=marks_linear;
+            c = C_linear;
+        }
         for ( int i = 0 ; marks[i] != 0 ; ++i ) {
             x = marks[i];
             for (int i = 0 ; i < range ; ++ i ) {
-#if 0
-                PXL(x,i).red = QuantumRange;
-                PXL(x,i).green = QuantumRange;
-                PXL(x,i).blue = QuantumRange;
-#else
-                PXL(x,i).red = x*128;
-                PXL(x,i).green = x*128;
-                PXL(x,i).blue = x*128;
-#endif
+                quantum_t color;
+                switch (c) {
+                case C_nonlinear:
+                    color = x*128;
+                    break;
+                case C_linear:
+                    color = iGamma::sRGB().applyOnQuantum(x*128, false);
+                    break;
+                case C_hdr:
+                    color = iGamma::sRGB().applyOnQuantum(x*128, true);
+                }
+
+                if ( i < 12 || i >= range-12 ) {
+                    /* add some light on top and bottom of the frame*/
+                    color = clamp( color +
+                                   QuantumRange/(i?i:1) +
+                                   QuantumRange/((range-i))
+                                   );
+                }
+                PXL(x,i).red = color;
+                PXL(x,i).green = color;
+                PXL(x,i).blue = color;
             }
         }
     }

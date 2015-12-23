@@ -25,7 +25,7 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
 }
 
 OpRotate::OpRotate(Process *parent) :
-    Operator(OP_SECTION_GEOMETRY, "Rotation", parent),
+    Operator(OP_SECTION_GEOMETRY, "Rotation", Operator::All, parent),
     m_dropdown(new OperatorParameterDropDown("angle","angle",this, SLOT(setAngle(int)))),
     m_angle(0)
 {

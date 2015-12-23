@@ -13,7 +13,10 @@
 #include "operatoroutput.h"
 #include "operatorworker.h"
 
-Operator::Operator(const QString& classSection, const QString& classIdentifier, Process *parent) :
+Operator::Operator(const QString& classSection,
+                   const QString& classIdentifier,
+                   int scaleCompatibility,
+                   Process *parent) :
     QObject(NULL),
     m_process(parent),
     m_enabled(true),
@@ -22,6 +25,8 @@ Operator::Operator(const QString& classSection, const QString& classIdentifier, 
     m_parameters(),
     m_inputs(),
     m_outputs(),
+    m_outputStatus(),
+    m_scaleCompatibility(ScaleCompatibility(scaleCompatibility)),
     m_waitingParentFor(NotWaiting),
     m_uuid(Process::uuid()),
     m_classSection(classSection),
@@ -209,6 +214,22 @@ void Operator::addParameter(OperatorParameter *parameter)
 void Operator::setOutputStatus(int idx, Operator::OperatorOutputStatus status)
 {
     m_outputStatus[idx] = status;
+}
+
+bool Operator::isCompatible(const Photo &photo) const
+{
+    if ( photo.getScale() == Photo::Linear && (Linear & m_scaleCompatibility) )
+        return true;
+    else if ( photo.getScale() == Photo::NonLinear && (NonLinear & m_scaleCompatibility) )
+        return true;
+    else if ( photo.getScale() == Photo::HDR && (HDR & m_scaleCompatibility) )
+        return true;
+    return false;
+}
+
+bool Operator::isCompatible(const Operator::ScaleCompatibility &comp) const
+{
+    return ( comp & m_scaleCompatibility);
 }
 
 QVector<QVector<Photo> > Operator::collectInputs()

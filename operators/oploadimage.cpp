@@ -11,7 +11,7 @@ static const char *ColorSpaceStr[] = {
 };
 
 OpLoadImage::OpLoadImage(Process *parent) :
-    Operator(OP_SECTION_ASSETS, "Images", parent),
+    Operator(OP_SECTION_ASSETS, "Images", Operator::NA, parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "imageCollection",
                           "Images",

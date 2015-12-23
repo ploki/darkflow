@@ -11,7 +11,7 @@ public:
                          qreal g,
                          qreal b,
                          QObject *parent = 0);
-    void applyOnImage(Magick::Image& image);
+    void applyOnImage(Magick::Image& image, bool hdr);
 
 private:
     qreal m_rgb[3];

@@ -19,7 +19,7 @@ static const char *ClippingStr[] = {
 };
 
 OpLoadRaw::OpLoadRaw(Process *parent) :
-    Operator(OP_SECTION_ASSETS, "Raw photos", parent),
+    Operator(OP_SECTION_ASSETS, "Raw photos", Operator::NA, parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "rawCollection",
                           "RAW photos",

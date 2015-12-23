@@ -4,8 +4,8 @@
 #include "operatoroutput.h"
 #include "operatorparameterslider.h"
 #include <Magick++.h>
-
-
+#include "hdr.h"
+#include "igamma.h"
 
 using Magick::Quantum;
 
@@ -29,7 +29,7 @@ private:
 };
 
 OpAdaptiveThreshold::OpAdaptiveThreshold(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Adaptive Threshold", parent),
+    Operator(OP_SECTION_COLOR, "Adaptive Threshold", Operator::NonHDR, parent),
     m_width(new OperatorParameterSlider("width", "Width", "Adaptive Threshold Width", Slider::Value, Slider::Linear, Slider::Integer, 1, 25, 4, 1, 1000, Slider::FilterNothing, this)),
     m_height(new OperatorParameterSlider("height", "Height", "Adaptive Threshold Height", Slider::Value, Slider::Linear, Slider::Integer, 1, 25, 4, 1, 1000, Slider::FilterNothing, this)),
     m_offset(new OperatorParameterSlider("offset", "Offset", "Adaptive Threshold Offset", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1, 1<<16, Slider::FilterExposureFromOne, this))

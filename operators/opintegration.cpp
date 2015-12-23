@@ -17,14 +17,16 @@ static const char *NormalizationTypeStr[] = {
 using Magick::Quantum;
 
 OpIntegration::OpIntegration(Process *parent) :
-    Operator(OP_SECTION_BLEND, "Integration", parent),
+    Operator(OP_SECTION_BLEND, "Integration", Operator::All, parent),
     m_rejectionType(NoRejection),
     m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", "Rejection", this, SLOT(setRejectionType(int)))),
     m_upper(new OperatorParameterSlider("upper", "Upper mul.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_lower(new OperatorParameterSlider("lower", "Lower div.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_normalizationType(NoNormalization),
     m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", "Normalization", this, SLOT(setNormalizationType(int)))),
-    m_customNormalization(new OperatorParameterSlider("normalizationValue", "Custom Norm.", "Integration Custom Normalization", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
+    m_customNormalization(new OperatorParameterSlider("normalizationValue", "Custom Norm.", "Integration Custom Normalization", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", "Output HDR", this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(false)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Integrated Image", "Integrated Image", this));
@@ -38,11 +40,15 @@ OpIntegration::OpIntegration(Process *parent) :
     m_normalizationTypeDropDown->addOption(NormalizationTypeStr[HighestValue], HighestValue);
     m_normalizationTypeDropDown->addOption(NormalizationTypeStr[Custom], Custom);
 
+    m_outputHDR->addOption("No", false, true);
+    m_outputHDR->addOption("Yes", true);
+
     addParameter(m_rejectionTypeDropDown);
     addParameter(m_upper);
     addParameter(m_lower);
     addParameter(m_normalizationTypeDropDown);
     addParameter(m_customNormalization);
+    addParameter(m_outputHDR);
 }
 
 OpIntegration *OpIntegration::newInstance()
@@ -57,6 +63,7 @@ OperatorWorker *OpIntegration::newWorker()
                                  m_lower->value(),
                                  m_normalizationType,
                                  m_customNormalization->value(),
+                                 m_outputHDRValue,
                                  m_thread, this);
 }
 
@@ -72,6 +79,14 @@ void OpIntegration::setNormalizationType(int type)
 {
     if ( m_normalizationType != type ) {
         m_normalizationType = NormalizationType(type);
+        setOutOfDate();
+    }
+}
+
+void OpIntegration::setOutputHDR(int type)
+{
+    if ( m_outputHDRValue != !!type ) {
+        m_outputHDRValue = !!type;
         setOutOfDate();
     }
 }

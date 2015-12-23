@@ -17,6 +17,7 @@ public:
                       qreal lower,
                       OpIntegration::NormalizationType normalizationType,
                       qreal customNormalizationValue,
+                      bool outputHDR,
                       QThread *thread, OpIntegration *op);
     ~WorkerIntegration();
     Photo process(const Photo &, int, int) { throw 0; }
@@ -31,6 +32,7 @@ public slots:
     qreal m_lower;
     OpIntegration::NormalizationType m_normalizationType;
     qreal m_customNormalizationValue;
+    bool m_outputHDR;
     integration_plane_t *m_integrationPlane;
     int *m_countPlane;
     int m_w;

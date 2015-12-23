@@ -135,7 +135,9 @@ SOURCES +=\
     operators/ophotpixels.cpp \
     operators/opcolor.cpp \
     ui/console.cpp \
-    ui/preferences.cpp
+    ui/preferences.cpp \
+    algorithms/hdr.cpp \
+    operators/ophdr.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -247,7 +249,9 @@ HEADERS  += \
     operators/ophotpixels.h \
     operators/opcolor.h \
     ui/console.h \
-    ui/preferences.h
+    ui/preferences.h \
+    algorithms/hdr.h \
+    operators/ophdr.h
 
 FORMS    += \
     ui/aboutdialog.ui \

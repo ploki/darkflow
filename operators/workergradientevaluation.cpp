@@ -2,6 +2,7 @@
 #include <QPointF>
 #include "workergradientevaluation.h"
 #include "algorithm.h"
+#include "hdr.h"
 
 WorkerGradientEvaluation::WorkerGradientEvaluation(qreal radius,
                                                    qreal altitude,
@@ -23,6 +24,7 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
     Magick::Image& in = inPhoto.image();
     Magick::Image& out = outPhoto.image();
 
+    bool hdr = srcPhoto.getScale() == Photo::HDR;
     int w = in.columns();
     int h = in.rows();
     Magick::Pixels cache(in);
@@ -46,9 +48,16 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
                 qreal dy = points[i].y()-y;
                 if ( dx*dx+dy*dy >= radius_pow2 )
                     continue;
-                color.red+=(pixels[y*w+x].red);
-                color.green+=(pixels[y*w+x].green);
-                color.blue+=(pixels[y*w+x].blue);
+                if ( hdr ) {
+                    color.red+=fromHDR(pixels[y*w+x].red);
+                    color.green+=fromHDR(pixels[y*w+x].green);
+                    color.blue+=fromHDR(pixels[y*w+x].blue);
+                }
+                else {
+                    color.red+=(pixels[y*w+x].red);
+                    color.green+=(pixels[y*w+x].green);
+                    color.blue+=(pixels[y*w+x].blue);
+                }
                 ++count;
             }
         }
@@ -93,10 +102,16 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
                 color.blue += double(colors[i].blue)/dist;
                 coef+=1./dist;
             }
-
-            pxl[y*w+x].red = clamp<quantum_t>(color.red/coef);
-            pxl[y*w+x].green = clamp<quantum_t>(color.green/coef);
-            pxl[y*w+x].blue = clamp<quantum_t>(color.blue/coef);
+            if (hdr) {
+                pxl[y*w+x].red = clamp<quantum_t>(toHDR(color.red/coef));
+                pxl[y*w+x].green = clamp<quantum_t>(toHDR(color.green/coef));
+                pxl[y*w+x].blue = clamp<quantum_t>(toHDR(color.blue/coef));
+            }
+            else {
+                pxl[y*w+x].red = clamp<quantum_t>(color.red/coef);
+                pxl[y*w+x].green = clamp<quantum_t>(color.green/coef);
+                pxl[y*w+x].blue = clamp<quantum_t>(color.blue/coef);
+            }
 
         }
 #pragma omp critical

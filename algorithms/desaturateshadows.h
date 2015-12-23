@@ -19,7 +19,7 @@ public:
                                qreal saturation,
                                QObject *parent = 0);
     ~DesaturateShadows();
-    void applyOnImage(Magick::Image& image);
+    void applyOnImage(Magick::Image& image, bool hdr);
 private:
     double *m_lut;
     qreal m_highlightLimit;

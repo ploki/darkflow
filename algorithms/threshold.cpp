@@ -1,4 +1,5 @@
 #include "threshold.h"
+#include "hdr.h"
 
 using Magick::Quantum;
 
@@ -24,4 +25,16 @@ Threshold::Threshold(qreal high, qreal low, QObject *parent) :
         else
             m_lut[i] = down;
     }
+
+    l=toHDR(l);
+    h=toHDR(h);
+#pragma omp parallel for
+    for ( quantum_t i = 0 ; i <= quantum_t(QuantumRange) ; ++i ) {
+        if ( i >= l && i <= h )
+            m_hdrLut[i] = up;
+        else
+            m_hdrLut[i] = down;
+    }
+
+
 }

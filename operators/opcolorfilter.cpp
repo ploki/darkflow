@@ -17,7 +17,6 @@ public:
     Photo process(const Photo &photo, int , int ) {
         Photo newPhoto(photo);
         m_colorFilter.applyOn(newPhoto);
-        m_colorFilter.applyOnImage(newPhoto.curve());
         return newPhoto;
     }
 
@@ -26,7 +25,7 @@ private:
 };
 
 OpColorFilter::OpColorFilter(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Color Filter", parent),
+    Operator(OP_SECTION_COLOR, "Color Filter", Operator::All, parent),
     m_r(new OperatorParameterSlider("red", "Red", "Color Filter Red Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_g(new OperatorParameterSlider("green", "Green", "Color Filter Green Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_b(new OperatorParameterSlider("blue", "Blue", "Color Filter Blue Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this))

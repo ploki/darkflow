@@ -23,7 +23,11 @@ public:
         SquareRoot,
         TargetNone
     } TransformTarget;
-
+    typedef enum {
+        Ignore,
+        Warning,
+        Error
+    } IncompatibleAction;
     explicit Preferences(QWidget *parent = 0);
     ~Preferences();
 
@@ -33,6 +37,7 @@ public:
     void releaseWorker();
 
     TransformTarget getCurrentTarget() const;
+    IncompatibleAction getIncompatibleAction() const;
 
 private:
     void getDefaultMagickResources();
@@ -61,7 +66,7 @@ private:
     size_t m_scheduledMaxWorkers;
     size_t m_OpenMPThreads;
     TransformTarget m_currentTarget;
-
+    IncompatibleAction m_incompatibleAction;
 };
 
 extern Preferences *preferences;

@@ -13,11 +13,12 @@ public:
     explicit LutBased(QObject *parent = 0);
     ~LutBased();
 
-    void applyOnImage(Magick::Image& image);
-    quantum_t applyOnQuantum(quantum_t v);
+    void applyOnImage(Magick::Image& image, bool hdr);
+    quantum_t applyOnQuantum(quantum_t v, bool hdr);
 
 protected:
     quantum_t *m_lut;
+    quantum_t *m_hdrLut;
 };
 
 #endif // LUTBASED_H

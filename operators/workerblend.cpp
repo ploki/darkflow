@@ -100,9 +100,9 @@ blend(WorkerBlend *self, PIXEL *rgb, const PIXEL *p, OpBlend::BlendMode mode)
         rgb[2] = rgb[2]-p[2];
         break;
     case OpBlend::Difference: {
-        real r = rgb[0]-p[0];
-        real g = rgb[1]-p[1];
-        real b = rgb[2]-p[2];
+        PIXEL r = rgb[0]-p[0];
+        PIXEL g = rgb[1]-p[1];
+        PIXEL b = rgb[2]-p[2];
         if ( r < 0 ) r=-r;
         if ( g < 0 ) g=-g;
         if ( b < 0 ) b=-b;
@@ -232,11 +232,11 @@ void WorkerBlend::play()
                 c_h = imageC->rows();
             }
             int line = 0;
+            bool aHDR = photoA.getScale() == Photo::HDR;
+            bool bHDR = photoB && photoB->getScale() == Photo::HDR;
+            bool cHDR = photoC && photoC->getScale() == Photo::HDR ;
             bool anyHDR = false;
-            if ( m_outputHDR ||
-                 (photoA.getScale() == Photo::HDR) ||
-                 (photoB && photoB->getScale() == Photo::HDR ) ||
-                 (photoC && photoC->getScale() == Photo::HDR ))
+            if ( m_outputHDR || aHDR || bHDR || cHDR)
                 anyHDR = true;
 
 #pragma omp parallel for
@@ -257,9 +257,9 @@ void WorkerBlend::play()
                     if ( pxl_C ) pC = pxl_C+(x%c_w);
                     if (anyHDR)
                         blend<real>(this,
-                                    pxl_A+x, (photoA.getScale() == Photo::HDR),
-                                    pB, (photoB?(photoB->getScale() == Photo::HDR): false),
-                                    pC, (photoC?(photoC->getScale() == Photo::HDR): false),
+                                    pxl_A+x, aHDR,
+                                    pB, bHDR,
+                                    pC, cHDR,
                                     pxl_u+x,
                                     pxl_o+x,
                                     m_mode1,
@@ -267,9 +267,9 @@ void WorkerBlend::play()
                                     m_outputHDR);
                     else
                         blend<quantum_t>(this,
-                                         pxl_A+x, (photoA.getScale() == Photo::HDR),
-                                         pB, (photoB?(photoB->getScale() == Photo::HDR): false),
-                                         pC, (photoC?(photoC->getScale() == Photo::HDR): false),
+                                         pxl_A+x, aHDR,
+                                         pB, bHDR,
+                                         pC, cHDR,
                                          pxl_u+x,
                                          pxl_o+x,
                                          m_mode1,
@@ -278,7 +278,9 @@ void WorkerBlend::play()
                 }
 #pragma omp critical
                 {
-                    emitProgress(n, a_count, line++, h);
+                    if ( line % 100 == 0)
+                        emitProgress(n, a_count, line, h);
+                    ++line;
                 }
             }
             imageA_cache->sync();

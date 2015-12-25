@@ -57,7 +57,9 @@ public:
     void correct(Magick::Image &image, bool imageIsHDR,
                  Magick::Image& flatfield, bool flatfieldIsHDR,
                  Magick::Image& overflow,
-                 Triplet<real> & max) {
+                 Triplet<real> & max,
+                 int p,
+                 int c) {
         int w = image.columns();
         int h = image.rows();
         int f_w = flatfield.columns();
@@ -71,6 +73,7 @@ public:
         Magick::Pixels image_cache(image);
         Magick::Pixels flatfield_cache(flatfield);
         Magick::Pixels overflow_cache(overflow);
+        int line=0;
 #pragma omp parallel for
         for ( int y = 0 ; y < h ; ++y ) {
             Magick::PixelPacket *image_pixels = image_cache.get(0, y, w, 1);
@@ -139,6 +142,12 @@ public:
                             clamp<quantum_t>(b);
                 }
             }
+#pragma omp critical
+            {
+                if ( line % 100 == 0 )
+                    emitProgress(p, c, line, h);
+                ++line;
+            }
         }
     }
 
@@ -152,7 +161,6 @@ public:
         int source_flatfield_idx = 0;
         foreach(Photo flatfield, m_inputs[1]) {
             foreach(Photo photo, m_inputs[0]) {
-                ++n;
                 if (aborted())
                     continue;
                 try {
@@ -162,12 +170,14 @@ public:
                         correct<real>(photo.image(), photo.getScale() == Photo::HDR,
                                       flatfield.image(), flatfield.getScale() == Photo::HDR,
                                       overflow.image(),
-                                      m_max[source_flatfield_idx]);
+                                      m_max[source_flatfield_idx],
+                                      n, n_photos);
                     else
                         correct<quantum_t>(photo.image(), photo.getScale() == Photo::HDR,
                                            flatfield.image(), flatfield.getScale() == Photo::HDR,
                                            overflow.image(),
-                                           m_max[source_flatfield_idx]);
+                                           m_max[source_flatfield_idx],
+                                           n, n_photos);
                     if ( m_outputHDR )
                         photo.setScale(Photo::HDR);
                     else if ( photo.getScale() == Photo::HDR )
@@ -175,6 +185,7 @@ public:
                     overflow.setScale(Photo::Linear);
                     outputPush(0, photo);
                     outputPush(1, overflow);
+                    ++n;
                     emit progress(n, n_photos);
                 }
                 catch (std::exception &e) {

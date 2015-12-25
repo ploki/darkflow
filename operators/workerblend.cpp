@@ -289,6 +289,8 @@ void WorkerBlend::play()
                 photoA.setScale(Photo::HDR);
             else if ( photoA.getScale() == Photo::HDR )
                 photoA.setScale(Photo::Linear);
+            overflow.setScale(Photo::Linear);
+            underflow.setScale(Photo::Linear);
             outputPush(0, photoA);
             outputPush(1, overflow);
             outputPush(2, underflow);

@@ -33,12 +33,17 @@ public:
                     const Magick::PixelPacket * pixels = pixels_cache.getConst(0, y, w, 1);
                     for ( int x = 0 ; x < w ; ++x ) {
                         if ( pixels[x].red > max.red )
-                            max.red = hdr?fromHDR(pixels[x].red):pixels[x].red;
+                            max.red = pixels[x].red;
                         if ( pixels[x].green > max.green )
-                            max.green = hdr?fromHDR(pixels[x].green):pixels[x].green;
+                            max.green = pixels[x].green;
                         if ( pixels[x].blue > max.blue )
-                            max.blue = hdr?fromHDR(pixels[x].blue):pixels[x].blue;
+                            max.blue = pixels[x].blue;
                     }
+                }
+                if ( hdr ) {
+                    max.red = fromHDR(max.red);
+                    max.green = fromHDR(max.green);
+                    max.blue = fromHDR(max.blue);
                 }
                 m_max.push_back(max);
             }
@@ -160,6 +165,7 @@ public:
                         photo.setScale(Photo::HDR);
                     else if ( photo.getScale() == Photo::HDR )
                         photo.setScale(Photo::Linear);
+                    overflow.setScale(Photo::Linear);
                     outputPush(0, photo);
                     outputPush(1, overflow);
                     emit progress(n, n_photos);
@@ -207,7 +213,7 @@ OpFlatFieldCorrection *OpFlatFieldCorrection::newInstance()
 
 OperatorWorker *OpFlatFieldCorrection::newWorker()
 {
-    return new WorkerFlatField(m_outputHDR, m_thread, this);
+    return new WorkerFlatField(m_outputHDRValue, m_thread, this);
 }
 
 void OpFlatFieldCorrection::setOutputHDR(int type)

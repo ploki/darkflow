@@ -3,6 +3,8 @@
 
 #include "lutbased.h"
 
+extern double *fromHDRLut;
+
 static inline
 quantum_t toHDR(double v)
 {
@@ -18,13 +20,7 @@ quantum_t toHDR(double v)
 static inline
 double fromHDR(quantum_t v)
 {
-#if 1
-  if ( v == 0 ) return 0;
-  return pow(2,(double)(v+1)/4096)-1;
-#else
-    if ( v == 0 ) return 0;
-    return pow(2,(double)(v)/4096);
-#endif
+    return fromHDRLut[clamp(v)];
 }
 
 class HDR : public LutBased

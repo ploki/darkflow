@@ -53,7 +53,7 @@ public:
             }
         }
     }
-
+    template<typename PIXEL>
     void correct(Magick::Image &image, bool imageIsHDR,
                  Magick::Image& flatfield, bool flatfieldIsHDR,
                  Magick::Image& overflow,
@@ -79,7 +79,7 @@ public:
             if ( !image_pixels ) continue;
             if ( !flatfield_pixels ) continue;
             for ( int x = 0 ; x < w ; ++x ) {
-                Triplet<real> ff;
+                Triplet<PIXEL> ff;
                 bool singularity = false;
                 if ( flatfield_pixels[x].red )
                     ff.red = flatfield_pixels[x].red;
@@ -107,9 +107,9 @@ public:
                     ff.green = fromHDR(ff.green);
                     ff.blue = fromHDR(ff.blue);
                 }
-                real r = image_pixels[x].red;
-                real g = image_pixels[x].green;
-                real b = image_pixels[x].blue;
+                PIXEL r = image_pixels[x].red;
+                PIXEL g = image_pixels[x].green;
+                PIXEL b = image_pixels[x].blue;
                 if ( imageIsHDR ) {
                     r = fromHDR(r);
                     g = fromHDR(g);
@@ -157,10 +157,17 @@ public:
                     continue;
                 try {
                     Photo overflow(photo);
-                    correct(photo.image(), photo.getScale() == Photo::HDR,
-                            flatfield.image(), flatfield.getScale() == Photo::HDR,
-                            overflow.image(),
-                            m_max[source_flatfield_idx]);
+                    if (photo.getScale() == Photo::HDR ||
+                        flatfield.getScale() == Photo::HDR )
+                        correct<real>(photo.image(), photo.getScale() == Photo::HDR,
+                                      flatfield.image(), flatfield.getScale() == Photo::HDR,
+                                      overflow.image(),
+                                      m_max[source_flatfield_idx]);
+                    else
+                        correct<quantum_t>(photo.image(), photo.getScale() == Photo::HDR,
+                                           flatfield.image(), flatfield.getScale() == Photo::HDR,
+                                           overflow.image(),
+                                           m_max[source_flatfield_idx]);
                     if ( m_outputHDR )
                         photo.setScale(Photo::HDR);
                     else if ( photo.getScale() == Photo::HDR )

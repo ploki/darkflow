@@ -19,21 +19,22 @@ Photo WorkerBlend::process(const Photo &, int, int)
     throw 0;
 }
 
+template<typename PIXEL>
 static inline void
-blend(WorkerBlend *self, real *rgb, const real *p, OpBlend::BlendMode mode)
+blend(WorkerBlend *self, PIXEL *rgb, const PIXEL *p, OpBlend::BlendMode mode)
 {
     switch ( mode ) {
     case OpBlend::Multiply:
         //f(a,b) = a*b
-        rgb[0] = (rgb[0] * p[0]) / QuantumRange;
-        rgb[1] = (rgb[1] * p[1]) / QuantumRange;
-        rgb[2] = (rgb[2] * p[2]) / QuantumRange;
+        rgb[0] = (real(rgb[0]) * real(p[0])) / QuantumRange;
+        rgb[1] = (real(rgb[1]) * real(p[1])) / QuantumRange;
+        rgb[2] = (real(rgb[2]) * real(p[2])) / QuantumRange;
         break;
     case OpBlend::Screen:
         //f(a,b) = 1-(1-a)(1-b)
-        rgb[0] = QuantumRange-(1.-rgb[0]/QuantumRange)*(1.-p[0]/QuantumRange)*QuantumRange;
-        rgb[1] = QuantumRange-(1.-rgb[1]/QuantumRange)*(1.-p[1]/QuantumRange)*QuantumRange;
-        rgb[2] = QuantumRange-(1.-rgb[2]/QuantumRange)*(1.-p[2]/QuantumRange)*QuantumRange;
+        rgb[0] = QuantumRange-(1.-real(rgb[0])/QuantumRange)*(1.-real(p[0])/QuantumRange)*QuantumRange;
+        rgb[1] = QuantumRange-(1.-real(rgb[1])/QuantumRange)*(1.-real(p[1])/QuantumRange)*QuantumRange;
+        rgb[2] = QuantumRange-(1.-real(rgb[2])/QuantumRange)*(1.-real(p[2])/QuantumRange)*QuantumRange;
         break;
     case OpBlend::Overlay:
         //f(a,b) = a<.5 ? 2ab : 1-2(1-a)(1-b)
@@ -123,6 +124,7 @@ blend(WorkerBlend *self, real *rgb, const real *p, OpBlend::BlendMode mode)
     }
 }
 
+template<typename PIXEL>
 static inline void
 blend(WorkerBlend *self,
       Magick::PixelPacket *a,
@@ -137,22 +139,22 @@ blend(WorkerBlend *self,
       OpBlend::BlendMode mode2,
       bool outputHDR)
 {
-    real rgb[3] = {0, 0, 0};
+    PIXEL rgb[3] = {0, 0, 0};
     if ( a ) {
         if (!aHdr) { rgb[0] = a->red; rgb[1] = a->green; rgb[2] = a->blue; }
         else { rgb[0] = fromHDR(a->red); rgb[1] = fromHDR(a->green); rgb[2] = fromHDR(a->blue); }
     }
     if ( b ) {
-        real p[3];
+        PIXEL p[3];
         if (!bHdr) { p[0] = b->red; p[1] = b->green; p[2] = b->blue; }
         else { p[0] = fromHDR(b->red); p[1] = fromHDR(b->green); p[2] = fromHDR(b->blue); }
-        blend(self, rgb, p, mode1);
+        blend<PIXEL>(self, rgb, p, mode1);
     }
     if ( c ) {
-        real p[3];
+        PIXEL p[3];
         if (!cHdr) { p[0] = c->red; p[1] = c->green; p[2] = c->blue; }
         else { p[0] = fromHDR(c->red); p[1] = fromHDR(c->green); p[2] = fromHDR(c->blue); }
-        blend(self, rgb, p, mode2);
+        blend<PIXEL>(self, rgb, p, mode2);
     }
     if (u) {
         if ( rgb[0] < 0 ) u->red = -rgb[0]; else u->red = 0;
@@ -230,6 +232,13 @@ void WorkerBlend::play()
                 c_h = imageC->rows();
             }
             int line = 0;
+            bool anyHDR = false;
+            if ( m_outputHDR ||
+                 (photoA.getScale() == Photo::HDR) ||
+                 (photoB && photoB->getScale() == Photo::HDR ) ||
+                 (photoC && photoC->getScale() == Photo::HDR ))
+                anyHDR = true;
+
 #pragma omp parallel for
             for ( int y = 0 ; y < h ; ++y ) {
                 Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
@@ -246,15 +255,26 @@ void WorkerBlend::play()
                     const Magick::PixelPacket *pC = NULL;
                     if ( pxl_B ) pB = pxl_B+(x%b_w);
                     if ( pxl_C ) pC = pxl_C+(x%c_w);
-                    blend(this,
-                          pxl_A+x, (photoA.getScale() == Photo::HDR),
-                          pB, (photoB?(photoB->getScale() == Photo::HDR): false),
-                          pC, (photoC?(photoC->getScale() == Photo::HDR): false),
-                          pxl_u+x,
-                          pxl_o+x,
-                          m_mode1,
-                          m_mode2,
-                          m_outputHDR);
+                    if (anyHDR)
+                        blend<real>(this,
+                                    pxl_A+x, (photoA.getScale() == Photo::HDR),
+                                    pB, (photoB?(photoB->getScale() == Photo::HDR): false),
+                                    pC, (photoC?(photoC->getScale() == Photo::HDR): false),
+                                    pxl_u+x,
+                                    pxl_o+x,
+                                    m_mode1,
+                                    m_mode2,
+                                    m_outputHDR);
+                    else
+                        blend<quantum_t>(this,
+                                         pxl_A+x, (photoA.getScale() == Photo::HDR),
+                                         pB, (photoB?(photoB->getScale() == Photo::HDR): false),
+                                         pC, (photoC?(photoC->getScale() == Photo::HDR): false),
+                                         pxl_u+x,
+                                         pxl_o+x,
+                                         m_mode1,
+                                         m_mode2,
+                                         m_outputHDR);
                 }
 #pragma omp critical
                 {
@@ -277,11 +297,18 @@ void WorkerBlend::play()
                 if ( imageC_cache )
                     pxl_C = imageC_cache->getConst(0, 0, 1, 1);
                 for ( int x = 0; x < 65536 ; ++x ) {
-                    blend(this,
-                          pxl_A+x, (photoA.getScale() == Photo::HDR),
-                          pxl_B, (photoB?(photoB->getScale() == Photo::HDR): false),
-                          pxl_C, (photoC?(photoC->getScale() == Photo::HDR): false),
-                          NULL, NULL, m_mode1, m_mode2, m_outputHDR);
+                    if (anyHDR)
+                        blend<real>(this,
+                                    pxl_A+x, (photoA.getScale() == Photo::HDR),
+                                    pxl_B, (photoB?(photoB->getScale() == Photo::HDR): false),
+                                    pxl_C, (photoC?(photoC->getScale() == Photo::HDR): false),
+                                    NULL, NULL, m_mode1, m_mode2, m_outputHDR);
+                    else
+                        blend<quantum_t>(this,
+                                    pxl_A+x, (photoA.getScale() == Photo::HDR),
+                                    pxl_B, (photoB?(photoB->getScale() == Photo::HDR): false),
+                                    pxl_C, (photoC?(photoC->getScale() == Photo::HDR): false),
+                                    NULL, NULL, m_mode1, m_mode2, m_outputHDR);
                 }
                 curve_cache.sync();
             }

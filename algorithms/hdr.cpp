@@ -26,7 +26,8 @@ public:
 
 
 HDR::HDR(bool revert, QObject *parent) :
-    LutBased(parent)
+    LutBased(parent),
+    m_revert(revert)
 {
 
 #pragma omp parallel for
@@ -41,4 +42,16 @@ HDR::HDR(bool revert, QObject *parent) :
                           ? i
                           : toHDR(i));
     }
+}
+
+void HDR::applyOn(Photo &photo)
+{
+    bool hdr = photo.getScale() == Photo::HDR;
+    applyOnImage(photo.image(), hdr);
+    if (m_alterCurve)
+        applyOnImage(photo.curve(), hdr);
+    photo.setTag(TAG_SCALE,
+                 m_revert
+                 ? TAG_SCALE_LINEAR
+                 : TAG_SCALE_HDR );
 }

@@ -12,7 +12,7 @@ OpLoadVideo::OpLoadVideo(Process *process) :
                           "Videos",
                           tr("Select Videos to add to the collection"),
                           m_process->baseDirectory(),
-                          "Videos (*.avi *.mjpg *.mjpeg *.ts *.mov *.mpg *.mpeg *.mp4 *.webm *);;"
+                          "Videos (*.avi *.mjpg *.mjpeg *.ts *.m2ts *.mov *.mpg *.mpeg *.mp4 *.webm);;"
                           "All Files (*.*)", this)),
     m_skip(new OperatorParameterSlider("skip", "Skip", "Video Frames to skip", Slider::Value, Slider::Linear, Slider::Integer, 0, 1000, 0, 0, 1000000, Slider::FilterPixels, this)),
     m_count(new OperatorParameterSlider("count", "Count", "Video Frames to collect", Slider::Value, Slider::Linear, Slider::Integer, 0, 1000, 100, 0, 1000000, Slider::FilterPixels, this))

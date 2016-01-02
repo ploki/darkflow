@@ -449,7 +449,7 @@ void Visualization::transformView(qreal factor)
 void Visualization::updateColorLabels(const QPointF& pos)
 {
     using Magick::Quantum;
-    QVector<int> rgb(3);
+    QVector<qreal> rgb(3);
     bool clearStatus = true;
 
     if ( pos.x() >= 0 && pos.y() >= 0 && m_photo ) {
@@ -457,13 +457,13 @@ void Visualization::updateColorLabels(const QPointF& pos)
         rgb = m_photo->pixelColor(pos.x(), pos.y());
     }
 
-    ui->value_ADU_R->setText(QString("R: %0").arg(rgb[0], 5, 10, QChar(' ')));
-    ui->value_ADU_G->setText(QString("G: %0").arg(rgb[1], 5, 10, QChar(' ')));
-    ui->value_ADU_B->setText(QString("B: %0").arg(rgb[2], 5, 10, QChar(' ')));
+    ui->value_ADU_R->setText(QString("R: %0").arg(int(rgb[0]), 5, 10, QChar(' ')));
+    ui->value_ADU_G->setText(QString("G: %0").arg(int(rgb[1]), 5, 10, QChar(' ')));
+    ui->value_ADU_B->setText(QString("B: %0").arg(int(rgb[2]), 5, 10, QChar(' ')));
     qreal
-            r = rgb[0]?log2(qreal(rgb[0])/QuantumRange):-16,
-            g = rgb[1]?log2(qreal(rgb[1])/QuantumRange):-16,
-            b = rgb[2]?log2(qreal(rgb[2])/QuantumRange):-16;
+            r = rgb[0]!=0?log2(rgb[0]/QuantumRange):-16,
+            g = rgb[1]!=0?log2(rgb[1]/QuantumRange):-16,
+            b = rgb[2]!=0?log2(rgb[2]/QuantumRange):-16;
     ui->value_EV_R->setText(QString::number(r,'.',2)+" EV");
     ui->value_EV_G->setText(QString::number(g,'.',2)+" EV");
     ui->value_EV_B->setText(QString::number(b,'.',2)+" EV");
@@ -772,7 +772,6 @@ void Visualization::setInputControlEnabled(bool v)
     ui->tag_buttonAdd->setEnabled(v);
     ui->tag_buttonRemove->setEnabled(v);
     ui->tag_buttonReset->setEnabled(v);
-    ui->combo_input->setEnabled(v);
 }
 void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
 {

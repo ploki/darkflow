@@ -84,7 +84,7 @@ public:
     void createImage(long width, long height);
     void createImageAlike(const Photo& photo);
 
-    QVector<int> pixelColor(unsigned x, unsigned y);
+    QVector<qreal> pixelColor(unsigned x, unsigned y);
     const Magick::Image& image() const;
     Magick::Image& image();
     const Magick::Image &curve() const;

@@ -19,9 +19,6 @@ public:
         if ( !m_invert && photo.getScale() != Photo::Linear)
             dflWarning(photo.getIdentity()+": must be Linear");
         m_hdr.applyOn(newPhoto);
-        newPhoto.setScale( m_invert
-                           ? Photo::Linear
-                           : Photo::HDR);
         return newPhoto;
     }
 private:

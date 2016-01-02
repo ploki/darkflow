@@ -9,6 +9,7 @@
 #include "operatoroutput.h"
 #include "photo.h"
 #include "preferences.h"
+#include "hdr.h"
 
 static struct AtStart {
     AtStart() {
@@ -23,6 +24,7 @@ OperatorWorker::OperatorWorker(QThread *thread, Operator *op) :
     m_inputs(),
     m_outputs(),
     m_outputStatus(),
+    m_elapsed(),
     m_signalEmited(false),
     m_error(false),
     m_earlyAbort(false)
@@ -49,6 +51,7 @@ void OperatorWorker::started()
         emitFailure();
         return;
     }
+    m_elapsed.start();
     play();
 }
 
@@ -122,9 +125,9 @@ void OperatorWorker::emitFailure() {
     emit failure();
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
     if ( ( m_earlyAbort || aborted() ) && !m_error )
-        dflDebug("Aborted");
+        dflDebug("Aborted (after %lldms)",m_elapsed.elapsed());
     else
-        dflError("Failure");
+        dflError("Failure (after %lldms)",m_elapsed.elapsed());
 }
 
 void OperatorWorker::emitSuccess()
@@ -135,7 +138,7 @@ void OperatorWorker::emitSuccess()
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit success"));
     emit success(m_outputs);
     dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
-    dflInfo("Success");
+    dflInfo("Success (after %lldms)",m_elapsed.elapsed());
 }
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
@@ -198,10 +201,11 @@ bool OperatorWorker::play_onInput(int idx)
             Photo newPhoto;
             if ( !m_operator->isCompatible(photo) ) {
                 switch ( preferences->getIncompatibleAction()) {
-                case Preferences::Ignore:
-                    break;
                 case Preferences::Warning:
                     dflWarning(photo.getIdentity() + ": Incompatible pixel scale");
+                case Preferences::Ignore:
+                    if ( photo.getScale() == Photo::HDR )
+                        HDR(true).applyOn(photo);
                     break;
                 default:
                 case Preferences::Error:
@@ -254,10 +258,11 @@ bool OperatorWorker::play_onInputParallel(int idx)
         Photo newPhoto;
         if ( !m_operator->isCompatible(photo) ) {
             switch ( preferences->getIncompatibleAction()) {
-            case Preferences::Ignore:
-                break;
             case Preferences::Warning:
-                dflWarning(photo.getIdentity() + ": Incompatible pixel scale");
+                dflWarning(photo.getIdentity() + ": Incompatible pixel scale, converted");
+            case Preferences::Ignore:
+                if ( photo.getScale() == Photo::HDR )
+                    HDR(true).applyOn(photo);
                 break;
             default:
             case Preferences::Error:

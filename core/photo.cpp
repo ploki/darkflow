@@ -138,28 +138,27 @@ void Photo::createImageAlike(const Photo& photo)
     createImage(photo.m_image.columns(), photo.m_image.rows());
 }
 
-QVector<int> Photo::pixelColor(unsigned x, unsigned y)
+QVector<qreal> Photo::pixelColor(unsigned x, unsigned y)
 {
-    QVector<int> rgb(3);
+    QVector<qreal> rgb(3);
     if ( x >= m_image.columns() ||
          y >= m_image.rows() )
         return rgb;
     try {
-#if 0
-        /* This doesn't work as expected with palletized images */
-        Magick::Color col = m_image.pixelColor(x,y);
-        rgb[0] = col.redQuantum();
-        rgb[1] = col.greenQuantum();
-        rgb[2] = col.blueQuantum();
-#else
         Magick::Pixels cache(m_image);
         const Magick::PixelPacket *pixel = cache.getConst(x,y,1,1);
         if (pixel) {
-            rgb[0] = pixel->red;
-            rgb[1] = pixel->green;
-            rgb[2] = pixel->blue;
+            if ( getScale() == HDR ) {
+                rgb[0] = fromHDR(pixel->red);
+                rgb[1] = fromHDR(pixel->green);
+                rgb[2] = fromHDR(pixel->blue);
+            }
+            else {
+                rgb[0] = pixel->red;
+                rgb[1] = pixel->green;
+                rgb[2] = pixel->blue;
+            }
         }
-#endif
     }
     catch (std::exception &e) {
         dflError("Unable to get pixel color: %s", e.what());

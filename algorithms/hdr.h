@@ -20,7 +20,7 @@ quantum_t toHDR(double v)
 static inline
 double fromHDR(quantum_t v)
 {
-    return fromHDRLut[clamp(v)];
+    return fromHDRLut[v];
 }
 
 class HDR : public LutBased
@@ -28,6 +28,9 @@ class HDR : public LutBased
     Q_OBJECT
 public:
     HDR(bool revert, QObject *parent = 0);
+    void applyOn(Photo &photo);
+private:
+    bool m_revert;
 };
 
 #endif // HDR_H

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QElapsedTimer>
 
 #include "photo.h"
 #include "operator.h"
@@ -43,6 +44,7 @@ protected:
 private:
     QVector<QVector<Photo> > m_outputs;
     QVector<Operator::OperatorOutputStatus> m_outputStatus;
+    QElapsedTimer m_elapsed;
 protected:
     bool m_signalEmited;
     mutable bool m_error;

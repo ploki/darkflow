@@ -350,12 +350,12 @@
         <widget class="QComboBox" name="comboIncompatibleScale">
          <item>
           <property name="text">
-           <string>Ignore</string>
+           <string>Ignore and convert</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Warning</string>
+           <string>Warning and convert</string>
           </property>
          </item>
          <item>

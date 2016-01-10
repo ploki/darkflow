@@ -24,7 +24,7 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
         p=(a+1.L)*pow(x0,1.L/gamma)/(gamma*x0);
 
 #pragma omp parallel for
-    for ( unsigned int i = 0 ; i <= QuantumRange ; ++i ) {
+    for ( int i = 0 ; i <= int(QuantumRange) ; ++i ) {
         double xx= double(i)/double(QuantumRange);
         if ( xx > x0 ) {
             if ( invert ) {
@@ -40,7 +40,7 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
     }
 // reverse and hdr are not compatible
 #pragma omp parallel for
-    for ( unsigned int i = 0 ; i <= QuantumRange ; ++i ) {
+    for ( int i = 0 ; i <= int(QuantumRange) ; ++i ) {
 
         double xx= double(fromHDR(i))/double(QuantumRange);
         if ( xx > x0 ) {

@@ -41,7 +41,9 @@
 #include "opintegration.h"
 #include "opinvert.h"
 #include "opcrop.h"
-#include "oploadvideo.h"
+#ifdef HAVE_FFMPEG
+# include "oploadvideo.h"
+#endif
 #include "opblend.h"
 #include "opmultiplexer.h"
 #include "opdemultiplexer.h"
@@ -106,7 +108,9 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpLoadRaw(this));
     m_availableOperators.push_back(new OpLoadImage(this));
+#ifdef HAVE_FFMPEG
     m_availableOperators.push_back(new OpLoadVideo(this));
+#endif
 
     m_availableOperators.push_back(new OpExposure(this));
     m_availableOperators.push_back(new OpShapeDynamicRange(this));

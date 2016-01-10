@@ -8,8 +8,8 @@ OperatorParameterSlider::OperatorParameterSlider(const QString &name,
                                                  Slider::Unit unit,
                                                  Slider::Scale scale,
                                                  Slider::NumberSet numberSet,
-                                                 qreal min,
-                                                 qreal max,
+                                                 qreal min_,
+                                                 qreal max_,
                                                  qreal value,
                                                  qreal hardMin,
                                                  qreal hardMax,
@@ -20,8 +20,8 @@ OperatorParameterSlider::OperatorParameterSlider(const QString &name,
     m_unit(unit),
     m_scale(scale),
     m_numberSet(numberSet),
-    m_min(min),
-    m_max(max),
+    m_min(min_),
+    m_max(max_),
     m_value(value),
     m_hardMin(hardMin),
     m_hardMax(hardMax),
@@ -50,12 +50,12 @@ Slider::NumberSet OperatorParameterSlider::numberSet() const
     return m_numberSet;
 }
 
-qreal OperatorParameterSlider::min() const
+qreal OperatorParameterSlider::getMin() const
 {
     return m_min;
 }
 
-qreal OperatorParameterSlider::max() const
+qreal OperatorParameterSlider::getMax() const
 {
     return m_max;
 }

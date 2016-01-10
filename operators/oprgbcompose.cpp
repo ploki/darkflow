@@ -83,7 +83,7 @@ public:
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 int line = 0;
 #pragma omp parallel for
-                for ( unsigned y = 0 ; y < h ; ++y ) {
+                for ( int y = 0 ; y < int(h) ; ++y ) {
                     const Magick::PixelPacket *pxl_Red = iRed_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Green = iGreen_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Blue = iBlue_cache.getConst(0, y, w, 1);

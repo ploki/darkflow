@@ -15,8 +15,8 @@ public:
             Slider::Unit unit,
             Slider::Scale scale,
             Slider::NumberSet numberSet,
-            qreal min,
-            qreal max,
+            qreal min_,
+            qreal max_,
             qreal value,
             qreal hardMin,
             qreal hardMax,
@@ -27,8 +27,8 @@ public:
     Slider::Unit unit() const;
     Slider::Scale scale() const;
     Slider::NumberSet numberSet() const;
-    qreal min() const;
-    qreal max() const;
+    qreal getMin() const;
+    qreal getMax() const;
     qreal value() const;
     qreal hardMin() const;
     qreal hardMax() const;

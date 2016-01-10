@@ -1,5 +1,6 @@
 #include "oplevelpercentile.h"
 
+#include "ports.h"
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
@@ -23,7 +24,7 @@ public:
         int h = image.rows();
         int w = image.columns();
         Q_ASSERT(QuantumRange + 1 == 1<<16);
-        int histo[QuantumRange+1][3] = {};
+        unsigned int histo[QuantumRange+1][3] = {};
         Magick::Pixels pixel_cache(image);
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,0, w, h);
 #pragma omp parallel for
@@ -33,9 +34,9 @@ public:
                         quantum_t r=pixels[x].red;
                         quantum_t g=pixels[x].green;
                         quantum_t b=pixels[x].blue;
-                        __sync_fetch_and_add(&histo[r][0], 1);
-                        __sync_fetch_and_add(&histo[g][1], 1);
-                        __sync_fetch_and_add(&histo[b][2], 1);
+                        atomic_incr(&histo[r][0]);
+                        atomic_incr(&histo[g][1]);
+                        atomic_incr(&histo[b][2]);
                 }
         }
 

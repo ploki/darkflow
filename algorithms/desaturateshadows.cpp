@@ -4,6 +4,7 @@
 #include <Magick++.h>
 #include "cielab.h"
 #include "hdr.h"
+#include "ports.h"
 using Magick::Quantum;
 
 DesaturateShadows::DesaturateShadows(qreal highlightLimit,
@@ -21,7 +22,7 @@ DesaturateShadows::DesaturateShadows(qreal highlightLimit,
     double threshold_high = highlightLimit * QuantumRange;
     double threshold_low =  threshold_high / range;
 #pragma omp parallel for
-    for ( unsigned int i = 0 ; i < QuantumRange+1 ; ++i ) {
+    for ( int i = 0 ; i < int(QuantumRange)+1 ; ++i ) {
         if ( i < threshold_low ) {
             m_lut[i]=saturation;
         }

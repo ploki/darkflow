@@ -10,12 +10,13 @@
 #include "operatorparameterslider.h"
 #include "console.h"
 
+#ifdef HAVE_FFMPEG
 extern "C" {
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
 #include <libavutil/mathematics.h>
 }
-
+#endif
 
 WorkerLoadVideo::WorkerLoadVideo(QThread *thread, OpLoadVideo *op) :
     OperatorWorker(thread, op),
@@ -53,6 +54,9 @@ void WorkerLoadVideo::play()
     emitSuccess();
     return;
 }
+
+#ifdef HAVE_FFMPEG
+
 static bool handle_error(const char *str) {
     dflWarning("LoadVideo(Worker): %s", str);
     return false;
@@ -268,5 +272,16 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
         return false;
     return true;
 }
-
-
+#else
+bool WorkerLoadVideo::push_frame(AVFrame *,
+                                 const QString &, int, int, int, int)
+{
+    dflError("FFMPEG not compiled in");
+    return false;
+}
+bool WorkerLoadVideo::decodeVideo(const QString &, int, int)
+{
+    dflError("FFMPEG not compiled in");
+    return false;
+}
+#endif

@@ -16,13 +16,30 @@ QT       += core gui
     QMAKE_LFLAGS +=  -fopenmp
     QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
 }
+
+unix {
+    QMAKE_CXXFLAGS += -DHAVE_FFMPEG
+    QMAKE_CFLAGS += -DHAVE_FFMPEG
+    CONFIG += link_pkgconfig
+    PKGCONFIG += Magick++ libavformat libavcodec libavutil
+    #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
+}
+
+win* {
+    QMAKE_CXXFLAGS += /wd4351 /wd4251 /wd4267 -IC:\ImageMagick\6.9.3-Q16\include
+    QMAKE_CFLAGS += /wd4351 /wd4251 /wd4267 -IC:\ImageMagick\6.9.3-Q16\include
+    QMAKE_CXXFLAGS += /openmp /MP
+    QMAKE_CFLAGS += /openmp /MP
+    LIBS += -LC:\ImageMagick\6.9.3-Q16\lib -lCORE_RL_magick_ -lCORE_RL_wand_ -lCORE_RL_Magick++_
+}
+
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QMAKE_INCDIR += core operators algorithms scene ui
 
 TARGET = darkflow
 TEMPLATE = app
-
 
 SOURCES +=\
     ui/aboutdialog.cpp \
@@ -137,7 +154,8 @@ SOURCES +=\
     ui/console.cpp \
     ui/preferences.cpp \
     algorithms/hdr.cpp \
-    operators/ophdr.cpp
+    operators/ophdr.cpp \
+    core/ports.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -251,7 +269,8 @@ HEADERS  += \
     ui/console.h \
     ui/preferences.h \
     algorithms/hdr.h \
-    operators/ophdr.h
+    operators/ophdr.h \
+    core/ports.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -264,6 +283,3 @@ FORMS    += \
     ui/console.ui \
     ui/preferences.ui
 
-unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += Magick++ libavformat libavcodec libavutil
-#unix: PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil

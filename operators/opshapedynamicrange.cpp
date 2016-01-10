@@ -74,8 +74,8 @@ void OpShapeDynamicRange::selectShape(int shape)
 
 void OpShapeDynamicRange::selectLab(int v)
 {
-    if ( m_labDomain != v ) {
-        m_labDomain = v;
+    if ( m_labDomain != !!v ) {
+        m_labDomain = !!v;
         setOutOfDate();
     }
 }

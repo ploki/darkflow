@@ -78,7 +78,7 @@ void WorkerConvolution::conv(Magick::Image& image, Magick::Image& kernel, qreal 
     Magick::Image nk = normalizeImage(kernel, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), true);
     Magick::Image ni = normalizeImage(image, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), false);
 
-    Magick::Image nnk = roll(nk,-nk.columns()/2, -nk.rows()/2);
+    Magick::Image nnk = roll(nk,-int(nk.columns())/2, -int(nk.rows())/2);
 
     Magick::forwardFourierTransformImage(&fft_image, ni, true);
     Magick::forwardFourierTransformImage(&fft_kernel, nnk, true);

@@ -22,7 +22,7 @@ ProcessSlider::ProcessSlider(QRectF rect,
     m_mouseHover(false),
     m_sliderDialog(new Slider(m_slider->windowCaption(),m_slider->unit(),
                               m_slider->scale(),m_slider->numberSet(),
-                              m_slider->min(), m_slider->max(),
+                              m_slider->getMin(), m_slider->getMax(),
                               m_slider->value(),m_slider->hardMin(),
                               m_slider->hardMax(),m_slider->parametersFilter(),
                               NULL))
@@ -123,7 +123,7 @@ void ProcessSlider::updateLoad()
 {
     m_sliderDialog->loadValues(m_slider->unit(),
                                m_slider->scale(),
-                               m_slider->min(),
-                               m_slider->max(),
+                               m_slider->getMin(),
+                               m_slider->getMax(),
                                m_slider->value());
 }

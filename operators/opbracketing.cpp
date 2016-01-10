@@ -4,6 +4,7 @@
 #include "operatoroutput.h"
 #include "operatorparameterslider.h"
 #include "photo.h"
+#include "ports.h"
 #include <Magick++.h>
 
 class WorkerBracketing : public OperatorWorker {
@@ -26,7 +27,6 @@ public:
 private:
     qreal m_compensation, m_high, m_low;
 };
-
 
 OpBracketing::OpBracketing(Process *parent) :
     Operator(OP_SECTION_BLEND, "Bracketing", Operator::All, parent),

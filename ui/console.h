@@ -1,6 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
+#include "ports.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -46,12 +47,12 @@ private:
 };
 
 
-void dflMessage(Console::Level level, char *fmt, ...) __attribute__((format(printf,2,3)));
-void dflDebug(const char* fmt, ...) __attribute__((format(printf,1,2)));
-void dflInfo(const char* fmt, ...) __attribute__((format(printf,1,2)));
-void dflWarning(const char* fmt, ...) __attribute__((format(printf,1,2)));
-void dflError(const char* fmt, ...) __attribute__((format(printf,1,2)));
-void dflCritical(const char* fmt, ...) __attribute__((format(printf,1,2)));
+void dflMessage(Console::Level level, char *fmt, ...) DF_PRINTF_FORMAT(2,3);
+void dflDebug(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);
+void dflInfo(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);
+void dflWarning(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);
+void dflError(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);
+void dflCritical(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);
 
 void dflMessage(Console::Level, const QString& msg);
 void dflDebug(const QString& msg);

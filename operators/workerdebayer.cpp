@@ -17,13 +17,13 @@ getFilterPattern(const Photo &photo)
 {
     QString str = photo.getTag(TAG_FILTER_PATTERN);
     u_int32_t filters = 0;
-    if ( str == "BGGRBGGRBGGRBGGR" )
+    if ( str == "BGGRBGGRBGGRBGGR" || str == "BG/GR" )
         filters=0x16161616;
-    else if ( str == "GRBGGRBGGRBGGRBG" )
+    else if ( str == "GRBGGRBGGRBGGRBG" || str == "GR/BG" )
         filters=0x61616161;
-    else if ( str == "GBRGGBRGGBRGGBRG" )
+    else if ( str == "GBRGGBRGGBRGGBRG" || str == "GB/RG" )
         filters=0x49494949;
-    else if ( str == "RGGBRGGBRGGBRGGB")
+    else if ( str == "RGGBRGGBRGGBRGGB" || str == "RG/GB")
         filters=0x94949494;
     return filters;
 }
@@ -145,14 +145,13 @@ static dc1394color_filter_t
 get_color_filter(const Photo& photo)
 {
     QString str = photo.getTag(TAG_FILTER_PATTERN);
-    str = str.left(4);
-    if ( str == "RGGB")
+    if ( str == "RGGBRGGBRGGBRGGB" || str == "RG/GB" )
         return DC1394_COLOR_FILTER_RGGB;
-    else if ( str == "GBRG" )
+    else if ( str == "GBRGGBRGGBRGGBRG" || str == "GB/RG" )
         return DC1394_COLOR_FILTER_GBRG;
-    else if ( str == "GRBG" )
+    else if ( str == "GRBGGRBGGRBGGRBG" || str == "GR/BG" )
         return DC1394_COLOR_FILTER_GRBG;
-    else if ( str == "BGGR" )
+    else if ( str == "BGGRBGGRBGGRBGGR" || str == "BG/GR")
         return DC1394_COLOR_FILTER_BGGR;
     else {
         return DARKFLOW_COLOR_FILTER_UNKNOWN;

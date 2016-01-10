@@ -7,7 +7,9 @@
 #include <cmath>
 
 #include <string>
+#include <cstdio>
 
+#include "ports.h"
 #include "igamma.h"
 #include "hdr.h"
 #include "exposure.h"

@@ -3,8 +3,6 @@
 #include "ui_console.h"
 #include <QDateTime>
 
-#include <csignal>
-
 Console *console = NULL;
 
 Console::Console(QWidget *parent) :
@@ -72,7 +70,7 @@ void Console::setRaiseLevel(Console::Level level)
 void Console::trap(Console::Level level)
 {
     if ( level >= console->m_trapLevel )
-        ::raise(SIGTRAP);
+        DF_TRAP();
 }
 
 void Console::recvMessage(Console::Level level, QString message)

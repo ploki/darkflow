@@ -78,7 +78,7 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
     Magick::Image nk = normalizeImage(kernel, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), true);
     Magick::Image ni = normalizeImage(image, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), false);
 
-    Magick::Image nnk = roll(nk,-nk.columns()/2, -nk.rows()/2);
+    Magick::Image nnk = roll(nk,-int(nk.columns())/2, -int(nk.rows())/2);
 
     Magick::forwardFourierTransformImage(&fft_image, ni, true);
     Magick::forwardFourierTransformImage(&fft_kernel, nnk, true);
@@ -135,7 +135,7 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
            Q_UNUSED(Bm_pxl);
            Q_UNUSED(luminosity);
 #define RM(comp) \
-    Rm_pxl[x].comp = clamp( luminosity * double(Bm_pxl[x].comp) / double(Am_pxl[x].comp?:1))
+    Rm_pxl[x].comp = clamp( luminosity * double(Bm_pxl[x].comp) / double(Am_pxl[x].comp?Am_pxl[x].comp:1))
            RM(red); RM(green); RM(blue);
 #define mod(a,b) (a)%(b)
 #define RP(comp) \

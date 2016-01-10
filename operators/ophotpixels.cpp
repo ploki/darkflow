@@ -5,6 +5,7 @@
 #include "operatorparameterslider.h"
 #include "operatorparameterdropdown.h"
 #include "hotpixels.h"
+#include "ports.h"
 
 class WorkerHotPixels : public OperatorWorker {
 public:

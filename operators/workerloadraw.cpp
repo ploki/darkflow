@@ -169,10 +169,17 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
 
     dcraw.start(dcraw_executable, arguments, PROCESSCLASS::ReadOnly);
     QByteArray data;
+#ifndef DF_WINDOWS
     data = dcraw.readAllStandardOutput();
+#endif
     dcraw.waitForFinished();
-    //int rc = dcraw.exitCode();
-    //if ( 0 == rc )
+    int rc = dcraw.exitCode();
+    if ( 0 != rc )
+        dflError("dcraw failure: rc=%d", rc);
+#ifdef DF_WINDOWS
+    else
+        data = dcraw.readAllStandardOutput();
+#endif
     dflDebug("dcraw bytes read: %d", data.size());
     return data;
 }

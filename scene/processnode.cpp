@@ -5,6 +5,7 @@
 #include <QCursor>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QDesktopWidget>
 
 #include "process.h"
 #include "processnode.h"
@@ -242,6 +243,15 @@ void ProcessNode::visualizationClicked(QPoint screenPos)
         QPoint newPos = screenPos;
         newPos.setX(newPos.x() - m_visualization->size().width()/2);
         newPos.setY(newPos.y() - m_visualization->size().height()/2);
+        QRect screenSize = QDesktopWidget().availableGeometry(m_visualization);
+        if ( newPos.x() + m_visualization->size().width() > screenSize.width() )
+            newPos.setX(screenSize.width()-m_visualization->size().width());
+        if ( newPos.y() + m_visualization->size().height() > screenSize.height() )
+            newPos.setY(screenSize.height()-m_visualization->size().height());
+        if ( newPos.y() < 0 )
+            newPos.setY(0);
+        if ( newPos.x() < 0 )
+            newPos.setX(0);
         m_visualization->move(newPos.x(), newPos.y());
         m_visualization->show();
     }

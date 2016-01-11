@@ -216,6 +216,7 @@ void PosixSpawn::start(const QString &program,
     if ( peer[0] ) ::close(peer[0]);
     if ( peer[1] ) ::close(peer[1]);
     dflDebug("PosixSpawn Success");
+    open(mode);
 }
 
 qint64 PosixSpawn::readData(char *data, qint64 maxSize)

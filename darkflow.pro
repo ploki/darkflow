@@ -19,7 +19,7 @@ QT       += core gui
 
 unix {
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
-    vQMAKE_CFLAGS += -DHAVE_FFMPEG
+    QMAKE_CFLAGS += -DHAVE_FFMPEG
     CONFIG += link_pkgconfig
     PKGCONFIG += Magick++ libavformat libavcodec libavutil
     #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
@@ -31,6 +31,11 @@ win* {
     QMAKE_CXXFLAGS += /openmp /MP
     QMAKE_CFLAGS += /openmp /MP
     LIBS += -LC:\ImageMagick\6.9.3-Q16\lib -lCORE_RL_magick_ -lCORE_RL_wand_ -lCORE_RL_Magick++_
+
+    QMAKE_CXXFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
+    QMAKE_CFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
+    LIBS += -LC:\ffmpeg\lib -lavformat -lavcodec -lavutil
+
 }
 
 

@@ -24,6 +24,8 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
+#else
+#pragma warning ( disable: 4305 4244 4018 4028 )
 #endif
 
 #include <limits.h>

@@ -1,4 +1,11 @@
-#include <QProcess>
+#include "ports.h"
+#ifdef DF_WINDOWS
+# include <QProcess>
+# define PROCESSCLASS QProcess
+#else
+# include "posixspawn.h"
+# define PROCESSCLASS PosixSpawn
+#endif
 #include <QRegularExpression>
 
 #include "rawinfo.h"
@@ -78,8 +85,8 @@ bool RawInfo::probeFile(const QString &filename)
     QString dcraw_executable("dcraw");
     QStringList arguments;
     arguments << "-i" << "-v" << filename;
-    QProcess dcraw;
-    dcraw.start(dcraw_executable, arguments, QProcess::ReadOnly|QProcess::Text);
+    PROCESSCLASS dcraw;
+    dcraw.start(dcraw_executable, arguments, PROCESSCLASS::ReadOnly|PROCESSCLASS::Text);
     if ( !dcraw.waitForStarted() )
         return false;
     dcraw.waitForFinished();

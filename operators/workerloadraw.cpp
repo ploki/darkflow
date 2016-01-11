@@ -1,5 +1,12 @@
 #include <QStringList>
-#include <QProcess>
+#include "ports.h"
+#ifdef DF_WINDOWS
+# include <QProcess>
+# define PROCESSCLASS QProcess
+#else
+# include "posixspawn.h"
+# define PROCESSCLASS PosixSpawn
+#endif
 #include <QByteArray>
 #include <QThread>
 #include <QFileInfo>
@@ -83,7 +90,7 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
 {
     QString dcraw_executable("dcraw");
     QStringList arguments;
-    QProcess dcraw;
+    PROCESSCLASS dcraw;
     switch(m_loadraw->m_whiteBalanceValue ) {
     case OpLoadRaw::NoWhiteBalance:
         arguments << "-r" << "1" << "1" << "1" << "1";
@@ -160,12 +167,12 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
     /* the RAW photo */
     arguments << filename;
 
-    dcraw.start(dcraw_executable, arguments, QProcess::ReadOnly);
+    dcraw.start(dcraw_executable, arguments, PROCESSCLASS::ReadOnly);
     QByteArray data;
+    data = dcraw.readAllStandardOutput();
     dcraw.waitForFinished();
-    int rc = dcraw.exitCode();
-    if ( 0 == rc )
-        data = dcraw.readAllStandardOutput();
+    //int rc = dcraw.exitCode();
+    //if ( 0 == rc )
     dflDebug("dcraw bytes read: %d", data.size());
     return data;
 }

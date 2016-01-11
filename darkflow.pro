@@ -19,7 +19,7 @@ QT       += core gui
 
 unix {
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
-    QMAKE_CFLAGS += -DHAVE_FFMPEG
+    vQMAKE_CFLAGS += -DHAVE_FFMPEG
     CONFIG += link_pkgconfig
     PKGCONFIG += Magick++ libavformat libavcodec libavutil
     #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
@@ -155,7 +155,8 @@ SOURCES +=\
     ui/preferences.cpp \
     algorithms/hdr.cpp \
     operators/ophdr.cpp \
-    core/ports.cpp
+    core/ports.cpp \
+    core/posixspawn.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -270,7 +271,8 @@ HEADERS  += \
     ui/preferences.h \
     algorithms/hdr.h \
     operators/ophdr.h \
-    core/ports.h
+    core/ports.h \
+    core/posixspawn.h
 
 FORMS    += \
     ui/aboutdialog.ui \

@@ -1,6 +1,7 @@
 #include "slider.h"
 #include "ui_slider.h"
 #include "console.h"
+#include "darkflow.h"
 
 #include <cmath>
 
@@ -30,6 +31,7 @@ Slider::Slider(const QString &windowCaption,
     m_pvDecimals(-1)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
     setWindowTitle(windowCaption);
     m_range = ui->slider_value->maximum() - ui->slider_value->minimum();
 

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../darkflow.png</file>
+    </qresource>
+</RCC>

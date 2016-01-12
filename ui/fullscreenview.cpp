@@ -9,6 +9,7 @@
 
 #include "fullscreenview.h"
 #include "ui_fullscreenview.h"
+#include "darkflow.h"
 
 FullScreenView::FullScreenView(QGraphicsScene *scene, QWidget *parent) :
     QMainWindow(parent),
@@ -17,6 +18,7 @@ FullScreenView::FullScreenView(QGraphicsScene *scene, QWidget *parent) :
     m_zoomLevel(0)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
     ui->graphicsView->setScene(m_scene);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

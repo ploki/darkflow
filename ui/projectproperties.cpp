@@ -3,6 +3,7 @@
 #include "projectproperties.h"
 #include "ui_projectproperties.h"
 #include "process.h"
+#include "darkflow.h"
 
 ProjectProperties::ProjectProperties(QWidget *parent) :
     QDialog(parent),
@@ -11,6 +12,7 @@ ProjectProperties::ProjectProperties(QWidget *parent) :
     m_andSave(false)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
 }
 
 void ProjectProperties::modify(Process *process)

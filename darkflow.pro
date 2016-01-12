@@ -17,6 +17,8 @@ QT       += core gui
     QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
 }
 
+ICON = darkflow.png darkflow.ico
+
 unix {
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
     QMAKE_CFLAGS += -DHAVE_FFMPEG
@@ -35,7 +37,7 @@ win* {
     QMAKE_CXXFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
     QMAKE_CFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
     LIBS += -LC:\ffmpeg\lib -lavformat -lavcodec -lavutil
-
+    RC_ICONS = darkflow.ico
 }
 
 
@@ -277,7 +279,8 @@ HEADERS  += \
     algorithms/hdr.h \
     operators/ophdr.h \
     core/ports.h \
-    core/posixspawn.h
+    core/posixspawn.h \
+    core/darkflow.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -289,4 +292,7 @@ FORMS    += \
     ui/fullscreenview.ui \
     ui/console.ui \
     ui/preferences.ui
+
+RESOURCES += \
+    ui/resources.qrc
 

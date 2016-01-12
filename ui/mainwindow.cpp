@@ -7,6 +7,7 @@
 #include <QUrl>
 #include <cmath>
 
+#include "darkflow.h"
 #include "console.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -79,8 +80,7 @@ void MainWindow::actionLoad()
                                                         "Darkflow Project (*.dflow)",
                                                         0, 0);
         if ( !filename.isEmpty()) {
-            newProcess();
-            process->load(filename);
+            load(filename);
         }
     }
 
@@ -99,6 +99,12 @@ void MainWindow::actionConsole()
 void MainWindow::actionOnlineDocumentation()
 {
     QDesktopServices::openUrl(QUrl("http://darkflow.org/redirect/"));
+}
+
+void MainWindow::load(const QString &filename)
+{
+    newProcess();
+    process->load(filename);
 }
 
 void MainWindow::processStateChanged()
@@ -130,6 +136,7 @@ MainWindow::MainWindow(QWidget *parent) :
     preferences = new Preferences(this);
     process = new Process(scene, this);
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
     QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
     resize( screenSize * 4 / 5);
     move((screenSize.width()-size().width())/2,

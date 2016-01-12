@@ -35,6 +35,7 @@ public slots:
     void actionSaveAs();
     void actionConsole();
     void actionOnlineDocumentation();
+    void load(const QString& filename);
 
 private slots:
     void processStateChanged();

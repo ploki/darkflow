@@ -2,6 +2,7 @@
 #include "console.h"
 #include "ui_console.h"
 #include <QDateTime>
+#include "darkflow.h"
 
 Console *console = NULL;
 
@@ -13,6 +14,7 @@ Console::Console(QWidget *parent) :
     ui(new Ui::Console)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
     ui->textEdit->setStyleSheet("QTextEdit { background-color: black }");
     connect(this, SIGNAL(message(Level, QString)), this, SLOT(recvMessage(Level, QString)), Qt::QueuedConnection);
 }

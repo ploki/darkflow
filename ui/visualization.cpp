@@ -29,6 +29,7 @@
 #include "fullscreenview.h"
 #include "console.h"
 #include "preferences.h"
+#include "darkflow.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -54,6 +55,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_fullScreenView(new FullScreenView(m_scene, this))
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
     ui->operatorName->setText(m_operator->getName());
     ui->operatorClass->setText(m_operator->getClassIdentifier());
     setWindowTitle(m_operator->getName());

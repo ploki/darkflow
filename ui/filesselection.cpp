@@ -5,6 +5,7 @@
 
 #include "filesselection.h"
 #include "ui_filesselection.h"
+#include "darkflow.h"
 
 FilesSelection::FilesSelection(const QString& windowCaption,
                                const QString& dir,
@@ -18,6 +19,7 @@ FilesSelection::FilesSelection(const QString& windowCaption,
     m_filter(filter)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(DF_ICON));
     ui->selectedFiles->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ui->selectedFiles->setModel(m_list);
 }

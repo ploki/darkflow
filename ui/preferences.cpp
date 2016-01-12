@@ -13,6 +13,7 @@
 #include "ui_preferences.h"
 #include "console.h"
 #include "operatorworker.h"
+#include "darkflow.h"
 #include <Magick++.h>
 
 #include <omp.h>
@@ -67,7 +68,7 @@ Preferences::Preferences(QWidget *parent) :
   m_incompatibleAction(Error)
 {
     ui->setupUi(this);
-
+    setWindowIcon(QIcon(DF_ICON));
     Magick::InitializeMagick("darkflow");
     getDefaultMagickResources();
 

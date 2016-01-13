@@ -17,7 +17,14 @@ QT       += core gui
     QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
 }
 
-ICON = darkflow.png darkflow.ico
+ICON = icons/darkflow.png \
+    icons/darkflow-256x256.ico \
+    icons/darkflow-128x128.ico \
+    icons/darkflow-96x96.ico \
+    icons/darkflow-64x64.ico \
+    icons/darkflow-48x48.ico \
+    icons/darkflow-32x32.ico \
+    icons/darkflow-24x24.ico
 
 unix {
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
@@ -37,7 +44,13 @@ win* {
     QMAKE_CXXFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
     QMAKE_CFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
     LIBS += -LC:\ffmpeg\lib -lavformat -lavcodec -lavutil
-    RC_ICONS = darkflow.ico
+    RC_ICONS = icons/darkflow-256x256.ico \
+        icons/darkflow-128x128.ico \
+        icons/darkflow-96x96.ico \
+        icons/darkflow-64x64.ico \
+        icons/darkflow-48x48.ico \
+        icons/darkflow-32x32.ico \
+        icons/darkflow-24x24.ico
 }
 
 

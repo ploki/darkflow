@@ -55,6 +55,7 @@ public:
       int dw = i_w-w;
       int ssd_sz = dh*dw;
       double *ssd = new double[ssd_sz];
+      memset(ssd, 0, ssd_sz * sizeof(*ssd));
 #pragma omp parallel for
       for ( int dy = 0 ; dy < dh ; ++dy )
           for ( int dx = 0 ; dx < dw ; ++dx )

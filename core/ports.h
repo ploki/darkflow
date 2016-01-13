@@ -1,16 +1,13 @@
 #ifndef PORTS_H
 #define PORTS_H
 
-#if defined(WIN32)  && !defined(WIN64)
-#error Unsupported Platform
-#endif
-
-#if defined(WIN64)
+#if defined(WIN32) || defined(WIN64)
 # include <cstdio>
 # include <Windows.h>
 # define DF_WINDOWS
 typedef unsigned int u_int32_t;
-typedef unsigned long long int u_int32_t;
+typedef unsigned long long u_int64_t;
+typedef long long int64_t;
 #endif
 
 #ifdef __GNUC__

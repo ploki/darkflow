@@ -1,6 +1,7 @@
 #ifndef PREFERENCES_H
 #define PREFERENCES_H
 
+#include "ports.h"
 #include <QDialog>
 
 namespace Ui {

@@ -68,7 +68,7 @@ win32 {
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-QMAKE_INCDIR += core operators algorithms scene ui
+QMAKE_INCDIR += core operators algorithms scene ui setup
 
 TARGET = darkflow
 TEMPLATE = app

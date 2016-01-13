@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>274</width>
-    <height>338</height>
+    <height>358</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -43,6 +43,13 @@
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="version">
+     <property name="text">
+      <string>Version</string>
      </property>
     </widget>
    </item>

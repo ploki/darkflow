@@ -2,6 +2,11 @@
 #define PORTS_H
 
 #if defined(WIN32) || defined(WIN64)
+# if defined(WIN64)
+#  define DF_ARCH "64-bit"
+# else
+#  define DF_ARCH "32-bit"
+#endif
 # include <cstdio>
 # include <Windows.h>
 # define DF_WINDOWS
@@ -11,7 +16,11 @@ typedef long long int64_t;
 #endif
 
 #ifdef __GNUC__
-
+# if defined(__LP64__)
+#  define DF_ARCH "64-bit"
+# else
+#  define DF_ARCH "32-bit"
+#endif
 # define DF_PRINTF_FORMAT(x,y) __attribute__((format(printf,x,y)))
 # define DF_TRAP() do { __asm__("int3"); } while(0)
 # define atomic_incr(ptr) do { __sync_fetch_and_add ((ptr), 1); } while(0)

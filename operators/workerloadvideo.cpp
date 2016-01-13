@@ -256,8 +256,8 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
                     pixels[x].green = g;
                     pixels[x].blue = b;
                 }
+                pixel_cache.sync();
             }
-            pixel_cache.sync();
             outputPush(0, photo);
             --m_count;
         }

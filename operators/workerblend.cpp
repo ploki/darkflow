@@ -277,6 +277,9 @@ void WorkerBlend::play()
                                          m_mode2,
                                          m_outputHDR);
                 }
+                imageA_cache->sync();
+                underflow_cache.sync();
+                overflow_cache.sync();
 #pragma omp critical
                 {
                     if ( line % 100 == 0)
@@ -284,9 +287,6 @@ void WorkerBlend::play()
                     ++line;
                 }
             }
-            imageA_cache->sync();
-            underflow_cache.sync();
-            overflow_cache.sync();
 
             if ( b_h == 1 && b_w == 1 &&
                  c_h == 1 && c_w == 1 ) {

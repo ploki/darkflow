@@ -226,8 +226,8 @@ bool WorkerIntegration::play_onInput(int idx)
                                 clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
                 }
             }
+            pixel_cache.sync();
         }
-        pixel_cache.sync();
         if (m_outputHDR)
             newPhoto.setScale(Photo::HDR);
         outputPush(0, newPhoto);

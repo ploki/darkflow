@@ -73,8 +73,8 @@ void WhiteBalance::applyOnImage(Magick::Image& image, bool hdr)
                 pixels[x].blue=clamp<double>(pixels[x].blue*rgb[2],0,QuantumRange);
             }
         }
+        pixel_cache.sync();
     }
-    pixel_cache.sync();
 
 }
 

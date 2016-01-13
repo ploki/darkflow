@@ -148,9 +148,9 @@ public:
                     emitProgress(p, c, line, h);
                 ++line;
             }
+            image_cache.sync();
+            overflow_cache.sync();
         }
-        image_cache.sync();
-        overflow_cache.sync();
     }
 
     void play() {

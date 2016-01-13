@@ -37,8 +37,8 @@ void LutBased::applyOnImage(Magick::Image &image, bool hdr)
             pixels[x].green=lut[pixels[x].green];
             pixels[x].blue=lut[pixels[x].blue];
         }
+        pixel_cache.sync();
     }
-    pixel_cache.sync();
 }
 
 quantum_t LutBased::applyOnQuantum(quantum_t v, bool hdr)

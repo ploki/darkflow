@@ -139,6 +139,6 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image, bool hdr)
             pixels[x].blue = clamp(rgb[2]);
 
         }
+        pixel_cache.sync();
     }
-    pixel_cache.sync();
 }

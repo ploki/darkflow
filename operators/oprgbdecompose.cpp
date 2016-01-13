@@ -54,15 +54,15 @@ public:
                                       .7152L * pxl_Green[x].green +
                                       .0722L * pxl_Blue[x].blue);
                     }
+                    iRed_cache.sync();
+                    iGreen_cache.sync();
+                    iBlue_cache.sync();
+                    iLuminance_cache.sync();
 #pragma omp critical
                     {
                         emitProgress(p, c, line++, h);
                     }
                 }
-                iRed_cache.sync();
-                iGreen_cache.sync();
-                iBlue_cache.sync();
-                iLuminance_cache.sync();
                 outputPush(0, pLuminance);
                 outputPush(1, pRed);
                 outputPush(2, pGreen);

@@ -39,8 +39,8 @@ normalizeImage(Magick::Image& image, int w, int h, bool center)
         for ( int x = 0 ; x < k_w ; ++x ) {
             n_pixel[x] = k_pixel[x];
         }
+        n_cache.sync();
     }
-    n_cache.sync();
     return nk;
 }
 static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
@@ -58,8 +58,8 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
         for ( int x = 0 ; x < w ; ++x ) {
             n_pixel[(x+o_x+w)%w] = k_pixel[x];
         }
+        n_cache.sync();
     }
-    n_cache.sync();
     return nk;
 
 }
@@ -142,9 +142,9 @@ void WorkerConvolution::conv(Magick::Image& image, Magick::Image& kernel, qreal 
     Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) + quantum_t(Ap_pxl[x].comp) + 32768, 65536)
            RP(red); RP(green); RP(blue);
        }
+       Rm_cache.sync();
+       Rp_cache.sync();
     }
-    Rm_cache.sync();
-    Rp_cache.sync();
     Rm.inverseFourierTransform(Rp, true);
     image=Rm;
 #endif

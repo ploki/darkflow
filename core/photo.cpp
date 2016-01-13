@@ -416,8 +416,8 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
         PXL(i,yr).red = QuantumRange;
         PXL(i,yg).green = QuantumRange;
         PXL(i,yb).blue = QuantumRange;
-    }
 
+    }
     image_cache.sync();
     /*
              for ( int x=0 ; x < 512 ; ++x) {
@@ -476,8 +476,8 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             if ( g > 2 && g < (range-1) && histo[g][1] > maxi ) maxi=histo[g][1];
             if ( b > 2 && b < (range-1) && histo[b][2] > maxi ) maxi=histo[b][2];
         }
+        photo_cache.sync();
     }
-    photo_cache.sync();
     image = Image( "512x512" , "black" );
     image.modifyImage();
     Magick::Pixels image_cache(image);
@@ -591,7 +591,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
         }
         for ( int i = 0 ; marks[i] != 0 ; ++i ) {
             x = marks[i];
-            for (int i = 0 ; i < range ; ++ i ) {
+            for (int y = 0 ; y < range ; ++ y ) {
                 quantum_t color;
                 switch (c) {
                 case C_nonlinear:
@@ -604,20 +604,20 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
                     color = iGamma::sRGB().applyOnQuantum(x*128, true);
                 }
 
-                if ( i < 12 || i >= range-12 ) {
+                if ( y < 12 || y >= range-12 ) {
                     /* add some light on top and bottom of the frame*/
                     color = clamp( color +
-                                   QuantumRange/(i?i:1) +
-                                   QuantumRange/((range-i))
+                                   QuantumRange/(y?y:1) +
+                                   QuantumRange/((range-y))
                                    );
                 }
-                PXL(x,i).red = color;
-                PXL(x,i).green = color;
-                PXL(x,i).blue = color;
+                PXL(x,y).red = color;
+                PXL(x,y).green = color;
+                PXL(x,y).blue = color;
             }
         }
+        image_cache.sync();
     }
-    image_cache.sync();
     return convert(image);
 }
 

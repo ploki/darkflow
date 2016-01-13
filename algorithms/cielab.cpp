@@ -71,9 +71,9 @@ void Labize(Magick::Image &image, Magick::Image &labImage) {
                     labpixels[x].green=
                     labpixels[x].blue=lab[0];
         }
+        lab_cache.sync();
+        pixel_cache.sync();
     }
-    lab_cache.sync();
-    pixel_cache.sync();
 
 }
 
@@ -114,8 +114,7 @@ void unLabize(Magick::Image &image, Magick::Image &labImage) {
             pixels[x].blue=rgb[2];
 
         }
+        lab_cache.sync();
+        pixel_cache.sync();
     }
-    lab_cache.sync();
-    pixel_cache.sync();
-
 }

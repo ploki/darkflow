@@ -40,8 +40,8 @@ private slots:
                         pixels[x].green = qrand()%QuantumRange;
                         pixels[x].blue = qrand()%QuantumRange;
                     }
+                    cache.sync();
                 }
-                cache.sync();
                 photo.setTag(TAG_NAME, "Random Image");
                 outputPush(0, photo);
                 emitSuccess();

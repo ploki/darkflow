@@ -147,7 +147,6 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
                 output_pixels[x].blue=rgb[2]>QuantumRange?QuantumRange:rgb[2];
             }
         }
+        output_cache.sync();
     }
-#pragma omp barrier
-    output_cache.sync();
 }

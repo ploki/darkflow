@@ -85,8 +85,8 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
                 }
             }
         }
+        pixel_cache.sync();
     }
-    pixel_cache.sync();
 }
 
 bool DesaturateShadows::equals(double x, double y, double prec) {

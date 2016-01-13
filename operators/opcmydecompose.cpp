@@ -57,15 +57,15 @@ public:
                         pxl_Yellow[x].green = pxl_Yellow[x].blue = pxl_Yellow[x].red =
                                 (quantum_t(pxl_Yellow[x].red) + quantum_t(pxl_Yellow[x].green))/2;
                     }
+                    iCyan_cache.sync();
+                    iMagenta_cache.sync();
+                    iYellow_cache.sync();
+                    iLuminance_cache.sync();
 #pragma omp critical
                     {
                         emitProgress(p, c, line++, h);
                     }
                 }
-                iCyan_cache.sync();
-                iMagenta_cache.sync();
-                iYellow_cache.sync();
-                iLuminance_cache.sync();
                 outputPush(0, pLuminance);
                 outputPush(1, pCyan);
                 outputPush(2, pMagenta);

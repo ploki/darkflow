@@ -41,7 +41,7 @@ void ChannelMixer::applyOnImage(Magick::Image &image, bool hdr)
                                   m_rgb[2]*pixels[x].blue));
             }
         }
+        pixel_cache.sync();
     }
-    pixel_cache.sync();
 
 }

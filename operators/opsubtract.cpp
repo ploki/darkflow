@@ -63,9 +63,9 @@ public:
                 minuend_pixels[x].green = clamp<quantum_t>(g, 0, QuantumRange);
                 minuend_pixels[x].blue = clamp<quantum_t>(b, 0, QuantumRange);
             }
+            minuend_cache.sync();
+            underflow_cache.sync();
         }
-        minuend_cache.sync();
-        underflow_cache.sync();
     }
 
     void play() {

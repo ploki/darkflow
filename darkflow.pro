@@ -34,16 +34,28 @@ unix {
     #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
 }
 
-win* {
-    QMAKE_CXXFLAGS += /wd4351 /wd4251 /wd4267 -IC:\ImageMagick\6.9.3-Q16\include
-    QMAKE_CFLAGS += /wd4351 /wd4251 /wd4267 -IC:\ImageMagick\6.9.3-Q16\include
-    QMAKE_CXXFLAGS += /openmp /MP
-    QMAKE_CFLAGS += /openmp /MP
-    LIBS += -LC:\ImageMagick\6.9.3-Q16\lib -lCORE_RL_magick_ -lCORE_RL_wand_ -lCORE_RL_Magick++_
-
-    QMAKE_CXXFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
-    QMAKE_CFLAGS += /DHAVE_FFMPEG -IC:\ffmpeg\include
-    LIBS += -LC:\ffmpeg\lib -lavformat -lavcodec -lavutil
+win32 {
+    QMAKE_CXXFLAGS += /wd4351 /wd4251 /wd4267 /openmp /MP /DHAVE_FFMPEG
+    QMAKE_CFLAGS += /wd4351 /wd4251 /wd4267 /openmp /MP /DHAVE_FFMPEG
+    contains(QMAKE_TARGET.arch, x86_64) {
+        message("x64 build")
+        QMAKE_CXXFLAGS += -IC:\ImageMagick\6.9.3-Q16\include
+        QMAKE_CFLAGS += -IC:\ImageMagick\6.9.3-Q16\include
+        LIBS += -LC:\ImageMagick\6.9.3-Q16\lib
+        QMAKE_CXXFLAGS += -IC:\ffmpeg-x64\include
+        QMAKE_CFLAGS += -IC:\ffmpeg-x64\include
+        LIBS += -LC:\ffmpeg-x64\lib
+    } else {
+        message("x86 build")
+        QMAKE_CXXFLAGS += -IC:\ImageMagick\6.9.3-Q16-x86\include
+        QMAKE_CFLAGS += -IC:\ImageMagick\6.9.3-Q16-x86\include
+        LIBS += -LC:\ImageMagick\6.9.3-Q16-x86\lib
+        QMAKE_CXXFLAGS += -IC:\ffmpeg-x86\include
+        QMAKE_CFLAGS += -IC:\ffmpeg-x86\include
+        LIBS += -LC:\ffmpeg-x86\lib
+    }
+    LIBS += -lCORE_RL_magick_ -lCORE_RL_wand_ -lCORE_RL_Magick++_
+    LIBS += -lavformat -lavcodec -lavutil
     RC_ICONS = icons/darkflow-256x256.ico \
         icons/darkflow-128x128.ico \
         icons/darkflow-96x96.ico \

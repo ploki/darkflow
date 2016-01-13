@@ -135,7 +135,7 @@ bool WorkerIntegration::play_onInput(int idx)
 #pragma omp parallel for
             for ( int y = 0 ; y < m_h ; ++y ) {
                 if ( y+cy < 0 || y+cy >= m_h ) continue;
-                Magick::PixelPacket *pixels = pixel_cache.get(0, y+cy, m_w, 1);
+                const Magick::PixelPacket *pixels = pixel_cache.getConst(0, y+cy, m_w, 1);
                 if ( !pixels ) continue;
                 for ( int x = 0 ; x < m_w ; ++x ) {
                     if ( x+cx < 0 || x+cx >= m_w ) continue;
@@ -227,6 +227,7 @@ bool WorkerIntegration::play_onInput(int idx)
                 }
             }
         }
+        pixel_cache.sync();
         if (m_outputHDR)
             newPhoto.setScale(Photo::HDR);
         outputPush(0, newPhoto);

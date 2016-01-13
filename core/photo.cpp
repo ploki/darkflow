@@ -222,6 +222,7 @@ Image Photo::newCurve(Photo::Gamma gamma)
     PixelPacket *pixels = curve_cache.get(0,0,65536,1);
     for ( int i = 0 ; i < 65536 ; ++i )
         pixels[i].red = pixels[i].green = pixels[i].blue = i;
+    curve_cache.sync();
     switch(gamma) {
     default:
     case NonLinear:
@@ -255,10 +256,16 @@ static QPixmap convert(Magick::Image& image) {
              "P6\n%d %d\n%d\n",w,h,255);
     unsigned char *buf = (unsigned char *)malloc(header_size+w*h*3*1);
     memcpy(buf, pgm_header, header_size);
+    bool error=false;
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,y,w,1);
-        if ( !pixels ) continue;
+        if ( error || !pixels ) {
+            if ( !error )
+                dflError("PixelPacket is NULL");
+            error = true;
+            continue;
+        }
         for ( int x = 0 ; x < w ; ++x ) {
             buf[header_size+y*w*3+x*3+0]=pixels[x].red/256;
             buf[header_size+y*w*3+x*3+1]=pixels[x].green/256;
@@ -304,6 +311,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     Q_ASSERT( m_status == Complete );
     Magick::Image image("512x512", "black");
     Magick::Image curve(this->curve());
+    image.modifyImage();
     Magick::Pixels image_cache(image);
 
     if ( getScale() == HDR ) {
@@ -409,7 +417,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
         PXL(i,yg).green = QuantumRange;
         PXL(i,yb).blue = QuantumRange;
     }
-    curve_cache.sync();
+
     image_cache.sync();
     /*
              for ( int x=0 ; x < 512 ; ++x) {
@@ -450,6 +458,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
 
     Magick::Pixels photo_cache(photo);
     photo.modifyImage();
+#pragma omp parallel for
     for ( y = 0 ; y < h ; ++y ) {
         const Magick::PixelPacket *pixels = photo_cache.getConst(0,y,w,1);
         if (!pixels ) continue;
@@ -460,9 +469,9 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             Q_ASSERT(r < range);
             Q_ASSERT(g < range);
             Q_ASSERT(b < range);
-            ++(histo[r][0]);
-            ++(histo[g][1]);
-            ++(histo[b][2]);
+            atomic_incr(&histo[r][0]);
+            atomic_incr(&histo[g][1]);
+            atomic_incr(&histo[b][2]);
             if ( r > 2 && r < (range-1) && histo[r][0] > maxi ) maxi=histo[r][0];
             if ( g > 2 && g < (range-1) && histo[g][1] > maxi ) maxi=histo[g][1];
             if ( b > 2 && b < (range-1) && histo[b][2] > maxi ) maxi=histo[b][2];

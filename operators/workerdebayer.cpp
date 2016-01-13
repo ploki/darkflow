@@ -211,7 +211,7 @@ bufferToImage(uint16_t *buffer, int w, int h) {
         pixel[i].green = buffer[i*3+1];
         pixel[i].blue = buffer[i*3+2];
     }
-    image.syncPixels();
+    cache.sync();
     return image;
 }
 

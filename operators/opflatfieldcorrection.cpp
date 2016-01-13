@@ -149,6 +149,8 @@ public:
                 ++line;
             }
         }
+        image_cache.sync();
+        overflow_cache.sync();
     }
 
     void play() {

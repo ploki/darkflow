@@ -321,3 +321,9 @@ FORMS    += \
 RESOURCES += \
     ui/resources.qrc
 
+DISTFILES += \
+    setup/darkflow-x64.iss \
+    setup/darkflow-x86.iss \
+    setup/darkflow-common.iss \
+    setup/darkflow-version.iss
+

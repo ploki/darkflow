@@ -65,6 +65,7 @@ public:
             }
         }
         minuend_cache.sync();
+        underflow_cache.sync();
     }
 
     void play() {

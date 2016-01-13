@@ -29,9 +29,9 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
     for ( int y = 1 ; y < h-1 ; ++y ) {
         Magick::PixelPacket *output_pixels = output_cache.get(0,y,w,1);
         const Magick::PixelPacket *input_pixels[3];
-        input_pixels[0] = input_cache.get(0,y-1,w,1);
-        input_pixels[1] = input_cache.get(0,y,w,1);
-        input_pixels[2] = input_cache.get(0,y+1,w,1);
+        input_pixels[0] = input_cache.getConst(0,y-1,w,1);
+        input_pixels[1] = input_cache.getConst(0,y,w,1);
+        input_pixels[2] = input_cache.getConst(0,y+1,w,1);
 
         for ( int x = 1 ; x < w-1 ; ++x ) {
             extended_quantum_t max_rgb[3]={0,0,0};

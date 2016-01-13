@@ -206,11 +206,12 @@ void WorkerBlend::play()
         Magick::Pixels *imageB_cache = NULL;
         Magick::Pixels *imageC_cache = NULL;
         try {
+            Q_ASSERT(NULL != imageA);
             imageA->modifyImage();
             underflow.image().modifyImage();
             overflow.image().modifyImage();
 
-            imageA_cache = imageA?new Magick::Pixels(*imageA):NULL;
+            imageA_cache = new Magick::Pixels(*imageA);
             Magick::Pixels underflow_cache(underflow.image());
             Magick::Pixels overflow_cache(overflow.image());
             int w = imageA->columns();

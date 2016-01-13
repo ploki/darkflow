@@ -81,6 +81,7 @@ public:
                 photo.setSequenceNumber(i);
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
                 photo.setTag(TAG_NAME, "LCMY Composition");
+                photo.image().modifyImage();
                 Magick::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 int line = 0;

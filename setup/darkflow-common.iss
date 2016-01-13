@@ -54,6 +54,9 @@ Source: "{#DcrawExec}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#ImageMagickInstaller}";  DestDir: "{app}"; AfterInstall: RunOtherInstaller
 
 ;ffmpeg
+#if Arch != "x64"
+Source: "{#PackageContent}\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+#endif
 Source: "{#FFmpegBinDir}\avcodec-57.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#FFmpegBinDir}\avformat-57.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#FFmpegBinDir}\avutil-55.dll"; DestDir: "{app}"; Flags: ignoreversion

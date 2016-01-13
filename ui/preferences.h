@@ -55,16 +55,16 @@ public slots:
 
 private:
     Ui::Preferences *ui;
-    size_t m_defaultArea;
-    size_t m_defaultMemory;
-    size_t m_defaultMap;
-    size_t m_defaultDisk;
-    size_t m_defaultThreads;
+    u_int64_t m_defaultArea;
+    u_int64_t m_defaultMemory;
+    u_int64_t m_defaultMap;
+    u_int64_t m_defaultDisk;
+    u_int64_t m_defaultThreads;
     QSemaphore *m_sem;
     QMutex *m_mutex;
-    size_t m_currentMaxWorkers;
-    size_t m_scheduledMaxWorkers;
-    size_t m_OpenMPThreads;
+    u_int64_t m_currentMaxWorkers;
+    u_int64_t m_scheduledMaxWorkers;
+    u_int64_t m_OpenMPThreads;
     TransformTarget m_currentTarget;
     IncompatibleAction m_incompatibleAction;
 };

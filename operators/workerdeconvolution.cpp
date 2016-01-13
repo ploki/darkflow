@@ -82,13 +82,13 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
 
     Magick::forwardFourierTransformImage(&fft_image, ni, true);
     Magick::forwardFourierTransformImage(&fft_kernel, nnk, true);
-    dflDebug("fft_image.size = %ld", fft_image.size());
-    dflDebug("fft_kernel.size = %ld", fft_kernel.size());
+    dflDebug("fft_image.size = %ld", long(fft_image.size()));
+    dflDebug("fft_kernel.size = %ld", long(fft_kernel.size()));
     dflDebug("w1=%ld, h1=%ld, w2=%ld, h2=%ld",
-           fft_image.front().columns(),
-           fft_image.front().rows(),
-           fft_image.back().columns(),
-           fft_image.back().rows()
+           long(fft_image.front().columns()),
+           long(fft_image.front().rows()),
+           long(fft_image.back().columns()),
+           long(fft_image.back().rows())
            );
     /*
      * R = B / A

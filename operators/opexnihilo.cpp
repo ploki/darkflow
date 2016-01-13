@@ -25,16 +25,16 @@ private slots:
                 Magick::Image& image = photo.image();
                 image.modifyImage();
                 Magick::Pixels cache(image);
-                size_t w = image.columns();
-                size_t h = image.rows();
-                for (size_t y = 0 ; y < h ; ++y) {
+                unsigned w = image.columns();
+                unsigned h = image.rows();
+                for (unsigned y = 0 ; y < h ; ++y) {
                     emit progress(y, h);
                     if ( aborted() ) {
                         emitFailure();
                         return;
                     }
                     Magick::PixelPacket *pixels = cache.get(0,y,w,1);
-                    for (size_t x = 0 ; x < w ; ++x ) {
+                    for (unsigned x = 0 ; x < w ; ++x ) {
                         using Magick::Quantum;
                         pixels[x].red = qrand()%QuantumRange;
                         pixels[x].green = qrand()%QuantumRange;

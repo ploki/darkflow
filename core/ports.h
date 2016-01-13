@@ -9,20 +9,21 @@
 # include <cstdio>
 # include <Windows.h>
 # define DF_WINDOWS
-typedef int u_int32_t;
+typedef unsigned int u_int32_t;
+typedef unsigned long long int u_int32_t;
 #endif
 
 #ifdef __GNUC__
 
 # define DF_PRINTF_FORMAT(x,y) __attribute__((format(printf,x,y)))
 # define DF_TRAP() do { __asm__("int3"); } while(0)
-# define atomic_incr(ptr) __sync_fetch_and_add ((ptr), 1)
+# define atomic_incr(ptr) do { __sync_fetch_and_add ((ptr), 1); } while(0)
 
 #else /* not GCC */
 
 # define DF_PRINTF_FORMAT(x,y)
 # define DF_TRAP() __debugbreak()
-# define atomic_incr(ptr) InterlockedIncrement ((ptr))
+# define atomic_incr(ptr) do { InterlockedIncrement ((ptr)); } while(0)
 
 # ifndef M_PI
 #  define M_PI 3.141592654L

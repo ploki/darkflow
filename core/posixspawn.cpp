@@ -226,7 +226,6 @@ qint64 PosixSpawn::readData(char *data, qint64 maxSize)
         return -1;
     }
     qint64 ret = ::read(impl->channels[0], data, maxSize);
-    dflDebug("read of %lld => %lld", maxSize, ret);
     return ret;
 }
 

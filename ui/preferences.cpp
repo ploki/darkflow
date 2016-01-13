@@ -153,7 +153,7 @@ void Preferences::releaseWorker()
 
 void Preferences::getDefaultMagickResources()
 {
-    const size_t div = 1<<30;
+    const u_int64_t div = 1<<30;
     m_defaultArea    = Magick::ResourceLimits::area();
     m_defaultMemory  = Magick::ResourceLimits::memory();
     m_defaultMap     = Magick::ResourceLimits::map();
@@ -162,33 +162,34 @@ void Preferences::getDefaultMagickResources()
     ui->defaultArea->setText(QString::number(qreal(m_defaultArea)/div));
     ui->defaultMemory->setText(QString::number(qreal(m_defaultMemory)/div));
     ui->defaultMap->setText(QString::number(qreal(m_defaultMap)/div));
-    ui->defaultDisk->setText(m_defaultDisk==(size_t)-1?QString("unlimited"):QString::number(qreal(m_defaultDisk)/div));
+    ui->defaultDisk->setText(m_defaultDisk==(u_int64_t)-1?QString("unlimited"):QString::number(qreal(m_defaultDisk)/div));
     ui->defaultThreads->setText(QString::number(m_defaultThreads));
 }
 
 void Preferences::getMagickResources()
 {
-    const size_t div = 1<<30;
-    size_t currentArea    = Magick::ResourceLimits::area();
-    size_t currentMemory  = Magick::ResourceLimits::memory();
-    size_t currentMap     = Magick::ResourceLimits::map();
-    size_t currentDisk    = Magick::ResourceLimits::disk();
-    size_t currentThreads = Magick::ResourceLimits::thread();
+    const u_int64_t div = 1<<30;
+    u_int64_t currentArea    = Magick::ResourceLimits::area();
+    u_int64_t currentMemory  = Magick::ResourceLimits::memory();
+    u_int64_t currentMap     = Magick::ResourceLimits::map();
+    u_int64_t currentDisk    = Magick::ResourceLimits::disk();
+    u_int64_t currentThreads = Magick::ResourceLimits::thread();
     ui->valueArea->setText(QString::number(qreal(currentArea)/div));
     ui->valueMemory->setText(QString::number(qreal(currentMemory)/div));
     ui->valueMap->setText(QString::number(qreal(currentMap)/div));
-    ui->valueDisk->setText(currentDisk==(size_t)-1?QString("unlimited"):QString::number(qreal(currentDisk)/div));
+    ui->valueDisk->setText(currentDisk==(u_int64_t)-1?QString("unlimited"):QString::number(qreal(currentDisk)/div));
     ui->valueThreads->setText(QString::number(currentThreads));
 }
 
 void Preferences::setMagickResources()
 {
-    const size_t div = 1<<30;
-    size_t currentArea    = ui->valueArea->text().toDouble()*div;
-    size_t currentMemory  = ui->valueMemory->text().toDouble()*div;
-    size_t currentMap     = ui->valueMap->text().toDouble()*div;
-    size_t currentDisk    = ui->valueDisk->text().toDouble()*div;
-    size_t currentThreads = ui->valueThreads->text().toDouble();
+    const u_int64_t div = 1<<30;
+    u_int64_t currentArea    = ui->valueArea->text().toDouble()*div;
+    u_int64_t currentMemory  = ui->valueMemory->text().toDouble()*div;
+    u_int64_t currentMap     = ui->valueMap->text().toDouble()*div;
+    u_int64_t currentDisk    = ui->valueDisk->text().toDouble()*div;
+    u_int64_t currentThreads = ui->valueThreads->text().toDouble();
+
     Magick::ResourceLimits::area(currentArea);
     Magick::ResourceLimits::memory(currentMemory);
     Magick::ResourceLimits::map(currentMap);
@@ -235,11 +236,11 @@ bool Preferences::load(bool create)
     ui->valueDflThreads->setText(QString::number(dfl_max_threads()));
     ui->valueDflWorkers->setText(QString::number(dflWorkers));
 
-    ssize_t area = resources["area"].toDouble();
-    ssize_t memory = resources["memory"].toDouble();
-    ssize_t map = resources["map"].toDouble();
-    ssize_t disk = resources["disk"].toDouble();
-    ssize_t threads = resources["threads"].toDouble();
+    int64_t area = resources["area"].toDouble();
+    int64_t memory = resources["memory"].toDouble();
+    int64_t map = resources["map"].toDouble();
+    int64_t disk = resources["disk"].toDouble();
+    int64_t threads = resources["threads"].toDouble();
     if ( area <= 0 )
         ui->valueArea->setText("unlimited");
     else
@@ -297,7 +298,7 @@ void Preferences::save()
     QString diskStr = ui->valueDisk->text();
     QString threadsStr = ui->valueThreads->text();
 
-    const size_t mul = 1<<30;
+    const u_int64_t mul = 1<<30;
 
     resources["area"] =  qint64((areaStr.isEmpty()||areaStr=="unlimited")?-1:areaStr.toDouble()*mul);
     resources["memory"] = qint64((memoryStr.isEmpty()||memoryStr=="unlimited")?-1:memoryStr.toDouble()*mul);

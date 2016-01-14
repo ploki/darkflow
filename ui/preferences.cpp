@@ -233,7 +233,7 @@ bool Preferences::load(bool create)
         QMutexLocker lock(m_mutex);
         m_scheduledMaxWorkers = dflWorkers;
     }
-    ui->valueDflThreads->setText(QString::number(dfl_max_threads()));
+    ui->valueDflThreads->setText(QString::number(m_OpenMPThreads));
     ui->valueDflWorkers->setText(QString::number(dflWorkers));
 
     int64_t area = resources["area"].toDouble();

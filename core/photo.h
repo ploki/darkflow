@@ -17,6 +17,18 @@ Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
 
 typedef int quantum_t;
 
+void ResetImage(Magick::Image &image);
+bool OnDiskCache();
+bool OnDiskCache(const Magick::Image& image);
+bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2);
+bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const Magick::Image& image3);
+bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const Magick::Image& image3, const Magick::Image& image4);
+bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const Magick::Image& image3, const Magick::Image& image4, const Magick::Image& image5);
+bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const Magick::Image& image3, const Magick::Image& image4, const Magick::Image& image5, const Magick::Image& image6);
+int DfThreadLimit();
+
+#define dfl_threads(chunk, ...) schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
+
 template<typename T>
 class Triplet {
 public:

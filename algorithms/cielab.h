@@ -211,7 +211,4 @@ do { \
 	if ( rgb[2] > QuantumRange ) rgb[2] = QuantumRange; \
 } while(0)
 
-void Labize(Magick::Image &image, Magick::Image &labImage);
-void unLabize(Magick::Image &image, Magick::Image &labImage);
-
 #endif // CIELAB_H

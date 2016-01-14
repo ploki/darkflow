@@ -14,7 +14,6 @@ public:
     Photo process(const Photo &photo, int , int ) {
         Photo newPhoto(photo);
         Magick::Image& image = newPhoto.image();
-        image.modifyImage();
         image.equalize();
         return newPhoto;
     }

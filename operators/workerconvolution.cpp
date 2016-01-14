@@ -26,9 +26,8 @@ normalizeImage(Magick::Image& image, int w, int h, bool center)
     int o_x = (w-k_w)/2;
     int o_y = (h-k_h)/2;
     Magick::Pixels i_cache(image);
-    nk.modifyImage();
     Magick::Pixels n_cache(nk);
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, image, nk)
     for ( int y = 0 ; y < k_h ; ++y ) {
         const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, k_w, 1);
         Magick::PixelPacket * n_pixel;
@@ -49,9 +48,8 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
     int h = image.rows();
     Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
     Magick::Pixels i_cache(image);
-    nk.modifyImage();
     Magick::Pixels n_cache(nk);
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, image, nk)
     for ( int y = 0 ; y < h ; ++y ) {
         const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, w, 1);
         Magick::PixelPacket * n_pixel= n_cache.get(0, (y+o_y+h)%h, w, 1);
@@ -103,8 +101,8 @@ void WorkerConvolution::conv(Magick::Image& image, Magick::Image& kernel, qreal 
     int h = Am.rows();
     Magick::Image Rm(Magick::Geometry(w, h), Magick::Color(0,0,0));
     Magick::Image Rp(Magick::Geometry(w, h), Magick::Color(0,0,0));
-    Rm.modifyImage();
-    Rp.modifyImage();
+    ResetImage(Rm);
+    ResetImage(Rp);
     Magick::Pixels Am_cache(Am);
     Magick::Pixels Ap_cache(Ap);
     Magick::Pixels Bm_cache(Bm);
@@ -121,7 +119,7 @@ void WorkerConvolution::conv(Magick::Image& image, Magick::Image& kernel, qreal 
     dflDebug("comp.green=%d, luminosity=%f",green, 1./luminosity);
     dflDebug("comp.blue=%d, luminosity=%f",blue, 1./luminosity);
 
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, Bm, Bp, Am, Ap, Rm, Rp)
     for ( int y = 0 ; y < h ; ++y ) {
        const Magick::PixelPacket *Am_pxl = Am_cache.getConst(0, y, w, 1);
        const Magick::PixelPacket *Ap_pxl = Ap_cache.getConst(0, y, w, 1);

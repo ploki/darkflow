@@ -46,6 +46,7 @@ private:
     ~Console();
 };
 
+#define DF_NULL_PIXELS "Could not get pixels from cache, memory exhausted?"
 
 void dflMessage(Console::Level level, char *fmt, ...) DF_PRINTF_FORMAT(2,3);
 void dflDebug(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);

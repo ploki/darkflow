@@ -3,6 +3,7 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "algorithm.h"
+#include "console.h"
 
 static Photo
 blackDot()
@@ -81,16 +82,21 @@ public:
                 photo.setSequenceNumber(i);
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
                 photo.setTag(TAG_NAME, "LCMY Composition");
-                photo.image().modifyImage();
+                ResetImage(photo.image());
                 Magick::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 int line = 0;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, iCyan, iMagenta, iYellow, iLuminance)
                 for ( int y = 0 ; y < int(h) ; ++y ) {
                     const Magick::PixelPacket *pxl_Cyan = iCyan_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Magenta = iMagenta_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Luminance = iLuminance_cache.getConst(0, y, w, 1);
+                    if ( m_error || !pxl_Cyan || !pxl_Magenta || !pxl_Yellow || !pxl_Luminance ) {
+                        if (!m_error)
+                            dflError(DF_NULL_PIXELS);
+                        continue;
+                    }
                     for ( unsigned x = 0 ; x < w ; ++x ) {
                         quantum_t rgb[3];
                         quantum_t cyan = 0;

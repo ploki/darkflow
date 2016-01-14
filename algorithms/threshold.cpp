@@ -18,7 +18,7 @@ Threshold::Threshold(qreal high, qreal low, QObject *parent) :
         h = l;
         l = tmp;
     }
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(1024)
     for ( int i = 0 ; i <= int(QuantumRange) ; ++i ) {
         if ( i >= l && i <= h )
             m_lut[i] = up;
@@ -28,7 +28,7 @@ Threshold::Threshold(qreal high, qreal low, QObject *parent) :
 
     l=toHDR(l);
     h=toHDR(h);
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(1024)
     for ( int i = 0 ; i <= int(QuantumRange) ; ++i ) {
         if ( i >= l && i <= h )
             m_hdrLut[i] = up;

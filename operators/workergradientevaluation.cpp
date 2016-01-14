@@ -35,7 +35,7 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
     QVector<Triplet<qreal> > colors(n_points);
     qreal radius_pow2 = m_radius*m_radius;
 
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, in, out)
     for (int i = 0 ; i < n_points ; ++i ) {
         int count = 0;
         Triplet<qreal> color;
@@ -75,13 +75,13 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
         }
     }
 
-    out.modifyImage();
+    ResetImage(out);
     Magick::Pixels out_cache(out);
     Magick::PixelPacket *pxl = out_cache.get(0, 0, w, h);
 
     int line=0;
     qreal altitude = m_altitude*m_altitude;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4)
     for (int y = 0 ; y < h ; ++y ) {
         for ( int x = 0 ; x < w ; ++x ) {
             Triplet<qreal> color;

@@ -234,9 +234,8 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             photo.setSequenceNumber(n);
             photo.setTag(TAG_SCALE, TAG_SCALE_NONLINEAR);
             Magick::Image& image=photo.image();
-            image.modifyImage();
             Magick::Pixels pixel_cache(image);
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, image)
             for ( int y = 0 ; y < h ; ++y ) {
                 Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
                 if (!pixels) {

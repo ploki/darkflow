@@ -1,6 +1,7 @@
 #include "hotpixels.h"
 #include <Magick++.h>
 #include "hdr.h"
+#include "console.h"
 using Magick::Quantum;
 
 typedef double extended_quantum_t;
@@ -16,7 +17,7 @@ HotPixels::HotPixels(double delta, bool aggressive, bool naive, QObject *parent)
 void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
 {
     Magick::Image input(image);
-    image.modifyImage();
+    ResetImage(image);
 
     Magick::Pixels
             output_cache(image),
@@ -24,15 +25,20 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
 
     int w = image.columns();
     int h = image.rows();
-
-#pragma omp parallel for
+    bool error=false;
+#pragma omp parallel for dfl_threads(4, input, image)
     for ( int y = 1 ; y < h-1 ; ++y ) {
         Magick::PixelPacket *output_pixels = output_cache.get(0,y,w,1);
         const Magick::PixelPacket *input_pixels[3];
         input_pixels[0] = input_cache.getConst(0,y-1,w,1);
         input_pixels[1] = input_cache.getConst(0,y,w,1);
         input_pixels[2] = input_cache.getConst(0,y+1,w,1);
-
+        if ( error || !output_pixels || !input_pixels[0] || !input_pixels[1] || !input_pixels[2] ) {
+            if (!error)
+                dflError(DF_NULL_PIXELS);
+            error=true;
+            continue;
+        }
         for ( int x = 1 ; x < w-1 ; ++x ) {
             extended_quantum_t max_rgb[3]={0,0,0};
             extended_quantum_t min_rgb[3]={QuantumRange,QuantumRange,QuantumRange};

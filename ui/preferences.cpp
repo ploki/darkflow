@@ -75,7 +75,6 @@ Preferences::Preferences(QWidget *parent) :
     ui->defaultDflThreads->setText(QString::number(m_OpenMPThreads));
     ui->defaultDflWorkers->setText(QString::number(m_scheduledMaxWorkers));
 
-    omp_set_dynamic(0);
     bool loaded = load(false);
 
     if ( !loaded ) {
@@ -228,7 +227,8 @@ bool Preferences::load(bool create)
         dflThreads = 1;
     if ( dflThreads > 1024 )
         dflThreads = 1024;
-    omp_set_num_threads(dflThreads);
+    m_OpenMPThreads = dflThreads;
+
     {
         QMutexLocker lock(m_mutex);
         m_scheduledMaxWorkers = dflWorkers;
@@ -418,4 +418,9 @@ Preferences::TransformTarget Preferences::getCurrentTarget() const
 Preferences::IncompatibleAction Preferences::getIncompatibleAction() const
 {
     return m_incompatibleAction;
+}
+
+int Preferences::getNumThreads() const
+{
+    return m_OpenMPThreads;
 }

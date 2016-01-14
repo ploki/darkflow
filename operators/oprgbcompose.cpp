@@ -3,6 +3,8 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "algorithm.h"
+#include "console.h"
+
 static Photo
 blackDot()
 {
@@ -79,16 +81,20 @@ public:
                 photo.setSequenceNumber(i);
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
                 photo.setTag(TAG_NAME, "LRGB Composition");
-                photo.image().modifyImage();
                 Magick::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 int line = 0;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, iLuminance, iRed, iGreen, iBlue)
                 for ( int y = 0 ; y < int(h) ; ++y ) {
                     const Magick::PixelPacket *pxl_Red = iRed_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Green = iGreen_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Blue = iBlue_cache.getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Luminance = iLuminance_cache.getConst(0, y, w, 1);
+                    if ( m_error || !pxl_Red || !pxl_Green || !pxl_Blue || !pxl_Luminance ) {
+                        if ( !m_error )
+                            dflError(DF_NULL_PIXELS);
+                        continue;
+                    }
                     for ( unsigned x = 0 ; x < w ; ++x ) {
                         quantum_t red = pxl_Red?pxl_Red[x].red:0;
                         quantum_t green = pxl_Green?pxl_Green[x].green:0;

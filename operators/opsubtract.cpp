@@ -4,6 +4,7 @@
 #include "operatoroutput.h"
 #include "photo.h"
 #include "algorithm.h"
+#include "console.h"
 #include <Magick++.h>
 using Magick::Quantum;
 
@@ -29,29 +30,35 @@ public:
             dflError("size mismatch");
             return;
         }
-        minuend.modifyImage();
-        underflow.modifyImage();
+        Magick::Image &srcImage(minuend);
+        ResetImage(minuend);
+        ResetImage(underflow);
+        Magick::Pixels src_cache(srcImage);
         Magick::Pixels minuend_cache(minuend);
         Magick::Pixels subtrahend_cache(subtrahend);
         Magick::Pixels *addend_cache = NULL;
         if (addend)
             addend_cache = new Magick::Pixels(*addend);
         Magick::Pixels underflow_cache(underflow);
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, srcImage, minuend, subtrahend, addend?*addend:Magick::Image())
         for ( int y = 0 ; y < h ; ++y ) {
+            const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
             Magick::PixelPacket *minuend_pixels = minuend_cache.get(0, y, w, 1);
             Magick::PixelPacket *underflow_pixels = underflow_cache.get(0, y, w,1);
-            Magick::PixelPacket *addend_pixels = NULL;
-            if ( addend_cache )
-                addend_pixels = addend_cache->get(0, (1 == s_h ? 0 : y), s_w, 1);
             const Magick::PixelPacket *subtrahend_pixels = subtrahend_cache.getConst(0, (1 == s_h ? 0 : y), s_w, 1);
-            if ( !minuend_pixels ) continue;
-            if ( !subtrahend_pixels ) continue;
+            const Magick::PixelPacket *addend_pixels = NULL;
+            if ( addend_cache )
+                addend_pixels = addend_cache->getConst(0, (1 == s_h ? 0 : y), s_w, 1);
+            if ( m_error || !src || !minuend_pixels || !underflow_pixels || !subtrahend_pixels || (addend_cache && !addend_pixels) ) {
+                if ( !m_error )
+                    dflError(DF_NULL_PIXELS);
+                continue;
+            }
             for ( int x = 0 ; x < w ; ++x ) {
                 int s_x = ( 1 == s_w ) ? 0 : x ;
-                quantum_t r = minuend_pixels[x].red - subtrahend_pixels[s_x].red;
-                quantum_t g = minuend_pixels[x].green - subtrahend_pixels[s_x].green;
-                quantum_t b = minuend_pixels[x].blue - subtrahend_pixels[s_x].blue;
+                quantum_t r = src[x].red - subtrahend_pixels[s_x].red;
+                quantum_t g = src[x].green - subtrahend_pixels[s_x].green;
+                quantum_t b = src[x].blue - subtrahend_pixels[s_x].blue;
                 if ( addend_pixels ) {
                     r += addend_pixels[s_x].red;
                     g += addend_pixels[s_x].green;

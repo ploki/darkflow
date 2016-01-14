@@ -26,7 +26,7 @@ void WorkerLoadImage::play()
     int p = 0;
     volatile bool failure = false;
 
-#pragma omp parallel for shared(failure)
+#pragma omp parallel for shared(failure) dfl_threads(1)
     for (int i = 0 ; i < s ; ++i) {
         if ( failure || aborted() ) {
             failure = true;

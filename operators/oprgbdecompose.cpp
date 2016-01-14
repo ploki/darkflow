@@ -2,6 +2,7 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
+#include "console.h"
 
 class WorkerRGBDecompose : public OperatorWorker {
 public:
@@ -14,45 +15,54 @@ public:
     void play() {
         int p = 0,
                 c = m_inputs[0].count();
-        foreach(Photo pRed, m_inputs[0]) {
+        foreach(Photo photo, m_inputs[0]) {
             if (aborted())
                 continue;
-            Photo pGreen(pRed);
-            Photo pBlue(pRed);
-            Photo pLuminance(pRed);
+            Photo pRed(photo);
+            Photo pGreen(photo);
+            Photo pBlue(photo);
+            Photo pLuminance(photo);
+            Magick::Image& srcImage = photo.image();
             Magick::Image& iRed = pRed.image();
             Magick::Image& iGreen = pGreen.image();
             Magick::Image& iBlue = pBlue.image();
             Magick::Image& iLuminance = pLuminance.image();
 
             try {
-                iRed.modifyImage();
-                iGreen.modifyImage();
-                iBlue.modifyImage();
-                iLuminance.modifyImage();
+                ResetImage(iRed);
+                ResetImage(iGreen);
+                ResetImage(iBlue);
+                ResetImage(iLuminance);
+                Magick::Pixels src_cache(srcImage);
                 Magick::Pixels iRed_cache(iRed);
                 Magick::Pixels iGreen_cache(iGreen);
                 Magick::Pixels iBlue_cache(iBlue);
                 Magick::Pixels iLuminance_cache(iLuminance);
-                int w = iRed.columns();
-                int h = iRed.rows();
+                int w = srcImage.columns();
+                int h = srcImage.rows();
                 int line = 0;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, srcImage, iRed, iGreen, iBlue, iLuminance)
                 for ( int y = 0 ; y < h ; ++y ) {
+                    const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
                     Magick::PixelPacket *pxl_Red = iRed_cache.get(0, y, w, 1);
                     Magick::PixelPacket *pxl_Green = iGreen_cache.get(0, y, w, 1);
                     Magick::PixelPacket *pxl_Blue = iBlue_cache.get(0, y, w, 1);
                     Magick::PixelPacket *pxl_Luminance = iLuminance_cache.get(0, y, w, 1);
+                    if ( m_error || !src || !pxl_Red || !pxl_Green || !pxl_Blue || !pxl_Luminance ) {
+                        if ( !m_error )
+                            dflError(DF_NULL_PIXELS);
+                        continue;
+                    }
                     for ( int x = 0 ; x < w ; ++x ) {
-                        pxl_Red[x].green = pxl_Red[x].blue = pxl_Red[x].red;
-                        pxl_Green[x].red = pxl_Green[x].blue = pxl_Green[x].green;
-                        pxl_Blue[x].red = pxl_Blue[x].green = pxl_Blue[x].blue;
+                        pxl_Red[x].red = pxl_Red[x].green = pxl_Red[x].blue = src[x].red;
+                        pxl_Green[x].red = pxl_Green[x].green = pxl_Green[x].blue = src[x].green;
+                        pxl_Blue[x].red = pxl_Blue[x].green = pxl_Blue[x].blue = src[x].blue;
                         pxl_Luminance[x].red =
                         pxl_Luminance[x].green =
                         pxl_Luminance[x].blue =
-                                round(.2126L * pxl_Red[x].red +
-                                      .7152L * pxl_Green[x].green +
-                                      .0722L * pxl_Blue[x].blue);
+                                round(.2126L * src[x].red +
+                                      .7152L * src[x].green +
+                                      .0722L * src[x].blue);
                     }
                     iRed_cache.sync();
                     iGreen_cache.sync();

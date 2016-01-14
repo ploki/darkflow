@@ -5,6 +5,7 @@
 #include "cielab.h"
 #include "hdr.h"
 #include "ports.h"
+#include "console.h"
 using Magick::Quantum;
 
 DesaturateShadows::DesaturateShadows(qreal highlightLimit,
@@ -21,7 +22,7 @@ DesaturateShadows::DesaturateShadows(qreal highlightLimit,
     double low = high - log2(range);
     double threshold_high = highlightLimit * QuantumRange;
     double threshold_low =  threshold_high / range;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(1024)
     for ( int i = 0 ; i < int(QuantumRange)+1 ; ++i ) {
         if ( i < threshold_low ) {
             m_lut[i]=saturation;
@@ -43,26 +44,35 @@ DesaturateShadows::~DesaturateShadows()
 
 void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
 {
+    Magick::Image srcImage(image);
+    ResetImage(image);
     int h = image.rows(),
             w = image.columns();
 
-    image.modifyImage();
+    Magick::Pixels src_cache(srcImage);
     Magick::Pixels pixel_cache(image);
-#pragma omp parallel for
+    bool error=false;
+#pragma omp parallel for dfl_threads(4, srcImage, image)
     for ( int y = 0 ; y < h ; ++y ) {
         Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        if ( !pixels ) continue;
+        const Magick::PixelPacket *src = src_cache.getConst(0,y,w,1);
+        if ( error || !pixels || !src ) {
+            if ( !error )
+                dflError(DF_NULL_PIXELS);
+            error=true;
+            continue;
+        }
         for ( int x = 0 ; x < w ; ++x ) {
             double rgb[3];
             if (hdr) {
-                rgb[0]=fromHDR(pixels[x].red);
-                rgb[1]=fromHDR(pixels[x].green);
-                rgb[2]=fromHDR(pixels[x].blue);
+                rgb[0]=fromHDR(src[x].red);
+                rgb[1]=fromHDR(src[x].green);
+                rgb[2]=fromHDR(src[x].blue);
             }
             else {
-                rgb[0]=pixels[x].red;
-                rgb[1]=pixels[x].green;
-                rgb[2]=pixels[x].blue;
+                rgb[0]=src[x].red;
+                rgb[1]=src[x].green;
+                rgb[2]=src[x].blue;
             }
             double lab[3];
             RGB_to_LinearLab(rgb,lab);
@@ -83,6 +93,11 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
                     pixels[x].green = round(rgb[1]);
                     pixels[x].blue = round(rgb[2]);
                 }
+            }
+            else {
+                pixels[x].red = src[x].red;
+                pixels[x].green = src[x].green;
+                pixels[x].blue = src[x].blue;
             }
         }
         pixel_cache.sync();

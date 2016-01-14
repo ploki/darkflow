@@ -246,7 +246,7 @@ bool OperatorWorker::play_onInputParallel(int idx)
     int p = 0;
     c = m_inputs[idx].count();
 
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(1)
     for (int i = 0 ; i < c ; ++i ) {
         if ( m_error || aborted() )
             continue;

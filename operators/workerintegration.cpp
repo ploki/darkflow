@@ -132,7 +132,7 @@ bool WorkerIntegration::play_onInput(int idx)
             }
 
 #define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, image)
             for ( int y = 0 ; y < m_h ; ++y ) {
                 if ( y+cy < 0 || y+cy >= m_h ) continue;
                 const Magick::PixelPacket *pixels = pixel_cache.getConst(0, y+cy, m_w, 1);
@@ -195,10 +195,9 @@ bool WorkerIntegration::play_onInput(int idx)
         newPhoto.createImage(m_w, m_h);
         newPhoto.setTag(TAG_NAME, "Integration");
         Magick::Image& newImage = newPhoto.image();
-        newImage.modifyImage();
         Magick::Pixels pixel_cache(newImage);
         qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, newImage)
         for ( int y = 0 ; y < m_h ; ++y ) {
             Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
             for ( int x = 0 ; x < m_w ; ++x ) {

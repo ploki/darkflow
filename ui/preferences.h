@@ -39,6 +39,7 @@ public:
 
     TransformTarget getCurrentTarget() const;
     IncompatibleAction getIncompatibleAction() const;
+    int getNumThreads() const;
 
 private:
     void getDefaultMagickResources();

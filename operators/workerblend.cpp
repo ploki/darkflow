@@ -2,6 +2,7 @@
 #include <Magick++.h>
 #include "algorithm.h"
 #include "hdr.h"
+#include "console.h"
 
 using Magick::Quantum;
 
@@ -186,9 +187,10 @@ void WorkerBlend::play()
 
     int complete = qMin(1,qMax(b_count, c_count)) * m_inputs[0].count();
     int n = 0;
-    foreach(Photo photoA, m_inputs[0]) {
+    foreach(Photo photo, m_inputs[0]) {
         if (aborted())
             continue;
+        Photo photoA(photo);
         Photo *photoB = NULL;
         Photo *photoC = NULL;
         if ( b_count )
@@ -196,8 +198,9 @@ void WorkerBlend::play()
         if ( c_count )
             photoC = &m_inputs[2][n%c_count];
 
-        Photo underflow(photoA);
-        Photo overflow(photoA);
+        Photo underflow(photo);
+        Photo overflow(photo);
+        Magick::Image& srcImage = photo.image();
         Magick::Image *imageA = &photoA.image();
         Magick::Image *imageB = NULL;
         Magick::Image *imageC = NULL;
@@ -207,15 +210,16 @@ void WorkerBlend::play()
         Magick::Pixels *imageC_cache = NULL;
         try {
             Q_ASSERT(NULL != imageA);
-            imageA->modifyImage();
-            underflow.image().modifyImage();
-            overflow.image().modifyImage();
+            ResetImage(*imageA);
+            ResetImage(underflow.image());
+            ResetImage(overflow.image());
 
-            imageA_cache = new Magick::Pixels(*imageA);
+            Magick::Pixels src_cache(srcImage);
             Magick::Pixels underflow_cache(underflow.image());
             Magick::Pixels overflow_cache(overflow.image());
-            int w = imageA->columns();
-            int h = imageA->rows();
+            imageA_cache = new Magick::Pixels(*imageA);
+            int w = srcImage.columns();
+            int h = srcImage.rows();
             int b_w = 0;
             int b_h = 0;
             int c_w = 0;
@@ -240,10 +244,11 @@ void WorkerBlend::play()
             if ( m_outputHDR || aHDR || bHDR || cHDR)
                 anyHDR = true;
 
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, srcImage, imageA?*imageA:Magick::Image(), imageB?*imageB:Magick::Image(), imageC?*imageC:Magick::Image(), overflow.image(), underflow.image())
             for ( int y = 0 ; y < h ; ++y ) {
                 if ( m_error || aborted() )
                     continue;
+                const Magick::PixelPacket *src = src_cache.get(0, y, w, 1);
                 Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
                 Magick::PixelPacket *pxl_o = overflow_cache.get(0, y, w, 1);
                 Magick::PixelPacket *pxl_A = imageA_cache->get(0, y, w, 1);
@@ -253,8 +258,9 @@ void WorkerBlend::play()
                     pxl_B = imageB_cache->getConst(0, y%b_h, b_w, 1);
                 if ( imageC_cache )
                     pxl_C = imageC_cache->getConst(0, y%c_h, c_w, 1);
-                if ( !pxl_u || !pxl_o || !pxl_A || (imageB_cache && !pxl_B) || (imageC_cache && !pxl_C) ) {
-                    dflError("Unable to get pixels from cache, memory exhausted?");
+                if ( m_error || !src || !pxl_u || !pxl_o || !pxl_A || (imageB_cache && !pxl_B) || (imageC_cache && !pxl_C) ) {
+                    if ( !m_error )
+                        dflError(DF_NULL_PIXELS);
                     continue;
                 }
                 for ( int x = 0 ; x < w ; ++x ) {
@@ -262,6 +268,9 @@ void WorkerBlend::play()
                     const Magick::PixelPacket *pC = NULL;
                     if ( pxl_B ) pB = pxl_B+(x%b_w);
                     if ( pxl_C ) pC = pxl_C+(x%c_w);
+                    pxl_A[x].red = src[x].red;
+                    pxl_A[x].green = src[x].green;
+                    pxl_A[x].blue = src[x].blue;
                     if (anyHDR)
                         blend<real>(this,
                                     pxl_A+x, aHDR,
@@ -296,8 +305,11 @@ void WorkerBlend::play()
 
             if ( b_h == 1 && b_w == 1 &&
                  c_h == 1 && c_w == 1 ) {
-                photoA.curve().modifyImage();
+                Magick::Image & srcCurve(photoA.curve());
+                ResetImage(photoA.curve());
+                Magick::Pixels src_cache(srcCurve);
                 Magick::Pixels curve_cache(photoA.curve());
+                const Magick::PixelPacket *src = src_cache.getConst(0, 0, 65536, 1);
                 Magick::PixelPacket *pxl_A = curve_cache.get(0, 0, 65536, 1);
                 const Magick::PixelPacket *pxl_B = NULL;
                 const Magick::PixelPacket *pxl_C = NULL;
@@ -305,7 +317,15 @@ void WorkerBlend::play()
                     pxl_B = imageB_cache->getConst(0, 0, 1, 1);
                 if ( imageC_cache )
                     pxl_C = imageC_cache->getConst(0, 0, 1, 1);
+                if ( m_error || !src || !pxl_A || ( imageB_cache && !pxl_B ) || ( imageC_cache && ! pxl_C) ) {
+                    if ( !m_error )
+                        dflError(DF_NULL_PIXELS);
+                    continue;
+                }
                 for ( int x = 0; x < 65536 ; ++x ) {
+                    pxl_A[x].red = src[x].red;
+                    pxl_A[x].green = src[x].green;
+                    pxl_A[x].blue = src[x].blue;
                     if (anyHDR)
                         blend<real>(this,
                                     pxl_A+x, (photoA.getScale() == Photo::HDR),

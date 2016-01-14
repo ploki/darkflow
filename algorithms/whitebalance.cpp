@@ -1,5 +1,6 @@
 #include "whitebalance.h"
 #include "photo.h"
+#include "console.h"
 #include <Magick++.h>
 
 WhiteBalance::WhiteBalance(qreal temperature,
@@ -41,9 +42,11 @@ WhiteBalance::WhiteBalance(qreal temperature,
 
 void WhiteBalance::applyOnImage(Magick::Image& image, bool hdr)
 {
-    image.modifyImage();
+    Magick::Image srcImage(image);
+    ResetImage(image);
     int h = image.rows(),
             w = image.columns();
+    Magick::Pixels src_cache(srcImage);
     Magick::Pixels pixel_cache(image);
     double rgb[3];
     if (hdr) {
@@ -56,10 +59,17 @@ void WhiteBalance::applyOnImage(Magick::Image& image, bool hdr)
         rgb[1] = m_rgb[1];
         rgb[2] = m_rgb[2];
     }
-#pragma omp parallel for
+    bool error=false;
+#pragma omp parallel for dfl_threads(4, srcImage, image)
     for (int y = 0 ; y < h ; ++y ) {
         Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        if ( !pixels ) continue;
+        const Magick::PixelPacket *src = src_cache.getConst(0,y,w,1);
+        if ( error || !pixels || !src ) {
+            if (!error)
+                dflError(DF_NULL_PIXELS);
+            error=true;
+            continue;
+        }
         for (int x = 0 ; x < w ; ++x ) {
             using Magick::Quantum;
             if (hdr) {

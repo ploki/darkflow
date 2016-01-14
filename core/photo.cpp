@@ -15,6 +15,7 @@
 #include "exposure.h"
 #include "process.h"
 #include "console.h"
+#include "preferences.h"
 
 using namespace Magick;
 
@@ -217,7 +218,6 @@ Image Photo::newCurve(Photo::Gamma gamma)
 {
     Image curve;
     curve.size("65536x1");
-    curve.modifyImage();
     Pixels curve_cache(curve);
     PixelPacket *pixels = curve_cache.get(0,0,65536,1);
     for ( int i = 0 ; i < 65536 ; ++i )
@@ -257,7 +257,7 @@ static QPixmap convert(Magick::Image& image) {
     unsigned char *buf = (unsigned char *)malloc(header_size+w*h*3*1);
     memcpy(buf, pgm_header, header_size);
     bool error=false;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, image)
     for ( int y = 0 ; y < h ; ++y ) {
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,y,w,1);
         if ( error || !pixels ) {
@@ -311,7 +311,6 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     Q_ASSERT( m_status == Complete );
     Magick::Image image("512x512", "black");
     Magick::Image curve(this->curve());
-    image.modifyImage();
     Magick::Pixels image_cache(image);
 
     if ( getScale() == HDR ) {
@@ -435,8 +434,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
 QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGeometry geometry)
 {
     Q_ASSERT( m_status == Complete );
-    Magick::Image image;
-    Magick::Image photo = this->image();
+    Magick::Image & photo = this->image();
 
     /*
     if ( getScale() == HDR ) {
@@ -456,76 +454,81 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
     unsigned long histo[range][3]={{0}};
     unsigned long maxi=0;
 
-    Magick::Pixels photo_cache(photo);
-    photo.modifyImage();
-#pragma omp parallel for
-    for ( y = 0 ; y < h ; ++y ) {
-        const Magick::PixelPacket *pixels = photo_cache.getConst(0,y,w,1);
-        if (!pixels ) continue;
-        for ( x = 0 ; x < w ; ++x ) {
-            int r=(range-1)*pixels[x].red/QuantumRange;
-            int g=(range-1)*pixels[x].green/QuantumRange;
-            int b=(range-1)*pixels[x].blue/QuantumRange;
-            Q_ASSERT(r < range);
-            Q_ASSERT(g < range);
-            Q_ASSERT(b < range);
-            atomic_incr(&histo[r][0]);
-            atomic_incr(&histo[g][1]);
-            atomic_incr(&histo[b][2]);
-            if ( r > 2 && r < (range-1) && histo[r][0] > maxi ) maxi=histo[r][0];
-            if ( g > 2 && g < (range-1) && histo[g][1] > maxi ) maxi=histo[g][1];
-            if ( b > 2 && b < (range-1) && histo[b][2] > maxi ) maxi=histo[b][2];
-        }
-        photo_cache.sync();
-    }
-    image = Image( "512x512" , "black" );
-    image.modifyImage();
-    Magick::Pixels image_cache(image);
-    Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
-    for ( x=0 ; x < range ; ++x ) {
-        quantum_t qr;
-        quantum_t qg;
-        quantum_t qb;
-        if ( hlog )
-        {
-            qg = (range-1)*log(histo[x][1])/log(maxi);
-            qr = (range-1)*log(histo[x][0])/log(maxi);
-            qb = (range-1)*log(histo[x][2])/log(maxi);
-        }
-        else
-        {
-            qg = (range-1)*(double)histo[x][1]/(double)maxi;
-            qr = (range-1)*(double)histo[x][0]/(double)maxi;
-            qb = (range-1)*(double)histo[x][2]/(double)maxi;
-        }
-
-        if ( qr > (range-1) ) qr = (range-1);
-        if ( qg > (range-1) ) qg = (range-1);
-        if ( qb > (range-1) ) qb = (range-1);
-
-        if ( qr == 0 && histo[x][0] > 0 ) qr=1;
-        if ( qg == 0 && histo[x][1] > 0 ) qg=1;
-        if ( qb == 0 && histo[x][2] > 0 ) qb=1;
-        for (int i = 0 ; i < qr ; ++i )
-        {
-            PXL(x, (range-1)-i).red = QuantumRange;
-        }
-        for (int i = 0 ; i < qg ; ++i )
-        {
-            PXL(x, (range-1)-i).green = QuantumRange;
-        }
-        for (int i = 0 ; i < qb ; ++i )
-        {
-            PXL(x, (range-1)-i).blue = QuantumRange;
+    {
+        Magick::Pixels photo_cache(photo);
+#pragma omp parallel for dfl_threads(4, photo)
+        for ( y = 0 ; y < h ; ++y ) {
+            const Magick::PixelPacket *pixels = photo_cache.getConst(0,y,w,1);
+            if (!pixels ) continue;
+            for ( x = 0 ; x < w ; ++x ) {
+                int r=(range-1)*pixels[x].red/QuantumRange;
+                int g=(range-1)*pixels[x].green/QuantumRange;
+                int b=(range-1)*pixels[x].blue/QuantumRange;
+                Q_ASSERT(r < range);
+                Q_ASSERT(g < range);
+                Q_ASSERT(b < range);
+                atomic_incr(&histo[r][0]);
+                atomic_incr(&histo[g][1]);
+                atomic_incr(&histo[b][2]);
+                if ( r > 2 && r < (range-1) && histo[r][0] > maxi ) maxi=histo[r][0];
+                if ( g > 2 && g < (range-1) && histo[g][1] > maxi ) maxi=histo[g][1];
+                if ( b > 2 && b < (range-1) && histo[b][2] > maxi ) maxi=histo[b][2];
+            }
         }
     }
-    image_cache.sync();
+    Magick::Image image( "512x512" , "black" );
+
+    {
+        Magick::Pixels image_cache(image);
+        Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
+        for ( x=0 ; x < range ; ++x ) {
+            quantum_t qr;
+            quantum_t qg;
+            quantum_t qb;
+            if ( hlog )
+            {
+                qg = (range-1)*log(histo[x][1])/log(maxi);
+                qr = (range-1)*log(histo[x][0])/log(maxi);
+                qb = (range-1)*log(histo[x][2])/log(maxi);
+            }
+            else
+            {
+                qg = (range-1)*(double)histo[x][1]/(double)maxi;
+                qr = (range-1)*(double)histo[x][0]/(double)maxi;
+                qb = (range-1)*(double)histo[x][2]/(double)maxi;
+            }
+
+            if ( qr > (range-1) ) qr = (range-1);
+            if ( qg > (range-1) ) qg = (range-1);
+            if ( qb > (range-1) ) qb = (range-1);
+
+            if ( qr == 0 && histo[x][0] > 0 ) qr=1;
+            if ( qg == 0 && histo[x][1] > 0 ) qg=1;
+            if ( qb == 0 && histo[x][2] > 0 ) qb=1;
+            for (int i = 0 ; i < qr ; ++i )
+            {
+                PXL(x, (range-1)-i).red = QuantumRange;
+            }
+            for (int i = 0 ; i < qg ; ++i )
+            {
+                PXL(x, (range-1)-i).green = QuantumRange;
+            }
+            for (int i = 0 ; i < qb ; ++i )
+            {
+                PXL(x, (range-1)-i).blue = QuantumRange;
+            }
+        }
+        image_cache.sync();
+    }
     if ( adt )
         image.adaptiveThreshold(4,4,0.);
     {
-        image.modifyImage();
+        Magick::Image srcImage(image);
+        ResetImage(image);
+        Magick::Pixels src_cache(srcImage);
         Magick::Pixels image_cache(image);
         Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
+        const Magick::PixelPacket *src = src_cache.get(0, 0, range, range);
         iGamma& g = iGamma::sRGB();
         int marks_non_linear[] = { g.applyOnQuantum(1<<15, false)/128,
                                    g.applyOnQuantum(1<<14, false)/128,
@@ -589,6 +592,14 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             marks=marks_linear;
             c = C_linear;
         }
+#pragma omp parallel for dfl_threads(4, srcImage, image)
+        for ( int y = 0 ; y < range ; ++y ) {
+            for ( int x = 0 ; x < range ; ++x ) {
+                PXL(x,y).red = src[y*range+x].red;
+                PXL(x,y).green = src[y*range+x].green;
+                PXL(x,y).blue = src[y*range+x].blue;
+            }
+        }
         for ( int i = 0 ; marks[i] != 0 ; ++i ) {
             x = marks[i];
             for (int y = 0 ; y < range ; ++ y ) {
@@ -625,7 +636,6 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
 void Photo::writeJPG(const QString &filename)
 {
     Magick::Image image(m_image);
-    image.modifyImage();
     image.magick("JPG");
     Magick::Blob blob;
     image.write(&blob);
@@ -788,3 +798,53 @@ Photo::Gamma Photo::getScale() const
 
 
 
+
+void ResetImage(Image &image)
+{
+    int w = image.columns();
+    int h = image.rows();
+    image = Image(Geometry(w, h), Magick::Color(0,0,0));
+    image.quantizeColorSpace(Magick::RGBColorspace);
+}
+
+bool OnDiskCache()
+{
+    return false;
+}
+
+bool OnDiskCache(const Image &image)
+{
+    bool onDisk = MagickCore::GetImagePixelCacheType(const_cast<Image&>(image).image()) == MagickCore::DiskCache;
+    if (onDisk)
+        dflDebug("Image cache is on disk, threading disabled");
+    return onDisk;
+}
+
+bool OnDiskCache(const Image &image1, const Image &image2)
+{
+    return OnDiskCache(image1) || OnDiskCache(image2);
+}
+
+bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3)
+{
+    return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3);
+}
+
+bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3, const Image &image4)
+{
+    return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3) || OnDiskCache(image4);
+}
+
+bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3, const Image &image4, const Image &image5)
+{
+    return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3) || OnDiskCache(image4) || OnDiskCache(image5);
+}
+bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3, const Image &image4, const Image &image5, const Image &image6)
+{
+    return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3) || OnDiskCache(image4) || OnDiskCache(image5) || OnDiskCache(image6);
+}
+
+int DfThreadLimit()
+{
+    return preferences->getNumThreads();
+}

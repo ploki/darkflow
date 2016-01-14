@@ -4,6 +4,7 @@
 #include "operatorworker.h"
 #include "process.h"
 #include "photo.h"
+#include "console.h"
 
 #include <Magick++.h>
 
@@ -23,7 +24,6 @@ private slots:
         if (photo.isComplete()) {
             try {
                 Magick::Image& image = photo.image();
-                image.modifyImage();
                 Magick::Pixels cache(image);
                 unsigned w = image.columns();
                 unsigned h = image.rows();
@@ -34,6 +34,11 @@ private slots:
                         return;
                     }
                     Magick::PixelPacket *pixels = cache.get(0,y,w,1);
+                    if ( m_error || !pixels ) {
+                        if ( !m_error )
+                            dflError(DF_NULL_PIXELS);
+                        continue;
+                    }
                     for (unsigned x = 0 ; x < w ; ++x ) {
                         using Magick::Quantum;
                         pixels[x].red = qrand()%QuantumRange;

@@ -62,31 +62,39 @@ void bayerToPixel(const Magick::PixelPacket& src,
 static Photo debayerMask(const Photo &photo, u_int32_t filters)
 {
     Photo newPhoto(photo);
-    Magick::Image& dst = newPhoto.image();
-    dst.modifyImage();
+    Magick::Image& srcImage = newPhoto.image();
+    Magick::Image& dst(srcImage);
+    ResetImage(dst);
 
-    int w = dst.columns();
-    int h = dst.rows();
-
-    dst.modifyImage();
+    int w = srcImage.columns();
+    int h = srcImage.rows();
+    Magick::Pixels src_cache(srcImage);
     Magick::Pixels dst_cache(dst);
-    Magick::PixelPacket *pixel = dst_cache.get(0, 0, w, h);
-#pragma omp parallel for
+    bool error=false;
+#pragma omp parallel for dfl_threads(4, srcImage, dst)
     for (int y = 0 ; y < h ; ++y ) {
+        Magick::PixelPacket *pixel = dst_cache.get(0, y, w, 1);
+        const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
+        if ( error || !pixel || !src ) {
+            if (!error)
+                dflError(DF_NULL_PIXELS);
+            error=true;
+            continue;
+        }
         for (int x = 0 ; x < w ; ++x ) {
             int c = FC(filters, y, x);
             switch (c) {
             case 0:
-                pixel[y*w+x].green = pixel[y*w+x].blue = 0; break;
+                pixel[x].red = src[x].red; pixel[x].green = 0 ; pixel[x].blue = 0; break;
             case 1:
             case 3:
-                pixel[y*w+x].red = pixel[y*w+x].blue = 0; break;
+                pixel[x].red = 0 ; pixel[x].green = src[x].green ; pixel[y*w+x].blue = 0; break;
             case 2:
-                pixel[y*w+x].red = pixel[y*w+x].green = 0; break;
+                pixel[x].red = 0; pixel[x].green = 0; pixel[x].blue = src[x].blue; break;
             }
         }
+        dst_cache.sync();
     }
-    dst_cache.sync();
     return newPhoto;
 }
 
@@ -100,13 +108,13 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
     int w = dst.columns();
     int h = dst.rows();
 
-    dst.modifyImage();
+    ResetImage(dst);
     Magick::Pixels image_cache(image);
     Magick::Pixels dst_cache(dst);
     const Magick::PixelPacket *image_pixels = image_cache.getConst(0, 0, w*2, h*2);
     Magick::PixelPacket *pixels = dst_cache.get(0, 0, w, h);
     bool failure = false;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, image, dst)
     for ( int y = 0 ; y < h ; ++y ) {
         for ( int x = 0 ; x < w ; ++x ) {
             if ( failure ) continue;
@@ -202,7 +210,7 @@ imageToBayer(Magick::Image& image, u_int32_t filters)
 static Magick::Image
 bufferToImage(uint16_t *buffer, int w, int h) {
     Magick::Image image(Magick::Geometry(w,h), Magick::Color(0,0,0));
-    image.modifyImage();
+    ResetImage(image);
     int s = w * h;
     Magick::Pixels cache(image);
     Magick::PixelPacket *pixel = cache.get(0, 0, w, h);

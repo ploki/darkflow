@@ -7,6 +7,7 @@
 #include <Magick++.h>
 #include "algorithm.h"
 #include "hdr.h"
+#include "console.h"
 
 using Magick::Quantum;
 
@@ -68,19 +69,26 @@ public:
             dflError("size mismatch");
             return;
         }
-        image.modifyImage();
-        overflow.modifyImage();
+        Magick::Image srcImage(image);
+        ResetImage(image);
+        ResetImage(overflow);
+        Magick::Pixels src_cache(srcImage);
         Magick::Pixels image_cache(image);
         Magick::Pixels flatfield_cache(flatfield);
         Magick::Pixels overflow_cache(overflow);
         int line=0;
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(4, srcImage, image, flatfield, overflow)
         for ( int y = 0 ; y < h ; ++y ) {
             Magick::PixelPacket *image_pixels = image_cache.get(0, y, w, 1);
             Magick::PixelPacket *overflow_pixels = overflow_cache.get(0, y, w, 1);
             const Magick::PixelPacket *flatfield_pixels = flatfield_cache.getConst(0, y, w, 1);
-            if ( !image_pixels ) continue;
-            if ( !flatfield_pixels ) continue;
+            const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
+            if ( m_error || !image_pixels || !overflow_pixels || !flatfield_pixels || !src ) {
+                if ( !m_error )
+                    dflError(DF_NULL_PIXELS);
+                continue;
+            }
+
             for ( int x = 0 ; x < w ; ++x ) {
                 Triplet<PIXEL> ff;
                 bool singularity = false;
@@ -110,9 +118,9 @@ public:
                     ff.green = fromHDR(ff.green);
                     ff.blue = fromHDR(ff.blue);
                 }
-                PIXEL r = image_pixels[x].red;
-                PIXEL g = image_pixels[x].green;
-                PIXEL b = image_pixels[x].blue;
+                PIXEL r = src[x].red;
+                PIXEL g = src[x].green;
+                PIXEL b = src[x].blue;
                 if ( imageIsHDR ) {
                     r = fromHDR(r);
                     g = fromHDR(g);

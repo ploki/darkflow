@@ -27,7 +27,7 @@ public:
     int h = rect.height();
     Magick::Pixels cache(image);
     Region *region = new Region(worker, w, h);
-    #pragma omp parallel for
+    #pragma omp parallel for dfl_threads(4, image)
     for (int y = 0 ; y < h ; ++y)
       {
         const Magick::PixelPacket *pixels = cache.getConst(px,py+y,w,1);
@@ -56,7 +56,7 @@ public:
       int ssd_sz = dh*dw;
       double *ssd = new double[ssd_sz];
       memset(ssd, 0, ssd_sz * sizeof(*ssd));
-#pragma omp parallel for
+#pragma omp parallel for dfl_threads(1)
       for ( int dy = 0 ; dy < dh ; ++dy )
           for ( int dx = 0 ; dx < dw ; ++dx )
               //needle window

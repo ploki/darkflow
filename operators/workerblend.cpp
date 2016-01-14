@@ -242,6 +242,8 @@ void WorkerBlend::play()
 
 #pragma omp parallel for
             for ( int y = 0 ; y < h ; ++y ) {
+                if ( m_error || aborted() )
+                    continue;
                 Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
                 Magick::PixelPacket *pxl_o = overflow_cache.get(0, y, w, 1);
                 Magick::PixelPacket *pxl_A = imageA_cache->get(0, y, w, 1);
@@ -251,6 +253,10 @@ void WorkerBlend::play()
                     pxl_B = imageB_cache->getConst(0, y%b_h, b_w, 1);
                 if ( imageC_cache )
                     pxl_C = imageC_cache->getConst(0, y%c_h, c_w, 1);
+                if ( !pxl_u || !pxl_o || !pxl_A || (imageB_cache && !pxl_B) || (imageC_cache && !pxl_C) ) {
+                    dflError("Unable to get pixels from cache, memory exhausted?");
+                    continue;
+                }
                 for ( int x = 0 ; x < w ; ++x ) {
                     const Magick::PixelPacket *pB = NULL;
                     const Magick::PixelPacket *pC = NULL;

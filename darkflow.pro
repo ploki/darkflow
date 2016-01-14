@@ -37,6 +37,7 @@ unix {
 win32 {
     QMAKE_CXXFLAGS += /wd4351 /wd4251 /wd4267 /openmp /MP /DHAVE_FFMPEG
     QMAKE_CFLAGS += /wd4351 /wd4251 /wd4267 /openmp /MP /DHAVE_FFMPEG
+    QMAKE_LFLAGS += /LARGEADDRESSAWARE
     contains(QMAKE_TARGET.arch, x86_64) {
         message("x64 build")
         QMAKE_CXXFLAGS += -IC:\ImageMagick\6.9.3-Q16\include

@@ -73,14 +73,14 @@ void WhiteBalance::applyOnImage(Magick::Image& image, bool hdr)
         for (int x = 0 ; x < w ; ++x ) {
             using Magick::Quantum;
             if (hdr) {
-                pixels[x].red=clamp<double>(pixels[x].red+rgb[0],0,QuantumRange);
-                pixels[x].green=clamp<double>(pixels[x].green+rgb[1],0,QuantumRange);
-                pixels[x].blue=clamp<double>(pixels[x].blue+rgb[2],0,QuantumRange);
+                pixels[x].red=clamp<double>(src[x].red+rgb[0],0,QuantumRange);
+                pixels[x].green=clamp<double>(src[x].green+rgb[1],0,QuantumRange);
+                pixels[x].blue=clamp<double>(src[x].blue+rgb[2],0,QuantumRange);
             }
             else {
-                pixels[x].red=clamp<double>(pixels[x].red*rgb[0],0,QuantumRange);
-                pixels[x].green=clamp<double>(pixels[x].green*rgb[1],0,QuantumRange);
-                pixels[x].blue=clamp<double>(pixels[x].blue*rgb[2],0,QuantumRange);
+                pixels[x].red=clamp<double>(src[x].red*rgb[0],0,QuantumRange);
+                pixels[x].green=clamp<double>(src[x].green*rgb[1],0,QuantumRange);
+                pixels[x].blue=clamp<double>(src[x].blue*rgb[2],0,QuantumRange);
             }
         }
         pixel_cache.sync();

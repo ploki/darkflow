@@ -453,8 +453,8 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             h = photo.rows();
 
     const int range = 512;
-    quantum_t histo[range][3]={{0}};
-    quantum_t maxi=0;
+    unsigned long histo[range][3]={{0}};
+    unsigned long maxi=0;
 
     Magick::Pixels photo_cache(photo);
     photo.modifyImage();

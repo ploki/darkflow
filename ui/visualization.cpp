@@ -352,27 +352,18 @@ void Visualization::treatmentChanged(int idx)
         type = TreePhotoItem::InputDisabled;
     }
 
-    QString treatTag = m_photo->getTag(TAG_TREAT);
+    QString photoTag = m_photo->getTag(TAG_TREAT);
+    QString treatTag = photoTag;
     if ( !from_photo ) {
-        treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), "TREAT");
+        treatTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_TREAT);
     }
 
-    if ( ( treatTag == TAG_TREAT_REGULAR   && idx == 0 ) ||
-         ( treatTag == TAG_TREAT_REFERENCE && idx == 1 ) ||
-         ( treatTag == TAG_TREAT_DISCARDED && idx == 2 ) ||
-         ( treatTag == TAG_TREAT_ERROR     && idx == 3 ) )
+    if ( treatTag == value )
         return;
-
-
-    if ( value == TAG_TREAT_REGULAR ) {
-        if ( from_photo )
-            m_operator->setTagOverride(identity, TAG_TREAT, TAG_TREAT_REGULAR);
-        else
-            m_operator->resetTagOverride(identity, TAG_TREAT);
-    }
-    else {
+    if ( photoTag == value || ( value == TAG_TREAT_REGULAR && photoTag=="" ) )
+        m_operator->resetTagOverride(identity, TAG_TREAT);
+    else
         m_operator->setTagOverride(identity, TAG_TREAT, value);
-    }
     m_photoItem->setType(type);
 }
 
@@ -458,10 +449,22 @@ void Visualization::updateColorLabels(const QPointF& pos)
         clearStatus = false;
         rgb = m_photo->pixelColor(pos.x(), pos.y());
     }
-
-    ui->value_ADU_R->setText(QString("R: %0").arg(int(rgb[0]), 5, 10, QChar(' ')));
-    ui->value_ADU_G->setText(QString("G: %0").arg(int(rgb[1]), 5, 10, QChar(' ')));
-    ui->value_ADU_B->setText(QString("B: %0").arg(int(rgb[2]), 5, 10, QChar(' ')));
+    QString rStr("R: %0");
+    QString gStr("G: %0");
+    QString bStr("B: %0");
+    if ( m_photo && m_photo->getScale() == Photo::HDR ) {
+        rStr = QString("r %0").arg(rgb[0], 5, 'f', 5, QChar(' ')).left(8);
+        gStr = QString("g %0").arg(rgb[1], 5, 'f', 5, QChar(' ')).left(8);
+        bStr = QString("b %0").arg(rgb[2], 5, 'f', 5, QChar(' ')).left(8);
+    }
+    else {
+        rStr = QString("R: %0").arg(int(rgb[0]), 5, 10, QChar(' '));
+        gStr = QString("G: %0").arg(int(rgb[1]), 5, 10, QChar(' '));
+        bStr = QString("B: %0").arg(int(rgb[2]), 5, 10, QChar(' '));
+    }
+    ui->value_ADU_R->setText(rStr);
+    ui->value_ADU_G->setText(gStr);
+    ui->value_ADU_B->setText(bStr);
     qreal
             r = rgb[0]!=0?log2(rgb[0]/QuantumRange):-16,
             g = rgb[1]!=0?log2(rgb[1]/QuantumRange):-16,
@@ -694,6 +697,7 @@ void Visualization::updateTabsWithPhoto()
     histogramParamsChanged();
     updateVisualizationZoom();
     updateTagsTable();
+    updateColorLabels(QPointF(-1,-1));
 #if 0
     QString geometry = QString::number(m_photo->image().columns()) + " x " + QString::number(m_photo->image().rows());
     ui->value_size->setText(geometry);

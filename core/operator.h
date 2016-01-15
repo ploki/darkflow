@@ -29,6 +29,7 @@ class OperatorWorker;
 #define OP_SECTION_EFFECTS "Effects"
 #define OP_SECTION_DEPRECATED "Deprecated"
 
+class Algorithm;
 
 class Operator : public QObject
 {
@@ -103,6 +104,9 @@ public:
     void setOutputStatus(int idx, OperatorOutputStatus status);
     bool isCompatible(const Photo& photo) const;
     bool isCompatible(const ScaleCompatibility& comp) const;
+
+    virtual Algorithm *getAlgorithm() const;
+    virtual void releaseAlgorithm(Algorithm *) const;
 
 private:
     QVector<QVector<Photo> > collectInputs();

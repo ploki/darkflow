@@ -130,16 +130,12 @@ static inline void CIELab16_to_RGB(const quantum_t lab16[3], quantum_t rgb[3] ) 
 	CIELab_to_RGB(lab,rgb);
 }
 
-#define lab_linearize(l) ({ \
-	const double epsilon =  216.L/24389.L, kappa = 24389.L/27.L; \
-	double __ret = (l<=kappa*epsilon) ? \
-		(l/kappa) : (pow((l+16.0)/116.0, 3.0)); \
-__ret; })
+#define __lab_kappa (24389.L/27.L)
+#define __lab_epsilon (216.L/24389.L)
 
-#define lab_gammaize(v) ({ \
-	const double epsilon =  216.L/24389.L, kappa = 24389.L/27.L; \
-	double __ret = 116. * ( v > epsilon ? pow(v,1./3.) : ( kappa * v + 16. ) / 116. ) - 16.; \
-__ret; })
+#define lab_linearize(l) ( (l<=__lab_kappa*__lab_epsilon) ? (l/__lab_kappa) : (pow((l+16.0)/116.0, 3.0)) )
+
+#define lab_gammaize(v) ( 116. * ( v > __lab_epsilon ? pow(v,1./3.) : ( __lab_kappa * v + 16. ) / 116. ) - 16. )
 
 
 /**

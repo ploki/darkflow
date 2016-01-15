@@ -189,7 +189,12 @@ SOURCES +=\
     algorithms/hdr.cpp \
     operators/ophdr.cpp \
     core/ports.cpp \
-    core/posixspawn.cpp
+    core/posixspawn.cpp \
+    ui/selectivelab.cpp \
+    scene/processselectivelab.cpp \
+    core/operatorparameterselectivelab.cpp \
+    algorithms/selectivelabfilter.cpp \
+    operators/opselectivelabfilter.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -306,7 +311,12 @@ HEADERS  += \
     operators/ophdr.h \
     core/ports.h \
     core/posixspawn.h \
-    core/darkflow.h
+    core/darkflow.h \
+    ui/selectivelab.h \
+    scene/processselectivelab.h \
+    core/operatorparameterselectivelab.h \
+    algorithms/selectivelabfilter.h \
+    operators/opselectivelabfilter.h
 
 FORMS    += \
     ui/aboutdialog.ui \
@@ -317,7 +327,8 @@ FORMS    += \
     ui/slider.ui \
     ui/fullscreenview.ui \
     ui/console.ui \
-    ui/preferences.ui
+    ui/preferences.ui \
+    ui/selectivelab.ui
 
 RESOURCES += \
     ui/resources.qrc

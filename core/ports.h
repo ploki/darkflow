@@ -43,6 +43,9 @@ typedef long long int64_t;
 #  define M_SQRT2l 1.4142136L
 # endif
 
+# ifndef M_LN2
+#  define M_LN2 0.69314718L
+# endif
 #endif /* __GNUC__ */
 
 #ifdef DF_WINDOWS

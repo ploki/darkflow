@@ -8,5 +8,6 @@ int main(int argc, char *argv[])
     if (argc == 2)
         w.load(argv[1]);
     w.show();
+
     return a.exec();
 }

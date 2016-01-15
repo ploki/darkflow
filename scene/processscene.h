@@ -21,7 +21,8 @@ public:
         UserTypeProgressBar,
         UserTypeDropDown,
         UserTypeFilesCollection,
-        UserTypeSlider
+        UserTypeSlider,
+        UserTypeSelectiveLab
     };
 
     explicit ProcessScene(QWidget *parent = 0);

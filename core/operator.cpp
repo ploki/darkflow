@@ -232,6 +232,15 @@ bool Operator::isCompatible(const Operator::ScaleCompatibility &comp) const
     return ( comp & m_scaleCompatibility);
 }
 
+Algorithm *Operator::getAlgorithm() const
+{
+    return NULL;
+}
+
+void Operator::releaseAlgorithm(Algorithm *) const
+{
+}
+
 QVector<QVector<Photo> > Operator::collectInputs()
 {
     QMap<QString, int> seen;

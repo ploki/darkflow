@@ -26,6 +26,9 @@
 #include "operatorparameterslider.h"
 #include "processslider.h"
 
+#include "operatorparameterselectivelab.h"
+#include "processselectivelab.h"
+
 #include "visualization.h"
 #include "console.h"
 
@@ -103,6 +106,9 @@ void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal s
         }
         else if ( OperatorParameterSlider *slider = dynamic_cast<OperatorParameterSlider*>(parameters[i])) {
             new ProcessSlider(QRectF(x,y+size*i+offset, w, size),slider, m_process, this);
+        }
+        else if ( OperatorParameterSelectiveLab *sl = dynamic_cast<OperatorParameterSelectiveLab*>(parameters[i])) {
+            new ProcessSelectiveLab(QRectF(x,y+size*i+offset, w, size), sl, m_process, this);
         }
         else {
             dflWarning("ProcessNode: Unknown parameter type");

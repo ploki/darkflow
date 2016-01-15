@@ -22,6 +22,7 @@
 #include "processdropdown.h"
 #include "processfilescollection.h"
 #include "processslider.h"
+#include "processselectivelab.h"
 
 #include "console.h"
 
@@ -80,6 +81,7 @@
 #include "ophotpixels.h"
 #include "opcolor.h"
 #include "ophdr.h"
+#include "opselectivelabfilter.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -137,6 +139,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
+    m_availableOperators.push_back(new OpSelectiveLabFilter(this));
     m_availableOperators.push_back(new OpMicroContrasts(this));
     m_availableOperators.push_back(new OpUnsharpMask(this));
     m_availableOperators.push_back(new OpEnhance(this));
@@ -437,6 +440,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     QGraphicsItem *dropdownItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeDropDown);
     QGraphicsItem *filesCollectionItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeFilesCollection);
     QGraphicsItem *sliderItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSlider);
+    QGraphicsItem *selectiveLab = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSelectiveLab);
     switch (type)
     {
     case QEvent::GraphicsSceneMousePress:
@@ -471,6 +475,11 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         }
         if (sliderItem) {
             dynamic_cast<ProcessSlider*>(sliderItem)->clicked(me->screenPos());
+            event->accept();
+            return true;
+        }
+        if (selectiveLab) {
+            dynamic_cast<ProcessSelectiveLab*>(selectiveLab)->clicked(me->screenPos());
             event->accept();
             return true;
         }

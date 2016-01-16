@@ -62,8 +62,8 @@ void bayerToPixel(const Magick::PixelPacket& src,
 static Photo debayerMask(const Photo &photo, u_int32_t filters)
 {
     Photo newPhoto(photo);
-    Magick::Image& srcImage = newPhoto.image();
-    Magick::Image& dst(srcImage);
+    Magick::Image srcImage(newPhoto.image());
+    Magick::Image& dst = newPhoto.image();
     ResetImage(dst);
 
     int w = srcImage.columns();
@@ -88,7 +88,7 @@ static Photo debayerMask(const Photo &photo, u_int32_t filters)
                 pixel[x].red = src[x].red; pixel[x].green = 0 ; pixel[x].blue = 0; break;
             case 1:
             case 3:
-                pixel[x].red = 0 ; pixel[x].green = src[x].green ; pixel[y*w+x].blue = 0; break;
+                pixel[x].red = 0 ; pixel[x].green = src[x].green ; pixel[x].blue = 0; break;
             case 2:
                 pixel[x].red = 0; pixel[x].green = 0; pixel[x].blue = src[x].blue; break;
             }

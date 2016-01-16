@@ -54,7 +54,6 @@ void SelectiveLabFilter::applyOnImage(Magick::Image &image, bool hdr)
     double bias_sat = m_strict?0:1;
     double bias_val = m_exposureStrict?0:1;
     bool inv_val = !m_insideSelection;
-    qDebug("bias_sat=%f", bias_sat);
 
 #pragma omp parallel for
     for ( int y = 0 ; y < h ; ++y ) {

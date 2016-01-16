@@ -71,7 +71,6 @@ void SelectiveLab::setCoverage(int v)
 
 bool SelectiveLab::strict() const
 {
-    qDebug("checbkox check!: %d",ui->checkBoxStrict->isChecked());
     return ui->checkBoxStrict->isChecked();
 }
 

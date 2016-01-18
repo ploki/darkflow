@@ -48,6 +48,7 @@ static int dfl_max_threads() {
 #endif
 }
 #define N_WORKERS 4
+#define LAB_SEL_SIZE 256
 
 Preferences *preferences = NULL;
 
@@ -66,7 +67,7 @@ Preferences::Preferences(QWidget *parent) :
   m_OpenMPThreads(dfl_max_threads()),
   m_currentTarget(sRGB),
   m_incompatibleAction(Error),
-  m_labSelectionSize(256)
+  m_labSelectionSize(LAB_SEL_SIZE)
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
@@ -271,6 +272,8 @@ bool Preferences::load(bool create)
     m_incompatibleAction = IncompatibleAction(pixels["incompatibleAction"].toInt());
     ui->comboIncompatibleScale->setCurrentIndex(m_incompatibleAction);
     m_labSelectionSize = pixels["labSelectionSize"].toInt();
+    if ( 0 == m_labSelectionSize )
+        m_labSelectionSize = LAB_SEL_SIZE;
     ui->spinLabSelectionSize->setValue(m_labSelectionSize);
 
     ui->valueTmpDir->setText(path["tmp"].toString());

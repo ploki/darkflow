@@ -66,7 +66,7 @@ void WorkerLoadRaw::play()
             }
         }
         catch (std::exception &e) {
-            dflError(e.what());
+            dflError("%s", e.what());
             failure = true;
         }
         catch (...) {

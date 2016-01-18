@@ -105,7 +105,9 @@ void PosixSpawn::start(const QString &program,
 {
     int rc;
     char *file = strdup(program.toLocal8Bit().data());
-    char * argv[arguments.count()+2] = {};
+    size_t sz = arguments.count()+2;
+    char * argv[sz];
+    memset(argv, 0, sizeof(*argv)*sz);
     posix_spawn_file_actions_t file_actions;
     posix_spawnattr_t attr;
     posix_spawn_file_actions_init(&file_actions);

@@ -261,7 +261,7 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             --m_count;
         }
         catch (std::exception &e) {
-            dflError(e.what());
+            dflError("%s", e.what());
             m_error = true;
             return false;
         }

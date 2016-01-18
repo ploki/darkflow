@@ -52,7 +52,7 @@ private slots:
                 emitSuccess();
             }
             catch(std::exception &e) {
-                dflError(e.what());
+                dflError("%s", e.what());
                 emitFailure();
             }
         }

@@ -93,7 +93,7 @@ bool Photo::load(const QString &filename)
         m_status = Photo::Complete;
     }
     catch (std::exception& e) {
-        dflError(e.what());
+        dflError("%s", e.what());
         setUndefined();
         return false;
     }
@@ -116,7 +116,7 @@ bool Photo::save(const QString &filename, const QString &magick)
         }
     }
     catch (std::exception& e) {
-        dflError(e.what());
+        dflError("%s", e.what());
         setUndefined();
         return false;
     }
@@ -131,7 +131,7 @@ void Photo::createImage(long width, long height)
         m_status = Complete;
     }
     catch (std::exception &e) {
-        dflError(e.what());
+        dflError("%s", e.what());
         setUndefined();
     }
 }

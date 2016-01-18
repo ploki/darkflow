@@ -326,7 +326,7 @@
          </item>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -363,6 +363,26 @@
            <string>Error</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelLabSelectionSize">
+         <property name="text">
+          <string>Lab selection size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="spinLabSelectionSize">
+         <property name="suffix">
+          <string> pixels</string>
+         </property>
+         <property name="minimum">
+          <number>256</number>
+         </property>
+         <property name="maximum">
+          <number>2000</number>
+         </property>
         </widget>
        </item>
       </layout>

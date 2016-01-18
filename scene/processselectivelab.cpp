@@ -25,6 +25,7 @@ ProcessSelectiveLab::ProcessSelectiveLab(QRectF rect,
                                           m_selectiveLab->coverage(),
                                           m_selectiveLab->strict(),
                                           m_selectiveLab->level(),
+                                          m_selectiveLab->clipToGamut(),
                                           m_selectiveLab->displayGuide(),
                                           m_selectiveLab->previewEffect(),
                                           m_node->m_operator, NULL))
@@ -113,6 +114,7 @@ void ProcessSelectiveLab::updateValue()
     m_selectiveLab->setCoverage(m_selectiveLabDialog->coverage());
     m_selectiveLab->setStrict(m_selectiveLabDialog->strict());
     m_selectiveLab->setLevel(m_selectiveLabDialog->level());
+    m_selectiveLab->setClipToGamut(m_selectiveLabDialog->clipToGamut());;
     m_selectiveLab->setDisplayGuide(m_selectiveLabDialog->displayGuide());
     m_selectiveLab->setPreviewEffect(m_selectiveLabDialog->previewEffect());
 
@@ -127,6 +129,7 @@ void ProcessSelectiveLab::updateLoad()
                                      m_selectiveLab->coverage(),
                                      m_selectiveLab->strict(),
                                      m_selectiveLab->level(),
+                                     m_selectiveLab->clipToGamut(),
                                      m_selectiveLab->displayGuide(),
                                      m_selectiveLab->previewEffect());
 }

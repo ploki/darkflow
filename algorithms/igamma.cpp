@@ -61,7 +61,7 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
 
 iGamma& iGamma::sRGB()
 {
-    static iGamma g(2.4L, 0.00304L,false);
+    static iGamma g(SRGB_G, SRGB_N,false);
     return g;
 }
 
@@ -79,7 +79,7 @@ iGamma& iGamma::Lab()
 
 iGamma& iGamma::reverse_sRGB()
 {
-    static iGamma g(2.4L, 0.00304L,true);
+    static iGamma g(SRGB_G, SRGB_N,true);
     return g;
 }
 

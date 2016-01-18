@@ -65,7 +65,8 @@ Preferences::Preferences(QWidget *parent) :
   m_scheduledMaxWorkers(N_WORKERS),
   m_OpenMPThreads(dfl_max_threads()),
   m_currentTarget(sRGB),
-  m_incompatibleAction(Error)
+  m_incompatibleAction(Error),
+  m_labSelectionSize(256)
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
@@ -96,6 +97,7 @@ Preferences::Preferences(QWidget *parent) :
         MagickCore::SetImageRegistry(MagickCore::StringRegistryType, "temporary-path", (const void*)ui->valueTmpDir->text().toLocal8Bit(), exception);
 
         ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
+        ui->spinLabSelectionSize->setValue(m_labSelectionSize);
     }
     load();
 }
@@ -268,6 +270,8 @@ bool Preferences::load(bool create)
     ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
     m_incompatibleAction = IncompatibleAction(pixels["incompatibleAction"].toInt());
     ui->comboIncompatibleScale->setCurrentIndex(m_incompatibleAction);
+    m_labSelectionSize = pixels["labSelectionSize"].toInt();
+    ui->spinLabSelectionSize->setValue(m_labSelectionSize);
 
     ui->valueTmpDir->setText(path["tmp"].toString());
     ui->valueBaseDir->setText(path["base"].toString());
@@ -319,6 +323,8 @@ void Preferences::save()
     pixels["transformTarget"] = m_currentTarget;
     m_incompatibleAction = IncompatibleAction(ui->comboIncompatibleScale->currentIndex());
     pixels["incompatibleAction"] = m_incompatibleAction;
+    m_labSelectionSize = ui->spinLabSelectionSize->value();
+    pixels["labSelectionSize"] = m_labSelectionSize;
 
     path["tmp"] = ui->valueTmpDir->text();
     path["base"] = ui->valueBaseDir->text();
@@ -423,4 +429,9 @@ Preferences::IncompatibleAction Preferences::getIncompatibleAction() const
 int Preferences::getNumThreads() const
 {
     return m_OpenMPThreads;
+}
+
+int Preferences::getLabSelectionSize() const
+{
+    return m_labSelectionSize;
 }

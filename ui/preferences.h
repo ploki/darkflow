@@ -40,6 +40,7 @@ public:
     TransformTarget getCurrentTarget() const;
     IncompatibleAction getIncompatibleAction() const;
     int getNumThreads() const;
+    int getLabSelectionSize() const;
 
 private:
     void getDefaultMagickResources();
@@ -69,6 +70,7 @@ private:
     u_int64_t m_OpenMPThreads;
     TransformTarget m_currentTarget;
     IncompatibleAction m_incompatibleAction;
+    int m_labSelectionSize;
 };
 
 extern Preferences *preferences;

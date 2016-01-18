@@ -9,6 +9,7 @@ OperatorParameterSelectiveLab::OperatorParameterSelectiveLab(const QString &name
                                                              int coverage,
                                                              bool strict,
                                                              int level,
+                                                             bool clipToGamut,
                                                              bool displayGuide,
                                                              bool previewEffect,
                                                              Operator *op) :
@@ -18,6 +19,7 @@ OperatorParameterSelectiveLab::OperatorParameterSelectiveLab(const QString &name
     m_coverage(coverage),
     m_strict(strict),
     m_level(level),
+    m_clipToGamut(clipToGamut),
     m_displayGuide(displayGuide),
     m_previewEffect(previewEffect)
 {
@@ -33,6 +35,7 @@ QJsonObject OperatorParameterSelectiveLab::save()
     obj["coverage"] = m_coverage;
     obj["strict"] = m_strict;
     obj["level"] = m_level;
+    obj["clipToGamut"] = m_clipToGamut;
     obj["displayGuide"] = m_displayGuide;
     obj["previewEffect"] = m_previewEffect;
     return obj;
@@ -52,6 +55,7 @@ void OperatorParameterSelectiveLab::load(const QJsonObject &obj)
     m_coverage = obj["coverage"].toInt();
     m_strict = obj["strict"].toBool();
     m_level = obj["level"].toInt();
+    m_clipToGamut = obj["clipToGamut"].toBool();
     m_displayGuide = obj["displayGuide"].toBool();
     m_previewEffect = obj["previewEffect"].toBool();
 
@@ -114,6 +118,16 @@ int OperatorParameterSelectiveLab::level() const
 void OperatorParameterSelectiveLab::setLevel(int level)
 {
     m_level = level;
+}
+
+bool OperatorParameterSelectiveLab::clipToGamut() const
+{
+    return m_clipToGamut;
+}
+
+void OperatorParameterSelectiveLab::setClipToGamut(bool clipToGamut)
+{
+    m_clipToGamut = clipToGamut;
 }
 
 bool OperatorParameterSelectiveLab::displayGuide() const

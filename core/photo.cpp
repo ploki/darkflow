@@ -294,9 +294,6 @@ QPixmap Photo::imageToPixmap(double gamma, double x0, double exposureBoost)
 }
 
 
-#define SRGB_G 2.4L
-#define SRGB_N 0.00304L
-
 static double calcGamma(double v) {
         double a=-(SRGB_G-1.L)*pow(SRGB_N,(1.L/SRGB_G))/((SRGB_G-1.L)*pow(SRGB_N,(1.L/SRGB_G))-SRGB_G);
         double p = (a+1.L)*pow(SRGB_N,1.L/SRGB_G)/(SRGB_G*SRGB_N);

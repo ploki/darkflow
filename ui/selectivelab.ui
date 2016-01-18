@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>297</width>
-    <height>490</height>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,32 +50,20 @@
       <string>Selection</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="2">
-       <widget class="QSpinBox" name="spinBoxHue">
-        <property name="suffix">
-         <string>°</string>
+      <item row="6" column="0" colspan="3">
+       <widget class="QCheckBox" name="checkBoxGuide">
+        <property name="text">
+         <string>Display guide</string>
         </property>
-        <property name="minimum">
-         <number>-181</number>
-        </property>
-        <property name="maximum">
-         <number>181</number>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QSpinBox" name="spinBoxCoverage">
-        <property name="suffix">
-         <string>°</string>
-        </property>
-        <property name="minimum">
-         <number>-360</number>
-        </property>
-        <property name="maximum">
-         <number>360</number>
-        </property>
-        <property name="value">
-         <number>0</number>
+      <item row="3" column="0" colspan="3">
+       <widget class="QCheckBox" name="checkBoxStrict">
+        <property name="text">
+         <string>Strict selection</string>
         </property>
        </widget>
       </item>
@@ -98,6 +86,66 @@
         </property>
        </widget>
       </item>
+      <item row="8" column="0" colspan="3">
+       <widget class="QCheckBox" name="checkBoxPreview">
+        <property name="text">
+         <string>Preview effect</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelCoverage">
+        <property name="text">
+         <string>Coverage:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="3">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QSpinBox" name="spinBoxCoverage">
+        <property name="suffix">
+         <string>°</string>
+        </property>
+        <property name="minimum">
+         <number>-360</number>
+        </property>
+        <property name="maximum">
+         <number>360</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelHue">
+        <property name="text">
+         <string>Hue:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="spinBoxHue">
+        <property name="suffix">
+         <string>°</string>
+        </property>
+        <property name="minimum">
+         <number>-181</number>
+        </property>
+        <property name="maximum">
+         <number>181</number>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
        <widget class="QSlider" name="sliderHue">
         <property name="minimum">
@@ -114,51 +162,13 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelCoverage">
-        <property name="text">
-         <string>Coverage:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="labelHue">
-        <property name="text">
-         <string>Hue:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" colspan="3">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" colspan="3">
-       <widget class="QCheckBox" name="checkBoxPreview">
-        <property name="text">
-         <string>Preview effect</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
       <item row="5" column="0" colspan="3">
-       <widget class="QCheckBox" name="checkBoxGuide">
+       <widget class="QCheckBox" name="checkBoxClipToGamut">
         <property name="text">
-         <string>Display guide</string>
+         <string>Clip to gamut</string>
         </property>
         <property name="checked">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="3">
-       <widget class="QCheckBox" name="checkBoxStrict">
-        <property name="text">
-         <string>Strict selection</string>
         </property>
        </widget>
       </item>
@@ -368,6 +378,22 @@
     <hint type="destinationlabel">
      <x>148</x>
      <y>244</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxClipToGamut</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SelectiveLab</receiver>
+   <slot>updateView()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>148</x>
+     <y>257</y>
     </hint>
    </hints>
   </connection>

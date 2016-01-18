@@ -3,6 +3,10 @@
 
 #include "lutbased.h"
 
+#define SRGB_G 2.4L
+#define SRGB_N 0.00304L
+
+
 class iGamma : public LutBased
 {
     Q_OBJECT

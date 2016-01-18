@@ -1,8 +1,12 @@
+#include <QThreadPool>
+#include <QMutexLocker>
+
 #include "selectivelab.h"
 #include "ui_selectivelab.h"
-
+#include "preferences.h"
 #include "console.h"
 #include "photo.h"
+#include "igamma.h"
 #include <Magick++.h>
 #include "cielab.h"
 #include "darkflow.h"
@@ -11,26 +15,43 @@
 
 using Magick::Quantum;
 
-#define WIDTH 384
-
 SelectiveLab::SelectiveLab(const QString& windowCaption,
                            int hue,
                            int coverage,
                            bool strict,
                            int level,
+                           bool clipToGamut,
                            bool displayGuide,
                            bool preview,
                            const Operator *op,
                            QWidget *parent) :
     QDialog(parent),
+    QRunnable(),
     ui(new Ui::SelectiveLab),
-    m_operator(op)
+    m_operator(op),
+    m_labSelectionSize(preferences->getLabSelectionSize()),
+    m_updated(true),
+    m_hue(hue),
+    m_coverage(coverage),
+    m_level(level),
+    m_strict(strict),
+    m_clipToGamut(clipToGamut),
+    m_guide(displayGuide),
+    m_preview(preview),
+    m_running(false),
+    m_pixmap(),
+    m_mutex(QMutex::Recursive)
+
 {
+    if ( m_labSelectionSize == 0 ) {
+        dflError("Wrong lab selection size of 0");
+        m_labSelectionSize = 32;
+    }
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
     setWindowFlags(Qt::Tool|Qt::WindowStaysOnTopHint);
-    ui->view->setMinimumSize(WIDTH, WIDTH);
-    ui->view->resize(WIDTH,WIDTH);
+    ui->view->setMinimumSize(m_labSelectionSize, m_labSelectionSize);
+    ui->view->resize(m_labSelectionSize, m_labSelectionSize);
 
     setWindowTitle(windowCaption);
     setHue(hue);
@@ -42,10 +63,15 @@ SelectiveLab::SelectiveLab(const QString& windowCaption,
     adjustSize();
     updateView();
     connect(m_operator, SIGNAL(outOfDate()), this, SLOT(updateViewNoEmission()));
+    connect(this, SIGNAL(finishedPixmap()), this, SLOT(updatePixmap()), Qt::QueuedConnection);
+    getDialogValues();
+    setAutoDelete(false);
 }
 
 SelectiveLab::~SelectiveLab()
 {
+    m_running = true;
+    QThreadPool::globalInstance()->waitForDone();
     delete ui;
 }
 
@@ -89,6 +115,16 @@ void SelectiveLab::setLevel(int v)
     ui->sliderView->setValue(v);
 }
 
+bool SelectiveLab::clipToGamut() const
+{
+    return ui->checkBoxClipToGamut->isChecked();
+}
+
+void SelectiveLab::setClipToGamut(bool clipToGamut)
+{
+    ui->checkBoxClipToGamut->setChecked(clipToGamut);
+}
+
 bool SelectiveLab::displayGuide() const
 {
     return ui->checkBoxGuide->isChecked();
@@ -109,46 +145,105 @@ void SelectiveLab::setPreviewEffect(bool v)
     ui->checkBoxPreview->setChecked(v);
 }
 
-void SelectiveLab::loadValues(int hue, int coverage, bool strict, int level, bool displayGuide, bool preview)
+void SelectiveLab::loadValues(int hue, int coverage, bool strict, int level, bool clipToGamut, bool displayGuide, bool preview)
 {
     setHue(hue);
     setCoverage(coverage);
     setStrict(strict);
     setLevel(level);
+    setClipToGamut(clipToGamut);
     setDisplayGuide(displayGuide);
     setPreviewEffect(preview);
     updateView();
 }
 
-void SelectiveLab::updateViewNoEmission()
+void SelectiveLab::getDialogValues()
 {
-    int hue = ui->sliderHue->value();
-    int coverage = ui->sliderCoverage->value();
-    int level = ui->sliderView->value();
-    bool strict = ui->checkBoxStrict->isChecked();
-    bool guide = ui->checkBoxGuide->isChecked();
-    bool preview = ui->checkBoxPreview->isChecked();
-
-    if ( hue == -181 ) {
-        hue = 179;
-        ui->sliderHue->setValue(hue);
-        return;
+    do {
+        QMutexLocker lock(&m_mutex);
+        m_updated = true;
+        m_hue = ui->sliderHue->value();
+        m_coverage = ui->sliderCoverage->value();
+        m_level = ui->sliderView->value();
+        m_strict = ui->checkBoxStrict->isChecked();
+        m_clipToGamut = ui->checkBoxClipToGamut->isChecked();
+        m_guide = ui->checkBoxGuide->isChecked();
+        m_preview = ui->checkBoxPreview->isChecked();
+        if ( m_hue == -181 ) {
+            m_hue = 179;
+            ui->sliderHue->setValue(m_hue);
+            break;
+        }
+        if ( m_hue == 181 ) {
+            m_hue = -179;
+            ui->sliderHue->setValue(m_hue);
+            break;
+        }
     }
-    if ( hue == 181 ) {
-        hue = -179;
-        ui->sliderHue->setValue(hue);
-        return;
-    }
+    while (0);
+}
 
-    Photo photo = createPhoto(level);
+void SelectiveLab::run()
+{
+    int hue, coverage, strict;
+    int level;
+    bool preview, guide, clipToGamut;
+    do {
+        QMutexLocker lock(&m_mutex);
+        hue = m_hue;
+        coverage = m_coverage;
+        strict = m_strict;
+        level = m_level;
+        preview = m_preview;
+        guide = m_guide;
+        clipToGamut = m_clipToGamut;
+    }
+    while (0);
+
+    Photo photo = createPhoto(level, clipToGamut);
 
     if (preview)
         applyPreview(photo);
 
     if (guide)
         drawGuide(photo, hue, coverage, strict);
+    QPixmap pixmap =  photo.imageToPixmap(SRGB_G, SRGB_N, 1.);
+    do {
+        QMutexLocker lock(&m_mutex);
+        m_pixmap = pixmap;
+    }
+    while (0);
 
-    ui->view->setPixmap(photo.imageToPixmap(2.4,0.03,1.));
+    emit finishedPixmap();
+}
+
+void SelectiveLab::updateViewNoEmission()
+{
+    getDialogValues();
+    do {
+        QMutexLocker lock(&m_mutex);
+        if ( m_running )
+            return;
+        m_running = true;
+        m_updated = false;
+    }
+    while (0);
+    Q_ASSERT( m_running );
+    QThreadPool::globalInstance()->start(this);
+}
+
+void SelectiveLab::updatePixmap()
+{
+    Q_ASSERT( this->thread() == QThread::currentThread() );
+    do {
+        m_running = false;
+        QMutexLocker lock(&m_mutex);
+        ui->view->setPixmap(m_pixmap);
+    }
+    while (0);
+    if ( m_updated ) {
+        updateViewNoEmission();
+    }
 }
 
 void SelectiveLab::updateView()
@@ -157,10 +252,10 @@ void SelectiveLab::updateView()
     emit updated();
 }
 
-Photo SelectiveLab::createPhoto(int level)
+Photo SelectiveLab::createPhoto(int level, bool clipToGamut)
 {
     Photo photo;
-    photo.createImage(WIDTH, WIDTH);
+    photo.createImage(m_labSelectionSize, m_labSelectionSize);
     Magick::Image& image = photo.image();
     int w = image.columns();
     int h = image.rows();
@@ -176,11 +271,11 @@ Photo SelectiveLab::createPhoto(int level)
             double lab[3];
 
             lab[0] = lab_gammaize(v);
-            lab[1] = double(x-WIDTH/2)/(double(WIDTH)/200.);
-            lab[2] = -double(y-WIDTH/2)/(double(WIDTH)/200.);
+            lab[1] = double(x-m_labSelectionSize/2)/(double(m_labSelectionSize)/200.);
+            lab[2] = -double(y-m_labSelectionSize/2)/(double(m_labSelectionSize)/200.);
             CIELab_to_RGB(lab,rgb);
-            if ( rgb[0] == QuantumRange || rgb[1] == QuantumRange || rgb[2] == QuantumRange
-                 || rgb[0] == 0 || rgb[1] == 0 || rgb[2] == 0 ) {
+            if ( clipToGamut && ( rgb[0] == QuantumRange || rgb[1] == QuantumRange || rgb[2] == QuantumRange
+                 || rgb[0] == 0 || rgb[1] == 0 || rgb[2] == 0 ) ) {
                 pixels[x].red=pixels[x].green=pixels[x].blue=0;
             }
             else {
@@ -240,7 +335,7 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
     for (int i = 0 ; i < s ; ++i )
         dst[i] = src[i];
 
-    s = WIDTH*WIDTH/4;
+    s = m_labSelectionSize*m_labSelectionSize/4;
 #pragma omp parallel for dfl_threads(1024)
     for ( int i = 0 ; i < s ; i+=4 ) {
         double t = 2*M_PI*i/s;
@@ -250,8 +345,8 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
         quantum_t l;
         Magick::PixelPacket *p;
 
-        x = clamp<int>(WIDTH/2 - cos(t)*(WIDTH/4-1),0,WIDTH);
-        y = clamp<int>(WIDTH/2 - sin(t)*(WIDTH/4-1),0,WIDTH);
+        x = clamp<int>(m_labSelectionSize/2 - cos(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
+        y = clamp<int>(m_labSelectionSize/2 - sin(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
         l = round(.2126L * src[y*w+x].red +
                 .7152L * src[y*w+x].green +
                 .0722L * src[y*w+x].blue);
@@ -281,8 +376,8 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
                 mul *= 2;
         }
 
-        x = clamp<int>(WIDTH/2 - mul*cos(t)*(WIDTH/4-1),0,WIDTH);
-        y = clamp<int>(WIDTH/2 - mul*sin(t)*(WIDTH/4-1),0,WIDTH);
+        x = clamp<int>(m_labSelectionSize/2 - mul*cos(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
+        y = clamp<int>(m_labSelectionSize/2 - mul*sin(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
         l = round(.2126L * src[y*w+x].red +
                 .7152L * src[y*w+x].green +
                 .0722L * src[y*w+x].blue);
@@ -290,12 +385,12 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
         if ( l < 16384 ) c = QuantumRange; else c = 0;
         p->red = p->green = p->blue = c;
     }
-    const int center = w*WIDTH/2+WIDTH/2;
+    const int center = w*m_labSelectionSize/2+m_labSelectionSize/2;
     dst[center].red = dst[center].green = dst[center].blue = QuantumRange;
     dst[center-1].red = dst[center-1].green = dst[center-1].blue = QuantumRange;
     dst[center+1].red = dst[center+1].green = dst[center+1].blue = QuantumRange;
-    dst[center-WIDTH].red = dst[center-WIDTH].green = dst[center-WIDTH].blue = QuantumRange;
-    dst[center+WIDTH].red = dst[center+WIDTH].green = dst[center+WIDTH].blue = QuantumRange;
+    dst[center-m_labSelectionSize].red = dst[center-m_labSelectionSize].green = dst[center-m_labSelectionSize].blue = QuantumRange;
+    dst[center+m_labSelectionSize].red = dst[center+m_labSelectionSize].green = dst[center+m_labSelectionSize].blue = QuantumRange;
 
     dst_cache.sync();
 

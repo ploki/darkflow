@@ -15,6 +15,7 @@ public:
     }
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
+        newPhoto.image().page(Magick::Geometry(0,0,0,0));
         newPhoto.image().roll(m_columns, m_rows);
         return newPhoto;
     }

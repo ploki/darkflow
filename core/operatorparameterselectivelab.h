@@ -16,6 +16,7 @@ public:
             int coverage,
             bool strict,
             int level,
+            bool clipToGamut,
             bool displayGuide,
             bool previewEffect,
             Operator *op);
@@ -40,6 +41,9 @@ public:
     int level() const;
     void setLevel(int level);
 
+    bool clipToGamut() const;
+    void setClipToGamut(bool clipToGamut);
+
     bool displayGuide() const;
     void setDisplayGuide(bool displayGuide);
 
@@ -54,6 +58,7 @@ private:
     int m_coverage;
     bool m_strict;
     int m_level;
+    bool m_clipToGamut;
     bool m_displayGuide;
     bool m_previewEffect;
 

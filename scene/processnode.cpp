@@ -180,6 +180,10 @@ ProcessNode::~ProcessNode()
     //disconnect(m_process, SIGNAL(stateChanged()), this, SLOT(operatorStateChanged()));
     foreach(ProcessConnection *connection, m_connections)
         connection->detach();
+
+    /* operator parameters may be bound to the operator, so they need to be destroyed first */
+    foreach(QGraphicsItem *child, this->childItems())
+        delete child;
     delete m_operator;
     delete m_visualization;
 }

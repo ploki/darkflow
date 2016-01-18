@@ -603,7 +603,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
         for ( int i = 0 ; marks[i] != 0 ; ++i ) {
             x = marks[i];
             for (int y = 0 ; y < range ; ++ y ) {
-                quantum_t color;
+                quantum_t color = 0;
                 switch (c) {
                 case C_nonlinear:
                     color = x*128;

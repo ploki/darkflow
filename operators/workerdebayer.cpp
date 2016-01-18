@@ -228,7 +228,7 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
 {
     u_int32_t filters = getFilterPattern(photo);
     dc1394color_filter_t dc_filters = get_color_filter(photo);
-    dc1394bayer_method_t method;
+    dc1394bayer_method_t method = DC1394_BAYER_METHOD_SIMPLE;
     bool use_dc = true;
 
     if ( dc_filters == DARKFLOW_COLOR_FILTER_UNKNOWN) {

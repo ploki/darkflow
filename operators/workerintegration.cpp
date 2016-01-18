@@ -232,7 +232,7 @@ bool WorkerIntegration::play_onInput(int idx)
         outputPush(0, newPhoto);
     }
     catch (std::exception &e) {
-        dflError(e.what());
+        dflError("%s", e.what());
         emitFailure();
         return false;
     }

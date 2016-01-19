@@ -350,9 +350,7 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
 
         x = clamp<int>(m_labSelectionSize/2 - cos(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
         y = clamp<int>(m_labSelectionSize/2 - sin(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
-        l = DF_ROUND(.2126L * src[y*w+x].red +
-                     .7152L * src[y*w+x].green +
-                     .0722L * src[y*w+x].blue);
+        l = DF_ROUND(LUMINANCE_PIXEL(src[y*w+x]));
         p = dst+y*w+x;
         p->red = p->green = p->blue = 8192;
 
@@ -382,9 +380,7 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
 
         x = clamp<int>(m_labSelectionSize/2 - mul*cos(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
         y = clamp<int>(m_labSelectionSize/2 - mul*sin(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
-        l = round(.2126L * src[y*w+x].red +
-                .7152L * src[y*w+x].green +
-                .0722L * src[y*w+x].blue);
+        l = DF_ROUND(LUMINANCE_PIXEL(src[y*w+x]));
         p = dst+y*w+x;
         if ( l < 16384 ) c = QuantumRange; else c = 0;
         p->red = p->green = p->blue = c;

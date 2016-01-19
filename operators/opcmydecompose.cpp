@@ -3,6 +3,7 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "console.h"
+#include "cielab.h"
 
 class WorkerCMYDecompose : public OperatorWorker {
 public:
@@ -57,9 +58,7 @@ public:
                         pxl_Luminance[x].red =
                                 pxl_Luminance[x].green =
                                 pxl_Luminance[x].blue =
-                                        DF_ROUND(.2126L * src[x].red +
-                                                 .7152L * src[x].green +
-                                                 .0722L * src[x].blue);
+                                        DF_ROUND(LUMINANCE_PIXEL(src[x]));
                         pxl_Cyan[x].green = pxl_Cyan[x].blue = pxl_Cyan[x].red =
                                 (quantum_t(src[x].green) + quantum_t(src[x].blue))/2;
                         pxl_Magenta[x].green = pxl_Magenta[x].blue = pxl_Magenta[x].red =

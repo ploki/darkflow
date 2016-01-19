@@ -4,6 +4,7 @@
 #include "operatoroutput.h"
 #include "algorithm.h"
 #include "console.h"
+#include "cielab.h"
 
 static Photo
 blackDot()
@@ -101,12 +102,12 @@ public:
                         quantum_t blue = pxl_Blue?pxl_Blue[x].blue:0;
 
                         if ( l_count ) {
-                            double lum = .2126L*(pxl_Luminance?pxl_Luminance[x].red:0) +
-                                    .7152L*(pxl_Luminance?pxl_Luminance[x].green:0) +
-                                    .0722L*(pxl_Luminance?pxl_Luminance[x].blue:0);
-                            double cur = .2126L*red +
-                                    .7152L*green +
-                                    .0722L*blue;
+                            double lum = LUMINANCE(pxl_Luminance?pxl_Luminance[x].red:0,
+                                                   pxl_Luminance?pxl_Luminance[x].green:0,
+                                                   pxl_Luminance?pxl_Luminance[x].blue:0);
+                            double cur = LUMINANCE(red,
+                                                   green,
+                                                   blue);
                             double mul = lum/cur;
                             red = clamp<quantum_t>(DF_ROUND(mul*red));
                             green =  clamp<quantum_t>(DF_ROUND(mul*green));

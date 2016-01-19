@@ -123,14 +123,11 @@ void SelectiveLabFilter::applyOnImage(Magick::Image &image, bool hdr)
                 v = v * mul_val * value;
             else {
                 /*
-                 * correction handles low saturation zone and enlarge selection
+                 * correction handles low saturation zone by enlarging selection
                  * to prevent discontinuity
                  */
                 double correction = clamp<double>(pow(module/DF_MAX_AB_MODULE,.15), 0, 1);
-                if ( value < 1 )
-                    v = v * mul_val * pow(value,correction) + v * (1-mul_val);
-                else
-                    v = v * mul_val * value + v * (1-mul_val) * pow(value,1-correction);
+                v = v * mul_val * value + v * (1-mul_val) * pow(value,1-correction);
             }
 
             lab[0] = lab_gammaize(v);

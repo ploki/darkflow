@@ -41,6 +41,13 @@ extern const double illuminant[3];
 #define DF_MAX_AB_MODULE (133.807616L)
 #define DF_MAX_AB (110)
 
+#define LUMINANCE_RED   (xyz_rgb[1][0]/illuminant[1])
+#define LUMINANCE_GREEN (xyz_rgb[1][1]/illuminant[1])
+#define LUMINANCE_BLUE  (xyz_rgb[1][2]/illuminant[1])
+
+#define LUMINANCE(r,g,b) (((r)*xyz_rgb[1][0]+(g)*xyz_rgb[1][1]+(b)*xyz_rgb[1][2])/illuminant[1])
+#define LUMINANCE_PIXEL(p) LUMINANCE((p).red,(p).green,(p).blue)
+
 #define RGB_to_CIELab(rgb,lab) \
 do { \
 	const double epsilon = 216./24389., \

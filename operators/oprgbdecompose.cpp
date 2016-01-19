@@ -3,6 +3,7 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "console.h"
+#include "cielab.h"
 
 class WorkerRGBDecompose : public OperatorWorker {
 public:
@@ -59,10 +60,7 @@ public:
                         pxl_Blue[x].red = pxl_Blue[x].green = pxl_Blue[x].blue = src[x].blue;
                         pxl_Luminance[x].red =
                         pxl_Luminance[x].green =
-                        pxl_Luminance[x].blue =
-                                DF_ROUND(.2126L * src[x].red +
-                                         .7152L * src[x].green +
-                                         .0722L * src[x].blue);
+                        pxl_Luminance[x].blue = DF_ROUND(LUMINANCE_PIXEL(src[x]));
                     }
                     iRed_cache.sync();
                     iGreen_cache.sync();

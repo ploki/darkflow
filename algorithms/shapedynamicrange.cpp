@@ -2,6 +2,7 @@
 #include "shapedynamicrange.h"
 #include "photo.h"
 #include <Magick++.h>
+#include "cielab.h"
 #include "hdr.h"
 #include "console.h"
 
@@ -108,9 +109,9 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image, bool hdr)
             rgb[2] = src[x].blue;
             if (hdr) {
              if ( m_labDomain )    {
-                 double cur = .2126L*fromHDR(rgb[0]) +
-                         .7152L*fromHDR(rgb[1]) +
-                         .0722L*fromHDR(rgb[1]);
+                 double cur = LUMINANCE(fromHDR(rgb[0]),
+                                        fromHDR(rgb[1]),
+                                        fromHDR(rgb[1]));
                  double lum = fromHDR(m_hdrLut[clamp(toHDR(cur))]);
                  double mul = log2(lum/cur)*4096;
                  rgb[0] = mul + rgb[0];
@@ -125,9 +126,9 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image, bool hdr)
             }
             else {
                 if ( m_labDomain ) {
-                    double cur = .2126L*rgb[0] +
-                            .7152L*rgb[1] +
-                            .0722L*rgb[2];
+                    double cur = LUMINANCE(rgb[0],
+                                           rgb[1],
+                                           rgb[2]);
                     double lum = m_lut[clamp<quantum_t>(DF_ROUND(cur))];
                     double mul = lum/cur;
                     rgb[0] = mul*rgb[0];

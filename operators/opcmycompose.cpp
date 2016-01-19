@@ -4,6 +4,7 @@
 #include "operatoroutput.h"
 #include "algorithm.h"
 #include "console.h"
+#include "cielab.h"
 
 static Photo
 blackDot()
@@ -110,12 +111,12 @@ public:
                         rgb[1] =    cyan - magenta + yellow;
                         rgb[2] =    cyan + magenta - yellow;
                         if ( l_count ) {
-                            double lum = .2126L*(pxl_Luminance?pxl_Luminance[x].red:0) +
-                                    .7152L*(pxl_Luminance?pxl_Luminance[x].green:0) +
-                                    .0722L*(pxl_Luminance?pxl_Luminance[x].blue:0);
-                            double cur = .2126L*rgb[0] +
-                                    .7152L*rgb[1] +
-                                    .0722L*rgb[2];
+                            double lum = LUMINANCE(pxl_Luminance?pxl_Luminance[x].red:0,
+                                                   pxl_Luminance?pxl_Luminance[x].green:0,
+                                                   pxl_Luminance?pxl_Luminance[x].blue:0);
+                            double cur = LUMINANCE(rgb[0],
+                                                   rgb[1],
+                                                   rgb[2]);
                             double mul = lum/cur;
                             rgb[0] = DF_ROUND(mul*rgb[0]);
                             rgb[1] = DF_ROUND(mul*rgb[1]);

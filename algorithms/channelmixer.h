@@ -2,14 +2,15 @@
 #define CHANNELMIXER_H
 
 #include "algorithm.h"
+#include "cielab.h"
 
 class ChannelMixer : public Algorithm
 {
     Q_OBJECT
 public:
-    explicit ChannelMixer(qreal r = .2126L,
-                 qreal g = .7152L,
-                 qreal b = .0722L,
+    explicit ChannelMixer(qreal r = LUMINANCE_RED,
+                 qreal g = LUMINANCE_GREEN,
+                 qreal b = LUMINANCE_BLUE,
                  QObject *parent = 0);
     void applyOnImage(Magick::Image& image, bool hdr);
 

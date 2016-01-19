@@ -20,9 +20,9 @@ public:
         Photo photo;
         photo.setIdentity(m_operator->uuid());
         photo.createImage(1,1);
-        quantum_t r = round((m_r-(1./(1<<16)))*(1<<16));
-        quantum_t g = round((m_g-(1./(1<<16)))*(1<<16));
-        quantum_t b = round((m_b-(1./(1<<16)))*(1<<16));
+        quantum_t r = DF_ROUND((m_r-(1./(1<<16)))*(1<<16));
+        quantum_t g = DF_ROUND((m_g-(1./(1<<16)))*(1<<16));
+        quantum_t b = DF_ROUND((m_b-(1./(1<<16)))*(1<<16));
         photo.setTag(TAG_NAME, "Color");
         photo.image().pixelColor(0, 0, Magick::Color(r,g,b));
         outputPush(0, photo);

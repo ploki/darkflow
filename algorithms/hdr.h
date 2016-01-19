@@ -2,6 +2,7 @@
 #define HDR_H
 
 #include "lutbased.h"
+#include "ports.h"
 
 extern double *fromHDRLut;
 
@@ -10,10 +11,10 @@ quantum_t toHDR(double v)
 {
 #if 1
   if ( v <= 0 ) return 0;
-  return clamp<quantum_t>(round(log2(1+v)*4096-1));
+  return clamp<quantum_t>(DF_ROUND(log2(1+v)*4096-1));
 #else
     if ( v < 1 ) return 0;
-    return clamp<quantum_t>(round(log2(v)*4096));
+    return clamp<quantum_t>(DF_ROUND(log2(v)*4096));
 #endif
 }
 

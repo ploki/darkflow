@@ -48,8 +48,8 @@ OpAdaptiveThreshold *OpAdaptiveThreshold::newInstance()
 
 OperatorWorker *OpAdaptiveThreshold::newWorker()
 {
-    return new WorkerAdaptiveThreshold(round(m_width->value()),
-                                       round(m_height->value()),
+    return new WorkerAdaptiveThreshold(DF_ROUND(m_width->value()),
+                                       DF_ROUND(m_height->value()),
                                        (m_offset->value()-1.),
                                        m_thread, this);
 }

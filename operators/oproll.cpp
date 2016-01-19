@@ -43,7 +43,7 @@ OpRoll *OpRoll::newInstance()
 
 OperatorWorker *OpRoll::newWorker()
 {
-    return new WorkerRoll(round(m_columns->value()),
-                          round(m_rows->value()),
+    return new WorkerRoll(DF_ROUND(m_columns->value()),
+                          DF_ROUND(m_rows->value()),
                           m_thread, this);
 }

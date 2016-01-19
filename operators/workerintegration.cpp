@@ -105,8 +105,8 @@ bool WorkerIntegration::play_onInput(int idx)
                 ff_y = lcy;
             }
         }
-        int cx = round(lcx - ff_x);
-        int cy = round(lcy - ff_y);
+        int cx = DF_ROUND(lcx - ff_x);
+        int cy = DF_ROUND(lcy - ff_y);
 
         try {
             Magick::Image& image = photo.image();

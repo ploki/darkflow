@@ -46,9 +46,9 @@ void ChannelMixer::applyOnImage(Magick::Image &image, bool hdr)
                 pixels[x].red=
                 pixels[x].green=
                 pixels[x].blue=clamp<quantum_t>(
-                            round(m_rgb[0]*src[x].red +
-                                  m_rgb[1]*src[x].green +
-                                  m_rgb[2]*src[x].blue));
+                            DF_ROUND(m_rgb[0]*src[x].red +
+                                     m_rgb[1]*src[x].green +
+                                     m_rgb[2]*src[x].blue));
             }
         }
         pixel_cache.sync();

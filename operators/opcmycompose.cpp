@@ -117,9 +117,9 @@ public:
                                     .7152L*rgb[1] +
                                     .0722L*rgb[2];
                             double mul = lum/cur;
-                            rgb[0] = round(mul*rgb[0]);
-                            rgb[1] = round(mul*rgb[1]);
-                            rgb[2] = round(mul*rgb[2]);
+                            rgb[0] = DF_ROUND(mul*rgb[0]);
+                            rgb[1] = DF_ROUND(mul*rgb[1]);
+                            rgb[2] = DF_ROUND(mul*rgb[2]);
                         }
                         pxl[y*w+x].red = clamp(rgb[0]);
                         pxl[y*w+x].green = clamp(rgb[1]);

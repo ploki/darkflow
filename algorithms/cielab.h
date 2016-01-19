@@ -38,6 +38,9 @@ extern const double xyz_rgb[3][3];
 extern const double rgb_xyz[3][3];
 extern const double illuminant[3];
 
+#define DF_MAX_AB_MODULE (133.807616L)
+#define DF_MAX_AB (110)
+
 #define RGB_to_CIELab(rgb,lab) \
 do { \
 	const double epsilon = 216./24389., \
@@ -85,19 +88,19 @@ do { \
         tmpf += rgb_xyz[0][1] * xyz[1]; \
         tmpf += rgb_xyz[0][2] * xyz[2]; \
         rgb[0] = ( tmpf<0?0:tmpf ) * 65535.0 + 0.5; \
-	if ( rgb[0] > QuantumRange ) rgb[0] = QuantumRange; \
+    if ( rgb[0] > QuantumRange ) rgb[0] = QuantumRange; \
         tmpf = 0; \
         tmpf += rgb_xyz[1][0] * xyz[0]; \
         tmpf += rgb_xyz[1][1] * xyz[1]; \
         tmpf += rgb_xyz[1][2] * xyz[2]; \
         rgb[1] = ( tmpf<0?0:tmpf ) * 65535.0 + 0.5; \
-	if ( rgb[1] > QuantumRange ) rgb[1] = QuantumRange; \
+    if ( rgb[1] > QuantumRange ) rgb[1] = QuantumRange; \
         tmpf = 0; \
         tmpf += rgb_xyz[2][0] * xyz[0]; \
         tmpf += rgb_xyz[2][1] * xyz[1]; \
         tmpf += rgb_xyz[2][2] * xyz[2]; \
         rgb[2] = ( tmpf<0?0:tmpf ) * 65535.0 + 0.5; \
-	if ( rgb[2] > QuantumRange ) rgb[2] = QuantumRange; \
+    if ( rgb[2] > QuantumRange ) rgb[2] = QuantumRange; \
 } while(0)
 
 

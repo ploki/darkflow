@@ -108,9 +108,9 @@ public:
                                     .7152L*green +
                                     .0722L*blue;
                             double mul = lum/cur;
-                            red = clamp<quantum_t>(round(mul*red));
-                            green =  clamp<quantum_t>(round(mul*green));
-                            blue = clamp<quantum_t>(round(mul*blue));
+                            red = clamp<quantum_t>(DF_ROUND(mul*red));
+                            green =  clamp<quantum_t>(DF_ROUND(mul*green));
+                            blue = clamp<quantum_t>(DF_ROUND(mul*blue));
                         }
                         pxl[y*w+x].red=red;
                         pxl[y*w+x].green=green;

@@ -268,14 +268,17 @@ Photo SelectiveLab::createPhoto(int level, bool clipToGamut)
         if ( !pixels ) continue;
         for ( int x = 0 ; x < w ; ++x ) {
             quantum_t rgb[3];
-            double lab[3];
+            double lab[3], check[3];
 
-            lab[0] = lab_gammaize(v);
-            lab[1] = double(x-m_labSelectionSize/2)/(double(m_labSelectionSize)/200.);
-            lab[2] = -double(y-m_labSelectionSize/2)/(double(m_labSelectionSize)/200.);
+            lab[0] = 100.*v;//lab_gammaize(v);
+            lab[1] = 2*DF_MAX_AB*double(x-w/2)/(double(w));
+            lab[2] = -2*DF_MAX_AB*double(y-w/2)/(double(w));
             CIELab_to_RGB(lab,rgb);
-            if ( clipToGamut && ( rgb[0] == QuantumRange || rgb[1] == QuantumRange || rgb[2] == QuantumRange
-                 || rgb[0] == 0 || rgb[1] == 0 || rgb[2] == 0 ) ) {
+            RGB_to_CIELab(rgb, check);
+
+            if ( clipToGamut && ( !DF_EQUALS(lab[0],check[0],0.1) ||
+                                  !DF_EQUALS(lab[1],check[1],0.1) ||
+                                  !DF_EQUALS(lab[2],check[2],0.1))) {
                 pixels[x].red=pixels[x].green=pixels[x].blue=0;
             }
             else {
@@ -347,9 +350,9 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
 
         x = clamp<int>(m_labSelectionSize/2 - cos(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
         y = clamp<int>(m_labSelectionSize/2 - sin(t)*(m_labSelectionSize/4-1),0,m_labSelectionSize);
-        l = round(.2126L * src[y*w+x].red +
-                .7152L * src[y*w+x].green +
-                .0722L * src[y*w+x].blue);
+        l = DF_ROUND(.2126L * src[y*w+x].red +
+                     .7152L * src[y*w+x].green +
+                     .0722L * src[y*w+x].blue);
         p = dst+y*w+x;
         p->red = p->green = p->blue = 8192;
 
@@ -364,10 +367,11 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
         }
         else {
             if ( puissance != 0 ) {
+                const double epsilon = pow((1.-cos(t+theta))/2.,puissance);
                 if ( inv_sat )
-                    mul = bias_sat+(1.-pow((1.-cos(t+theta))/2.,puissance));
+                    mul = bias_sat+(1.-epsilon);
                 else
-                    mul = bias_sat+pow((1.-cos(t+theta))/2.,puissance);
+                    mul = bias_sat+epsilon;
             }
             else {
                 mul = bias_sat;

@@ -60,9 +60,9 @@ public:
                         pxl_Luminance[x].red =
                         pxl_Luminance[x].green =
                         pxl_Luminance[x].blue =
-                                round(.2126L * src[x].red +
-                                      .7152L * src[x].green +
-                                      .0722L * src[x].blue);
+                                DF_ROUND(.2126L * src[x].red +
+                                         .7152L * src[x].green +
+                                         .0722L * src[x].blue);
                     }
                     iRed_cache.sync();
                     iGreen_cache.sync();

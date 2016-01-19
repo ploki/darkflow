@@ -25,7 +25,6 @@ private:
     qreal m_highlightLimit;
     qreal m_range;
     qreal m_saturation;
-    bool equals(double x, double y, double prec=0.00001);
 };
 
 #endif // DESATURATESHADOWS_H

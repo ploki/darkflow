@@ -48,9 +48,9 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
             extended_quantum_t other_channels=0;
 
             if (hdr) {
-                rgb[0]=round(fromHDR(input_pixels[1][x].red));
-                rgb[1]=round(fromHDR(input_pixels[1][x].green));
-                rgb[2]=round(fromHDR(input_pixels[1][x].blue));
+                rgb[0]=DF_ROUND(fromHDR(input_pixels[1][x].red));
+                rgb[1]=DF_ROUND(fromHDR(input_pixels[1][x].green));
+                rgb[2]=DF_ROUND(fromHDR(input_pixels[1][x].blue));
             }
             else {
                 rgb[0]=input_pixels[1][x].red;

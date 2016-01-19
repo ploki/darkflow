@@ -44,12 +44,12 @@ QStringList OpLoadVideo::getCollection() const
 
 int OpLoadVideo::getSkip() const
 {
-    return round(m_skip->value());
+    return DF_ROUND(m_skip->value());
 }
 
 int OpLoadVideo::getCount() const
 {
-    return round(m_count->value());
+    return DF_ROUND(m_count->value());
 }
 
 void OpLoadVideo::filesCollectionChanged()

@@ -128,7 +128,7 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image, bool hdr)
                     double cur = .2126L*rgb[0] +
                             .7152L*rgb[1] +
                             .0722L*rgb[2];
-                    double lum = m_lut[clamp<quantum_t>(round(cur))];
+                    double lum = m_lut[clamp<quantum_t>(DF_ROUND(cur))];
                     double mul = lum/cur;
                     rgb[0] = mul*rgb[0];
                     rgb[1] = mul*rgb[1];

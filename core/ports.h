@@ -55,4 +55,9 @@ int vasprintf(char **strp, const char *fmt, va_list ap);
 #define snprintf(buffer, size,fmt,...) \
     _snprintf_s(buffer, size, _TRUNCATE, fmt, __VA_ARGS__)
 #endif
+
+
+#define DF_EQUALS(x, y, epsilon) (fabs((x)-(y)) < (epsilon))
+#define DF_ROUND(x) ((x) + 0.5)
+
 #endif // PORTS_H

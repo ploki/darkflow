@@ -385,7 +385,7 @@
    <sender>checkBoxClipToGamut</sender>
    <signal>toggled(bool)</signal>
    <receiver>SelectiveLab</receiver>
-   <slot>updateView()</slot>
+   <slot>updateViewNoEmission()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>74</x>

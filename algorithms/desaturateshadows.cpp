@@ -76,9 +76,9 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
             }
             double lab[3];
             RGB_to_LinearLab(rgb,lab);
-            quantum_t L= round(lab[0]*QuantumRange);
+            quantum_t L= DF_ROUND(lab[0]*QuantumRange);
             if ( L > QuantumRange ) L=QuantumRange;
-            if ( ! equals(m_lut[L],1.) )
+            if ( ! DF_EQUALS(m_lut[L],1.,.00001) )
             {
                 lab[1]*=m_lut[L];
                 lab[2]*=m_lut[L];
@@ -89,9 +89,9 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
                     pixels[x].blue = toHDR(rgb[2]);
                 }
                 else {
-                    pixels[x].red = round(rgb[0]);
-                    pixels[x].green = round(rgb[1]);
-                    pixels[x].blue = round(rgb[2]);
+                    pixels[x].red = DF_ROUND(rgb[0]);
+                    pixels[x].green = DF_ROUND(rgb[1]);
+                    pixels[x].blue = DF_ROUND(rgb[2]);
                 }
             }
             else {
@@ -104,7 +104,3 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
     }
 }
 
-bool DesaturateShadows::equals(double x, double y, double prec) {
-
-    return fabs(x-y) < prec;
-}

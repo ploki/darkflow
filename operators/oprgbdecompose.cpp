@@ -92,7 +92,7 @@ public:
 };
 
 OpRGBDecompose::OpRGBDecompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, "LRGB Decompose", Operator::NonHDR, parent)
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Decompose"), Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Images set", "Images set", OperatorInput::Set, this));
     addOutput(new OperatorOutput("Luminance", "Luminance", this));

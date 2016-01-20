@@ -13,14 +13,14 @@
 static QString buttonText(ProcessButton::ButtonType type)
 {
     switch(type) {
-    case ProcessButton::Play: return "▶";
-    case ProcessButton::Abort:return "■";
-    case ProcessButton::Display: return "☷";
-    case ProcessButton::Close: return "❌";
-    case ProcessButton::Help: return "?";
-    case ProcessButton::Refresh: return "⟳";
+    case ProcessButton::Play: return QObject::tr("▶");
+    case ProcessButton::Abort:return QObject::tr("■");
+    case ProcessButton::Display: return QObject::tr("☷");
+    case ProcessButton::Close: return QObject::tr("❌");
+    case ProcessButton::Help: return QObject::tr("?");
+    case ProcessButton::Refresh: return QObject::tr("⟳");
     default:
-        return "0";
+        return QObject::tr("0");
     }
 }
 

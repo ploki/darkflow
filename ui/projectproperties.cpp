@@ -51,7 +51,7 @@ void ProjectProperties::selectProjectFile()
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Select a project file"),
                                                     base,
-                                                    "Darkflow Project (*.dflow)",
+                                                    tr("Darkflow Project (*.dflow)"),
                                                     0, 0);
     if ( filename.isEmpty())
         return;
@@ -62,7 +62,7 @@ void ProjectProperties::selectProjectFile()
 
 void ProjectProperties::selectBaseDirectory()
 {
-    QString baseDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    QString baseDir = QFileDialog::getExistingDirectory(this, tr("Select Base Directory"),
                                                           ui->valueBaseDir->text(),
                                                           QFileDialog::ShowDirsOnly);
     if ( !baseDir.isEmpty())
@@ -80,7 +80,7 @@ void ProjectProperties::accept()
         if (m_andSave) {
             if ( m_process->projectFile().isEmpty())
                 QMessageBox::warning( this, this->objectName(),
-                                      tr("Project filename not defined\n"));
+                                      tr("Project filename not defined"));
             m_process->save();
         }
         m_process = NULL;

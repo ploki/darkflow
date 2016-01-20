@@ -6,7 +6,7 @@
 
 
 OpConvolution::OpConvolution(Process *parent) :
-    Operator(OP_SECTION_EFFECTS, "Convolution", Operator::NonHDR, parent),
+    Operator(OP_SECTION_EFFECTS, QT_TRANSLATE_NOOP("Operator", "Convolution"), Operator::NonHDR, parent),
     m_luminosity(new OperatorParameterSlider("luminosity", "Luminosity", "Convolution Luminosity", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this))
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));

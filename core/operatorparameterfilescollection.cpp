@@ -62,7 +62,7 @@ QJsonObject OperatorParameterFilesCollection::save()
     obj["type"] = "filesCollection";
     obj["name"] = m_name;
     foreach(const QString& file, m_collection) {
-        dflDebug("FilesCollection: saving a file");
+        dflDebug(tr("FilesCollection: saving a file"));
         files.push_back(file);
     }
     obj["files"] = files;
@@ -72,11 +72,11 @@ QJsonObject OperatorParameterFilesCollection::save()
 void OperatorParameterFilesCollection::load(const QJsonObject &obj)
 {
     if ( obj["type"].toString() != "filesCollection" ) {
-        dflWarning("FilesCollection: invalid parameter type");
+        dflWarning(tr("FilesCollection: invalid parameter type"));
         return;
     }
     if ( obj["name"].toString() != m_name ) {
-        dflWarning("FilesCollection: invalid parameter name");
+        dflWarning(tr("FilesCollection: invalid parameter name"));
         return;
     }
     QJsonArray files = obj["files"].toArray();

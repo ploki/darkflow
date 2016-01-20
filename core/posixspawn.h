@@ -8,6 +8,7 @@ class PosixSpawnImpl;
 
 class PosixSpawn : public QIODevice
 {
+    Q_OBJECT
 public:
     PosixSpawn();
     ~PosixSpawn();

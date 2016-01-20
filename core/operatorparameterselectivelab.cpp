@@ -44,11 +44,11 @@ QJsonObject OperatorParameterSelectiveLab::save()
 void OperatorParameterSelectiveLab::load(const QJsonObject &obj)
 {
     if ( obj["type"].toString() != "selectiveLab" ) {
-        dflWarning("SelectiveLab: invalid parameter type");
+        dflWarning(tr("SelectiveLab: invalid parameter type"));
         return;
     }
     if ( obj["name"].toString() != m_name ) {
-        dflWarning("SelectiveLab: invalid parameter name");
+        dflWarning(tr("SelectiveLab: invalid parameter name"));
         return;
     }
     m_hue = obj["hue"].toInt();

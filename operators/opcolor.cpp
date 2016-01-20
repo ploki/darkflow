@@ -35,7 +35,7 @@ private:
     qreal m_b;
 };
 OpColor::OpColor(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Color", Operator::NA, parent),
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Color"), Operator::NA, parent),
     m_r(new OperatorParameterSlider("red", "Red", "Color Red Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1, 1./(1<<16), 1, Slider::FilterExposureFromOne, this)),
     m_g(new OperatorParameterSlider("green", "Green", "Color Green Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1, 1./(1<<16), 1, Slider::FilterExposureFromOne, this)),
     m_b(new OperatorParameterSlider("blue", "Blue", "Color Blue Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1, 1./(1<<16), 1, Slider::FilterExposureFromOne, this))

@@ -11,7 +11,7 @@ static const char *ColorSpaceStr[] = {
 };
 
 OpLoadImage::OpLoadImage(Process *parent) :
-    Operator(OP_SECTION_ASSETS, "Images", Operator::NA, parent),
+    Operator(OP_SECTION_ASSETS, QT_TRANSLATE_NOOP("Operator", "Images"), Operator::NA, parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "imageCollection",
                           "Images",

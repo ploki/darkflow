@@ -30,7 +30,7 @@ private:
 };
 
 OpIGamma::OpIGamma(Process *parent) :
-    Operator(OP_SECTION_CURVE, "iGamma", Operator::All, parent),
+    Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "iGamma"), Operator::All, parent),
     m_gamma(0),
     m_dynamicRange(0),
     m_revert(false),

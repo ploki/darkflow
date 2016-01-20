@@ -31,7 +31,7 @@ private:
 };
 
 OpShapeDynamicRange::OpShapeDynamicRange(Process *parent) :
-    Operator(OP_SECTION_CURVE, "Shape DR.", Operator::All, parent),
+    Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "Shape DR."), Operator::All, parent),
     m_shape(ShapeDynamicRange::TanH),
     m_shapeDialog(new OperatorParameterDropDown("shape", "Shape", this, SLOT(selectShape(int)))),
     m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Shape Dynamic Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<12, 1<<10, 1, QuantumRange, Slider::FilterExposure, this)),

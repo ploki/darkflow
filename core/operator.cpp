@@ -1,6 +1,7 @@
 #include <QThread>
 #include <QJsonArray>
 #include <QStringList>
+#include <QApplication>
 
 #include <cstdio>
 
@@ -14,7 +15,7 @@
 #include "operatorworker.h"
 
 Operator::Operator(const QString& classSection,
-                   const QString& classIdentifier,
+                   const char* classIdentifier,
                    int scaleCompatibility,
                    Process *parent) :
     QObject(NULL),
@@ -31,7 +32,8 @@ Operator::Operator(const QString& classSection,
     m_uuid(Process::uuid()),
     m_classSection(classSection),
     m_classIdentifier(classIdentifier),
-    m_name(classIdentifier),
+    m_localizedClassIdentifier(tr(classIdentifier)),
+    m_name(tr(classIdentifier)),
     m_tagsOverride(),
     m_thread(new QThread(this)),
     m_worker(NULL)
@@ -126,7 +128,7 @@ void Operator::parentUpToDate()
         play();
         break;
     default:
-        dflWarning("Unknwon waiting reason");
+        dflWarning(tr("Unknown waiting reason"));
     case NotWaiting:
         // emit permit to notif following operator of new inputs even if not waiting
         emit stateChanged();
@@ -171,6 +173,11 @@ QString Operator::uuid() const
 void Operator::setUuid(const QString &uuid)
 {
     m_uuid = uuid;
+}
+
+QString Operator::getLocalizedClassIdentifier() const
+{
+    return m_localizedClassIdentifier;
 }
 
 
@@ -265,7 +272,7 @@ QVector<QVector<Photo> > Operator::collectInputs()
                     inputs[i].push_back(photo);
                 }
                 else if ( treatTag == TAG_TREAT_ERROR ) {
-                    dflWarning("Photo: " + photo.getIdentity() + " discarded because of error");
+                    dflWarning(tr("Photo: %0 discarded because of error").arg(photo.getIdentity()));
                 }
             }
         }
@@ -277,7 +284,7 @@ QVector<QVector<Photo> > Operator::collectInputs()
 void Operator::play() {
     Q_ASSERT(QThread::currentThread() == thread());
     if (m_worker) {
-        dflDebug("already playing");
+        dflDebug(tr("Already playing"));
         return;
     }
     if (isUpToDate())
@@ -290,18 +297,17 @@ void Operator::play() {
     setOutOfDate();
     m_worker->start(collectInputs(), m_outputStatus);
     m_workerAboutToStart = false;
-    dflDebug("worker started for "+m_uuid);
+    dflDebug(tr("Worker started for %0").arg(m_uuid));
 }
 
 bool Operator::isUpToDate() const
 {
-    dflDebug(QString(m_uuid + " is up to date: %0").arg(m_upToDate && !m_worker));
+    dflDebug(tr("%0 is up to date: %1").arg(m_uuid).arg(m_upToDate && !m_worker));
     return m_upToDate;
 }
 
 void Operator::setUpToDate()
 {
-    dflDebug("setUpToDate()");
     Q_ASSERT(QThread::currentThread() == thread());
     m_upToDate = true;
     emit progress(1, 1);
@@ -312,11 +318,10 @@ void Operator::setOutOfDate()
 {
     Q_ASSERT(QThread::currentThread() == thread());
     if ( m_worker && !m_workerAboutToStart ) {
-        dflDebug("Sending 'stop' to worker");
+        dflDebug(tr("Sending 'stop' to worker"));
         stop();
         return;
     }
-    dflDebug("setOutOfDate()");
     m_upToDate = false;
     foreach(OperatorOutput *output, m_outputs) {
         output->m_result.clear();
@@ -439,7 +444,7 @@ void Operator::save(QJsonObject &obj)
     obj["classIdentifier"] = getClassIdentifier();
     obj["name"] = getName();
     foreach(OperatorParameter *parameter, m_parameters) {
-        dflDebug("saving a parameter");
+        dflDebug(tr("Saving a parameter"));
         parameters.push_back(parameter->save());
     }
     obj["parameters"] = parameters;

@@ -27,7 +27,7 @@ private:
 };
 
 OpThreshold::OpThreshold(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Threshold", Operator::NonHDR, parent),
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Threshold"), Operator::NonHDR, parent),
     m_high(new OperatorParameterSlider("high", "High", "Threshold High",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this)),
     m_low(new OperatorParameterSlider("low", "Low", "Threshold Low",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
 {

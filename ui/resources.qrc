@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>../icons/darkflow.png</file>
+        <file>../l10n/darkflow_fr.qm</file>
     </qresource>
 </RCC>

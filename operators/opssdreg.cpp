@@ -5,7 +5,7 @@
 
 
 OpSsdReg::OpSsdReg(Process *parent) :
-    Operator(OP_SECTION_REGISTRATION, "SsdReg", Operator::All, parent)
+    Operator(OP_SECTION_REGISTRATION, QT_TRANSLATE_NOOP("Operator", "SsdReg"), Operator::All, parent)
 {
     addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
     addOutput(new OperatorOutput("Images", "Images", this));

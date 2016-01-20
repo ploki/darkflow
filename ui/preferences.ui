@@ -368,7 +368,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="labelLabSelectionSize">
          <property name="text">
-          <string>Lab selection size</string>
+          <string>Lab selection size:</string>
          </property>
         </widget>
        </item>

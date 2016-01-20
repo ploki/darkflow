@@ -59,11 +59,11 @@ QJsonObject OperatorParameterDropDown::save()
 void OperatorParameterDropDown::load(const QJsonObject &obj)
 {
     if ( obj["type"].toString() != "dropdown" ) {
-        dflWarning("DropDown: invalid parameter type");
+        dflWarning(tr("DropDown: invalid parameter type"));
         return;
     }
     if ( obj["name"].toString() != m_name ) {
-        dflWarning("DropDown: invalid parameter name");
+        dflWarning(tr("DropDown: invalid parameter name"));
         return;
     }
     bool actionFound = false;
@@ -76,7 +76,7 @@ void OperatorParameterDropDown::load(const QJsonObject &obj)
         }
     }
     if (!actionFound)
-        dflWarning("DropDown: unknown value for dropdown");
+        dflWarning(tr("DropDown: unknown value for dropdown"));
 }
 
 

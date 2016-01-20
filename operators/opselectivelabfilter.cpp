@@ -26,7 +26,7 @@ private:
 };
 
 OpSelectiveLabFilter::OpSelectiveLabFilter(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Selective Lab Filter", Operator::All, parent),
+    Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Selective Lab Filter"), Operator::All, parent),
     m_selectiveLab(new OperatorParameterSelectiveLab("labSelection", "Selection", "Selective Lab Filter", 0, 0, false, 35, true, true, true, this)),
     m_saturation(new OperatorParameterSlider("saturation", "Saturation", "Selective Lab Filter Saturation", Slider::Percent, Slider::Linear, Slider::Real, 0, 2, 1, 0, 10, Slider::FilterNothing, this)),
     m_exposure(new OperatorParameterSlider("exposure", "Exposure", "Selective Lab Filter Exposure", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<8), 1<<8, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),

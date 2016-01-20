@@ -57,7 +57,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
     ui->operatorName->setText(m_operator->getName());
-    ui->operatorClass->setText(m_operator->getClassIdentifier());
+    ui->operatorClass->setText(m_operator->getLocalizedClassIdentifier());
+    ui->operatorClass->setToolTip(m_operator->getClassIdentifier());
     setWindowTitle(m_operator->getName());
     connect(ui->operatorName, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
     connect(ui->tree_photos, SIGNAL(itemSelectionChanged()), this, SLOT(photoSelectionChanged()));
@@ -73,8 +74,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     toolChanged(0);
 
     QStringList headers;
-    headers.push_back("Key");
-    headers.push_back("Value");
+    headers.push_back(tr("Key"));
+    headers.push_back(tr("Value"));
     ui->table_tags->setRowCount(0);
     ui->table_tags->setColumnCount(2);
     ui->table_tags->setHorizontalHeaderLabels(headers);
@@ -104,7 +105,6 @@ Visualization::~Visualization()
 
 void Visualization::zoomFitVisible()
 {
-    //dflDebug("action fit!");
     m_zoomLevel=ZoomFitVisible;
     updateVisualizationZoom();
 }
@@ -154,10 +154,10 @@ void Visualization::expChanged()
     if ( m_photo && m_photo->isComplete() ) {
         int exposure = ui->slider_exp->value();
         qreal gamma = 1., x0 = 0;
-        ui->value_exp->setText(QString("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
+        ui->value_exp->setText(tr("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
         switch(ui->combo_gamma->currentIndex()) {
         default:
-            dflWarning("Visualization: Unknown combo_gamma selection");
+            dflWarning(tr("Visualization: Unknown combo_gamma selection"));
         case 0: //As Input
             gamma = 1.; x0 = 0; break;
         case 1: //sRGB
@@ -190,7 +190,7 @@ void Visualization::outOfDate()
         ++it;
     }
     if ( this->isVisible() && ui->checkBox_autoPlay->isChecked() ) {
-        dflDebug(QString(m_operator->uuid() + " Vis requests play"));
+        dflDebug(tr("%0 Visualization requests play").arg(m_operator->uuid()));
         m_operator->play();
     }
 }
@@ -225,7 +225,7 @@ void Visualization::histogramParamsChanged()
         Photo::HistogramGeometry geometry;
         switch ( ui->combo_log->currentIndex()) {
         default:
-            dflWarning("Visualization: Unknown combo_log histogram selection");
+            dflWarning(tr("Visualization: Unknown combo_log histogram selection"));
         case 0:
             scale = Photo::HistogramLinear; break;
         case 1:
@@ -233,7 +233,7 @@ void Visualization::histogramParamsChanged()
         }
         switch ( ui->combo_surface->currentIndex()) {
         default:
-            dflWarning("Visualization: Unknown combo_surface selection");
+            dflWarning(tr("Visualization: Unknown combo_surface selection"));
         case 0:
             geometry = Photo::HistogramLines; break;
         case 1:
@@ -273,7 +273,7 @@ void Visualization::clearTags()
 void Visualization::tags_buttonAddClicked()
 {
     if (!m_photo) return;
-    m_tags.push_back(new TableTagsRow(m_photo->getIdentity(), "New key", "value", TableTagsRow::FromOperator, ui->table_tags, m_operator));
+    m_tags.push_back(new TableTagsRow(m_photo->getIdentity(), tr("New key"), tr("value"), TableTagsRow::FromOperator, ui->table_tags, m_operator));
 }
 
 void Visualization::tags_buttonRemoveClicked()
@@ -290,7 +290,7 @@ void Visualization::tags_buttonRemoveClicked()
                 m_tags.remove(idx);
             }
             else {
-                dflWarning("Visualization: row not found in m_tags");
+                dflWarning(tr("Visualization: row not found in m_tags"));
             }
         }
     }
@@ -310,7 +310,7 @@ void Visualization::toolChanged(int idx)
 {
     switch(idx) {
     default:
-        dflWarning("Visualization: Unknown tool combo index");
+        dflWarning(tr("Visualization: Unknown tool combo index"));
     case 0: m_tool = ToolNone; break;
     case 1: m_tool = ToolROI; break;
     case 2: m_tool = Tool1Point; break;
@@ -348,7 +348,7 @@ void Visualization::treatmentChanged(int idx)
     case 2: value = TAG_TREAT_DISCARDED; type = TreePhotoItem::InputDisabled; break;
     case 3: value = TAG_TREAT_ERROR; type = TreePhotoItem::InputError; break;
     default:
-        dflWarning("Visualization: Unknown type");
+        dflWarning(tr("Visualization: Unknown type"));
         type = TreePhotoItem::InputDisabled;
     }
 
@@ -374,7 +374,7 @@ void Visualization::inputTypeChanged(int idx)
     QString value;
     switch(idx) {
     default:
-        dflWarning("Unknown pixel scale idx");
+        dflWarning(tr("Visualization: Unknown pixel scale idx"));
     case 0: value = TAG_SCALE_LINEAR; break;
     case 1: value = TAG_SCALE_NONLINEAR; break;
     case 2: value = TAG_SCALE_HDR; break;
@@ -449,18 +449,18 @@ void Visualization::updateColorLabels(const QPointF& pos)
         clearStatus = false;
         rgb = m_photo->pixelColor(pos.x(), pos.y());
     }
-    QString rStr("R: %0");
-    QString gStr("G: %0");
-    QString bStr("B: %0");
+    QString rStr(tr("R: %0"));
+    QString gStr(tr("G: %0"));
+    QString bStr(tr("B: %0"));
     if ( m_photo && m_photo->getScale() == Photo::HDR ) {
-        rStr = QString("r %0").arg(rgb[0], 5, 'f', 5, QChar(' ')).left(8);
-        gStr = QString("g %0").arg(rgb[1], 5, 'f', 5, QChar(' ')).left(8);
-        bStr = QString("b %0").arg(rgb[2], 5, 'f', 5, QChar(' ')).left(8);
+        rStr = tr("r %0").arg(rgb[0], 5, 'f', 5, QChar(' ')).left(8);
+        gStr = tr("g %0").arg(rgb[1], 5, 'f', 5, QChar(' ')).left(8);
+        bStr = tr("b %0").arg(rgb[2], 5, 'f', 5, QChar(' ')).left(8);
     }
     else {
-        rStr = QString("R: %0").arg(int(rgb[0]), 5, 10, QChar(' '));
-        gStr = QString("G: %0").arg(int(rgb[1]), 5, 10, QChar(' '));
-        bStr = QString("B: %0").arg(int(rgb[2]), 5, 10, QChar(' '));
+        rStr = tr("R: %0").arg(int(rgb[0]), 5, 10, QChar(' '));
+        gStr = tr("G: %0").arg(int(rgb[1]), 5, 10, QChar(' '));
+        bStr = tr("B: %0").arg(int(rgb[2]), 5, 10, QChar(' '));
     }
     ui->value_ADU_R->setText(rStr);
     ui->value_ADU_G->setText(gStr);
@@ -469,14 +469,14 @@ void Visualization::updateColorLabels(const QPointF& pos)
             r = rgb[0]!=0?log2(rgb[0]/QuantumRange):-16,
             g = rgb[1]!=0?log2(rgb[1]/QuantumRange):-16,
             b = rgb[2]!=0?log2(rgb[2]/QuantumRange):-16;
-    ui->value_EV_R->setText(QString::number(r,'.',2)+" EV");
-    ui->value_EV_G->setText(QString::number(g,'.',2)+" EV");
-    ui->value_EV_B->setText(QString::number(b,'.',2)+" EV");
+    ui->value_EV_R->setText(QString::number(r,'.',2)+tr(" EV"));
+    ui->value_EV_G->setText(QString::number(g,'.',2)+tr(" EV"));
+    ui->value_EV_B->setText(QString::number(b,'.',2)+tr(" EV"));
     if ( m_tool != ToolROI ) {
         if ( clearStatus )
             ui->statusBar->showMessage("");
         else
-            ui->statusBar->showMessage(QString("x:%0, y:%1, R:%2%, G:%3%, B:%4%")
+            ui->statusBar->showMessage(tr("x:%0, y:%1, R:%2%, G:%3%, B:%4%")
                                        .arg(int(pos.x()),5,10,QChar(' '))
                                        .arg(int(pos.y()),5,10,QChar(' '))
                                        .arg(100.*rgb[0]/QuantumRange, 5, 'f', 2)
@@ -539,7 +539,7 @@ void Visualization::updateTreeviewPhotos()
     QMap<QString, int> seen;
 
     QTreeWidgetItem *tree_inputs = new QTreeWidgetItem(tree);
-    tree_inputs->setText(0, "Inputs:");
+    tree_inputs->setText(0, tr("Inputs:"));
     tree_inputs->setFont(0,QFont("Sans", 14));
     tree_inputs->setBackground(0,QBrush(Qt::lightGray));
     foreach(OperatorInput *input, m_operator->m_inputs) {
@@ -552,7 +552,7 @@ void Visualization::updateTreeviewPhotos()
             QTreeWidgetItem *tree_source = new TreeOutputItem(source, idx, TreeOutputItem::Source, tree_input);
             foreach(Photo photo, source->m_result) {
                 if ( !photo.isComplete() )
-                    dflCritical("Visualization: source photo is not complete");
+                    dflCritical(tr("Visualization: source photo is not complete"));
                 QString identity = photo.getIdentity();
                 identity = identity.split("|").first();
                 int count = ++seen[identity];
@@ -581,7 +581,7 @@ void Visualization::updateTreeviewPhotos()
     }
 
     QTreeWidgetItem *tree_outputs = new QTreeWidgetItem(tree);
-    tree_outputs->setText(0, "outputs:");
+    tree_outputs->setText(0, tr("Outputs:"));
     tree_outputs->setFont(0, QFont("Sans", 14));
     tree_outputs->setBackground(0, QBrush(Qt::lightGray));
     int idx = 0;
@@ -595,7 +595,7 @@ void Visualization::updateTreeviewPhotos()
         if (m_operator->m_outputStatus[idx] == Operator::OutputEnabled) {
             foreach(const Photo& photo, output->m_result) {
                 if ( !photo.isComplete() )
-                    dflCritical("Visualization: output photo is not complete");
+                    dflCritical(tr("Visualization: output photo is not complete"));
                 TreePhotoItem *item = new TreePhotoItem(photo, TreePhotoItem::Output, tree_output);
                 if ( photo.getIdentity() == m_currentPhoto &&
                      output == m_currentOutput ) {
@@ -613,7 +613,7 @@ void Visualization::photoSelectionChanged()
     QList<QTreeWidgetItem*> items = ui->tree_photos->selectedItems();
 
     if ( items.count() > 1 ) {
-        dflDebug(QString("Invalid photo selection in visualization tree view: sel count %0").arg(items.count()));
+        dflDebug(tr("Invalid photo selection in visualization tree view: sel count %0").arg(items.count()));
         return;
     }
 
@@ -793,7 +793,7 @@ void Visualization::rubberBandChanged(QRect, QPointF p1, QPointF p2)
         ui->statusBar->showMessage("");
     }
     else
-        ui->statusBar->showMessage(QString("Selection: x1:%0, y1:%1, x2:%2, y2:%3").arg(p1.x()).arg(p1.y()).arg(p2.x()).arg(p2.y()));
+        ui->statusBar->showMessage(tr("Selection: x1:%0, y1:%1, x2:%2, y2:%3").arg(p1.x()).arg(p1.y()).arg(p2.x()).arg(p2.y()));
     m_roi_p1 = p1;
     m_roi_p2 = p2;
 }

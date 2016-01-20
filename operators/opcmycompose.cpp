@@ -156,7 +156,7 @@ public:
 };
 
 OpCMYCompose::OpCMYCompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, "LCMY Compose", Operator::NonHDR, parent)
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LCMY Compose"), Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
     addInput(new OperatorInput("Cyan", "Cyan", OperatorInput::Set, this));

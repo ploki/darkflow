@@ -67,7 +67,7 @@ void OperatorWorker::outputPush(int idx, const Photo &photo)
             m_outputs[idx].push_back(photo);
     }
     else {
-        dflWarning("outputPush idx out of range");
+        dflCritical(tr("OutputPush idx out of range"));
     }
 }
 
@@ -78,7 +78,7 @@ void OperatorWorker::outputSort(int idx)
             qSort(m_outputs[idx]);
     }
     else {
-        dflWarning("outputSort idx out of range");
+        dflCritical(tr("outputSort idx out of range"));
     }
 }
 
@@ -103,7 +103,7 @@ void OperatorWorker::play()
 void OperatorWorker::finished()
 {
     if ( !m_signalEmited) {
-        dflDebug("OperatorWorker::finished: no signal sent, sending failure");
+        dflDebug(tr("OperatorWorker::finished: no signal sent, sending failure"));
         m_earlyAbort = true;
         emitFailure();
     }
@@ -119,26 +119,20 @@ bool OperatorWorker::aborted() {
 
 void OperatorWorker::emitFailure() {
     m_signalEmited = true;
-    dflDebug(QString("Worker of " + m_operator->uuid() + "emit progress(0, 1)"));
     emit progress(0, 1);
-    dflDebug(QString("Worker of " + m_operator->uuid() + "emit failure"));
     emit failure();
-    dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
     if ( ( m_earlyAbort || aborted() ) && !m_error )
-        dflDebug("Aborted (after %lldms)",m_elapsed.elapsed());
+        dflDebug(tr("Aborted (after %0ms)").arg(m_elapsed.elapsed()));
     else
-        dflError("Failure (after %lldms)",m_elapsed.elapsed());
+        dflError(tr("Failure (after %0ms)").arg(m_elapsed.elapsed()));
 }
 
 void OperatorWorker::emitSuccess()
 {
     m_signalEmited = true;
-    dflDebug(QString("Worker of " + m_operator->uuid() + "emit progress(1, 1)"));
     emit progress(1, 1);
-    dflDebug(QString("Worker of " + m_operator->uuid() + "emit success"));
     emit success(m_outputs);
-    dflDebug(QString("Worker of " + m_operator->uuid() + "emit done"));
-    dflInfo("Success (after %lldms)",m_elapsed.elapsed());
+    dflInfo(tr("Success (after %0ms)").arg(m_elapsed.elapsed()));
 }
 
 void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
@@ -149,7 +143,7 @@ void OperatorWorker::emitProgress(int p, int c, int sub_p, int sub_c)
 bool OperatorWorker::play_inputsAvailable()
 {
     if ( 0 == m_inputs.size() ) {
-        dflCritical("OperatorWorker::play() not overloaded for no input");
+        dflCritical(tr("OperatorWorker::play() not overloaded for an operator without inputs"));
         emitFailure();
         return false;
     }
@@ -167,7 +161,7 @@ void OperatorWorker::prepareOutputs(QVector<Operator::OperatorOutputStatus> outp
 bool OperatorWorker::play_outputsAvailable()
 {
     if ( 0 == m_outputs.count() ) {
-        dflCritical("OperatorWorker::play() not overloaded for #output != 1");
+        dflCritical(tr("OperatorWorker::play() not overloaded for #output != 1"));
         emitFailure();
         return false;
     }
@@ -187,12 +181,12 @@ bool OperatorWorker::play_onInput(int idx)
 
     foreach(Photo photo, m_inputs[idx]) {
         if ( m_error ) {
-            dflDebug("in error, sending failure");
+            dflDebug(tr("In error, sending failure"));
             emitFailure();
             return false;
         }
         if ( aborted() ) {
-            dflDebug("aborted, sending failure");
+            dflDebug(tr("Aborted, sending failure"));
             emitFailure();
             return false;
         }
@@ -202,21 +196,21 @@ bool OperatorWorker::play_onInput(int idx)
             if ( !m_operator->isCompatible(photo) ) {
                 switch ( preferences->getIncompatibleAction()) {
                 case Preferences::Warning:
-                    dflWarning(photo.getIdentity() + ": Incompatible pixel scale");
+                    dflWarning(tr("Incompatible pixel scale: %0").arg(photo.getIdentity()));
                 case Preferences::Ignore:
                     if ( photo.getScale() == Photo::HDR )
                         HDR(true).applyOn(photo);
                     break;
                 default:
                 case Preferences::Error:
-                    setError(photo, "Incompatible pixel scale");
+                    setError(photo, tr("Incompatible pixel scale"));
                     break;
                 }
             }
             if (!m_error) {
                 newPhoto = this->process(photo, p++, c);
                 if ( !newPhoto.isComplete() ) {
-                    dflDebug("photo is not complete, sending failure");
+                    dflDebug(tr("Photo is not complete, sending failure"));
                     m_error = true;
                     emitFailure();
                     return false;
@@ -259,14 +253,14 @@ bool OperatorWorker::play_onInputParallel(int idx)
         if ( !m_operator->isCompatible(photo) ) {
             switch ( preferences->getIncompatibleAction()) {
             case Preferences::Warning:
-                dflWarning(photo.getIdentity() + ": Incompatible pixel scale, converted");
+                dflWarning(tr("Incompatible pixel scale, converted").arg(photo.getIdentity()));
             case Preferences::Ignore:
                 if ( photo.getScale() == Photo::HDR )
                     HDR(true).applyOn(photo);
                 break;
             default:
             case Preferences::Error:
-                setError(photo, "Incompatible pixel scale");
+                setError(photo, tr("Incompatible pixel scale"));
                 break;
             }
         }
@@ -279,7 +273,7 @@ bool OperatorWorker::play_onInputParallel(int idx)
                 continue;
             }
             if ( !newPhoto.isComplete() ) {
-                dflDebug("photo is not complete, sending failure");
+                dflDebug(tr("Photo is not complete, sending failure"));
                 m_error = true;
                 continue;
             }
@@ -294,11 +288,11 @@ bool OperatorWorker::play_onInputParallel(int idx)
         }
     }
     if ( m_error ) {
-        dflDebug("in error, sending failure");
+        dflDebug(tr("In error, sending failure"));
         emitFailure();
     }
     else if ( aborted() ) {
-        dflDebug("aborted, sending failure");
+        dflDebug(tr("Aborted, sending failure"));
         emitFailure();
     }
     else {
@@ -395,7 +389,7 @@ void OperatorWorker::dflCritical(const QString &msg) const
 
 void OperatorWorker::setError(const Photo &photo, const QString &msg) const
 {
-    dflError("Photo: " + photo.getIdentity() + ", Error: " + msg);
+    dflError(tr("Photo: %0, Error: %1").arg(photo.getIdentity()).arg(msg));
     emit m_operator->setError(photo.getIdentity(), msg);
     m_error = true;
     m_operator->stop();

@@ -27,7 +27,7 @@ private:
 };
 
 OpHDR::OpHDR(Process *parent) :
-    Operator(OP_SECTION_CURVE, "HDR", Operator::HDR|Operator::Linear, parent),
+    Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "HDR"), Operator::HDR|Operator::Linear, parent),
     m_revert(false),
     m_revertDialog(new OperatorParameterDropDown("revert","Revert", this, SLOT(revert(int))))
 {

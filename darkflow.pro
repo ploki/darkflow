@@ -337,5 +337,7 @@ DISTFILES += \
     setup/darkflow-x64.iss \
     setup/darkflow-x86.iss \
     setup/darkflow-common.iss \
-    setup/darkflow-version.iss
+    setup/darkflow-version.iss \
+    l10n/darkflow_fr.ts
 
+TRANSLATIONS = l10n/darkflow_fr.ts

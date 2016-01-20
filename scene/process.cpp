@@ -193,7 +193,7 @@ void Process::addOperatorsToContextMenu() {
         if ( sections.find(op->getClassSection()) == sections.end() ) {
             sections[op->getClassSection()] = m_contextMenu->addMenu(QIcon(), op->getClassSection());
         }
-        QString caption = op->getClassIdentifier() + " (";
+        QString caption = op->getName() + " (";
         if ( op->isCompatible(Operator::Linear) )
             caption+="L";
         else

@@ -13,7 +13,7 @@ static const char *BlendModeStr[] = {
 
 
 OpBlend::OpBlend(Process *parent) :
-    Operator(OP_SECTION_BLEND, "Blend", Operator::All, parent),
+    Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Blend"), Operator::All, parent),
     m_mode1(new OperatorParameterDropDown("mode1", "A « B", this, SLOT(selectMode1(int)))),
     m_mode2(new OperatorParameterDropDown("mode2", "AB « C", this, SLOT(selectMode2(int)))),
     m_mode1Value(Multiply),

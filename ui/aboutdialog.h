@@ -2,6 +2,8 @@
 #define GUI_ABOUTDIALOG_H
 
 #include <QDialog>
+#include <QTimer>
+
 
 namespace Ui {
 class AboutDialog;
@@ -15,8 +17,12 @@ public:
 
     ~AboutDialog();
 
+private slots:
+    void updateUsage();
+
 private:
     Ui::AboutDialog *ui;
+    QTimer m_timer;
 };
 
 #endif // GUI_ABOUTDIALOG_H

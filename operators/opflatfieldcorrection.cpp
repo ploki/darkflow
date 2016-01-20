@@ -220,7 +220,7 @@ private:
 };
 
 OpFlatFieldCorrection::OpFlatFieldCorrection(Process *parent) :
-    Operator(OP_SECTION_BLEND, "Flat-Field Correction", Operator::All, parent),
+    Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Flat-Field Correction"), Operator::All, parent),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", "Output HDR", this, SLOT(setOutputHDR(int)))),
     m_outputHDRValue(false)
 {

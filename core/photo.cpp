@@ -93,7 +93,7 @@ bool Photo::load(const QString &filename)
         m_status = Photo::Complete;
     }
     catch (std::exception& e) {
-        dflError("%s", e.what());
+        dflCritical("%s", e.what());
         setUndefined();
         return false;
     }
@@ -116,7 +116,7 @@ bool Photo::save(const QString &filename, const QString &magick)
         }
     }
     catch (std::exception& e) {
-        dflError("%s", e.what());
+        dflCritical("%s", e.what());
         setUndefined();
         return false;
     }
@@ -131,7 +131,7 @@ void Photo::createImage(long width, long height)
         m_status = Complete;
     }
     catch (std::exception &e) {
-        dflError("%s", e.what());
+        dflCritical("%s", e.what());
         setUndefined();
     }
 }
@@ -164,7 +164,7 @@ QVector<qreal> Photo::pixelColor(unsigned x, unsigned y)
         }
     }
     catch (std::exception &e) {
-        dflError("Unable to get pixel color: %s", e.what());
+        dflCritical(tr("Unable to get pixel color: %0").arg(e.what()));
     }
 
     return rgb;
@@ -226,7 +226,7 @@ Image Photo::newCurve(Photo::Gamma gamma)
     switch(gamma) {
     default:
     case NonLinear:
-        dflWarning("Unable to create curve for NonLinear");
+        dflCritical(tr("Not expected to create a Non-linear curve"));
         break;
     case HDR: {
         ::HDR(false).applyOnImage(curve,false);
@@ -262,7 +262,7 @@ static QPixmap convert(Magick::Image& image) {
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,y,w,1);
         if ( error || !pixels ) {
             if ( !error )
-                dflError("PixelPacket is NULL");
+                dflCritical(DF_NULL_PIXELS);
             error = true;
             continue;
         }
@@ -275,7 +275,7 @@ static QPixmap convert(Magick::Image& image) {
   QPixmap pix(w,h);
    bool ret = pix.loadFromData(buf, header_size+w*h*3*1, "PPM", Qt::AutoColor|Qt::AvoidDither);
    if ( !ret )
-       dflError("pixmap conversion failed");
+       dflError(QObject::tr("Pixmap conversion failed"));
    free(buf);
    return pix;
 }
@@ -706,7 +706,7 @@ QVector<QPointF> Photo::getPoints() const
             continue;
         QStringList coords = point.split(',');
         if ( coords.count() != 2 ) {
-            dflError("Photo: Invalid numbers in " TAG_POINTS);
+            dflError(tr("Photo: Invalid numbers in %0").arg(TAG_POINTS));
             continue;
         }
         vec.push_back(QPointF(coords[0].toDouble(), coords[1].toDouble()));
@@ -750,8 +750,6 @@ QRectF Photo::getROI() const
             if ( y1 > y2 ) {
                 y=y2; h=-h;
             }
-            //dflDebug("x1:%f, y1:%f, x2:%f, y2:%f",x1,y1,x2,y2);
-            //dflDebug("x:%f, y:%f, w:%f, h:%f",x,y,w,h);
             return QRectF(x,y,w,h);
         }
     }
@@ -788,7 +786,7 @@ Photo::Gamma Photo::getScale() const
     else if ( scale == TAG_SCALE_HDR )
         return HDR;
     else {
-        dflWarning("Unknown photo scale");
+        dflWarning(tr("Unknown photo scale"));
         return Linear;
     }
 }
@@ -813,7 +811,7 @@ bool OnDiskCache(const Image &image)
 {
     bool onDisk = MagickCore::GetImagePixelCacheType(const_cast<Image&>(image).image()) == MagickCore::DiskCache;
     if (onDisk)
-        dflDebug("Image cache is on disk, threading disabled");
+        dflDebug(QObject::tr("Image cache is on disk, threading disabled"));
     return onDisk;
 }
 

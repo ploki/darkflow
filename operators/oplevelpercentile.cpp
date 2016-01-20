@@ -81,7 +81,7 @@ private:
 };
 
 OpLevelPercentile::OpLevelPercentile(Process *parent) :
-    Operator(OP_SECTION_CURVE, "Level Percentile", Operator::NonHDR, parent),
+    Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "Level Percentile"), Operator::NonHDR, parent),
     m_blackPoint(new OperatorParameterSlider("blackPoint", "Black Point", "Level Black Point", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.05, 0, 1, Slider::FilterPercent, this)),
     m_whitePoint(new OperatorParameterSlider("blackPoint", "White Point", "Level White Point", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.95, 0, 1, Slider::FilterPercent, this)),
     m_gamma(new OperatorParameterSlider("gamma", "Gamma", "Level Gamma", Slider::Value, Slider::Logarithmic, Slider::Real, 0.1, 10, 1, 0.01, 10, Slider::FilterNothing, this))

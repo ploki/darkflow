@@ -17,7 +17,7 @@ static const char *NormalizationTypeStr[] = {
 using Magick::Quantum;
 
 OpIntegration::OpIntegration(Process *parent) :
-    Operator(OP_SECTION_BLEND, "Integration", Operator::All, parent),
+    Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Integration"), Operator::All, parent),
     m_rejectionType(NoRejection),
     m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", "Rejection", this, SLOT(setRejectionType(int)))),
     m_upper(new OperatorParameterSlider("upper", "Upper mul.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),

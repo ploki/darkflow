@@ -128,11 +128,11 @@ QJsonObject OperatorParameterSlider::save()
 void OperatorParameterSlider::load(const QJsonObject &obj)
 {
     if ( obj["type"].toString() != "slider" ) {
-        dflWarning("Slider: invalid parameter type");
+        dflWarning(tr("Slider: invalid parameter type"));
         return;
     }
     if ( obj["name"].toString() != m_name ) {
-        dflWarning("Slider: invalid parameter name");
+        dflWarning(tr("Slider: invalid parameter name"));
         return;
     }
     m_unit = Slider::unitFromString(obj["unit"].toString());

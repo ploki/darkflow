@@ -65,7 +65,7 @@ QByteArray PosixSpawn::readAllStandardOutput()
     }
     if ( ret < 0 )
         impl->error=true;
-    dflDebug("Return array of size %d",array.count());
+    dflDebug(tr("Return array of size %0").arg(array.count()));
     return array;
 }
 
@@ -78,14 +78,14 @@ bool PosixSpawn::waitForFinished(int)
     do {
         w = waitpid(impl->pid, &status, WUNTRACED | WCONTINUED);
         if ( w < 0 ) {
-            dflError("waitpid error: %s", strerror(errno));
+            dflError("waitpid() failed, errno=%s", strerror(errno));
             impl->error = true;
             return false;
         }
     } while( !WIFEXITED(status) && !WIFSIGNALED(status));
     impl->rc = WEXITSTATUS(status);
     if ( impl->rc ) {
-        dflError("Chiled exited with %d",impl->rc);
+        dflError(tr("Child process failed with exit code %0").arg(impl->rc));
     }
     return true;
 }
@@ -93,7 +93,7 @@ bool PosixSpawn::waitForFinished(int)
 bool PosixSpawn::waitForStarted(int )
 {
     if (impl->error || !impl->started) {
-        dflError("not started");
+        dflError(tr("Child process not started"));
         return false;
     }
     return true;
@@ -207,7 +207,7 @@ void PosixSpawn::start(const QString &program,
     free(file);
 
     if ( rc < 0 ) {
-        dflError("posix_spawnp failed with errno=%s", strerror(errno));
+        dflError("posix_spawnp failed, errno=%s", strerror(errno));
         impl->error=true;
         return;
     }
@@ -217,14 +217,14 @@ void PosixSpawn::start(const QString &program,
 
     if ( peer[0] ) ::close(peer[0]);
     if ( peer[1] ) ::close(peer[1]);
-    dflDebug("PosixSpawn Success");
+    dflDebug(tr("PosixSpawn Success"));
     open(mode);
 }
 
 qint64 PosixSpawn::readData(char *data, qint64 maxSize)
 {
     if (impl->channels[0] < 0 ) {
-        dflError("read on closed fd");
+        dflError(tr("Read on closed file"));
         return -1;
     }
     qint64 ret = ::read(impl->channels[0], data, maxSize);

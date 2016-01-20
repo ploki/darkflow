@@ -23,7 +23,7 @@ private:
 };
 
 OpWhiteBalance::OpWhiteBalance(Process *parent) :
-    Operator(OP_SECTION_COLOR, "White Balance", Operator::All, parent),
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "White Balance"), Operator::All, parent),
     m_temperature(new OperatorParameterSlider("temperature", "Temperature", "White Balance Temperature",
                                               Slider::Value, Slider::Logarithmic, Slider::Integer,
                                               2000, 12000, 6500, 2000, 12000, Slider::FilterNothing,this)),

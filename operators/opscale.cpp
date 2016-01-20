@@ -135,7 +135,7 @@ private:
 
 
 OpScale::OpScale(Process *parent) :
-    Operator(OP_SECTION_GEOMETRY, "Scale", Operator::All, parent),
+    Operator(OP_SECTION_GEOMETRY, QT_TRANSLATE_NOOP("Operator", "Scale"), Operator::All, parent),
     m_algorithm(new OperatorParameterDropDown("algorithm", "Algorithm", this, SLOT(selectAlgorithm(int)))),
     m_algorithmValue(Magick::UndefinedFilter),
     m_to(new OperatorParameterDropDown("resizeTo", "Resize to", this, SLOT(selectResizeTo(int)))),

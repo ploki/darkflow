@@ -31,7 +31,7 @@ private:
 
 
 OpModulate::OpModulate(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, "Modulate", Operator::NonHDR, parent),
+    Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Modulate"), Operator::NonHDR, parent),
     m_hue(new OperatorParameterSlider("hue", "Hue", "Modulate Hue",Slider::Value, Slider::Linear, Slider::Integer, -180, 180, 0, -180, 180, Slider::FilterNothing, this)),
     m_saturation(new OperatorParameterSlider("saturation", "Saturation", "Modulate Saturation",Slider::Percent, Slider::Linear, Slider::Integer, 0, 2, 1, 0, 10, Slider::FilterNothing, this)),
     m_value(new OperatorParameterSlider("value", "Exposure", "Modulate Exposure",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))

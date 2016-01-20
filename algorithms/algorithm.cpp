@@ -13,7 +13,7 @@ Algorithm::Algorithm(bool alterCurve, QObject *parent) :
 
 void Algorithm::applyOnImage(Magick::Image &, bool)
 {
-    dflWarning("Algorithm::applyOnImage Not Implemented");
+    dflWarning(tr("Algorithm::applyOnImage Not Implemented"));
 }
 
 void Algorithm::applyOn(Photo &photo)

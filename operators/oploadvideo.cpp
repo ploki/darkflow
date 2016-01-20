@@ -6,7 +6,7 @@
 #include "process.h"
 
 OpLoadVideo::OpLoadVideo(Process *process) :
-    Operator(OP_SECTION_ASSETS, "Videos", Operator::NA, process),
+    Operator(OP_SECTION_ASSETS, QT_TRANSLATE_NOOP("Operator", "Videos"), Operator::NA, process),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "videoCollection",
                           "Videos",

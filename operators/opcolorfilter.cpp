@@ -25,7 +25,7 @@ private:
 };
 
 OpColorFilter::OpColorFilter(Process *parent) :
-    Operator(OP_SECTION_COLOR, "Color Filter", Operator::All, parent),
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Color Filter"), Operator::All, parent),
     m_r(new OperatorParameterSlider("red", "Red", "Color Filter Red Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_g(new OperatorParameterSlider("green", "Green", "Color Filter Green Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_b(new OperatorParameterSlider("blue", "Blue", "Color Filter Blue Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this))

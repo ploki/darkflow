@@ -128,7 +128,7 @@ public:
 
 
 OpSubtract::OpSubtract(Process *parent) :
-    Operator(OP_SECTION_DEPRECATED, "Subtract", Operator::NonHDR, parent)
+    Operator(OP_SECTION_DEPRECATED, QT_TRANSLATE_NOOP("Operator", "Subtract"), Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Minuend","Minuend",OperatorInput::Set, this));
     addInput(new OperatorInput("Subtrahend","Subtrahend",OperatorInput::Set, this));

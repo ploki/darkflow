@@ -38,9 +38,11 @@ private:
 };
 
 OpDemultiplexer::OpDemultiplexer(int ways, Process *parent) :
-    Operator(OP_SECTION_TOOLS, QString("%0-way Demultiplexer").arg(ways), Operator::All, parent),
+    Operator(OP_SECTION_TOOLS, QT_TRANSLATE_NOOP("Operator", "%0-way Demultiplexer"), Operator::All, parent),
     m_ways(ways)
 {
+    m_classIdentifier = m_classIdentifier.arg(ways);
+    m_name = m_name.arg(ways);
     addInput(new OperatorInput("Multiplexed set", "Multiplexed set", OperatorInput::Set, this));
     for (int i = 1 ; i <= m_ways ; ++i ) {
         QString name = QString("Images set %0").arg(i);

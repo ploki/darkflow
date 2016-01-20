@@ -147,7 +147,7 @@ public:
 };
 
 OpRGBCompose::OpRGBCompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, "LRGB Compose", Operator::NonHDR, parent)
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Compose"), Operator::NonHDR, parent)
 {
     addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
     addInput(new OperatorInput("Red", "Red", OperatorInput::Set, this));

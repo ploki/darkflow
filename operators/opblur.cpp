@@ -29,12 +29,12 @@ private:
 
 OpBlur::OpBlur(Process *parent) :
     Operator(OP_SECTION_EFFECTS, QT_TRANSLATE_NOOP("Operator", "Blur"), Operator::NonHDR, parent),
-    m_radius(new OperatorParameterSlider("radius", "Radius", "Gaussian Blur Radius", Slider::Value, Slider::Logarithmic, Slider::Real, .1, 100, 1, .1, 1000, Slider::FilterPixels, this)),
-    m_sigma(new OperatorParameterSlider("sigma", "Sigma", "Gaussian Blur Sigma", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, .5, 0, 1, Slider::FilterPercent, this))
+    m_radius(new OperatorParameterSlider("radius", tr("Radius"), tr("Gaussian Blur Radius"), Slider::Value, Slider::Logarithmic, Slider::Real, .1, 100, 1, .1, 1000, Slider::FilterPixels, this)),
+    m_sigma(new OperatorParameterSlider("sigma", tr("Sigma"), tr("Gaussian Blur Sigma"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, .5, 0, 1, Slider::FilterPercent, this))
 
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"),tr("Images"),OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), tr("Images"), this));
     addParameter(m_radius);
     addParameter(m_sigma);
 

@@ -57,13 +57,13 @@ private:
 
 OpBlackBody::OpBlackBody(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Black Body"), Operator::NA, parent),
-    m_temperature(new OperatorParameterSlider("temperature", "Temperature", "Black Body Temperature",
+    m_temperature(new OperatorParameterSlider("temperature", tr("Temperature"), tr("Black Body Temperature"),
                                               Slider::Value, Slider::Logarithmic, Slider::Integer,
                                               2000, 12000, 6500, 2000, 12000, Slider::FilterNothing,this)),
-    m_tint(new OperatorParameterSlider("tint", "Green tint", "Black Body Green Tint",
+    m_tint(new OperatorParameterSlider("tint", tr("Green tint"), tr("Black Body Green Tint"),
                                        Slider::Percent, Slider::Logarithmic, Slider::Real,
                                        0.5, 2, 1, 0.01, 100, Slider::FilterNothing, this)),
-    m_value(new OperatorParameterSlider("intensity", "Intensity", "Black Body Value",
+    m_value(new OperatorParameterSlider("intensity", tr("Intensity"), tr("Black Body Value"),
                                         Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
                                         1./(1<<8), 1, .125, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
 

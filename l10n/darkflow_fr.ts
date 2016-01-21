@@ -298,6 +298,139 @@
     </message>
 </context>
 <context>
+    <name>OpBlend</name>
+    <message>
+        <location filename="../operators/opblend.cpp" line="8"/>
+        <source>Multiply</source>
+        <translation>Multiplier</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="8"/>
+        <source>Screen</source>
+        <translation>Écran</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="8"/>
+        <source>Overlay</source>
+        <translation>Incrustation</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="8"/>
+        <source>Hard Light</source>
+        <translation>Lumière dure</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="9"/>
+        <source>Soft Light</source>
+        <translation>Lumière douce</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="9"/>
+        <source>Divide Brighten</source>
+        <translation>Diviser éclaricir</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="9"/>
+        <source>Divide</source>
+        <translation>Diviser</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="9"/>
+        <source>Divide Darken</source>
+        <translation>Diviser obscurcir</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="10"/>
+        <source>Addition</source>
+        <translation>Additionner</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="10"/>
+        <source>Subtract</source>
+        <translation>Soustraire</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="10"/>
+        <source>Difference</source>
+        <translation>Différence</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="11"/>
+        <source>Darken Only</source>
+        <translation>Obscurcir</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="11"/>
+        <source>Lighten Only</source>
+        <translation>Éclaircir</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="17"/>
+        <source>A « B</source>
+        <translation>A « B</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="18"/>
+        <source>AB « C</source>
+        <translation>AB « C</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="21"/>
+        <source>Output HDR</source>
+        <translation>Sortie HDR</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="32"/>
+        <source>Layer A (top)</source>
+        <translation>Couche A (haut)</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="32"/>
+        <source>Layer A</source>
+        <translation>Couche A</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="33"/>
+        <source>Layer B (Middle)</source>
+        <translation>Couche B (milieu)</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="33"/>
+        <source>Layer B</source>
+        <translation>Couche B</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="34"/>
+        <source>Layer C (Bottom)</source>
+        <translation>Couche C (bas)</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="34"/>
+        <source>Layer C</source>
+        <translation>Couche C</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="35"/>
+        <source>Blend</source>
+        <translation>Mélange</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="36"/>
+        <source>Overflow</source>
+        <translation>Débordement</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="37"/>
+        <source>Underflow</source>
+        <translation>Négatif</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="65"/>
+        <source>mode1: %0, mode2: %1</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>OpLoadImage</name>
     <message>
         <source>Images</source>
@@ -1226,37 +1359,37 @@
     <message>
         <location filename="../scene/processbutton.cpp" line="16"/>
         <source>▶</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../scene/processbutton.cpp" line="17"/>
         <source>■</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../scene/processbutton.cpp" line="18"/>
         <source>☷</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../scene/processbutton.cpp" line="19"/>
         <source>❌</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../scene/processbutton.cpp" line="20"/>
         <source>?</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../scene/processbutton.cpp" line="21"/>
         <source>⟳</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../scene/processbutton.cpp" line="23"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

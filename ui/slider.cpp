@@ -36,12 +36,12 @@ Slider::Slider(const QString &windowCaption,
     m_range = ui->slider_value->maximum() - ui->slider_value->minimum();
 
     if ( m_hardMin > m_min ) {
-        dflWarning("Slider: hardMin > min");
-        m_hardMin = m_min;
+        dflWarning(tr("Slider: hardMin > min"));
+        m_min = m_hardMin;
     }
     if ( m_hardMax < m_max ) {
-        dflWarning("Slider: hardMax < max");
-        m_hardMax = m_max;
+        dflWarning(tr("Slider: hardMax < max"));
+        m_max = m_hardMax;
     }
 
     int md = log10(1./m_hardMax);
@@ -53,11 +53,11 @@ Slider::Slider(const QString &windowCaption,
         ui->radio_ev->setEnabled(false);
         ui->radio_mag->setEnabled(false);
         if ( m_scale == Logarithmic ) {
-            dflWarning("Slider: wrong scale for +/- value");
+            dflWarning(tr("Slider: wrong scale for +/- value"));
             m_scale = Linear;
         }
         if ( m_unit == ExposureValue || m_unit == Magnitude ) {
-            dflWarning("Slider: wrong unit selected for linear scale");
+            dflWarning(tr("Slider: wrong unit selected for linear scale"));
             m_unit = Value;
         }
         ui->group_scale->hide();
@@ -351,7 +351,7 @@ qreal Slider::toUnit(qreal v)
 void Slider::setUnit(Slider::Unit u)
 {
     m_unit = u;
-    QString unit = " " + unitToString(m_unit);
+    QString unit = " " + unitToLocalizedString(m_unit);
     ui->dspin_min->setSuffix(unit);
     ui->dspin_max->setSuffix(unit);
     ui->dspin_value->setSuffix(unit);
@@ -396,30 +396,33 @@ void Slider::clickScale(Slider::Scale s)
     }
 }
 
-QString Slider::unitToString(Slider::Unit unit)
+const char *Slider::unitToString(Slider::Unit unit)
 {
     switch(unit) {
     default:
-        dflWarning("Slider: Unknown unit");
-    case Value: return "";
-    case Percent: return "%";
-    case ExposureValue: return "EV";
-    case Magnitude: return "M";
+        dflWarning(tr("Slider: Unknown unit"));
+    case Value: return QT_TR_NOOP("");
+    case Percent: return QT_TR_NOOP("%");
+    case ExposureValue: return QT_TR_NOOP("EV");
+    case Magnitude: return QT_TR_NOOP("M");
     }
 }
+QString Slider::unitToLocalizedString(Slider::Unit unit)
+{
+    return tr(unitToString(unit));}
 
 Slider::Unit Slider::unitFromString(const QString &unit)
 {
-    if ( unit == "" )
+    if ( unit == QT_TR_NOOP("") )
         return Value;
-    else if ( unit == "%" )
+    else if ( unit == QT_TR_NOOP("%") )
         return Percent;
-    else if ( unit == "EV" )
+    else if ( unit == QT_TR_NOOP("EV") )
         return ExposureValue;
-    else if ( unit == "M" )
+    else if ( unit == QT_TR_NOOP("M") )
         return Magnitude;
     else {
-        dflWarning("Slider: Unknown unit");
+        dflWarning(tr("Slider: Unknown unit"));
         return Value;
     }
 }
@@ -428,22 +431,22 @@ QString Slider::scaleToString(Slider::Scale scale)
 {
     switch(scale) {
     default:
-        dflWarning("Slider: Unknown scale");
+        dflWarning(tr("Slider: Unknown scale"));
     case Linear:
-        return "Linear";
+        return QT_TR_NOOP("Linear");
     case Logarithmic:
-        return "Logarithmic";
+        return QT_TR_NOOP("Logarithmic");
     }
 }
 
 Slider::Scale Slider::scaleFromString(const QString &scale)
 {
-    if (scale == "Linear")
+    if (scale == QT_TR_NOOP("Linear"))
         return Linear;
-    else if (scale == "Logarithmic")
+    else if (scale == QT_TR_NOOP("Logarithmic"))
         return Logarithmic;
     else {
-        dflWarning("Slider: Unknown scale");
+        dflWarning(tr("Slider: Unknown scale"));
         return Linear;
     }
 }

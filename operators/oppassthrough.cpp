@@ -20,7 +20,7 @@ public:
 
 OpPassThrough::OpPassThrough(Process *parent) :
     Operator(OP_SECTION_DEPRECATED, QT_TRANSLATE_NOOP("Operator", "Pass Through"), Operator::All, parent),
-    m_slider(new OperatorParameterSlider("scale", "scale", "scale",
+    m_slider(new OperatorParameterSlider("scale", tr("scale"), tr("scale"),
                                          Slider::ExposureValue, Slider::Logarithmic,
                                          Slider::Real,
                                          1., 1<<4,
@@ -28,19 +28,13 @@ OpPassThrough::OpPassThrough(Process *parent) :
                                          1./65535, 65535,
                                          Slider::FilterAll,this))
 {
-    addInput(new OperatorInput("Images set 1","Images set # one",OperatorInput::Set, this));
-    addInput(new OperatorInput("Images set 2","Images set # two",OperatorInput::Set, this));
-    addInput(new OperatorInput("Images set 3","Images set # three",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("merge", "merge", this));
+    addInput(new OperatorInput(tr("Images set 1"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Images set 2"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Images set 3"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Merge"), this));
 
     addParameter(m_slider);
 }
-
-OpPassThrough::~OpPassThrough()
-{
-   // dflDebug((QString("Delete of ")+getClassIdentifier()).toLatin1().data());
-}
-
 
 OpPassThrough *OpPassThrough::newInstance()
 {

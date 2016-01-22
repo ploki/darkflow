@@ -94,11 +94,11 @@ public:
 OpRGBDecompose::OpRGBDecompose(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Decompose"), Operator::NonHDR, parent)
 {
-    addInput(new OperatorInput("Images set", "Images set", OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Luminance", "Luminance", this));
-    addOutput(new OperatorOutput("Red", "Red", this));
-    addOutput(new OperatorOutput("Green", "Green", this));
-    addOutput(new OperatorOutput("Blue", "Blue", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Luminance"), this));
+    addOutput(new OperatorOutput(tr("Red"), this));
+    addOutput(new OperatorOutput(tr("Green"), this));
+    addOutput(new OperatorOutput(tr("Blue"), this));
 }
 
 OpRGBDecompose *OpRGBDecompose::newInstance()

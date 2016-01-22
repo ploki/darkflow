@@ -26,12 +26,12 @@ private:
 
 OpColorFilter::OpColorFilter(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Color Filter"), Operator::All, parent),
-    m_r(new OperatorParameterSlider("red", "Red", "Color Filter Red Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
-    m_g(new OperatorParameterSlider("green", "Green", "Color Filter Green Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
-    m_b(new OperatorParameterSlider("blue", "Blue", "Color Filter Blue Component", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this))
+    m_r(new OperatorParameterSlider("red", tr("Red"), tr("Color Filter Red Component"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
+    m_g(new OperatorParameterSlider("green", tr("Green"), tr("Color Filter Green Component"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
+    m_b(new OperatorParameterSlider("blue", tr("Blue"), tr("Color Filter Blue Component"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_r);
     addParameter(m_g);
     addParameter(m_b);

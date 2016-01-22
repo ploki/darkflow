@@ -19,8 +19,8 @@ public:
 OpFlop::OpFlop(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, QT_TRANSLATE_NOOP("Operator", "Flop"), Operator::All, parent)
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 
 }
 

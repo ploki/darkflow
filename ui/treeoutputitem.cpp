@@ -1,6 +1,7 @@
 #include "treeoutputitem.h"
 #include "operator.h"
 #include "operatoroutput.h"
+#include <QObject>
 
 TreeOutputItem::TreeOutputItem(OperatorOutput *output,
                                int idx,
@@ -28,11 +29,11 @@ void TreeOutputItem::setCaption()
     }
     else if ( EnabledSink == m_role ) {
         setBackground(0, QBrush(Qt::yellow));
-        setText(0, "☑ " + m_caption);
+        setText(0, tr("☑ %0").arg(m_caption));
     }
     else {
         setBackground(0, QBrush(Qt::gray));
-        setText(0, "☐ " + m_caption);
+        setText(0, tr("☐ %0").arg(m_caption));
     }
 }
 

@@ -7,11 +7,11 @@
 
 OpDeconvolution::OpDeconvolution(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Deconvolution"), Operator::NonHDR, parent),
-    m_luminosity(new OperatorParameterSlider("luminosity", "Luminosity", "Deconvolution Luminosity", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this))
+    m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Deconvolution Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addInput(new OperatorInput("Kernel","Kernel",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Negative images", "Negative Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Kernel"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_luminosity);
 }
 

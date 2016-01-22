@@ -29,12 +29,12 @@ private:
 
 OpDesaturateShadows::OpDesaturateShadows(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Desaturate Shadows"), Operator::All, parent),
-    m_highlightLimit(new OperatorParameterSlider("highlightLimit", "Higher limit","Desaturate Shadows Higher Limit",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<8),1, 1./(1<<5),1./QuantumRange,1, Slider::FilterExposureFromOne, this)),
-    m_range(new OperatorParameterSlider("range", "Range", "Desaturate Shadows Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1<<3, 1, QuantumRange, Slider::FilterExposureFromOne, this)),
-    m_saturation(new OperatorParameterSlider("saturation", "Saturation", "Desaturate Shadows Saturation", Slider::Percent, Slider::Linear, Slider::Integer, 0, 1, 0, 0, 1, Slider::FilterNothing, this))
+    m_highlightLimit(new OperatorParameterSlider("highlightLimit", tr("Higher limit"), tr("Desaturate Shadows Higher Limit"),Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<8),1, 1./(1<<5),1./QuantumRange,1, Slider::FilterExposureFromOne, this)),
+    m_range(new OperatorParameterSlider("range", tr("Range"), tr("Desaturate Shadows Range"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1<<3, 1, QuantumRange, Slider::FilterExposureFromOne, this)),
+    m_saturation(new OperatorParameterSlider("saturation", tr("Saturation"), tr("Desaturate Shadows Saturation"), Slider::Percent, Slider::Linear, Slider::Integer, 0, 1, 0, 0, 1, Slider::FilterNothing, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 
     addParameter(m_highlightLimit);
     addParameter(m_range);

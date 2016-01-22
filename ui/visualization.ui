@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>796</width>
-    <height>776</height>
+    <height>778</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,18 +16,29 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLineEdit" name="operatorName">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Operator Name</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLineEdit" name="operatorName">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Operator Name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="operatorNameReset">
+        <property name="text">
+         <string>Reset Name</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QSplitter" name="splitter">
@@ -1262,6 +1273,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>operatorNameReset</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>nameReset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>743</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>388</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1284,5 +1311,6 @@
   <slot>treatmentChanged(int)</slot>
   <slot>getInputsClicked()</slot>
   <slot>inputTypeChanged(int)</slot>
+  <slot>nameReset()</slot>
  </slots>
 </ui>

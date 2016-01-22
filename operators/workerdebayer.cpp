@@ -139,7 +139,7 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
     }
     dst_cache.sync();
     if ( failure ) {
-        dflError("Debayer(Worker): missing color component");
+        dflError(WorkerDebayer::tr("Debayer(Worker): missing color component"));
         Photo dummy;
         dummy.setUndefined();
         return dummy;
@@ -232,7 +232,7 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
     bool use_dc = true;
 
     if ( dc_filters == DARKFLOW_COLOR_FILTER_UNKNOWN) {
-        setError(photo, "Unknown color filter pattern");
+        setError(photo, tr("Unknown color filter pattern"));
         return photo;
     }
 
@@ -251,7 +251,7 @@ Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
         use_dc = false;
         newPhoto = debayerHalfSize(photo, filters);
         if ( newPhoto.isUndefined() ) {
-            setError(photo, "Half Size debayer failed");
+            setError(photo, tr("Half Size debayer failed"));
 
         }
         break;

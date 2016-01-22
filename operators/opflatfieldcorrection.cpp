@@ -221,16 +221,16 @@ private:
 
 OpFlatFieldCorrection::OpFlatFieldCorrection(Process *parent) :
     Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Flat-Field Correction"), Operator::All, parent),
-    m_outputHDR(new OperatorParameterDropDown("outputHDR", "Output HDR", this, SLOT(setOutputHDR(int)))),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
     m_outputHDRValue(false)
 {
-    m_outputHDR->addOption("No", false, true);
-    m_outputHDR->addOption("Yes", true);
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
 
-    addInput(new OperatorInput("Uneven images","Uneven images",OperatorInput::Set, this));
-    addInput(new OperatorInput("Flat-field","Flat-field",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Flattened", "Flattened", this));
-    addOutput(new OperatorOutput("Overflow", "Overflow", this));
+    addInput(new OperatorInput(tr("Uneven images"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Flat-field"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Flattened"), this));
+    addOutput(new OperatorOutput(tr("Overflow"), this));
     addParameter(m_outputHDR);
 }
 

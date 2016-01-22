@@ -27,12 +27,12 @@ private:
 
 OpChannelMixer::OpChannelMixer(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Channel Mixer"), Operator::All, parent),
-    m_r(new OperatorParameterSlider("red", "Red", "Channel Mixer Red Component", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, LUMINANCE_RED, 0, 1, Slider::FilterPercent, this)),
-    m_g(new OperatorParameterSlider("green", "Green", "Channel Mixer Green Component", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, LUMINANCE_GREEN, 0, 1, Slider::FilterPercent, this)),
-    m_b(new OperatorParameterSlider("blue", "Blue", "Channel Mixer Blue Component", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, LUMINANCE_BLUE, 0, 1, Slider::FilterPercent, this))
+    m_r(new OperatorParameterSlider("red", tr("Red"), tr("Channel Mixer Red Component"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, LUMINANCE_RED, 0, 1, Slider::FilterPercent, this)),
+    m_g(new OperatorParameterSlider("green", tr("Green"), tr("Channel Mixer Green Component"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, LUMINANCE_GREEN, 0, 1, Slider::FilterPercent, this)),
+    m_b(new OperatorParameterSlider("blue", tr("Blue"), tr("Channel Mixer Blue Component"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, LUMINANCE_BLUE, 0, 1, Slider::FilterPercent, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_r);
     addParameter(m_g);
     addParameter(m_b);

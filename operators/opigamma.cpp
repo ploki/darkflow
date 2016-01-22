@@ -34,7 +34,7 @@ OpIGamma::OpIGamma(Process *parent) :
     m_gamma(0),
     m_dynamicRange(0),
     m_revert(false),
-    m_revertDialog(new OperatorParameterDropDown("revert","Revert", this, SLOT(revert(int))))
+    m_revertDialog(new OperatorParameterDropDown("revert", tr("Revert"), this, SLOT(revert(int))))
 {
     qreal defaultGamma;
     qreal defaultDR;
@@ -62,18 +62,18 @@ OpIGamma::OpIGamma(Process *parent) :
         break;
     }
 
-    m_gamma = new OperatorParameterSlider("gamma", "Gamma", "Gamma Power",
+    m_gamma = new OperatorParameterSlider("gamma", tr("Gamma"), tr("Gamma Power"),
                                           Slider::Value, Slider::Logarithmic, Slider::Real,
                                           0.1, 10, defaultGamma, 0.01, 100, Slider::FilterNothing,this);
-    m_dynamicRange = new OperatorParameterSlider("logarithmicRange", "Logarithmic on", "Gamma Logarithmic Range",
+    m_dynamicRange = new OperatorParameterSlider("logarithmicRange", tr("Logarithmic on"), tr("Gamma Logarithmic Range"),
                                                  Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
                                                  1, defaultMax, defaultDR, 1, 1<<16, Slider::FilterExposure, this);
 
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 
-    m_revertDialog->addOption("No", false, true);
-    m_revertDialog->addOption("Yes", true);
+    m_revertDialog->addOption(DF_TR_AND_C("No"), false, true);
+    m_revertDialog->addOption(DF_TR_AND_C("Yes"), true);
 
     addParameter(m_gamma);
     addParameter(m_dynamicRange);

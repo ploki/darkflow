@@ -65,7 +65,7 @@ private slots:
 OpExNihilo::OpExNihilo(Process *parent) :
     Operator(OP_SECTION_DEPRECATED, QT_TRANSLATE_NOOP("Operator", "Ex Nihilo"), Operator::NA, parent)
 {
-    addOutput(new OperatorOutput("Random image", "Random Image", this));
+    addOutput(new OperatorOutput(tr("Random image"), this));
 }
 
 OpExNihilo::~OpExNihilo()

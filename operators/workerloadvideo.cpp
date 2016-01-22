@@ -57,8 +57,8 @@ void WorkerLoadVideo::play()
 
 #ifdef HAVE_FFMPEG
 
-static bool handle_error(const char *str) {
-    dflWarning("LoadVideo(Worker): %s", str);
+static bool handle_error(const QString &str) {
+    dflWarning(WorkerLoadVideo::tr("LoadVideo(Worker): %0").arg(str));
     return false;
 }
 
@@ -69,11 +69,11 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
     AVFormatContext *pFormatCtx = avformat_alloc_context();
 
     if(avformat_open_input(&pFormatCtx, filename.toLocal8Bit(), NULL, NULL)!=0)
-            return handle_error("Couldn't open file");
+            return handle_error(tr("Couldn't open file %0").arg(filename));
 
     // Retrieve stream information
     if(avformat_find_stream_info(pFormatCtx, NULL)<0)
-            return handle_error("Couldn't find stream information");
+            return handle_error(tr("Couldn't find stream information in file %0").arg(filename));
     unsigned int            i;
     int videoStream;
     AVCodecContext *pCodecCtx;
@@ -86,7 +86,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
             break;
         }
     if(videoStream==-1)
-        return handle_error("Didn't find a video stream");
+        return handle_error(tr("Didn't find a video stream for file %0").arg(filename));
 
     // Get a pointer to the codec context for the video stream
     pCodecCtx=pFormatCtx->streams[videoStream]->codec;
@@ -97,7 +97,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
     // Find the decoder for the video stream
     pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
     if(pCodec==NULL)
-        return handle_error("Codec not found");
+        return handle_error(tr("Codec not found for file %0").arg(filename));
 
     // Inform the codec that we can handle truncated bitstreams -- i.e.,
     // bitstreams where frame boundaries can fall in the middle of packets
@@ -106,11 +106,11 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
 
     if ( pCodecCtx->pix_fmt != AV_PIX_FMT_YUV420P &&
          pCodecCtx->pix_fmt != AV_PIX_FMT_YUV410P)
-            return handle_error("pix_fmt != PIX_FMT_YUV420P");
+            return handle_error(tr("pix_fmt != PIX_FMT_YUV420P for file %0").arg(filename));
 
     // Open codec
     if(avcodec_open2(pCodecCtx, pCodec, NULL)<0)
-        return handle_error("Could not open codec");
+        return handle_error(tr("Could not open codec for file %0").arg(filename));
 
     AVFrame *picture;
     int fps_num = pCodecCtx->framerate.num;
@@ -139,7 +139,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
          while (avpkt.size > 0) {
              len = avcodec_decode_video2(pCodecCtx, picture, &got_picture, &avpkt);
              if (len < 0) {
-                 dflDebug("Error while decoding frame");
+                 dflDebug(tr("Error while decoding frame in %0").arg(filename));
               }
              avpkt.size-=len;
              avpkt.data+=len;
@@ -220,7 +220,7 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
         case AV_PIX_FMT_YUV410P:
             div = 4; break;
         default:
-            dflWarning("LoadVideo(Worker): Unsupported pixel format");
+            dflWarning(tr("LoadVideo(Worker): Unsupported pixel format in file %0").arg(filename));
             return false;
         }
 
@@ -235,11 +235,14 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             photo.setTag(TAG_SCALE, TAG_SCALE_NONLINEAR);
             Magick::Image& image=photo.image();
             Magick::Pixels pixel_cache(image);
+            bool error = false;
 #pragma omp parallel for dfl_threads(4, image)
             for ( int y = 0 ; y < h ; ++y ) {
                 Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
-                if (!pixels) {
-                    dflWarning("LoadVideo(Worker): NULL pixels!");
+                if (error || !pixels) {
+                    if (!error)
+                        dflWarning(DF_NULL_PIXELS);
+                    error = true;
                     continue;
                 }
                 for ( int x = 0 ; x < w ; ++x ) {
@@ -275,12 +278,12 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
 bool WorkerLoadVideo::push_frame(AVFrame *,
                                  const QString &, int, int, int, int)
 {
-    dflError("FFMPEG not compiled in");
+    dflError(tr("FFMPEG not compiled in"));
     return false;
 }
 bool WorkerLoadVideo::decodeVideo(const QString &, int, int)
 {
-    dflError("FFMPEG not compiled in");
+    dflError(tr("FFMPEG not compiled in"));
     return false;
 }
 #endif

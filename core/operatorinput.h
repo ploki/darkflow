@@ -18,13 +18,10 @@ public:
     } OperatorInputCompatibility;
 
     OperatorInput(const QString& name,
-                  const QString& description,
                   OperatorInputCompatibility compatibility,
                   Operator *parent);
 
     QString name() const;
-
-    QString description() const;
 
     OperatorInputCompatibility compatibility() const;
 
@@ -35,7 +32,6 @@ public:
     Operator *m_operator;
 private:
     QString m_name;
-    QString m_description;
     OperatorInputCompatibility m_compatibility;
     QSet<OperatorOutput*> m_sources;
 };

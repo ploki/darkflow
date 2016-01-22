@@ -32,6 +32,7 @@ signals:
 
 public slots:
     void nameChanged(QString text);
+    void nameReset();
     void updateTreeviewPhotos();
     void photoSelectionChanged();
     void zoomFitVisible();

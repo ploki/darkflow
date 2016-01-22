@@ -45,7 +45,7 @@ private:
     ~Console();
 };
 
-#define DF_NULL_PIXELS QObject::tr("Could not get pixels from cache, memory exhausted?")
+#define DF_NULL_PIXELS Console::tr("Could not get pixels from cache, memory exhausted?")
 
 void dflMessage(Console::Level level, char *fmt, ...) DF_PRINTF_FORMAT(2,3);
 void dflDebug(const char* fmt, ...) DF_PRINTF_FORMAT(1,2);

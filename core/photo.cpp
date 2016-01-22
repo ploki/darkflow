@@ -275,7 +275,7 @@ static QPixmap convert(Magick::Image& image) {
   QPixmap pix(w,h);
    bool ret = pix.loadFromData(buf, header_size+w*h*3*1, "PPM", Qt::AutoColor|Qt::AvoidDither);
    if ( !ret )
-       dflError(QObject::tr("Pixmap conversion failed"));
+       dflError(Photo::tr("Pixmap conversion failed"));
    free(buf);
    return pix;
 }
@@ -811,7 +811,7 @@ bool OnDiskCache(const Image &image)
 {
     bool onDisk = MagickCore::GetImagePixelCacheType(const_cast<Image&>(image).image()) == MagickCore::DiskCache;
     if (onDisk)
-        dflDebug(QObject::tr("Image cache is on disk, threading disabled"));
+        dflDebug(Photo::tr("Image cache is on disk, threading disabled"));
     return onDisk;
 }
 

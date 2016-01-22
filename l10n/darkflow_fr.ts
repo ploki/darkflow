@@ -44,6 +44,11 @@
         <translation>Mémoire :</translation>
     </message>
     <message>
+        <location filename="../ui/aboutdialog.cpp" line="17"/>
+        <source>Dark Flow version %0 %1</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../ui/aboutdialog.cpp" line="36"/>
         <location filename="../ui/aboutdialog.cpp" line="37"/>
         <location filename="../ui/aboutdialog.cpp" line="38"/>
@@ -71,6 +76,21 @@
         <location filename="../ui/console.ui" line="61"/>
         <source>Clear</source>
         <translation>Nettoyer</translation>
+    </message>
+    <message>
+        <location filename="../ui/console.cpp" line="31"/>
+        <source>Darkflow Started!</source>
+        <translation>DarkFlow est en marche!</translation>
+    </message>
+    <message>
+        <location filename="../ui/console.cpp" line="98"/>
+        <source>Unknown LogLevel!: %0</source>
+        <translation>Niveau de messages inconnu! %0</translation>
+    </message>
+    <message>
+        <location filename="../ui/console.h" line="48"/>
+        <source>Could not get pixels from cache, memory exhausted?</source>
+        <translation>Impossible d&apos;obtenir les pixels du cache. Faudrait-il plus de mémoire ?</translation>
     </message>
 </context>
 <context>
@@ -108,6 +128,7 @@
     <name>MainWindow</name>
     <message>
         <location filename="../ui/mainwindow.ui" line="14"/>
+        <location filename="../ui/mainwindow.cpp" line="112"/>
         <source>DarkFlow</source>
         <translation></translation>
     </message>
@@ -240,13 +261,14 @@
         <source>Select a project file</source>
         <translation>Sélectionnez un ficher de projet</translation>
     </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="122"/>
+        <source>[New Project]</source>
+        <translation>[Nouveau projet]</translation>
+    </message>
 </context>
 <context>
     <name>OpAdaptiveThreshold</name>
-    <message>
-        <source>Adaptive Threshold</source>
-        <translation type="vanished">Seul adaptatif</translation>
-    </message>
     <message>
         <location filename="../operators/opadaptivethreshold.cpp" line="33"/>
         <source>Width</source>
@@ -287,9 +309,34 @@
 <context>
     <name>OpBlackBody</name>
     <message>
-        <location filename="../operators/opblackbody.cpp" line="71"/>
-        <source>Black Body</source>
-        <translation>Corps noir</translation>
+        <location filename="../operators/opblackbody.cpp" line="60"/>
+        <source>Temperature</source>
+        <translation>Température</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblackbody.cpp" line="60"/>
+        <source>Black Body Temperature</source>
+        <translation>Corps noir - Température</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblackbody.cpp" line="63"/>
+        <source>Green tint</source>
+        <translation>Teinte verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblackbody.cpp" line="63"/>
+        <source>Black Body Green Tint</source>
+        <translation>Corps noir - Teinte verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblackbody.cpp" line="66"/>
+        <source>Intensity</source>
+        <translation>Intensité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblackbody.cpp" line="66"/>
+        <source>Black Body Value</source>
+        <translation>Corps noir - Intensité</translation>
     </message>
     <message>
         <location filename="../operators/opblackbody.cpp" line="71"/>
@@ -365,6 +412,21 @@
         <translation>Éclaircir</translation>
     </message>
     <message>
+        <location filename="../operators/opblend.cpp" line="30"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="65"/>
+        <source>mode1: %0, mode2: %1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opblend.cpp" line="29"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
         <location filename="../operators/opblend.cpp" line="17"/>
         <source>A « B</source>
         <translation>A « B</translation>
@@ -385,29 +447,14 @@
         <translation>Couche A (haut)</translation>
     </message>
     <message>
-        <location filename="../operators/opblend.cpp" line="32"/>
-        <source>Layer A</source>
-        <translation>Couche A</translation>
-    </message>
-    <message>
         <location filename="../operators/opblend.cpp" line="33"/>
         <source>Layer B (Middle)</source>
         <translation>Couche B (milieu)</translation>
     </message>
     <message>
-        <location filename="../operators/opblend.cpp" line="33"/>
-        <source>Layer B</source>
-        <translation>Couche B</translation>
-    </message>
-    <message>
         <location filename="../operators/opblend.cpp" line="34"/>
         <source>Layer C (Bottom)</source>
         <translation>Couche C (bas)</translation>
-    </message>
-    <message>
-        <location filename="../operators/opblend.cpp" line="34"/>
-        <source>Layer C</source>
-        <translation>Couche C</translation>
     </message>
     <message>
         <location filename="../operators/opblend.cpp" line="35"/>
@@ -424,84 +471,1837 @@
         <source>Underflow</source>
         <translation>Négatif</translation>
     </message>
+</context>
+<context>
+    <name>OpBlur</name>
     <message>
-        <location filename="../operators/opblend.cpp" line="65"/>
-        <source>mode1: %0, mode2: %1</source>
+        <location filename="../operators/opblur.cpp" line="32"/>
+        <source>Radius</source>
+        <translation>Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblur.cpp" line="32"/>
+        <source>Blur Radius</source>
+        <translation>Flou - Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblur.cpp" line="33"/>
+        <source>Blur Sigma</source>
+        <translation>Flou - Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblur.cpp" line="33"/>
+        <source>Sigma</source>
+        <translation>Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/opblur.cpp" line="36"/>
+        <location filename="../operators/opblur.cpp" line="37"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpBracketing</name>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="33"/>
+        <source>Bracketing Exposure Compensation</source>
+        <translation>Bracketing - Compensation d&apos;exposition</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="33"/>
+        <source>Compensation</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="34"/>
+        <source>Limit High</source>
+        <translation>Limite haute</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="34"/>
+        <source>Bracketing Limit High</source>
+        <translation>Bracketing - Limite haute</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="35"/>
+        <source>Limit Low</source>
+        <translation>Limite basse</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="35"/>
+        <source>Bracketing Limit Low</source>
+        <translation>Bracketing - Limite basse</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbracketing.cpp" line="37"/>
+        <location filename="../operators/opbracketing.cpp" line="38"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpCMYCompose</name>
+    <message>
+        <location filename="../operators/opcmycompose.cpp" line="161"/>
+        <source>Luminance</source>
+        <translation>Luminance</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmycompose.cpp" line="162"/>
+        <source>Cyan</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmycompose.cpp" line="163"/>
+        <source>Magenta</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmycompose.cpp" line="164"/>
+        <source>Yellow</source>
+        <translation>Jaune</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmycompose.cpp" line="165"/>
+        <source>RGB</source>
+        <translation>RVB</translation>
+    </message>
+</context>
+<context>
+    <name>OpCMYDecompose</name>
+    <message>
+        <location filename="../operators/opcmydecompose.cpp" line="101"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmydecompose.cpp" line="102"/>
+        <source>Luminance</source>
+        <translation>Luminance</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmydecompose.cpp" line="103"/>
+        <source>Cyan</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmydecompose.cpp" line="104"/>
+        <source>Magenta</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opcmydecompose.cpp" line="105"/>
+        <source>Yellow</source>
+        <translation>Jaune</translation>
+    </message>
+</context>
+<context>
+    <name>OpChannelMixer</name>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="30"/>
+        <source>Red</source>
+        <translation>Rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="30"/>
+        <source>Channel Mixer Red Component</source>
+        <translation>Mélangeur de canal - Composante rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="31"/>
+        <source>Green</source>
+        <translation>Vert</translation>
+    </message>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="31"/>
+        <source>Channel Mixer Green Component</source>
+        <translation>Mélangeur de canal - Composante verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="32"/>
+        <source>Blue</source>
+        <translation>Bleu</translation>
+    </message>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="32"/>
+        <source>Channel Mixer Blue Component</source>
+        <translation>Mélangeur de canal - Composante bleue</translation>
+    </message>
+    <message>
+        <location filename="../operators/opchannelmixer.cpp" line="34"/>
+        <location filename="../operators/opchannelmixer.cpp" line="35"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpColor</name>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="39"/>
+        <source>Red</source>
+        <translation>Rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="39"/>
+        <source>Color Red Component</source>
+        <translation>Couleur - Composante rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="40"/>
+        <source>Green</source>
+        <translation>Vert</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="40"/>
+        <source>Color Green Component</source>
+        <translation>Couleur - Composante verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="41"/>
+        <source>Blue</source>
+        <translation>Bleu</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="41"/>
+        <source>Color Blue Component</source>
+        <translation>Couleur - Composante bleue</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolor.cpp" line="43"/>
+        <source>Color</source>
+        <translation>Couleur</translation>
+    </message>
+</context>
+<context>
+    <name>OpColorFilter</name>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="29"/>
+        <source>Red</source>
+        <translation>Rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="29"/>
+        <source>Color Filter Red Component</source>
+        <translation>Filtre de canal - Composante rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="30"/>
+        <source>Green</source>
+        <translation>Vert</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="30"/>
+        <source>Color Filter Green Component</source>
+        <translation>Filtre de canal - Composante verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="31"/>
+        <source>Blue</source>
+        <translation>Bleu</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="31"/>
+        <source>Color Filter Blue Component</source>
+        <translation>Filtre de canal - Composante bleue</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcolorfilter.cpp" line="33"/>
+        <location filename="../operators/opcolorfilter.cpp" line="34"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpConvolution</name>
+    <message>
+        <location filename="../operators/opconvolution.cpp" line="10"/>
+        <source>Luminosity</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opconvolution.cpp" line="10"/>
+        <source>Convolution Luminosity</source>
+        <translation>Convolution - Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opconvolution.cpp" line="12"/>
+        <location filename="../operators/opconvolution.cpp" line="14"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opconvolution.cpp" line="13"/>
+        <source>Kernel</source>
+        <translation>Noyau</translation>
+    </message>
+</context>
+<context>
+    <name>OpCrop</name>
+    <message>
+        <location filename="../operators/opcrop.cpp" line="52"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opcrop.cpp" line="53"/>
+        <source>Cropped</source>
+        <translation>Rogné</translation>
+    </message>
+</context>
+<context>
+    <name>OpDebayer</name>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="8"/>
+        <source>None</source>
+        <translation>Ne rien faire</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="9"/>
+        <source>Mask</source>
+        <translation>Masque</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="10"/>
+        <source>HalfSize</source>
+        <translation>Demi-taille</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="11"/>
+        <source>Simple</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="12"/>
+        <source>Bilinear</source>
+        <translation>Bilinéaire</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="13"/>
+        <source>HQ Linear</source>
+        <translation>Bilinéaire HQ</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="15"/>
+        <source>VNG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="16"/>
+        <source>AHD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="22"/>
+        <source>Quality</source>
+        <translation>Qualité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdebayer.cpp" line="35"/>
+        <location filename="../operators/opdebayer.cpp" line="36"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpDeconvolution</name>
+    <message>
+        <location filename="../operators/opdeconvolution.cpp" line="10"/>
+        <source>Luminosity</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdeconvolution.cpp" line="10"/>
+        <source>Deconvolution Luminosity</source>
+        <translation>Déconvolution - Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdeconvolution.cpp" line="12"/>
+        <location filename="../operators/opdeconvolution.cpp" line="14"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdeconvolution.cpp" line="13"/>
+        <source>Kernel</source>
+        <translation>Noyau</translation>
+    </message>
+</context>
+<context>
+    <name>OpDemultiplexer</name>
+    <message>
+        <location filename="../operators/opdemultiplexer.cpp" line="46"/>
+        <source>Multiplexed set</source>
+        <translation>Images multiplexées</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdemultiplexer.cpp" line="48"/>
+        <source>Image set %0</source>
+        <translation>Images (jeu n°%0)</translation>
+    </message>
+</context>
+<context>
+    <name>OpDesaturateShadows</name>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="32"/>
+        <source>Higher limit</source>
+        <translation>Limite haute</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="32"/>
+        <source>Desaturate Shadows Higher Limit</source>
+        <translation>Désaturer les ombres - Limite haute</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="33"/>
+        <source>Range</source>
+        <translation>Portée</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="33"/>
+        <source>Desaturate Shadows Range</source>
+        <translation>Désaturer les ombres - Limite basse</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="34"/>
+        <source>Saturation</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="34"/>
+        <source>Desaturate Shadows Saturation</source>
+        <translation>Désaturer les ombres - Saturation</translation>
+    </message>
+    <message>
+        <location filename="../operators/opdesaturateshadows.cpp" line="36"/>
+        <location filename="../operators/opdesaturateshadows.cpp" line="37"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpDespeckle</name>
+    <message>
+        <location filename="../operators/opdespeckle.cpp" line="22"/>
+        <location filename="../operators/opdespeckle.cpp" line="23"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpEnhance</name>
+    <message>
+        <location filename="../operators/openhance.cpp" line="22"/>
+        <location filename="../operators/openhance.cpp" line="23"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpEqualize</name>
+    <message>
+        <location filename="../operators/opequalize.cpp" line="25"/>
+        <location filename="../operators/opequalize.cpp" line="26"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpExNihilo</name>
+    <message>
+        <location filename="../operators/opexnihilo.cpp" line="68"/>
+        <source>Random image</source>
+        <translation>Image aléatoire</translation>
+    </message>
+</context>
+<context>
+    <name>OpExposure</name>
+    <message>
+        <location filename="../operators/opexposure.cpp" line="29"/>
+        <source>Exposure</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opexposure.cpp" line="29"/>
+        <source>Modulate Exposure</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opexposure.cpp" line="31"/>
+        <location filename="../operators/opexposure.cpp" line="32"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpFlatFieldCorrection</name>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="224"/>
+        <source>Output HDR</source>
+        <translation>Sortie HDR</translation>
+    </message>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="228"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="230"/>
+        <source>Uneven images</source>
+        <translation>Images irrégulières</translation>
+    </message>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="231"/>
+        <source>Flat-field</source>
+        <translation>Image du &quot;Flat&quot;</translation>
+    </message>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="232"/>
+        <source>Flattened</source>
+        <translation>Aplatie</translation>
+    </message>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="227"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/opflatfieldcorrection.cpp" line="233"/>
+        <source>Overflow</source>
+        <translation>Débordement</translation>
+    </message>
+</context>
+<context>
+    <name>OpFlip</name>
+    <message>
+        <location filename="../operators/opflip.cpp" line="22"/>
+        <location filename="../operators/opflip.cpp" line="23"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpFlop</name>
+    <message>
+        <location filename="../operators/opflop.cpp" line="22"/>
+        <location filename="../operators/opflop.cpp" line="23"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpGaussianBlur</name>
+    <message>
+        <location filename="../operators/opgaussianblur.cpp" line="32"/>
+        <source>Radius</source>
+        <translation>Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgaussianblur.cpp" line="32"/>
+        <source>Gaussian Blur Radius</source>
+        <translation>Flou gaussien - Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgaussianblur.cpp" line="33"/>
+        <source>Sigma</source>
+        <translation>Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgaussianblur.cpp" line="33"/>
+        <source>Gaussian Blur Sigma</source>
+        <translation>Flou gaussien - Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgaussianblur.cpp" line="36"/>
+        <location filename="../operators/opgaussianblur.cpp" line="37"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpGradientEvaluation</name>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="10"/>
+        <source>Points Radius</source>
+        <translation>Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="10"/>
+        <source>Gradient Evaluation Points Radius</source>
+        <translation>Évaluation du gradient - Rayon aux points</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="11"/>
+        <source>Altitude</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="11"/>
+        <source>Gradient Evaluation Altitude</source>
+        <translation>Évaluation du gradient - Altitude</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="12"/>
+        <source>Power</source>
+        <translation>Puissance</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="12"/>
+        <source>Gradient Evaluation Power</source>
+        <translation>Évaluation du gradient - Puissance</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="14"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opgradientevaluation.cpp" line="15"/>
+        <source>Gradients</source>
+        <translation>Gradients</translation>
+    </message>
+</context>
+<context>
+    <name>OpHDR</name>
+    <message>
+        <location filename="../operators/ophdr.cpp" line="32"/>
+        <source>Revert</source>
+        <translation>Inverser</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophdr.cpp" line="34"/>
+        <location filename="../operators/ophdr.cpp" line="35"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophdr.cpp" line="36"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophdr.cpp" line="37"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+</context>
+<context>
+    <name>OpHotPixels</name>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="36"/>
+        <location filename="../operators/ophotpixels.cpp" line="38"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="29"/>
+        <source>Delta</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="29"/>
+        <source>Hot Pixels Delta</source>
+        <translation>Pixels chauds - Delta</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="30"/>
+        <source>Aggressive</source>
+        <translation>Agressif</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="31"/>
+        <source>Naive</source>
+        <translation>Naïf</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="35"/>
+        <location filename="../operators/ophotpixels.cpp" line="37"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <location filename="../operators/ophotpixels.cpp" line="40"/>
+        <location filename="../operators/ophotpixels.cpp" line="41"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpIGamma</name>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="37"/>
+        <source>Revert</source>
+        <translation>Inverser</translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="65"/>
+        <source>Gamma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="65"/>
+        <source>Gamma Power</source>
+        <translation>Gamma - Puissance</translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="68"/>
+        <source>Logarithmic on</source>
+        <translation>Portée</translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="68"/>
+        <source>Gamma Logarithmic Range</source>
+        <translation>Gamma - Portée logarithmique</translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="72"/>
+        <location filename="../operators/opigamma.cpp" line="73"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="75"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/opigamma.cpp" line="76"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+</context>
+<context>
+    <name>OpIntegration</name>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="11"/>
+        <location filename="../operators/opintegration.cpp" line="17"/>
+        <source>None</source>
+        <translation>Aucune</translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="12"/>
+        <source>Sigma clipping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="13"/>
+        <source>Winsorized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="14"/>
+        <source>Median Percentil</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="18"/>
+        <source>Highest Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="19"/>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="27"/>
+        <source>Rejection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="28"/>
+        <source>Upper mul.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="28"/>
+        <source>Integration Upper Limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="29"/>
+        <source>Lower div.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="29"/>
+        <source>Integration Lower Limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="31"/>
+        <source>Normalization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="32"/>
+        <source>Custom Norm.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="32"/>
+        <source>Integration Custom Normalization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="37"/>
+        <source>Integrated Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="49"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="33"/>
+        <source>Output HDR</source>
+        <translation>Sortie HDR</translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="36"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opintegration.cpp" line="48"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+</context>
+<context>
+    <name>OpInvert</name>
+    <message>
+        <location filename="../operators/opinvert.cpp" line="25"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opinvert.cpp" line="26"/>
+        <source>Negative images</source>
+        <translation>Images négatives</translation>
+    </message>
+</context>
+<context>
+    <name>OpLevel</name>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="37"/>
+        <source>Black Point</source>
+        <translation>Point noir</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="37"/>
+        <source>Level Black Point</source>
+        <translation>Niveaux - Point noir</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="38"/>
+        <source>White Point</source>
+        <translation>Point blanc</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="38"/>
+        <source>Level White Point</source>
+        <translation>Niveaux - Point blanc</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="39"/>
+        <source>Gamma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="39"/>
+        <source>Level Gamma</source>
+        <translation>Niveaux - Gamma</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevel.cpp" line="41"/>
+        <location filename="../operators/oplevel.cpp" line="42"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpLevelPercentile</name>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="85"/>
+        <source>Black Point</source>
+        <translation>Point noir</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="85"/>
+        <source>Level Black Point</source>
+        <translation>Niveaux - Point noir</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="86"/>
+        <source>White Point</source>
+        <translation>Point blanc</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="86"/>
+        <source>Level White Point</source>
+        <translation>Niveaux - Point blanc</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="87"/>
+        <source>Gamma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="87"/>
+        <source>Level Gamma</source>
+        <translation>Niveaux - Gamma</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplevelpercentile.cpp" line="89"/>
+        <location filename="../operators/oplevelpercentile.cpp" line="90"/>
+        <source>Images</source>
+        <translation>Images</translation>
     </message>
 </context>
 <context>
     <name>OpLoadImage</name>
     <message>
-        <source>Images</source>
-        <translation type="obsolete">Images</translation>
+        <location filename="../operators/oploadimage.cpp" line="10"/>
+        <source>Linear</source>
+        <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../operators/oploadimage.cpp" line="18"/>
+        <location filename="../operators/oploadimage.cpp" line="11"/>
+        <source>sRGB</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadimage.cpp" line="12"/>
+        <source>IUT BT.709</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadimage.cpp" line="19"/>
+        <location filename="../operators/oploadimage.cpp" line="33"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadimage.cpp" line="20"/>
         <source>Select images to add to the collection</source>
         <translation>Sélectionnez les images à ajouter à la collection</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadimage.cpp" line="22"/>
+        <source>FITS Images (*.fits *.fit);;TIFF Images (*.tif *.tiff);;All Files (*.*)</source>
+        <translation>Images FITS (*.fits *.fit);;TIFF Images (*.tif *.tiff);;Tous les fichiers (*.*)</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadimage.cpp" line="25"/>
+        <source>Color Space</source>
+        <translation>Espace</translation>
     </message>
 </context>
 <context>
     <name>OpLoadRaw</name>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="26"/>
+        <location filename="../operators/oploadraw.cpp" line="9"/>
+        <source>Linear</source>
+        <translation>Linéaire</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="10"/>
+        <source>sRGB</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="11"/>
+        <source>IUT BT.709</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="14"/>
+        <location filename="../operators/oploadraw.cpp" line="22"/>
+        <source>None</source>
+        <translation>Aucun</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="15"/>
+        <source>Half Size</source>
+        <translation>Demi-taille</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="16"/>
+        <source>Low</source>
+        <translation>Basse qualité</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="17"/>
+        <source>VNG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="18"/>
+        <source>PPG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="19"/>
+        <source>AHD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="23"/>
+        <source>Raw colors</source>
+        <translation>Couleurs brutes</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="24"/>
+        <source>Camera</source>
+        <translation>Appareil</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="25"/>
+        <source>Daylight</source>
+        <translation>Lumière du jour</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="28"/>
+        <source>Auto</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="29"/>
+        <source>16-bit</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="30"/>
+        <source>15-bit</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="31"/>
+        <source>14-bit</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="32"/>
+        <source>13-bit</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="33"/>
+        <source>12-bit</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="40"/>
+        <source>RAW photos</source>
+        <translation>Photos brutes</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="41"/>
         <source>Select RAW photos to add to the collection</source>
         <translation>Sélectionnez les photos brutes à ajouter à la collection</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="43"/>
+        <source>RAW photos (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;All Files (*.*)</source>
+        <translation>Photos brutes (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;Tous les fichiers (*.*)</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="45"/>
+        <source>Color Space</source>
+        <translation>Espace</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="46"/>
+        <source>Debayer</source>
+        <translation>Dématriçage</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="47"/>
+        <source>White Balance</source>
+        <translation>Blancs</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="48"/>
+        <source>Clip Highlight</source>
+        <translation>écrêtage</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="83"/>
+        <source>RAWs</source>
+        <translation>Photos brutes</translation>
     </message>
 </context>
 <context>
     <name>OpLoadVideo</name>
     <message>
+        <location filename="../operators/oploadvideo.cpp" line="12"/>
+        <source>Videos</source>
+        <translation>Vidéos</translation>
+    </message>
+    <message>
         <location filename="../operators/oploadvideo.cpp" line="13"/>
         <source>Select Videos to add to the collection</source>
         <translation>Sélectionnez les vidéos à ajouter à la collection</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadvideo.cpp" line="15"/>
+        <source>Videos (*.avi *.mjpg *.mjpeg *.ts *.m2ts *.mov *.mpg *.mpeg *.mp4 *.webm);;All Files (*.*)</source>
+        <translation>Vidéos (*.avi *.mjpg *.mjpeg *.ts *.m2ts *.mov *.mpg *.mpeg *.mp4 *.webm);;Tous les fichiers (*.*)</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadvideo.cpp" line="17"/>
+        <source>Skip</source>
+        <translation>Saut</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadvideo.cpp" line="17"/>
+        <source>Video Frames to skip</source>
+        <translation>Vidéos - Images à sauter</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadvideo.cpp" line="18"/>
+        <source>Count</source>
+        <translation>Compte</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadvideo.cpp" line="18"/>
+        <source>Video Frames to collect</source>
+        <translation>Vidéos - Nombre d&apos;images à collecter</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadvideo.cpp" line="23"/>
+        <source>Video frames</source>
+        <translation>Images vidéos</translation>
+    </message>
+</context>
+<context>
+    <name>OpMicroContrasts</name>
+    <message>
+        <location filename="../operators/opmicrocontrasts.cpp" line="39"/>
+        <location filename="../operators/opmicrocontrasts.cpp" line="40"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpModulate</name>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="35"/>
+        <source>Hue</source>
+        <translation>Teinte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="35"/>
+        <source>Modulate Hue</source>
+        <translation>Modulation - Teinte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="36"/>
+        <source>Saturation</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="36"/>
+        <source>Modulate Saturation</source>
+        <translation>Modulation - -Saturation</translation>
+    </message>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="37"/>
+        <source>Exposure</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="37"/>
+        <source>Modulate Exposure</source>
+        <translation>Modulation - Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opmodulate.cpp" line="39"/>
+        <location filename="../operators/opmodulate.cpp" line="40"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpMultiplexer</name>
+    <message>
+        <location filename="../operators/opmultiplexer.cpp" line="53"/>
+        <source>Image set %0</source>
+        <translation>Images (jeu n°%0)</translation>
+    </message>
+    <message>
+        <location filename="../operators/opmultiplexer.cpp" line="56"/>
+        <source>Multiplexed set</source>
+        <translation>Images multiplexées</translation>
+    </message>
+</context>
+<context>
+    <name>OpNormalize</name>
+    <message>
+        <location filename="../operators/opnormalize.cpp" line="22"/>
+        <location filename="../operators/opnormalize.cpp" line="23"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpPassThrough</name>
+    <message>
+        <location filename="../operators/oppassthrough.cpp" line="23"/>
+        <source>scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/oppassthrough.cpp" line="31"/>
+        <source>Images set 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/oppassthrough.cpp" line="32"/>
+        <source>Images set 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/oppassthrough.cpp" line="33"/>
+        <source>Images set 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/oppassthrough.cpp" line="34"/>
+        <source>Merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OpRGBCompose</name>
+    <message>
+        <location filename="../operators/oprgbcompose.cpp" line="152"/>
+        <source>Luminance</source>
+        <translation>Luminance</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbcompose.cpp" line="153"/>
+        <source>Red</source>
+        <translation>Rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbcompose.cpp" line="154"/>
+        <source>Green</source>
+        <translation>Vert</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbcompose.cpp" line="155"/>
+        <source>Blue</source>
+        <translation>Bleu</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbcompose.cpp" line="156"/>
+        <source>RGB</source>
+        <translation>RVB</translation>
+    </message>
+</context>
+<context>
+    <name>OpRGBDecompose</name>
+    <message>
+        <location filename="../operators/oprgbdecompose.cpp" line="97"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbdecompose.cpp" line="98"/>
+        <source>Luminance</source>
+        <translation>Luminance</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbdecompose.cpp" line="99"/>
+        <source>Red</source>
+        <translation>Rouge</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbdecompose.cpp" line="100"/>
+        <source>Green</source>
+        <translation>Vert</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprgbdecompose.cpp" line="101"/>
+        <source>Blue</source>
+        <translation>Bleu</translation>
+    </message>
+</context>
+<context>
+    <name>OpReduceNoise</name>
+    <message>
+        <location filename="../operators/opreducenoise.cpp" line="27"/>
+        <source>Order</source>
+        <translation>Ordre</translation>
+    </message>
+    <message>
+        <location filename="../operators/opreducenoise.cpp" line="27"/>
+        <source>Reduce Noise Order</source>
+        <translation>Réduction de bruit - Ordre</translation>
+    </message>
+    <message>
+        <location filename="../operators/opreducenoise.cpp" line="29"/>
+        <location filename="../operators/opreducenoise.cpp" line="30"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpRoll</name>
+    <message>
+        <location filename="../operators/oproll.cpp" line="30"/>
+        <source>Columns</source>
+        <translation>Colonnes</translation>
+    </message>
+    <message>
+        <location filename="../operators/oproll.cpp" line="30"/>
+        <source>Roll Columns</source>
+        <translation>Décaler - Colonnes</translation>
+    </message>
+    <message>
+        <location filename="../operators/oproll.cpp" line="31"/>
+        <source>Rows</source>
+        <translation>Lignes</translation>
+    </message>
+    <message>
+        <location filename="../operators/oproll.cpp" line="31"/>
+        <source>Roll Rows</source>
+        <translation>Décaler - Lignes</translation>
+    </message>
+    <message>
+        <location filename="../operators/oproll.cpp" line="33"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/oproll.cpp" line="34"/>
+        <source>Rolled</source>
+        <translation>Images décalées</translation>
+    </message>
+</context>
+<context>
+    <name>OpRotate</name>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="29"/>
+        <source>Angle</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="32"/>
+        <source>0°</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="33"/>
+        <source>90°</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="34"/>
+        <source>180°</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="35"/>
+        <source>270°</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="37"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprotate.cpp" line="38"/>
+        <source>Rotated</source>
+        <translation>Images tournées</translation>
     </message>
 </context>
 <context>
     <name>OpScale</name>
     <message>
+        <location filename="../operators/opscale.cpp" line="138"/>
         <source>Scale</source>
-        <translation type="obsolete">Échelle</translation>
+        <translation>Échelle</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="11"/>
+        <source>Specified</source>
+        <translation>Spécifiée</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="12"/>
+        <source>Smallest W.</source>
+        <translation>Plus petite L.</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="13"/>
+        <source>Smallest H.</source>
+        <translation>Plus petite H.</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="14"/>
+        <source>Largest W.</source>
+        <translation>Plus grande L.</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="15"/>
+        <source>Largest H.</source>
+        <translation>Plus grande H.</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="16"/>
+        <source>Reference W.</source>
+        <translation>Référence L.</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="17"/>
+        <source>Reference H.</source>
+        <translation>Référence H.</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="136"/>
+        <source>Resize to</source>
+        <translation>À l&apos;échelle de</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="140"/>
+        <source>Box</source>
+        <translation>Boîte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="141"/>
+        <source>Point</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="142"/>
+        <source>(auto)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="143"/>
+        <source>Triangle</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="144"/>
+        <source>Hermite</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="145"/>
+        <source>Hanning</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="146"/>
+        <source>Hamming</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="147"/>
+        <source>Blackman</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="148"/>
+        <source>Gaussian</source>
+        <translation>Gaussien</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="149"/>
+        <source>Quadratic</source>
+        <translation>Quadratique</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="150"/>
+        <source>Cubic</source>
+        <translation>Cubique</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="151"/>
+        <source>Catrom</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="152"/>
+        <source>Mitchell</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="153"/>
+        <source>Jinc</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="154"/>
+        <source>Sinc</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="155"/>
+        <source>Sinc Fast</source>
+        <translation>Sinc Rapide</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="156"/>
+        <source>Kaiser</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="157"/>
+        <source>Welsh</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="158"/>
+        <source>Parzen</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="159"/>
+        <source>Bohman</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="160"/>
+        <source>Bartlett</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="161"/>
+        <source>Lagrange</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="162"/>
+        <source>Lanczos</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="163"/>
+        <source>Lanczos Sharp</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="164"/>
+        <source>Lanczos2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="165"/>
+        <source>Lanczos2 Sharp</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="166"/>
+        <source>Robidoux</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="167"/>
+        <source>Robidoux Sharp</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="168"/>
+        <source>Cosine</source>
+        <translation>Cosinus</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="169"/>
+        <source>Spline</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="170"/>
+        <source>Lanczos Radius</source>
+        <translation>Lanczos Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="184"/>
+        <source>Scaled</source>
+        <translation>Images à l&apos;échelle</translation>
+    </message>
+    <message>
+        <location filename="../operators/opscale.cpp" line="183"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpSelectiveLabFilter</name>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="30"/>
+        <source>Selection</source>
+        <translation>Sélection</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="30"/>
+        <source>Selective Lab Filter</source>
+        <translation>Filtre Lab sélectif</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="31"/>
+        <source>Saturation</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="31"/>
+        <source>Selective Lab Filter Saturation</source>
+        <translation>Filtre Lab sélectif - Saturation</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="32"/>
+        <source>Exposure</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="32"/>
+        <source>Selective Lab Filter Exposure</source>
+        <translation>Filtre Lab sélectif - Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="33"/>
+        <source>Exposure zone</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="36"/>
+        <source>Inside</source>
+        <translation>Intérieur</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="37"/>
+        <source>Outside</source>
+        <translation>Extérieur</translation>
+    </message>
+    <message>
+        <location filename="../operators/opselectivelabfilter.cpp" line="39"/>
+        <location filename="../operators/opselectivelabfilter.cpp" line="40"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpShapeDynamicRange</name>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="36"/>
+        <source>Shape</source>
+        <translation>Forme</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="37"/>
+        <source>Dynamic Range</source>
+        <translation>Dynamique</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="37"/>
+        <source>Shape Dynamic Range</source>
+        <translation>Modelage dynamique - Plage de dynamique</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="38"/>
+        <source>Exposure</source>
+        <translation>Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="38"/>
+        <source>Shape Dynamic Range Exposure</source>
+        <translation>Modelage dynamique - Luminosité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="40"/>
+        <source>On Luminance</source>
+        <translation>Luminance</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="42"/>
+        <location filename="../operators/opshapedynamicrange.cpp" line="43"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="45"/>
+        <source>TanH</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="47"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/opshapedynamicrange.cpp" line="48"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+</context>
+<context>
+    <name>OpSsdReg</name>
+    <message>
+        <location filename="../operators/opssdreg.cpp" line="10"/>
+        <location filename="../operators/opssdreg.cpp" line="11"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpSubtract</name>
+    <message>
+        <location filename="../operators/opsubtract.cpp" line="133"/>
+        <source>Minuend</source>
+        <translation>Diminuende</translation>
+    </message>
+    <message>
+        <location filename="../operators/opsubtract.cpp" line="134"/>
+        <source>Subtrahend</source>
+        <translation>Diminuteur</translation>
+    </message>
+    <message>
+        <location filename="../operators/opsubtract.cpp" line="135"/>
+        <source>Addend</source>
+        <translation>À additionner</translation>
+    </message>
+    <message>
+        <location filename="../operators/opsubtract.cpp" line="136"/>
+        <source>Difference</source>
+        <translation>Différence</translation>
+    </message>
+    <message>
+        <location filename="../operators/opsubtract.cpp" line="137"/>
+        <source>Underflow</source>
+        <translation>Négatif</translation>
+    </message>
+</context>
+<context>
+    <name>OpThreshold</name>
+    <message>
+        <location filename="../operators/opthreshold.cpp" line="31"/>
+        <source>High</source>
+        <translation>Haut</translation>
+    </message>
+    <message>
+        <location filename="../operators/opthreshold.cpp" line="31"/>
+        <source>Threshold High</source>
+        <translation>Seuil - Haut</translation>
+    </message>
+    <message>
+        <location filename="../operators/opthreshold.cpp" line="32"/>
+        <source>Low</source>
+        <translation>Bas</translation>
+    </message>
+    <message>
+        <location filename="../operators/opthreshold.cpp" line="32"/>
+        <source>Threshold Low</source>
+        <translation>Seuil - Bas</translation>
+    </message>
+    <message>
+        <location filename="../operators/opthreshold.cpp" line="34"/>
+        <location filename="../operators/opthreshold.cpp" line="35"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpUnsharpMask</name>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="38"/>
+        <source>Radius</source>
+        <translation>Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="38"/>
+        <source>Unsharp Mask Radius</source>
+        <translation>Masque flou - Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="39"/>
+        <source>Sigma</source>
+        <translation>Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="39"/>
+        <source>Unsharp Mask Sigma</source>
+        <translation>Masque flou- Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="40"/>
+        <source>Amount</source>
+        <translation>Quantité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="40"/>
+        <source>Unsharp Mask Amount</source>
+        <translation>Masque flou - Quantité</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="41"/>
+        <source>Threshold</source>
+        <translation>Seuil</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="41"/>
+        <source>Unsharp Mask Threshold</source>
+        <translation>Masque flou - Seuil</translation>
+    </message>
+    <message>
+        <location filename="../operators/opunsharpmask.cpp" line="43"/>
+        <location filename="../operators/opunsharpmask.cpp" line="44"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpWhiteBalance</name>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="27"/>
+        <source>Temperature</source>
+        <translation>Température</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="27"/>
+        <source>White Balance Temperature</source>
+        <translation>Balance des blancs - Température</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="30"/>
+        <source>Green tint</source>
+        <translation>Teinte verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="30"/>
+        <source>White Balance Green Tint</source>
+        <translation>Balance des blancs - Teinte verte</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="34"/>
+        <source>Range safe</source>
+        <translation>Ne pas crâmer</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="36"/>
+        <location filename="../operators/opwhitebalance.cpp" line="37"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="39"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/opwhitebalance.cpp" line="40"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
     </message>
 </context>
 <context>
     <name>Operator</name>
-    <message>
-        <location filename="../core/operator.cpp" line="131"/>
-        <source>Unknown waiting reason</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/operator.cpp" line="275"/>
-        <source>Photo: %0 discarded because of error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/operator.cpp" line="287"/>
-        <source>Already playing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/operator.cpp" line="300"/>
-        <source>Worker started for %0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/operator.cpp" line="305"/>
-        <source>%0 is up to date: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/operator.cpp" line="321"/>
-        <source>Sending &apos;stop&apos; to worker</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/operator.cpp" line="447"/>
-        <source>Saving a parameter</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location filename="../operators/opblackbody.cpp" line="59"/>
         <source>Black Body</source>
@@ -513,9 +2313,50 @@
         <translation>Seul adaptatif</translation>
     </message>
     <message>
+        <location filename="../core/operator.h" line="21"/>
+        <source>Assets</source>
+        <translation>Fichiers</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="22"/>
+        <source>Tools</source>
+        <translation>Outils</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="23"/>
+        <source>Geometry</source>
+        <translation>Géométrie</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="24"/>
+        <source>Registration</source>
+        <translation>Registration</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="26"/>
+        <source>Curve</source>
+        <translation>Courbe</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="27"/>
         <location filename="../operators/opblend.cpp" line="16"/>
         <source>Blend</source>
         <translation>Mélanger</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="28"/>
+        <source>Cosmetic</source>
+        <translation>Cosmétique</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="29"/>
+        <source>Effects</source>
+        <translation>Effets</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.h" line="30"/>
+        <source>Deprecated</source>
+        <translation>Dépréciés</translation>
     </message>
     <message>
         <location filename="../operators/opblur.cpp" line="31"/>
@@ -530,7 +2371,7 @@
     <message>
         <location filename="../operators/opchannelmixer.cpp" line="29"/>
         <source>Channel Mixer</source>
-        <translation>Mixeur de canaux</translation>
+        <translation>Mélangeur de canal</translation>
     </message>
     <message>
         <location filename="../operators/opcmycompose.cpp" line="159"/>
@@ -543,6 +2384,7 @@
         <translation>LCMJ Décomposition</translation>
     </message>
     <message>
+        <location filename="../core/operator.h" line="25"/>
         <location filename="../operators/opcolor.cpp" line="38"/>
         <source>Color</source>
         <translation>Couleur</translation>
@@ -575,7 +2417,7 @@
     <message>
         <location filename="../operators/opdemultiplexer.cpp" line="41"/>
         <source>%0-way Demultiplexer</source>
-        <translation>Démultiplexeur 1 vers %0</translation>
+        <translation>Démultiplexeur 1→ %0</translation>
     </message>
     <message>
         <location filename="../operators/opdesaturateshadows.cpp" line="31"/>
@@ -605,7 +2447,7 @@
     <message>
         <location filename="../operators/opexposure.cpp" line="28"/>
         <source>Exposure</source>
-        <translation>Exposition</translation>
+        <translation>Luminosité</translation>
     </message>
     <message>
         <location filename="../operators/opflatfieldcorrection.cpp" line="223"/>
@@ -615,12 +2457,12 @@
     <message>
         <location filename="../operators/opflip.cpp" line="20"/>
         <source>Flip</source>
-        <translation>Basculer verticalement</translation>
+        <translation>Basculement vertical</translation>
     </message>
     <message>
         <location filename="../operators/opflop.cpp" line="20"/>
         <source>Flop</source>
-        <translation>Basculer horizontalement</translation>
+        <translation>Basculement horizontal</translation>
     </message>
     <message>
         <location filename="../operators/opgaussianblur.cpp" line="31"/>
@@ -630,7 +2472,7 @@
     <message>
         <location filename="../operators/opgradientevaluation.cpp" line="9"/>
         <source>Gradient Evaluation</source>
-        <translation>Évaluation du gradient</translation>
+        <translation>Évaluation gradient</translation>
     </message>
     <message>
         <location filename="../operators/ophdr.cpp" line="30"/>
@@ -648,7 +2490,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/opintegration.cpp" line="20"/>
+        <location filename="../operators/opintegration.cpp" line="25"/>
         <source>Integration</source>
         <translation></translation>
     </message>
@@ -668,12 +2510,12 @@
         <translation>Niveaux pourcentiles</translation>
     </message>
     <message>
-        <location filename="../operators/oploadimage.cpp" line="14"/>
+        <location filename="../operators/oploadimage.cpp" line="16"/>
         <source>Images</source>
         <translation>Images</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="22"/>
+        <location filename="../operators/oploadraw.cpp" line="37"/>
         <source>Raw photos</source>
         <translation>Photos brutes</translation>
     </message>
@@ -693,9 +2535,9 @@
         <translation>Modulation</translation>
     </message>
     <message>
-        <location filename="../operators/opmultiplexer.cpp" line="45"/>
+        <location filename="../operators/opmultiplexer.cpp" line="47"/>
         <source>%0-way Multiplexer</source>
-        <translation>Multiplexeur %0 vers 1</translation>
+        <translation>Multiplexeur %0 → 1</translation>
     </message>
     <message>
         <location filename="../operators/opnormalize.cpp" line="20"/>
@@ -733,7 +2575,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/opscale.cpp" line="138"/>
+        <location filename="../operators/opscale.cpp" line="133"/>
         <source>Scale</source>
         <translation>Mise à l&apos;échelle</translation>
     </message>
@@ -772,21 +2614,61 @@
         <source>White Balance</source>
         <translation>Balance des blancs</translation>
     </message>
+    <message>
+        <location filename="../core/operator.cpp" line="131"/>
+        <source>Unknown waiting reason</source>
+        <translation>Raison d&apos;attente inconnue</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.cpp" line="275"/>
+        <source>Photo: %0 discarded because of error</source>
+        <translation>Photo: %0 évincée pour cause d&apos;erreur</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.cpp" line="287"/>
+        <source>Already playing</source>
+        <translation>Déjà en train de travailler</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.cpp" line="300"/>
+        <source>Worker started for %0</source>
+        <translation>Worker démarré pour %0</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.cpp" line="305"/>
+        <source>%0 is up to date: %1</source>
+        <translation>%0 est à jour: %1</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.cpp" line="321"/>
+        <source>Sending &apos;stop&apos; to worker</source>
+        <translation>&apos;Stop&apos; envoyé au worker</translation>
+    </message>
+    <message>
+        <location filename="../core/operator.cpp" line="447"/>
+        <source>Saving a parameter</source>
+        <translation>Sauvegarde d&apos;un paramètre</translation>
+    </message>
 </context>
 <context>
     <name>OperatorParameterDropDown</name>
     <message>
-        <location filename="../core/operatorparameterdropdown.cpp" line="62"/>
+        <location filename="../core/operatorparameterdropdown.cpp" line="63"/>
         <source>DropDown: invalid parameter type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorparameterdropdown.cpp" line="66"/>
+        <location filename="../core/operatorparameterdropdown.cpp" line="67"/>
         <source>DropDown: invalid parameter name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorparameterdropdown.cpp" line="79"/>
+        <location filename="../core/operatorparameterdropdown.cpp" line="82"/>
+        <source>DropDown: could not find localized value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/operatorparameterdropdown.cpp" line="94"/>
         <source>DropDown: unknown value for dropdown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -930,6 +2812,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../core/photo.cpp" line="278"/>
+        <source>Pixmap conversion failed</source>
+        <translation>Échec de la conversion en Pixmap</translation>
+    </message>
+    <message>
         <location filename="../core/photo.cpp" line="709"/>
         <source>Photo: Invalid numbers in %0</source>
         <translation type="unfinished"></translation>
@@ -938,6 +2825,11 @@
         <location filename="../core/photo.cpp" line="789"/>
         <source>Unknown photo scale</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/photo.cpp" line="814"/>
+        <source>Image cache is on disk, threading disabled</source>
+        <translation>Le cache d&apos;image est sur disque, parallèlisme désactivé</translation>
     </message>
 </context>
 <context>
@@ -1205,6 +3097,32 @@
         <translation>Jamais</translation>
     </message>
     <message>
+        <location filename="../ui/preferences.cpp" line="167"/>
+        <location filename="../ui/preferences.cpp" line="182"/>
+        <location filename="../ui/preferences.cpp" line="248"/>
+        <location filename="../ui/preferences.cpp" line="252"/>
+        <location filename="../ui/preferences.cpp" line="256"/>
+        <location filename="../ui/preferences.cpp" line="260"/>
+        <location filename="../ui/preferences.cpp" line="264"/>
+        <location filename="../ui/preferences.cpp" line="310"/>
+        <location filename="../ui/preferences.cpp" line="311"/>
+        <location filename="../ui/preferences.cpp" line="312"/>
+        <location filename="../ui/preferences.cpp" line="313"/>
+        <location filename="../ui/preferences.cpp" line="314"/>
+        <source>unlimited</source>
+        <translation>illimité</translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.cpp" line="212"/>
+        <source>Configuration file doesn&apos;t exist, creating one</source>
+        <translation>Le fichier de configuration n&apos;existe pas, création.</translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.cpp" line="358"/>
+        <source>Could not save configuration file %0</source>
+        <translation>Ne peut pas enregistrer le fichier de configuration %0</translation>
+    </message>
+    <message>
         <location filename="../ui/preferences.cpp" line="406"/>
         <source>Temporary Directory</source>
         <translation>Répertoire temporaire</translation>
@@ -1213,6 +3131,77 @@
         <location filename="../ui/preferences.cpp" line="415"/>
         <source>Base Directory</source>
         <translation>Répertoire de base</translation>
+    </message>
+</context>
+<context>
+    <name>Process</name>
+    <message>
+        <location filename="../scene/process.cpp" line="307"/>
+        <source>Process: saving a node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scene/process.cpp" line="321"/>
+        <source>Process: Couldn&apos;t open save file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scene/process.cpp" line="335"/>
+        <source>Process::load: Couldn&apos;t open file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scene/process.cpp" line="365"/>
+        <source>Process: Unknown operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scene/process.cpp" line="372"/>
+        <source>Process: unknown output node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scene/process.cpp" line="378"/>
+        <source>Process: unknown input node</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ProcessButton</name>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="16"/>
+        <source>▶</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="17"/>
+        <source>■</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="18"/>
+        <source>☷</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="19"/>
+        <source>❌</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="20"/>
+        <source>?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="21"/>
+        <source>⟳</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../scene/processbutton.cpp" line="23"/>
+        <source>0</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1290,106 +3279,11 @@
     </message>
 </context>
 <context>
-    <name>QObject</name>
+    <name>RotateWorker</name>
     <message>
-        <location filename="../core/photo.cpp" line="278"/>
-        <source>Pixmap conversion failed</source>
-        <translation>Échec de la conversion en Pixmap</translation>
-    </message>
-    <message>
-        <location filename="../core/photo.cpp" line="814"/>
-        <source>Image cache is on disk, threading disabled</source>
-        <translation>Le cache d&apos;image est sur disque, parallèlisme désactivé</translation>
-    </message>
-    <message>
-        <location filename="../ui/console.h" line="48"/>
-        <source>Could not get pixels from cache, memory exhausted?</source>
-        <translation>Impossible d&apos;obtenir les pixels du cache. Faudrait-il plus de mémoire ?</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="21"/>
-        <source>Assets</source>
-        <translation>Fichiers</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="22"/>
-        <source>Tools</source>
-        <translation>Outils</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="23"/>
-        <source>Geometry</source>
-        <translation>Géométrie</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="24"/>
-        <source>Registration</source>
-        <translation>Registration</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="25"/>
-        <source>Color</source>
-        <translation>Couleur</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="26"/>
-        <source>Curve</source>
-        <translation>Courbe</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="27"/>
-        <source>Blend</source>
-        <translation>Mélanger</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="28"/>
-        <source>Cosmetic</source>
-        <translation>Cosmétique</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="29"/>
-        <source>Effects</source>
-        <translation>Effets</translation>
-    </message>
-    <message>
-        <location filename="../core/operator.h" line="30"/>
-        <source>Deprecated</source>
-        <translation>Dépréciés</translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="16"/>
-        <source>▶</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="17"/>
-        <source>■</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="18"/>
-        <source>☷</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="19"/>
-        <source>❌</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="20"/>
-        <source>?</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="21"/>
-        <source>⟳</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../scene/processbutton.cpp" line="23"/>
-        <source>0</source>
-        <translation></translation>
+        <location filename="../operators/oprotate.cpp" line="22"/>
+        <source>apply rotation of %0 °</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1440,6 +3334,16 @@
         <source>Clip to gamut</source>
         <translation>Masquer couleurs hors gamut</translation>
     </message>
+    <message>
+        <location filename="../ui/selectivelab.cpp" line="47"/>
+        <source>Wrong lab selection size of 0</source>
+        <translation>Mauvaise sélection de taille 0</translation>
+    </message>
+    <message>
+        <location filename="../ui/selectivelab.cpp" line="300"/>
+        <source>Operator does not implement getAlgorithm()</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Slider</name>
@@ -1485,6 +3389,8 @@
     </message>
     <message>
         <location filename="../ui/slider.ui" line="98"/>
+        <location filename="../ui/slider.cpp" line="438"/>
+        <location filename="../ui/slider.cpp" line="446"/>
         <source>Logarithmic</source>
         <translation>Logarithmique</translation>
     </message>
@@ -1492,6 +3398,88 @@
         <location filename="../ui/slider.ui" line="108"/>
         <source>Extrema and value</source>
         <translation>Extrema et valeur</translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="39"/>
+        <source>Slider: hardMin &gt; min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="43"/>
+        <source>Slider: hardMax &lt; max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="56"/>
+        <source>Slider: wrong scale for +/- value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="60"/>
+        <source>Slider: wrong unit selected for linear scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="403"/>
+        <location filename="../ui/slider.cpp" line="425"/>
+        <source>Slider: Unknown unit</source>
+        <translation>Slider: Unité inconnue</translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="405"/>
+        <location filename="../ui/slider.cpp" line="418"/>
+        <source>%</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="406"/>
+        <location filename="../ui/slider.cpp" line="420"/>
+        <source>EV</source>
+        <translation>IL</translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="407"/>
+        <location filename="../ui/slider.cpp" line="422"/>
+        <source>M</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="434"/>
+        <location filename="../ui/slider.cpp" line="449"/>
+        <source>Slider: Unknown scale</source>
+        <translation>Slider: Échelle inconnue</translation>
+    </message>
+    <message>
+        <location filename="../ui/slider.cpp" line="436"/>
+        <location filename="../ui/slider.cpp" line="444"/>
+        <source>Linear</source>
+        <translation>Linéaire</translation>
+    </message>
+</context>
+<context>
+    <name>TreeOutputItem</name>
+    <message>
+        <location filename="../ui/treeoutputitem.cpp" line="32"/>
+        <source>☑ %0</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/treeoutputitem.cpp" line="36"/>
+        <source>☐ %0</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>TreePhotoItem</name>
+    <message>
+        <location filename="../ui/treephotoitem.cpp" line="15"/>
+        <source>TreePhotoItem: photo is not complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/treephotoitem.cpp" line="18"/>
+        <source>TreePhotoItem: m_photo is not complete</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1502,328 +3490,333 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="28"/>
+        <location filename="../ui/visualization.ui" line="30"/>
         <source>Operator Name</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="47"/>
+        <location filename="../ui/visualization.ui" line="37"/>
+        <source>Reset Name</source>
+        <translation>Réinitialiser le nom</translation>
+    </message>
+    <message>
+        <location filename="../ui/visualization.ui" line="58"/>
         <source>Operator Class</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="61"/>
+        <location filename="../ui/visualization.ui" line="72"/>
         <source>1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="69"/>
+        <location filename="../ui/visualization.ui" line="80"/>
         <source>Auto Play</source>
         <translation>Jouer automatiquement</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="79"/>
+        <location filename="../ui/visualization.ui" line="90"/>
         <source>Get Inputs</source>
         <translation>Obtenir les entrées</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="86"/>
+        <location filename="../ui/visualization.ui" line="97"/>
         <source>Play</source>
         <translation>Jouer</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="114"/>
+        <location filename="../ui/visualization.ui" line="125"/>
         <source>Visualization</source>
         <translation>Visualisation</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="163"/>
+        <location filename="../ui/visualization.ui" line="174"/>
         <source>Zoom</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="169"/>
+        <location filename="../ui/visualization.ui" line="180"/>
         <source>Fit visi&amp;ble</source>
         <translation>&amp;Ajusté à la fenêtre</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="179"/>
+        <location filename="../ui/visualization.ui" line="190"/>
         <source>&amp;1:2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="186"/>
+        <location filename="../ui/visualization.ui" line="197"/>
         <source>1:1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="193"/>
+        <location filename="../ui/visualization.ui" line="204"/>
         <source>&amp;2:1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="200"/>
+        <location filename="../ui/visualization.ui" line="211"/>
         <source>Custom:</source>
         <translation>Personnalisé :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="209"/>
+        <location filename="../ui/visualization.ui" line="220"/>
         <source>+</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="216"/>
+        <location filename="../ui/visualization.ui" line="227"/>
         <source>-</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="234"/>
+        <location filename="../ui/visualization.ui" line="245"/>
         <source>Image Information</source>
         <translation>Informations sur l&apos;image</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="240"/>
+        <location filename="../ui/visualization.ui" line="251"/>
         <source>Tool:</source>
         <translation>Outil :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="248"/>
+        <location filename="../ui/visualization.ui" line="259"/>
         <source>No</source>
         <translation>Aucun</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="253"/>
+        <location filename="../ui/visualization.ui" line="264"/>
         <source>ROI</source>
         <translation>Région</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="258"/>
+        <location filename="../ui/visualization.ui" line="269"/>
         <source>1 point</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="263"/>
+        <location filename="../ui/visualization.ui" line="274"/>
         <source>2 points</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="268"/>
+        <location filename="../ui/visualization.ui" line="279"/>
         <source>3 points</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="273"/>
+        <location filename="../ui/visualization.ui" line="284"/>
         <source>n points</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="281"/>
+        <location filename="../ui/visualization.ui" line="292"/>
         <source>Treatment:</source>
         <translation>Traitement :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="289"/>
+        <location filename="../ui/visualization.ui" line="300"/>
         <source>Regular</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="294"/>
+        <location filename="../ui/visualization.ui" line="305"/>
         <source>Reference</source>
         <translation>Référence</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="299"/>
+        <location filename="../ui/visualization.ui" line="310"/>
         <source>Discarded</source>
         <translation>Rejeter</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="304"/>
+        <location filename="../ui/visualization.ui" line="315"/>
         <source>In Error</source>
         <translation>En erreur</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="312"/>
+        <location filename="../ui/visualization.ui" line="323"/>
         <source>Width:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="319"/>
-        <location filename="../ui/visualization.ui" line="333"/>
+        <location filename="../ui/visualization.ui" line="330"/>
+        <location filename="../ui/visualization.ui" line="344"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="326"/>
+        <location filename="../ui/visualization.ui" line="337"/>
         <source>Height:</source>
         <translation>Hauteur :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="345"/>
+        <location filename="../ui/visualization.ui" line="356"/>
         <source>R:      0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="357"/>
-        <location filename="../ui/visualization.ui" line="384"/>
-        <location filename="../ui/visualization.ui" line="411"/>
+        <location filename="../ui/visualization.ui" line="368"/>
+        <location filename="../ui/visualization.ui" line="395"/>
+        <location filename="../ui/visualization.ui" line="422"/>
         <source>-16.00</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="372"/>
+        <location filename="../ui/visualization.ui" line="383"/>
         <source>G:      0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="399"/>
+        <location filename="../ui/visualization.ui" line="410"/>
         <source>B:      0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="444"/>
+        <location filename="../ui/visualization.ui" line="455"/>
         <source>Display assist</source>
         <translation>Affichage</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="450"/>
+        <location filename="../ui/visualization.ui" line="461"/>
         <source>Display:</source>
         <translation>Affichage :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="458"/>
+        <location filename="../ui/visualization.ui" line="469"/>
         <source>As Input</source>
         <translation>Comme l&apos;entrée</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="463"/>
+        <location filename="../ui/visualization.ui" line="474"/>
         <source>sRGB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="468"/>
+        <location filename="../ui/visualization.ui" line="479"/>
         <source>IUT BT.709</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="473"/>
+        <location filename="../ui/visualization.ui" line="484"/>
         <source>Square Root</source>
         <translation>Racine carrée</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="481"/>
-        <location filename="../ui/visualization.ui" line="516"/>
+        <location filename="../ui/visualization.ui" line="492"/>
+        <location filename="../ui/visualization.ui" line="527"/>
         <source>Exp:</source>
-        <translation></translation>
+        <translation>Lum:</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="523"/>
+        <location filename="../ui/visualization.ui" line="534"/>
         <source>0 EV</source>
         <translation>0 IL</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="530"/>
+        <location filename="../ui/visualization.ui" line="541"/>
         <source>Full Screen</source>
         <translation>Plein écran</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="537"/>
+        <location filename="../ui/visualization.ui" line="548"/>
         <source>Save View...</source>
         <translation>Enregistrer vue...</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="544"/>
+        <location filename="../ui/visualization.ui" line="555"/>
         <source>Pixels:</source>
         <translation>Pixels :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="558"/>
-        <location filename="../ui/visualization.ui" line="761"/>
+        <location filename="../ui/visualization.ui" line="569"/>
+        <location filename="../ui/visualization.ui" line="772"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="563"/>
+        <location filename="../ui/visualization.ui" line="574"/>
         <source>Non-Linear</source>
         <translation>Non-linéaire</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="568"/>
+        <location filename="../ui/visualization.ui" line="579"/>
         <source>HDR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="600"/>
+        <location filename="../ui/visualization.ui" line="611"/>
         <source>Tags</source>
         <translation>Étiquettes</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="617"/>
+        <location filename="../ui/visualization.ui" line="628"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="624"/>
+        <location filename="../ui/visualization.ui" line="635"/>
         <source>Remove</source>
         <translation>Enlever</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="631"/>
+        <location filename="../ui/visualization.ui" line="642"/>
         <source>Reset</source>
         <translation>R.à.z.</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="654"/>
-        <location filename="../ui/visualization.ui" line="737"/>
+        <location filename="../ui/visualization.ui" line="665"/>
+        <location filename="../ui/visualization.ui" line="748"/>
         <source>Histogram</source>
         <translation>Histogramme</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="747"/>
+        <location filename="../ui/visualization.ui" line="758"/>
         <source>Lines</source>
         <translation>Lignes</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="752"/>
+        <location filename="../ui/visualization.ui" line="763"/>
         <source>Surfaces</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="766"/>
+        <location filename="../ui/visualization.ui" line="777"/>
         <source>Logarithm</source>
         <translation>Logarithmique</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="778"/>
+        <location filename="../ui/visualization.ui" line="789"/>
         <source>Transfer function</source>
         <translation>Fonction de transfert</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="837"/>
+        <location filename="../ui/visualization.ui" line="848"/>
         <source>Transfer Function</source>
         <translation>Fonction de transfert</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="844"/>
+        <location filename="../ui/visualization.ui" line="855"/>
         <source>Cumulative</source>
         <translation>Cumulatif</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="849"/>
+        <location filename="../ui/visualization.ui" line="860"/>
         <source>Only this operator</source>
         <translation>Seulement cet opérateur</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="858"/>
+        <location filename="../ui/visualization.ui" line="869"/>
         <source>sRGB Linear</source>
         <translation>Perceptuel sRGB</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="863"/>
+        <location filename="../ui/visualization.ui" line="874"/>
         <source>sRGB level</source>
         <translation>Niveaux sRGB</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.ui" line="868"/>
+        <location filename="../ui/visualization.ui" line="879"/>
         <source>log2</source>
         <translation>Perceptuel Log2</translation>
     </message>
@@ -1938,34 +3931,182 @@
         <translation>x:%0, y:%1, R:%2%, V:%3%, B:%4%</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="542"/>
+        <location filename="../ui/visualization.cpp" line="548"/>
         <source>Inputs:</source>
         <translation>Entrées :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="555"/>
+        <location filename="../ui/visualization.cpp" line="561"/>
         <source>Visualization: source photo is not complete</source>
         <translation>Visualisation: la photo obtenue de la source n&apos;est pas complète</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="584"/>
+        <location filename="../ui/visualization.cpp" line="590"/>
         <source>Outputs:</source>
         <translation>Sorties :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="598"/>
+        <location filename="../ui/visualization.cpp" line="604"/>
         <source>Visualization: output photo is not complete</source>
         <translation>Visualisation: la photo générée par l&apos;opérateur n&apos;est pas complète</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="616"/>
+        <location filename="../ui/visualization.cpp" line="622"/>
         <source>Invalid photo selection in visualization tree view: sel count %0</source>
         <translation>Sélection de photo invalide dans l&apos;arborescence de la visualisation. %0 sélections</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="796"/>
+        <location filename="../ui/visualization.cpp" line="802"/>
         <source>Selection: x1:%0, y1:%1, x2:%2, y2:%3</source>
         <translation>Sélection: x1:%0, y1:%1, x2:%2, y2:%3</translation>
+    </message>
+</context>
+<context>
+    <name>WorkerDebayer</name>
+    <message>
+        <location filename="../operators/workerdebayer.cpp" line="142"/>
+        <source>Debayer(Worker): missing color component</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerdebayer.cpp" line="235"/>
+        <source>Unknown color filter pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerdebayer.cpp" line="254"/>
+        <source>Half Size debayer failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerDeconvolution</name>
+    <message>
+        <location filename="../operators/workerdeconvolution.cpp" line="71"/>
+        <source>Fourier Transformation not available with GraphicsMagick</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerGradientEvaluation</name>
+    <message>
+        <location filename="../operators/workergradientevaluation.cpp" line="70"/>
+        <source>missed a color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workergradientevaluation.cpp" line="125"/>
+        <source>Background of %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerHDR</name>
+    <message>
+        <location filename="../operators/ophdr.cpp" line="18"/>
+        <source>%0: must be HDR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/ophdr.cpp" line="20"/>
+        <source>%0: must be Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerIntegration</name>
+    <message>
+        <location filename="../operators/workerintegration.cpp" line="95"/>
+        <source>%0 is non-linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerintegration.cpp" line="196"/>
+        <source>Integration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerintegration.cpp" line="252"/>
+        <source>Plane dim: w:%0, h:%1, sz:%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerLoadImage</name>
+    <message>
+        <location filename="../operators/workerloadimage.cpp" line="78"/>
+        <source>Unknown image exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerLoadVideo</name>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="61"/>
+        <source>LoadVideo(Worker): %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="72"/>
+        <source>Couldn&apos;t open file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="76"/>
+        <source>Couldn&apos;t find stream information in file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="89"/>
+        <source>Didn&apos;t find a video stream for file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="100"/>
+        <source>Codec not found for file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="109"/>
+        <source>pix_fmt != PIX_FMT_YUV420P for file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="113"/>
+        <source>Could not open codec for file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="142"/>
+        <source>Error while decoding frame in %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="223"/>
+        <source>LoadVideo(Worker): Unsupported pixel format in file %0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/workerloadvideo.cpp" line="281"/>
+        <location filename="../operators/workerloadvideo.cpp" line="286"/>
+        <source>FFMPEG not compiled in</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerMultiplexer</name>
+    <message>
+        <location filename="../operators/opmultiplexer.cpp" line="24"/>
+        <source>Uneven photo count in multiplexer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerRGBCompose</name>
+    <message>
+        <location filename="../operators/oprgbcompose.cpp" line="84"/>
+        <source>LRGB Composition</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

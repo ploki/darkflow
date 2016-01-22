@@ -7,9 +7,19 @@
 
 #include "operatorparameter.h"
 
+#define DF_TR_AND_C(str) (str), tr(str)
+
 class QObject;
 class QMenu;
 class QAction;
+
+class DropDownPair {
+public:
+    DropDownPair();
+    DropDownPair(const char *str, int v);
+    QString C_option;
+    int value;
+};
 
 class OperatorParameterDropDown : public OperatorParameter
 {
@@ -22,7 +32,7 @@ public:
             const char *slot);
     ~OperatorParameterDropDown();
 
-    void addOption(const QString& option, int value, bool selected=false);
+    void addOption(const char *option, const QString& optionLocalized, int value, bool selected=false);
     void dropDown(const QPoint& pos);
 
     QString currentValue() const;
@@ -43,7 +53,7 @@ private slots:
 
 private:
     QMenu *m_menu;
-    QMap<QString, int> m_options;
+    QMap<QString, DropDownPair> m_options;
     QString m_currentValue;
 };
 

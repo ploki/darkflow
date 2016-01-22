@@ -22,8 +22,8 @@ public:
 OpEqualize::OpEqualize(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Equalize"), Operator::NonHDR, parent)
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 }
 
 OpEqualize *OpEqualize::newInstance()

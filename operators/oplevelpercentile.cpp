@@ -82,12 +82,12 @@ private:
 
 OpLevelPercentile::OpLevelPercentile(Process *parent) :
     Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "Level Percentile"), Operator::NonHDR, parent),
-    m_blackPoint(new OperatorParameterSlider("blackPoint", "Black Point", "Level Black Point", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.05, 0, 1, Slider::FilterPercent, this)),
-    m_whitePoint(new OperatorParameterSlider("blackPoint", "White Point", "Level White Point", Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.95, 0, 1, Slider::FilterPercent, this)),
-    m_gamma(new OperatorParameterSlider("gamma", "Gamma", "Level Gamma", Slider::Value, Slider::Logarithmic, Slider::Real, 0.1, 10, 1, 0.01, 10, Slider::FilterNothing, this))
+    m_blackPoint(new OperatorParameterSlider("blackPoint", tr("Black Point"), tr("Level Black Point"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.05, 0, 1, Slider::FilterPercent, this)),
+    m_whitePoint(new OperatorParameterSlider("blackPoint", tr("White Point"), tr("Level White Point"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.95, 0, 1, Slider::FilterPercent, this)),
+    m_gamma(new OperatorParameterSlider("gamma", tr("Gamma"), tr("Level Gamma"), Slider::Value, Slider::Logarithmic, Slider::Real, 0.1, 10, 1, 0.01, 10, Slider::FilterNothing, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_blackPoint);
     addParameter(m_whitePoint);
     addParameter(m_gamma);

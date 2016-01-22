@@ -158,11 +158,11 @@ public:
 OpCMYCompose::OpCMYCompose(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LCMY Compose"), Operator::NonHDR, parent)
 {
-    addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
-    addInput(new OperatorInput("Cyan", "Cyan", OperatorInput::Set, this));
-    addInput(new OperatorInput("Magenta", "Magenta", OperatorInput::Set, this));
-    addInput(new OperatorInput("Yellow", "Yellow", OperatorInput::Set, this));
-    addOutput(new OperatorOutput("RGB", "RGB", this));
+    addInput(new OperatorInput(tr("Luminance"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Cyan"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Magenta"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Yellow"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("RGB"), this));
 }
 
 OpCMYCompose *OpCMYCompose::newInstance()

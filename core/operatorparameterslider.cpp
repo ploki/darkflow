@@ -82,7 +82,7 @@ uint OperatorParameterSlider::parametersFilter() const
 
 QString OperatorParameterSlider::currentValue() const
 {
-    return QString("%0%1").arg(m_value).arg(Slider::unitToString(m_unit));
+    return QString("%0%1").arg(m_value).arg(Slider::unitToLocalizedString(m_unit));
 }
 
 void OperatorParameterSlider::setUnit(const Slider::Unit &unit)

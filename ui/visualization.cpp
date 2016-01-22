@@ -524,6 +524,12 @@ void Visualization::nameChanged(QString text)
     emit operatorNameChanged(text);
 }
 
+void Visualization::nameReset()
+{
+    QString text = m_operator->getLocalizedClassIdentifier();
+    ui->operatorName->setText(text);
+}
+
 void Visualization::updateTreeviewPhotos()
 {
     QTreeWidget *tree = ui->tree_photos;

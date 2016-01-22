@@ -44,7 +44,7 @@ SelectiveLab::SelectiveLab(const QString& windowCaption,
 
 {
     if ( m_labSelectionSize == 0 ) {
-        dflError("Wrong lab selection size of 0");
+        dflError(tr("Wrong lab selection size of 0"));
         m_labSelectionSize = 32;
     }
     ui->setupUi(this);
@@ -297,7 +297,7 @@ void SelectiveLab::applyPreview(Photo &photo)
 {
     Algorithm *algo = m_operator->getAlgorithm();
     if (!algo) {
-        dflWarning("Operator does not implement getAlgorithm()");
+        dflWarning(tr("Operator does not implement getAlgorithm()"));
         return;
     }
     algo->applyOn(photo);

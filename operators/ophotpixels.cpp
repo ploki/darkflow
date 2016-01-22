@@ -26,19 +26,19 @@ private:
 
 OpHotPixels::OpHotPixels(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Hot Pixels"), Operator::NonHDR, parent),
-    m_delta(new OperatorParameterSlider("delta", "Delta", "Hot Pixels Delta", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, M_SQRT2l, 1, 1<<16, Slider::FilterExposureFromOne, this)),
-    m_aggressive(new OperatorParameterDropDown("aggressive", "Aggressive", this, SLOT(selectAggressive(int)))),
-    m_naive(new OperatorParameterDropDown("naive", "Naive", this, SLOT(selectNaive(int)))),
+    m_delta(new OperatorParameterSlider("delta", tr("Delta"), tr("Hot Pixels Delta"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, M_SQRT2l, 1, 1<<16, Slider::FilterExposureFromOne, this)),
+    m_aggressive(new OperatorParameterDropDown("aggressive", tr("Aggressive"), this, SLOT(selectAggressive(int)))),
+    m_naive(new OperatorParameterDropDown("naive", tr("Naive"), this, SLOT(selectNaive(int)))),
     m_aggressiveValue(true),
     m_naiveValue(false)
 {
-    m_aggressive->addOption("Yes", true, true);
-    m_aggressive->addOption("No", false);
-    m_naive->addOption("Yes", true);
-    m_naive->addOption("No", false, true);
+    m_aggressive->addOption(DF_TR_AND_C("Yes"), true, true);
+    m_aggressive->addOption(DF_TR_AND_C("No"), false);
+    m_naive->addOption(DF_TR_AND_C("Yes"), true);
+    m_naive->addOption(DF_TR_AND_C("No"), false, true);
 
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 
     addParameter(m_delta);
     addParameter(m_aggressive);
@@ -60,7 +60,6 @@ return new WorkerHotPixels(m_delta->value(),
 
 void OpHotPixels::selectAggressive(int v)
 {
-    dflDebug("agg:%d, req:%d", m_aggressiveValue, v);
     if ( m_aggressiveValue != !!v) {
         m_aggressiveValue = !!v;
         setOutOfDate();
@@ -69,7 +68,6 @@ void OpHotPixels::selectAggressive(int v)
 
 void OpHotPixels::selectNaive(int v)
 {
-    dflDebug("naive:%d, req:%d", m_naiveValue, v);
     if ( m_naiveValue != !!v) {
         m_naiveValue = !!v;
         setOutOfDate();

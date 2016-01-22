@@ -92,7 +92,7 @@ bool WorkerIntegration::play_onInput(int idx)
             return false;
         }
         if ( photo.getScale() == Photo::NonLinear ) {
-            dflWarning(photo.getIdentity()+" is non-linear");
+            dflWarning(tr("%0 is non-linear").arg(photo.getIdentity()));
         }
         QVector<QPointF> points = photo.getPoints();
         qreal lcx=0, lcy=0;
@@ -193,7 +193,7 @@ bool WorkerIntegration::play_onInput(int idx)
         Photo newPhoto(Photo::Linear);
         newPhoto.setIdentity(m_operator->uuid());
         newPhoto.createImage(m_w, m_h);
-        newPhoto.setTag(TAG_NAME, "Integration");
+        newPhoto.setTag(TAG_NAME, tr("Integration"));
         Magick::Image& newImage = newPhoto.image();
         Magick::Pixels pixel_cache(newImage);
         qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );
@@ -249,7 +249,7 @@ void WorkerIntegration::createPlanes(Magick::Image &image)
     m_countPlane = new int[m_w*m_h*3];
     ::memset(m_integrationPlane, 0, m_w*m_h*3*sizeof(integration_plane_t));
     ::memset(m_countPlane, 0, m_w*m_h*3*sizeof(int));
-    dflDebug(QString("Plane dim: w:%0, h:%1, sz:%2").arg(m_w).arg(m_h).arg(m_w*m_h*3));
+    dflDebug(tr("Plane dim: w:%0, h:%1, sz:%2").arg(m_w).arg(m_h).arg(m_w*m_h*3));
     for ( int i = 0 ; i < m_w*m_h ; ++i ) {
         m_integrationPlane[i] = m_countPlane[i] = 0;
     }

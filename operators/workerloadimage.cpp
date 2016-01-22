@@ -75,7 +75,7 @@ void WorkerLoadImage::play()
             failure = true;
         }
         catch(...) {
-            dflError("unknown image exception");
+            dflError(tr("Unknown image exception"));
             failure = true;
         }
 

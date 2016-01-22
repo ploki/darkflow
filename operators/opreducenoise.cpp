@@ -24,10 +24,10 @@ private:
 
 OpReduceNoise::OpReduceNoise(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Reduce Noise"), Operator::NonHDR, parent),
-    m_order(new OperatorParameterSlider("order", "order", "Reduce Noise Order", Slider::Value, Slider::Linear, Slider::Real, 0, 20, 3, 0, 100, Slider::FilterNothing, this))
+    m_order(new OperatorParameterSlider("order", tr("Order"), tr("Reduce Noise Order"), Slider::Value, Slider::Linear, Slider::Real, 0, 20, 3, 0, 100, Slider::FilterNothing, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_order);
 }
 

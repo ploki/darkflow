@@ -1,11 +1,13 @@
 #ifndef TREEPHOTOITEM_H
 #define TREEPHOTOITEM_H
 
+#include <QCoreApplication>
 #include <QTreeWidgetItem>
 #include "photo.h"
 
 class TreePhotoItem : public QTreeWidgetItem
 {
+    Q_DECLARE_TR_FUNCTIONS(TreePhotoItem)
 public:
     enum { Type = QTreeWidgetItem::UserType + 2 };
     typedef enum {

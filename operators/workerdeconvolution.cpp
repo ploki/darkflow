@@ -68,7 +68,7 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
     Q_UNUSED(image);
     Q_UNUSED(kernel);
     Q_UNUSED(luminosity);
-    dflCritical("Fourier Transformation not available with GraphicsMagick");
+    dflCritical(tr("Fourier Transformation not available with GraphicsMagick"));
     return;
 #else
     std::list<Magick::Image> fft_image;

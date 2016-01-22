@@ -10,6 +10,7 @@ class Image;
 
 class WorkerIntegration : public OperatorWorker
 {
+    Q_OBJECT
 public:
     typedef double integration_plane_t;
     WorkerIntegration(OpIntegration::RejectionType rejectionType,
@@ -26,7 +27,7 @@ public:
     QRectF computePlanesDimensions();
 signals:
 
-public slots:
+public:
     OpIntegration::RejectionType m_rejectionType;
     qreal m_upper;
     qreal m_lower;

@@ -28,7 +28,7 @@ void Console::init()
 {
     qRegisterMetaType<Level>("Level");
     console = new Console();
-    dflInfo("Darkflow Started!");
+    dflInfo(tr("Darkflow Started!"));
 }
 
 void Console::fini()
@@ -95,7 +95,7 @@ void Console::recvMessage(Console::Level level, QString message)
         message = message;
         break;
     default:
-        message = "Unknown LogLevel!: " + message;
+        message = tr("Unknown LogLevel!: %0").arg(message);
     case Console::Critical:
         ui->textEdit->setTextBackgroundColor(Qt::red);
         ui->textEdit->setTextColor(Qt::white);

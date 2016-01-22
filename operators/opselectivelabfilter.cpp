@@ -27,17 +27,17 @@ private:
 
 OpSelectiveLabFilter::OpSelectiveLabFilter(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Selective Lab Filter"), Operator::All, parent),
-    m_selectiveLab(new OperatorParameterSelectiveLab("labSelection", "Selection", "Selective Lab Filter", 0, 0, false, 35, true, true, true, this)),
-    m_saturation(new OperatorParameterSlider("saturation", "Saturation", "Selective Lab Filter Saturation", Slider::Percent, Slider::Linear, Slider::Real, 0, 2, 1, 0, 10, Slider::FilterNothing, this)),
-    m_exposure(new OperatorParameterSlider("exposure", "Exposure", "Selective Lab Filter Exposure", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<8), 1<<8, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
-    m_exposureSelection(new OperatorParameterDropDown("exposureSelection", "Exposure zone", this, SLOT(exposureSelection(int)))),
+    m_selectiveLab(new OperatorParameterSelectiveLab("labSelection", tr("Selection"), tr("Selective Lab Filter"), 0, 0, false, 35, true, true, true, this)),
+    m_saturation(new OperatorParameterSlider("saturation", tr("Saturation"), tr("Selective Lab Filter Saturation"), Slider::Percent, Slider::Linear, Slider::Real, 0, 2, 1, 0, 10, Slider::FilterNothing, this)),
+    m_exposure(new OperatorParameterSlider("exposure", tr("Exposure"), tr("Selective Lab Filter Exposure"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<8), 1<<8, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
+    m_exposureSelection(new OperatorParameterDropDown("exposureSelection", tr("Exposure zone"), this, SLOT(exposureSelection(int)))),
     m_exposureSelectionValue(Inside)
 {
-    m_exposureSelection->addOption("Inside", Inside, true);
-    m_exposureSelection->addOption("Outside", Outside);
+    m_exposureSelection->addOption(DF_TR_AND_C("Inside"), Inside, true);
+    m_exposureSelection->addOption(DF_TR_AND_C("Outside"), Outside);
 
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_selectiveLab);
     addParameter(m_saturation);
     addParameter(m_exposure);

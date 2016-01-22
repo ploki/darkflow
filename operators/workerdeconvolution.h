@@ -7,6 +7,7 @@ class OpDeconvolution;
 
 class WorkerDeconvolution : public OperatorWorker
 {
+    Q_OBJECT
 public:
     WorkerDeconvolution(qreal luminosity, QThread *thread, OpDeconvolution *op);
     Photo process(const Photo &, int, int);

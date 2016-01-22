@@ -5,6 +5,7 @@
 
 class WorkerGradientEvaluation : public OperatorWorker
 {
+    Q_OBJECT
 public:
     WorkerGradientEvaluation(qreal radius, qreal altitude, qreal pow_, QThread *thread, Operator *op);
     Photo process(const Photo &photo, int p, int c);

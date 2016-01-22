@@ -1,3 +1,4 @@
+#include <QObject>
 #include "opmultiplexer.h"
 #include "operatorworker.h"
 #include "operatorinput.h"
@@ -11,6 +12,7 @@ public:
     {
 
     }
+    ~WorkerMultiplexer() {}
     Photo process(const Photo &, int , int ) {
         throw 0;
     }
@@ -19,7 +21,7 @@ public:
         int photo_count = m_inputs[0].count();
         for (int i = 1 ; i < m_inputs.count() ; ++i )
             if ( m_inputs[i].count() != photo_count ) {
-                dflError("Uneven photo count in multiplexer");
+                dflError(tr("Uneven photo count in multiplexer"));
                 emitFailure();
                 return;
             }
@@ -48,10 +50,10 @@ OpMultiplexer::OpMultiplexer(int ways, Process *parent) :
     m_classIdentifier = m_classIdentifier.arg(ways);
     m_name = m_name.arg(ways);
     for (int i = 1 ; i <= m_ways ; ++i ) {
-        QString name = QString("Images set %0").arg(i);
-         addInput(new OperatorInput(name, name, OperatorInput::Set, this));
+        QString name = tr("Image set %0").arg(i);
+         addInput(new OperatorInput(name, OperatorInput::Set, this));
     }
-    addOutput(new OperatorOutput("Multiplexed set", "Multiplexed set", this));
+    addOutput(new OperatorOutput(tr("Multiplexed set"), this));
 }
 
 OpMultiplexer *OpMultiplexer::newInstance()

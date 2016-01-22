@@ -34,8 +34,8 @@ OpAdaptiveThreshold::OpAdaptiveThreshold(Process *parent) :
     m_height(new OperatorParameterSlider("height", tr("Height"), tr("Adaptive Threshold Height"), Slider::Value, Slider::Linear, Slider::Integer, 1, 25, 4, 1, 1000, Slider::FilterNothing, this)),
     m_offset(new OperatorParameterSlider("offset", tr("Offset"), tr("Adaptive Threshold Offset"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1, 1<<16, Slider::FilterExposureFromOne, this))
 {
-    addInput(new OperatorInput(tr("Images"), tr("Images"),OperatorInput::Set, this));
-    addOutput(new OperatorOutput(tr("Images"), tr("Images"), this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_width);
     addParameter(m_height);
     addParameter(m_offset);

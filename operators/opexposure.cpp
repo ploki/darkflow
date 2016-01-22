@@ -26,10 +26,10 @@ private:
 
 OpExposure::OpExposure(Process *parent) :
     Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "Exposure"), Operator::All, parent),
-    m_value(new OperatorParameterSlider("value", "Exposure", "Modulate Exposure",Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
+    m_value(new OperatorParameterSlider("value", tr("Exposure"), tr("Modulate Exposure"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<8, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_value);
 
 }

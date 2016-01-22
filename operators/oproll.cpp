@@ -27,11 +27,11 @@ private:
 
 OpRoll::OpRoll(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, QT_TRANSLATE_NOOP("Operator", "Roll"), Operator::All, parent),
-    m_columns(new OperatorParameterSlider("columns", "Columns", "Roll Columns", Slider::Value, Slider::Linear, Slider::Integer, -10, 10, 0, -32768, 32768, Slider::FilterPixels, this)),
-    m_rows(new OperatorParameterSlider("rows", "Rows", "Roll Rows", Slider::Value, Slider::Linear, Slider::Integer, -10, 10, 0, -32768, 32768, Slider::FilterPixels, this))
+    m_columns(new OperatorParameterSlider("columns", tr("Columns"), tr("Roll Columns"), Slider::Value, Slider::Linear, Slider::Integer, -10, 10, 0, -32768, 32768, Slider::FilterPixels, this)),
+    m_rows(new OperatorParameterSlider("rows", tr("Rows"), tr("Roll Rows"), Slider::Value, Slider::Linear, Slider::Integer, -10, 10, 0, -32768, 32768, Slider::FilterPixels, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Rolled", "Rolled", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Rolled"), this));
     addParameter(m_columns);
     addParameter(m_rows);
 }

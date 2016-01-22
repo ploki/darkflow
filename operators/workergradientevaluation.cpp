@@ -67,7 +67,7 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
             color.blue/=count;
         }
         else {
-            dflWarning("missed a color");
+            dflWarning(tr("missed a color"));
         }
 #pragma omp critical
         {
@@ -122,6 +122,6 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
     out_cache.sync();
 
     outPhoto.setPoints(QVector<QPointF>());
-    outPhoto.setTag(TAG_NAME, "Background of "+outPhoto.getTag(TAG_NAME));
+    outPhoto.setTag(TAG_NAME, tr("Background of %0").arg(outPhoto.getTag(TAG_NAME)));
     return outPhoto;
 }

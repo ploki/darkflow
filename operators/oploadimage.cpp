@@ -7,28 +7,30 @@
 #include "workerloadimage.h"
 
 static const char *ColorSpaceStr[] = {
-  "Linear", "sRGB", "IUT BT.709"
+    QT_TRANSLATE_NOOP("OpLoadImage", "Linear"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "sRGB"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "IUT BT.709")
 };
 
 OpLoadImage::OpLoadImage(Process *parent) :
     Operator(OP_SECTION_ASSETS, QT_TRANSLATE_NOOP("Operator", "Images"), Operator::NA, parent),
     m_filesCollection(new OperatorParameterFilesCollection(
                           "imageCollection",
-                          "Images",
+                          tr("Images"),
                           tr("Select images to add to the collection"),
                           m_process->baseDirectory(),
-                          "FITS Images (*.fits *.fit);;"
+                          tr("FITS Images (*.fits *.fit);;"
                           "TIFF Images (*.tif *.tiff);;"
-                          "All Files (*.*)", this)),
-    m_colorSpace(new OperatorParameterDropDown("colorSpace", "Color Space", this, SLOT(setColorSpace(int)))),
+                          "All Files (*.*)"), this)),
+    m_colorSpace(new OperatorParameterDropDown("colorSpace", tr("Color Space"), this, SLOT(setColorSpace(int)))),
     m_colorSpaceValue(Linear)
 {
-    m_colorSpace->addOption(ColorSpaceStr[Linear], Linear, true);
-    m_colorSpace->addOption(ColorSpaceStr[sRGB], sRGB);
-    m_colorSpace->addOption(ColorSpaceStr[IUT_BT_709], IUT_BT_709);
+    m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[Linear]), Linear, true);
+    m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[sRGB]), sRGB);
+    m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[IUT_BT_709]), IUT_BT_709);
     addParameter(m_filesCollection);
     addParameter(m_colorSpace);
-    addOutput(new OperatorOutput("Images","Images collection",this));
+    addOutput(new OperatorOutput(tr("Images"),this));
 }
 
 OpLoadImage *OpLoadImage::newInstance()

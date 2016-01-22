@@ -19,23 +19,23 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
     Photo newPhoto(photo);
     qreal angle = dynamic_cast<OpRotate*>(m_operator)->angle();
 
-    dflDebug(QString("apply rotation of %0 °").arg(angle));
+    dflDebug(tr("apply rotation of %0 °").arg(angle));
     newPhoto.image().rotate(angle);
     return newPhoto;
 }
 
 OpRotate::OpRotate(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, QT_TRANSLATE_NOOP("Operator", "Rotation"), Operator::All, parent),
-    m_dropdown(new OperatorParameterDropDown("angle","angle",this, SLOT(setAngle(int)))),
+    m_dropdown(new OperatorParameterDropDown("angle", tr("Angle"), this, SLOT(setAngle(int)))),
     m_angle(0)
 {
-    m_dropdown->addOption("0°", 0, true);
-    m_dropdown->addOption("90°", 90);
-    m_dropdown->addOption("180°", 180);
-    m_dropdown->addOption("270°", 270);
+    m_dropdown->addOption(DF_TR_AND_C("0°"), 0, true);
+    m_dropdown->addOption(DF_TR_AND_C("90°"), 90);
+    m_dropdown->addOption(DF_TR_AND_C("180°"), 180);
+    m_dropdown->addOption(DF_TR_AND_C("270°"), 270);
     addParameter(m_dropdown);
-    addInput(new OperatorInput("Images","Image", OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Rotated", "Rotated", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Rotated"), this));
 }
 
 OpRotate::~OpRotate()

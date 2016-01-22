@@ -12,10 +12,10 @@ TreePhotoItem::TreePhotoItem(const Photo &photo,
     setText(0, photo.getTag(TAG_NAME));
     setToolTip(0, photo.getIdentity());
     if ( !photo.isComplete() ) {
-        dflCritical("TreePhotoItem: photo is not complete");
+        dflCritical(TreePhotoItem::tr("TreePhotoItem: photo is not complete"));
     }
     if ( !m_photo.isComplete() ) {
-        dflCritical("TreePhotoItem: m_photo is not complete");
+        dflCritical(TreePhotoItem::tr("TreePhotoItem: m_photo is not complete"));
     }
     setType(type);
 }

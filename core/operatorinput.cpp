@@ -2,13 +2,11 @@
 #include "operatorinput.h"
 
 OperatorInput::OperatorInput(const QString &name,
-                             const QString &description,
                              OperatorInput::OperatorInputCompatibility compatibility,
                              Operator *parent) :
     QObject(parent),
     m_operator(parent),
     m_name(name),
-    m_description(description),
     m_compatibility(compatibility),
     m_sources()
 {}
@@ -16,11 +14,6 @@ OperatorInput::OperatorInput(const QString &name,
 QString OperatorInput::name() const
 {
     return m_name;
-}
-
-QString OperatorInput::description() const
-{
-    return m_description;
 }
 
 OperatorInput::OperatorInputCompatibility

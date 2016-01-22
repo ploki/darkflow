@@ -98,11 +98,11 @@ public:
 OpCMYDecompose::OpCMYDecompose(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LCMY Decompose"), Operator::NonHDR, parent)
 {
-    addInput(new OperatorInput("Images set", "Images set", OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Luminance", "Luminance", this));
-    addOutput(new OperatorOutput("Cyan", "Cyan", this));
-    addOutput(new OperatorOutput("Magenta", "Magenta", this));
-    addOutput(new OperatorOutput("Yellow", "Yellow", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Luminance"), this));
+    addOutput(new OperatorOutput(tr("Cyan"), this));
+    addOutput(new OperatorOutput(tr("Magenta"), this));
+    addOutput(new OperatorOutput(tr("Yellow"), this));
 
 }
 

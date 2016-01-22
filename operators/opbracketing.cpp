@@ -30,12 +30,12 @@ private:
 
 OpBracketing::OpBracketing(Process *parent) :
     Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Bracketing"), Operator::All, parent),
-    m_compensation(new OperatorParameterSlider("compensation", "Compensation", "Bracketing Exposure Compensation", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<16, 1, 1, 1<<16, Slider::FilterExposureFromOne, this)),
-    m_high(new OperatorParameterSlider("high", "Limit High", "Bracketing Limit High", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, M_SQRT1_2l, 1./(1<<16), 1<<16, Slider::FilterExposureFromOne, this)),
-    m_low(new OperatorParameterSlider("low", "Limit Low", "Bracketing Limit Low", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1./(1<<8), 1./(1<<16), 1<<16, Slider::FilterExposureFromOne, this))
+    m_compensation(new OperatorParameterSlider("compensation", tr("Compensation"), tr("Bracketing Exposure Compensation"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<16, 1, 1, 1<<16, Slider::FilterExposureFromOne, this)),
+    m_high(new OperatorParameterSlider("high", tr("Limit High"), tr("Bracketing Limit High"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, M_SQRT1_2l, 1./(1<<16), 1<<16, Slider::FilterExposureFromOne, this)),
+    m_low(new OperatorParameterSlider("low", tr("Limit Low"), tr("Bracketing Limit Low"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<16), 1, 1./(1<<8), 1./(1<<16), 1<<16, Slider::FilterExposureFromOne, this))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_compensation);
     addParameter(m_high);
     addParameter(m_low);

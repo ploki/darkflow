@@ -15,9 +15,9 @@ public:
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
         if ( m_invert && photo.getScale() != Photo::HDR )
-            dflWarning(photo.getIdentity()+": must be HDR");
+            dflWarning(tr("%0: must be HDR").arg(photo.getIdentity()));
         if ( !m_invert && photo.getScale() != Photo::Linear)
-            dflWarning(photo.getIdentity()+": must be Linear");
+            dflWarning(tr("%0: must be Linear").arg(photo.getIdentity()));
         m_hdr.applyOn(newPhoto);
         return newPhoto;
     }
@@ -29,12 +29,12 @@ private:
 OpHDR::OpHDR(Process *parent) :
     Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "HDR"), Operator::HDR|Operator::Linear, parent),
     m_revert(false),
-    m_revertDialog(new OperatorParameterDropDown("revert","Revert", this, SLOT(revert(int))))
+    m_revertDialog(new OperatorParameterDropDown("revert", tr("Revert"), this, SLOT(revert(int))))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
-    m_revertDialog->addOption("No", false, true);
-    m_revertDialog->addOption("Yes", true);
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
+    m_revertDialog->addOption(DF_TR_AND_C("No"), false, true);
+    m_revertDialog->addOption(DF_TR_AND_C("Yes"), true);
     addParameter(m_revertDialog);
 
 }

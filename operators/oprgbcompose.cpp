@@ -81,7 +81,7 @@ public:
                 photo.createImage(w, h);
                 photo.setSequenceNumber(i);
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
-                photo.setTag(TAG_NAME, "LRGB Composition");
+                photo.setTag(TAG_NAME, tr("LRGB Composition"));
                 Magick::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 int line = 0;
@@ -149,11 +149,11 @@ public:
 OpRGBCompose::OpRGBCompose(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Compose"), Operator::NonHDR, parent)
 {
-    addInput(new OperatorInput("Luminance", "Luminance", OperatorInput::Set, this));
-    addInput(new OperatorInput("Red", "Red", OperatorInput::Set, this));
-    addInput(new OperatorInput("Green", "Green", OperatorInput::Set, this));
-    addInput(new OperatorInput("Blue", "Blue", OperatorInput::Set, this));
-    addOutput(new OperatorOutput("RGB", "RGB", this));
+    addInput(new OperatorInput(tr("Luminance"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Red"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Green"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Blue"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("RGB"), this));
 }
 
 OpRGBCompose *OpRGBCompose::newInstance()

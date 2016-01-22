@@ -68,7 +68,7 @@ OpBlackBody::OpBlackBody(Process *parent) :
                                         1./(1<<8), 1, .125, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
 
 {
-    addOutput(new OperatorOutput(tr("Black body"), tr("Black Body"), this));
+    addOutput(new OperatorOutput(tr("Black body"), this));
     addParameter(m_temperature);
     addParameter(m_tint);
     addParameter(m_value);

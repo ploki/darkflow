@@ -12,7 +12,7 @@ QT       += core gui
 #    QMAKE_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
     QMAKE_CXXFLAGS_RELEASE += -O3 -march=native -mfpmath=sse
-    QMAKE_CXXFLAGS_DEBUG += -ggdb3 -Og
+    QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_LFLAGS +=  -fopenmp
     QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
 }

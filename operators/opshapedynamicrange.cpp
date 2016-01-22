@@ -33,19 +33,19 @@ private:
 OpShapeDynamicRange::OpShapeDynamicRange(Process *parent) :
     Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "Shape DR."), Operator::All, parent),
     m_shape(ShapeDynamicRange::TanH),
-    m_shapeDialog(new OperatorParameterDropDown("shape", "Shape", this, SLOT(selectShape(int)))),
-    m_dynamicRange(new OperatorParameterSlider("dynamicRange", "Dynamic Range", "Shape Dynamic Range", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<12, 1<<10, 1, QuantumRange, Slider::FilterExposure, this)),
-    m_exposure(new OperatorParameterSlider("exposure", "Exposure", "Shape Dynamic Range Exposure", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
+    m_shapeDialog(new OperatorParameterDropDown("shape", tr("Shape"), this, SLOT(selectShape(int)))),
+    m_dynamicRange(new OperatorParameterSlider("dynamicRange", tr("Dynamic Range"), tr("Shape Dynamic Range"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<12, 1<<10, 1, QuantumRange, Slider::FilterExposure, this)),
+    m_exposure(new OperatorParameterSlider("exposure", tr("Exposure"), tr("Shape Dynamic Range Exposure"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposure, this)),
     m_labDomain(false),
-    m_labDomainDialog(new OperatorParameterDropDown("lab", "On L*", this, SLOT(selectLab(int))))
+    m_labDomainDialog(new OperatorParameterDropDown("lab", tr("On Luminance"), this, SLOT(selectLab(int))))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 
-    m_shapeDialog->addOption("TanH", ShapeDynamicRange::TanH, true);
+    m_shapeDialog->addOption(DF_TR_AND_C("TanH"), ShapeDynamicRange::TanH, true);
 
-    m_labDomainDialog->addOption("No", false, true);
-    m_labDomainDialog->addOption("Yes", true);
+    m_labDomainDialog->addOption(DF_TR_AND_C("No"), false, true);
+    m_labDomainDialog->addOption(DF_TR_AND_C("Yes"), true);
 
     addParameter(m_shapeDialog);
     addParameter(m_dynamicRange);

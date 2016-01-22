@@ -20,14 +20,15 @@ OperatorParameterDropDown::~OperatorParameterDropDown()
     delete m_menu;
 }
 
-void OperatorParameterDropDown::addOption(const QString &option,
+void OperatorParameterDropDown::addOption(const char * option,
+                                          const QString &optionLocalized,
                                           int value,
                                           bool selected)
 {
-    m_options[option] = value;
-    m_menu->addAction(QIcon(), option);
+    m_options[optionLocalized] = DropDownPair(option, value);
+    m_menu->addAction(QIcon(), optionLocalized);
     if (selected)
-        m_currentValue = option;
+        m_currentValue = optionLocalized;
 }
 
 void OperatorParameterDropDown::dropDown(const QPoint& pos)
@@ -38,7 +39,7 @@ void OperatorParameterDropDown::dropDown(const QPoint& pos)
 void OperatorParameterDropDown::actionTriggered(QAction *action)
 {
     m_currentValue=action->text();
-    emit itemSelected(m_options[m_currentValue]);
+    emit itemSelected(m_options[m_currentValue].value);
     emit valueChanged(m_currentValue);
 }
 
@@ -52,7 +53,7 @@ QJsonObject OperatorParameterDropDown::save()
     QJsonObject obj;
     obj["type"] = "dropdown";
     obj["name"] = m_name;
-    obj["currentValue"] = m_currentValue;
+    obj["currentValue"] = m_options[m_currentValue].C_option;
     return obj;
 }
 
@@ -68,6 +69,20 @@ void OperatorParameterDropDown::load(const QJsonObject &obj)
     }
     bool actionFound = false;
     QString currentValue = obj["currentValue"].toString();
+    for ( QMap<QString, DropDownPair>::iterator pair = m_options.begin();
+          pair != m_options.end();
+          ++pair) {
+        if ( currentValue == pair.value().C_option ) {
+            currentValue = pair.key();
+            actionFound = true;
+            break;
+        }
+    }
+    if ( !actionFound ) {
+        dflWarning(tr("DropDown: could not find localized value"));
+        return;
+    }
+    actionFound = false;
     foreach(QAction *action, m_menu->actions()) {
         if ( action->text() == currentValue ) {
             actionFound = true;
@@ -80,3 +95,13 @@ void OperatorParameterDropDown::load(const QJsonObject &obj)
 }
 
 
+
+DropDownPair::DropDownPair() : C_option(), value(-1)
+{
+}
+
+DropDownPair::DropDownPair(const char *str, int v) :
+    C_option(str),
+    value(v)
+{
+}

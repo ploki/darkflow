@@ -26,33 +26,33 @@ OpBlend::OpBlend(Process *parent) :
     addParameter(m_mode1);
     addParameter(m_mode2);
 
-    m_outputHDR->addOption("No", false, true);
-    m_outputHDR->addOption("Yes", true);
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
 
-    addInput(new OperatorInput(tr("Layer A (top)"),tr("Layer A"),OperatorInput::Set, this));
-    addInput(new OperatorInput(tr("Layer B (Middle)"),tr("Layer B"),OperatorInput::Set, this));
-    addInput(new OperatorInput(tr("Layer C (Bottom)"),tr("Layer C"),OperatorInput::Set, this));
-    addOutput(new OperatorOutput(tr("Blend"),tr("Blend"),this));
-    addOutput(new OperatorOutput(tr("Overflow"),tr("Overflow"),this));
-    addOutput(new OperatorOutput(tr("Underflow"),tr("Underflow"),this));
+    addInput(new OperatorInput(tr("Layer A (top)"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Layer B (Middle)"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Layer C (Bottom)"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Blend"), this));
+    addOutput(new OperatorOutput(tr("Overflow"), this));
+    addOutput(new OperatorOutput(tr("Underflow"), this));
     addParameter(m_outputHDR);
 }
 
 void OpBlend::registerOptions(OperatorParameterDropDown *mode)
 {
-    mode->addOption(tr(BlendModeStr[Multiply]), Multiply, true);
-    mode->addOption(tr(BlendModeStr[Screen]), Screen);
-    mode->addOption(tr(BlendModeStr[Overlay]), Overlay);
-    mode->addOption(tr(BlendModeStr[HardLight]), HardLight);
-    mode->addOption(tr(BlendModeStr[SoftLight]), SoftLight);
-    mode->addOption(tr(BlendModeStr[DivideBrighten]), DivideBrighten);
-    mode->addOption(tr(BlendModeStr[Divide]), Divide);
-    mode->addOption(tr(BlendModeStr[DivideDarken]), DivideDarken);
-    mode->addOption(tr(BlendModeStr[Addition]), Addition);
-    mode->addOption(tr(BlendModeStr[Subtract]), Subtract);
-    mode->addOption(tr(BlendModeStr[Difference]), Difference);
-    mode->addOption(tr(BlendModeStr[DarkenOnly]), DarkenOnly);
-    mode->addOption(tr(BlendModeStr[LightenOnly]), LightenOnly);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Multiply]), Multiply, true);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Screen]), Screen);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Overlay]), Overlay);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[HardLight]), HardLight);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[SoftLight]), SoftLight);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[DivideBrighten]), DivideBrighten);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Divide]), Divide);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[DivideDarken]), DivideDarken);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Addition]), Addition);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Subtract]), Subtract);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[Difference]), Difference);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[DarkenOnly]), DarkenOnly);
+    mode->addOption(DF_TR_AND_C(BlendModeStr[LightenOnly]), LightenOnly);
 }
 
 OpBlend *OpBlend::newInstance()

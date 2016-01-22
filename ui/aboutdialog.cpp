@@ -14,7 +14,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
     ui->pixmapWidget->setPixmap(QPixmap(DF_ICON));
-    ui->version->setText("Dark Flow version " Version " " DF_ARCH);
+    ui->version->setText(tr("Dark Flow version %0 %1").arg(Version).arg(DF_ARCH));
     m_timer.setInterval(500);
     connect(&m_timer,SIGNAL(timeout()), this, SLOT(updateUsage()));
     m_timer.start();

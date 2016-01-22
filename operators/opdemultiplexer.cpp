@@ -43,10 +43,10 @@ OpDemultiplexer::OpDemultiplexer(int ways, Process *parent) :
 {
     m_classIdentifier = m_classIdentifier.arg(ways);
     m_name = m_name.arg(ways);
-    addInput(new OperatorInput("Multiplexed set", "Multiplexed set", OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Multiplexed set"), OperatorInput::Set, this));
     for (int i = 1 ; i <= m_ways ; ++i ) {
-        QString name = QString("Images set %0").arg(i);
-        addOutput(new OperatorOutput(name, name, this));
+        QString name = tr("Image set %0").arg(i);
+        addOutput(new OperatorOutput(name, this));
     }
 }
 

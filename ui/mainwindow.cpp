@@ -109,7 +109,7 @@ void MainWindow::load(const QString &filename)
 
 void MainWindow::processStateChanged()
 {
-    QString title = "DarkFlow";
+    QString title = tr("DarkFlow");
     if (process->dirty())
         title += " * ";
     else
@@ -119,7 +119,7 @@ void MainWindow::processStateChanged()
     else if ( !process->projectName().isEmpty() )
         title += process->projectFile();
     else
-        title += "[New Project]";
+        title += tr("[New Project]");
     this->setWindowTitle(title);
 }
 

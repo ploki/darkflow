@@ -6,6 +6,7 @@
 
 class OpCrop : public Operator
 {
+    Q_OBJECT
 public:
     OpCrop(Process *parent);
 

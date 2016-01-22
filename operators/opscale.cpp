@@ -7,19 +7,14 @@
 #include <Magick++.h>
 
 
-const char *FunctionStr[] = {
-    "Resize",
-    "Sample",
-    "Scale"
-};
-const char *ResizeToStr[] = {
-    "Specified",
-    "Smallest W.",
-    "Smallest H.",
-    "Largest W.",
-    "Largest H.",
-    "Reference W.",
-    "Reference H."
+static const char *ResizeToStr[] = {
+    QT_TRANSLATE_NOOP("OpScale", "Specified"),
+    QT_TRANSLATE_NOOP("OpScale", "Smallest W."),
+    QT_TRANSLATE_NOOP("OpScale", "Smallest H."),
+    QT_TRANSLATE_NOOP("OpScale", "Largest W."),
+    QT_TRANSLATE_NOOP("OpScale", "Largest H."),
+    QT_TRANSLATE_NOOP("OpScale", "Reference W."),
+    QT_TRANSLATE_NOOP("OpScale", "Reference H.")
 };
 
 class WorkerScale : public OperatorWorker {
@@ -138,55 +133,55 @@ OpScale::OpScale(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, QT_TRANSLATE_NOOP("Operator", "Scale"), Operator::All, parent),
     m_algorithm(new OperatorParameterDropDown("algorithm", "Algorithm", this, SLOT(selectAlgorithm(int)))),
     m_algorithmValue(Magick::UndefinedFilter),
-    m_to(new OperatorParameterDropDown("resizeTo", "Resize to", this, SLOT(selectResizeTo(int)))),
+    m_to(new OperatorParameterDropDown("resizeTo", tr("Resize to"), this, SLOT(selectResizeTo(int)))),
     m_toValue(ToSpecified),
-    m_scale(new OperatorParameterSlider("scale", "Scale", "Scale", Slider::Value, Slider::Logarithmic, Slider::Real, 1./4., 4, 1, 1./1024, 8, Slider::FilterPercent, this))
+    m_scale(new OperatorParameterSlider("scale", tr("Scale"), tr("Scale"), Slider::Value, Slider::Logarithmic, Slider::Real, 1./4., 4, 1, 1./1024, 8, Slider::FilterPercent, this))
 {
-    m_algorithm->addOption("Box", Magick::BoxFilter, true);
-    m_algorithm->addOption("Point", Magick::PointFilter);
-    m_algorithm->addOption("(auto)",Magick::UndefinedFilter);
-    m_algorithm->addOption("Triangle", Magick::TriangleFilter);
-    m_algorithm->addOption("Hermite", Magick::HermiteFilter);
-    m_algorithm->addOption("Hanning", Magick::HanningFilter);
-    m_algorithm->addOption("Hamming", Magick::HammingFilter);
-    m_algorithm->addOption("Blackman", Magick::BlackmanFilter);
-    m_algorithm->addOption("Gaussian", Magick::GaussianFilter);
-    m_algorithm->addOption("Quadratic", Magick::QuadraticFilter);
-    m_algorithm->addOption("Cubic", Magick::CubicFilter);
-    m_algorithm->addOption("Catrom", Magick::CatromFilter);
-    m_algorithm->addOption("Mitchell", Magick::MitchellFilter);
-    m_algorithm->addOption("Jinc", Magick::JincFilter);
-    m_algorithm->addOption("Sinc", Magick::SincFilter);
-    m_algorithm->addOption("Sinc Fast", Magick::SincFastFilter);
-    m_algorithm->addOption("Kaiser", Magick::KaiserFilter);
-    m_algorithm->addOption("Welsh", Magick::WelshFilter);
-    m_algorithm->addOption("Parzen", Magick::ParzenFilter);
-    m_algorithm->addOption("Bohman", Magick::BohmanFilter);
-    m_algorithm->addOption("Bartlett", Magick::BartlettFilter);
-    m_algorithm->addOption("Lagrange", Magick::LagrangeFilter);
-    m_algorithm->addOption("Lanczos", Magick::LanczosFilter);
-    m_algorithm->addOption("Lanczos Sharp", Magick::LanczosSharpFilter);
-    m_algorithm->addOption("Lanczos2", Magick::Lanczos2Filter);
-    m_algorithm->addOption("Lanczos2 Sharp", Magick::Lanczos2SharpFilter);
-    m_algorithm->addOption("Robidoux", Magick::RobidouxFilter);
-    m_algorithm->addOption("Robidoux Sharp", Magick::RobidouxSharpFilter);
-    m_algorithm->addOption("Cosine", Magick::CosineFilter);
-    m_algorithm->addOption("Spline", Magick::SplineFilter);
-    m_algorithm->addOption("Lanczos Radius", Magick::LanczosRadiusFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Box"), Magick::BoxFilter, true);
+    m_algorithm->addOption(DF_TR_AND_C("Point"), Magick::PointFilter);
+    m_algorithm->addOption(DF_TR_AND_C("(auto)"),Magick::UndefinedFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Triangle"), Magick::TriangleFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Hermite"), Magick::HermiteFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Hanning"), Magick::HanningFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Hamming"), Magick::HammingFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Blackman"), Magick::BlackmanFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Gaussian"), Magick::GaussianFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Quadratic"), Magick::QuadraticFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Cubic"), Magick::CubicFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Catrom"), Magick::CatromFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Mitchell"), Magick::MitchellFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Jinc"), Magick::JincFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Sinc"), Magick::SincFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Sinc Fast"), Magick::SincFastFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Kaiser"), Magick::KaiserFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Welsh"), Magick::WelshFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Parzen"), Magick::ParzenFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Bohman"), Magick::BohmanFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Bartlett"), Magick::BartlettFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Lagrange"), Magick::LagrangeFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Lanczos"), Magick::LanczosFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Lanczos Sharp"), Magick::LanczosSharpFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Lanczos2"), Magick::Lanczos2Filter);
+    m_algorithm->addOption(DF_TR_AND_C("Lanczos2 Sharp"), Magick::Lanczos2SharpFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Robidoux"), Magick::RobidouxFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Robidoux Sharp"), Magick::RobidouxSharpFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Cosine"), Magick::CosineFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Spline"), Magick::SplineFilter);
+    m_algorithm->addOption(DF_TR_AND_C("Lanczos Radius"), Magick::LanczosRadiusFilter);
 
-    m_to->addOption(ResizeToStr[ToSpecified], ToSpecified, true);
-    m_to->addOption(ResizeToStr[ToSmallestWidth], ToSmallestWidth);
-    m_to->addOption(ResizeToStr[ToSmallestHeight], ToSmallestHeight);
-    m_to->addOption(ResizeToStr[ToLargestWidth], ToLargestWidth);
-    m_to->addOption(ResizeToStr[ToLargestHeight], ToLargestHeight);
-    m_to->addOption(ResizeToStr[ToReferenceWidth], ToReferenceWidth);
-    m_to->addOption(ResizeToStr[ToReferenceHeight], ToReferenceHeight);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToSpecified]), ToSpecified, true);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToSmallestWidth]), ToSmallestWidth);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToSmallestHeight]), ToSmallestHeight);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToLargestWidth]), ToLargestWidth);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToLargestHeight]), ToLargestHeight);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToReferenceWidth]), ToReferenceWidth);
+    m_to->addOption(DF_TR_AND_C(ResizeToStr[ToReferenceHeight]), ToReferenceHeight);
 
     addParameter(m_algorithm);
     addParameter(m_to);
     addParameter(m_scale);
-    addInput(new OperatorInput("Images","Image", OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Scaled", "Scaled", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Scaled"), this));
 }
 
 OpScale *OpScale::newInstance()

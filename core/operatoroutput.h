@@ -16,13 +16,10 @@ class OperatorOutput : public QObject
     Q_OBJECT
 public:
     explicit OperatorOutput(const QString& name,
-                            const QString& description,
                             Operator *parent = 0);
     ~OperatorOutput();
 
     QString name() const;
-
-    QString description() const;
 
     QSet<OperatorInput *> sinks() const;
     void addSink(OperatorInput *input);
@@ -33,7 +30,6 @@ public:
     Operator *m_operator;
 private:
     QString m_name;
-    QString m_description;
     QSet<OperatorInput*> m_sinks;
 public:
     QVector<Photo> m_result;

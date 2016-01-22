@@ -11,7 +11,6 @@ class OpPassThrough : public Operator
     Q_OBJECT
 public:
     OpPassThrough(Process *parent);
-    ~OpPassThrough();
     OpPassThrough *newInstance();
 
     OperatorWorker *newWorker();

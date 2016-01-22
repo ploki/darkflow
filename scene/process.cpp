@@ -304,7 +304,7 @@ void Process::save()
     foreach (QGraphicsItem *item, m_scene->items()) {
         if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
             ProcessNode *node = dynamic_cast<ProcessNode *>(item);
-            dflDebug("Process: saving a node");
+            dflDebug(tr("Process: saving a node"));
             nodes.push_back(node->save());
         }
         else if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeConnection ) {
@@ -318,7 +318,7 @@ void Process::save()
     doc.setObject(obj);
     QFile saveFile(projectFile());
     if (!saveFile.open(QIODevice::WriteOnly)) {
-           dflWarning("Process: Couldn't open save file.");
+           dflWarning(tr("Process: Couldn't open save file."));
        return;
     }
 
@@ -332,7 +332,7 @@ void Process::load(const QString& filename)
     QFile loadFile(filename);
     if (!loadFile.open(QIODevice::ReadOnly))
     {
-            dflWarning("Process: Couldn't open load file.");
+            dflWarning(tr("Process::load: Couldn't open file %0").arg(filename));
             return;
     }
     QByteArray data = loadFile.readAll();
@@ -362,20 +362,20 @@ void Process::load(const QString& filename)
             }
         }
         if (!operatorFound) {
-            dflWarning("Process: Unknown operator");
+            dflWarning(tr("Process: Unknown operator"));
         }
     }
     foreach(QJsonValue val, obj["connections"].toArray()) {
         QJsonObject obj = val.toObject();
         ProcessNode *outNode = findNode(obj["outPortUuid"].toString());
         if ( NULL == outNode ) {
-            dflWarning("Process: unknown output node");
+            dflWarning(tr("Process: unknown output node"));
             continue;
         }
         int outIdx = obj["outPortIdx"].toInt();
         ProcessNode *inNode = findNode(obj["inPortUuid"].toString());
         if ( NULL == inNode ) {
-            dflWarning("Process: unknown input node");
+            dflWarning(tr("Process: unknown input node"));
             continue;
         }
         int inIdx = obj["inPortIdx"].toInt();

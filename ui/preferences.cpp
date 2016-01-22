@@ -164,7 +164,7 @@ void Preferences::getDefaultMagickResources()
     ui->defaultArea->setText(QString::number(qreal(m_defaultArea)/div));
     ui->defaultMemory->setText(QString::number(qreal(m_defaultMemory)/div));
     ui->defaultMap->setText(QString::number(qreal(m_defaultMap)/div));
-    ui->defaultDisk->setText(m_defaultDisk==(u_int64_t)-1?QString("unlimited"):QString::number(qreal(m_defaultDisk)/div));
+    ui->defaultDisk->setText(m_defaultDisk==(u_int64_t)-1?tr("unlimited"):QString::number(qreal(m_defaultDisk)/div));
     ui->defaultThreads->setText(QString::number(m_defaultThreads));
 }
 
@@ -179,7 +179,7 @@ void Preferences::getMagickResources()
     ui->valueArea->setText(QString::number(qreal(currentArea)/div));
     ui->valueMemory->setText(QString::number(qreal(currentMemory)/div));
     ui->valueMap->setText(QString::number(qreal(currentMap)/div));
-    ui->valueDisk->setText(currentDisk==(u_int64_t)-1?QString("unlimited"):QString::number(qreal(currentDisk)/div));
+    ui->valueDisk->setText(currentDisk==(u_int64_t)-1?tr("unlimited"):QString::number(qreal(currentDisk)/div));
     ui->valueThreads->setText(QString::number(currentThreads));
 }
 
@@ -209,7 +209,7 @@ bool Preferences::load(bool create)
     QFile file(filename);
     if ( !file.open(QIODevice::ReadOnly)) {
         if (create) {
-            dflWarning("Configuration file doesn't exist, creating one");
+            dflWarning(tr("Configuration file doesn't exist, creating one"));
             save();
         }
         return false;
@@ -244,24 +244,24 @@ bool Preferences::load(bool create)
     int64_t map = resources["map"].toDouble();
     int64_t disk = resources["disk"].toDouble();
     int64_t threads = resources["threads"].toDouble();
-    if ( area <= 0 )
-        ui->valueArea->setText("unlimited");
+    if ( area < 0 )
+        ui->valueArea->setText(tr("unlimited"));
     else
         ui->valueArea->setText(QString::number(mul*area));
-    if ( memory <= 0 )
-        ui->valueMemory->setText("unlimited");
+    if ( memory < 0 )
+        ui->valueMemory->setText(tr("unlimited"));
     else
         ui->valueMemory->setText(QString::number(mul*memory));
-    if ( map <= 0 )
-        ui->valueMap->setText("unlimited");
+    if ( map < 0 )
+        ui->valueMap->setText(tr("unlimited"));
     else
         ui->valueMap->setText(QString::number(mul*map));
-    if ( disk <= 0 )
-        ui->valueDisk->setText("unlimited");
+    if ( disk < 0 )
+        ui->valueDisk->setText(tr("unlimited"));
     else
         ui->valueDisk->setText(QString::number(mul*disk));
-    if ( threads <= 0 )
-        ui->valueThreads->setText("unlimited");
+    if ( threads < 1 )
+        ui->valueThreads->setText(tr("unlimited"));
     else
         ui->valueThreads->setText(QString::number(threads));
 
@@ -307,11 +307,11 @@ void Preferences::save()
 
     const u_int64_t mul = 1<<30;
 
-    resources["area"] =  qint64((areaStr.isEmpty()||areaStr=="unlimited")?-1:areaStr.toDouble()*mul);
-    resources["memory"] = qint64((memoryStr.isEmpty()||memoryStr=="unlimited")?-1:memoryStr.toDouble()*mul);
-    resources["map"] = qint64((mapStr.isEmpty()||mapStr=="unlimited")?-1:mapStr.toDouble()*mul);
-    resources["disk"] = qint64((diskStr.isEmpty()||diskStr=="unlimited")?-1:diskStr.toDouble()*mul);
-    resources["threads"] = qint64((threadsStr.isEmpty()||threadsStr=="unlimited")?-1:threadsStr.toLongLong());
+    resources["area"] =  qint64((areaStr.isEmpty()||areaStr==tr("unlimited"))?-1:areaStr.toDouble()*mul);
+    resources["memory"] = qint64((memoryStr.isEmpty()||memoryStr==tr("unlimited"))?-1:memoryStr.toDouble()*mul);
+    resources["map"] = qint64((mapStr.isEmpty()||mapStr==tr("unlimited"))?-1:mapStr.toDouble()*mul);
+    resources["disk"] = qint64((diskStr.isEmpty()||diskStr==tr("unlimited"))?-1:diskStr.toDouble()*mul);
+    resources["threads"] = qint64((threadsStr.isEmpty()||threadsStr==tr("unlimited"))?-1:threadsStr.toLongLong());
 
     qint64 dflThreads = ui->valueDflThreads->text().toLong();
     qint64 dflWorkers = ui->valueDflWorkers->text().toLong();
@@ -355,7 +355,7 @@ void Preferences::save()
     }
     QFile saveFile(filename);
     if ( !saveFile.open(QIODevice::WriteOnly) ) {
-        dflCritical("Could not save configuration file.");
+        dflCritical(tr("Could not save configuration file %0").arg(filename));
         return;
     }
     saveFile.write(doc.toJson());

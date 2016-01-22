@@ -82,7 +82,8 @@ public slots:
                     qreal max,
                     qreal value);
 
-    static QString unitToString(Unit unit);
+    static const char* unitToString(Unit unit);
+    static QString unitToLocalizedString(Unit unit);
     static Unit unitFromString(const QString& unit);
     static QString scaleToString(Scale scale);
     static Scale scaleFromString(const QString& scale);

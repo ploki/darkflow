@@ -24,20 +24,20 @@ private:
 
 OpWhiteBalance::OpWhiteBalance(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "White Balance"), Operator::All, parent),
-    m_temperature(new OperatorParameterSlider("temperature", "Temperature", "White Balance Temperature",
+    m_temperature(new OperatorParameterSlider("temperature", tr("Temperature"), tr("White Balance Temperature"),
                                               Slider::Value, Slider::Logarithmic, Slider::Integer,
                                               2000, 12000, 6500, 2000, 12000, Slider::FilterNothing,this)),
-    m_tint(new OperatorParameterSlider("tint", "Green tint", "White Balance Green Tint",
+    m_tint(new OperatorParameterSlider("tint", tr("Green tint"), tr("White Balance Green Tint"),
                                        Slider::Percent, Slider::Logarithmic, Slider::Real,
                                        0.5, 2, 1, 0.01, 100, Slider::FilterNothing, this)),
     m_safe(false),
-    m_safeDialog(new OperatorParameterDropDown("safe","Range safe", this, SLOT(setSafe(int))))
+    m_safeDialog(new OperatorParameterDropDown("safe", tr("Range safe"), this, SLOT(setSafe(int))))
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Images", "Images", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
 
-    m_safeDialog->addOption("No", false, true);
-    m_safeDialog->addOption("Yes", true);
+    m_safeDialog->addOption(DF_TR_AND_C("No"), false, true);
+    m_safeDialog->addOption(DF_TR_AND_C("Yes"), true);
 
     addParameter(m_temperature);
     addParameter(m_tint);

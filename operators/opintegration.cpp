@@ -8,10 +8,15 @@
 #include "Magick++.h"
 
 static const char *RejectionTypeStr[] = {
-    "None", "Sigma clipping", "Winsorized", "Median Percentil"
+    QT_TRANSLATE_NOOP("OpIntegration", "None"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Sigma clipping"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Winsorized"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Median Percentil")
 };
 static const char *NormalizationTypeStr[] = {
-    "None", "Highest Value", "Custom"
+    QT_TRANSLATE_NOOP("OpIntegration", "None"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Highest Value"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Custom")
 };
 
 using Magick::Quantum;
@@ -19,29 +24,29 @@ using Magick::Quantum;
 OpIntegration::OpIntegration(Process *parent) :
     Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Integration"), Operator::All, parent),
     m_rejectionType(NoRejection),
-    m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", "Rejection", this, SLOT(setRejectionType(int)))),
-    m_upper(new OperatorParameterSlider("upper", "Upper mul.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
-    m_lower(new OperatorParameterSlider("lower", "Lower div.", "Integration Upper Limit", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
+    m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", tr("Rejection"), this, SLOT(setRejectionType(int)))),
+    m_upper(new OperatorParameterSlider("upper", tr("Upper mul."), tr("Integration Upper Limit"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
+    m_lower(new OperatorParameterSlider("lower", tr("Lower div."), tr("Integration Lower Limit"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_normalizationType(NoNormalization),
-    m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", "Normalization", this, SLOT(setNormalizationType(int)))),
-    m_customNormalization(new OperatorParameterSlider("normalizationValue", "Custom Norm.", "Integration Custom Normalization", Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
-    m_outputHDR(new OperatorParameterDropDown("outputHDR", "Output HDR", this, SLOT(setOutputHDR(int)))),
+    m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", tr("Normalization"), this, SLOT(setNormalizationType(int)))),
+    m_customNormalization(new OperatorParameterSlider("normalizationValue", tr("Custom Norm."), tr("Integration Custom Normalization"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
     m_outputHDRValue(false)
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Integrated Image", "Integrated Image", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Integrated Image"), this));
 
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[NoRejection], NoRejection, true);
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[SigmaClipping], SigmaClipping);
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[Winsorized], Winsorized);
-    m_rejectionTypeDropDown->addOption(RejectionTypeStr[MedianPercentil], MedianPercentil);
+    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[NoRejection]), NoRejection, true);
+    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[SigmaClipping]), SigmaClipping);
+    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[Winsorized]), Winsorized);
+    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[MedianPercentil]), MedianPercentil);
 
-    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[NoNormalization], NoNormalization, true);
-    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[HighestValue], HighestValue);
-    m_normalizationTypeDropDown->addOption(NormalizationTypeStr[Custom], Custom);
+    m_normalizationTypeDropDown->addOption(DF_TR_AND_C(NormalizationTypeStr[NoNormalization]), NoNormalization, true);
+    m_normalizationTypeDropDown->addOption(DF_TR_AND_C(NormalizationTypeStr[HighestValue]), HighestValue);
+    m_normalizationTypeDropDown->addOption(DF_TR_AND_C(NormalizationTypeStr[Custom]), Custom);
 
-    m_outputHDR->addOption("No", false, true);
-    m_outputHDR->addOption("Yes", true);
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
 
     addParameter(m_rejectionTypeDropDown);
     addParameter(m_upper);

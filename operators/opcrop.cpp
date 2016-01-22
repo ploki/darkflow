@@ -49,8 +49,8 @@ private:
 OpCrop::OpCrop(Process *parent) :
     Operator(OP_SECTION_GEOMETRY, QT_TRANSLATE_NOOP("Operator", "Crop"), Operator::All, parent)
 {
-    addInput(new OperatorInput("Images","Images",OperatorInput::Set, this));
-    addOutput(new OperatorOutput("Cropped", "Cropped", this));
+    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Cropped"), this));
 
 }
 

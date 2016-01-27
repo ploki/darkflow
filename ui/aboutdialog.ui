@@ -187,6 +187,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineArea</tabstop>
+  <tabstop>lineMemory</tabstop>
+  <tabstop>lineMap</tabstop>
+  <tabstop>lineDisk</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

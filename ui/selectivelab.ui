@@ -187,6 +187,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>sliderHue</tabstop>
+  <tabstop>spinBoxHue</tabstop>
+  <tabstop>sliderCoverage</tabstop>
+  <tabstop>spinBoxCoverage</tabstop>
+  <tabstop>checkBoxStrict</tabstop>
+  <tabstop>sliderView</tabstop>
+  <tabstop>checkBoxClipToGamut</tabstop>
+  <tabstop>checkBoxGuide</tabstop>
+  <tabstop>checkBoxPreview</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

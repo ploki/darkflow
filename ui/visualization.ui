@@ -687,8 +687,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
-                 <height>510</height>
+                 <width>597</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -811,8 +811,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
-                 <height>510</height>
+                 <width>597</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -903,6 +903,40 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
+ <tabstops>
+  <tabstop>operatorName</tabstop>
+  <tabstop>operatorNameReset</tabstop>
+  <tabstop>tree_photos</tabstop>
+  <tabstop>checkBox_autoPlay</tabstop>
+  <tabstop>button_getInputs</tabstop>
+  <tabstop>button_play</tabstop>
+  <tabstop>radio_fitVisible</tabstop>
+  <tabstop>radio_zoomHalf</tabstop>
+  <tabstop>radio_zoom1</tabstop>
+  <tabstop>radio_zoomDouble</tabstop>
+  <tabstop>radio_zoomCustom</tabstop>
+  <tabstop>button_zoomPlus</tabstop>
+  <tabstop>button_zoomMinus</tabstop>
+  <tabstop>combo_tool</tabstop>
+  <tabstop>combo_treatment</tabstop>
+  <tabstop>combo_input</tabstop>
+  <tabstop>combo_gamma</tabstop>
+  <tabstop>slider_exp</tabstop>
+  <tabstop>button_fullScreen</tabstop>
+  <tabstop>button_saveView</tabstop>
+  <tabstop>graphicsView</tabstop>
+  <tabstop>tag_buttonAdd</tabstop>
+  <tabstop>tag_buttonRemove</tabstop>
+  <tabstop>tag_buttonReset</tabstop>
+  <tabstop>table_tags</tabstop>
+  <tabstop>combo_surface</tabstop>
+  <tabstop>combo_log</tabstop>
+  <tabstop>scrollArea_2</tabstop>
+  <tabstop>combo_cumulative</tabstop>
+  <tabstop>combo_scale</tabstop>
+  <tabstop>scrollArea_curve</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

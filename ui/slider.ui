@@ -65,7 +65,7 @@
       <item>
        <widget class="QRadioButton" name="radio_mag">
         <property name="text">
-         <string>Magnitude</string>
+         <string>&amp;Magnitude</string>
         </property>
        </widget>
       </item>
@@ -196,6 +196,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>radio_value</tabstop>
+  <tabstop>radio_percent</tabstop>
+  <tabstop>radio_ev</tabstop>
+  <tabstop>radio_mag</tabstop>
+  <tabstop>radio_linear</tabstop>
+  <tabstop>radio_logarithmic</tabstop>
+  <tabstop>dspin_min</tabstop>
+  <tabstop>dspin_value</tabstop>
+  <tabstop>dspin_max</tabstop>
+  <tabstop>slider_value</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

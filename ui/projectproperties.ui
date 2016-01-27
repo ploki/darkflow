@@ -122,6 +122,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>project_name</tabstop>
+  <tabstop>project_file</tabstop>
+  <tabstop>button_project_file</tabstop>
+  <tabstop>valueBaseDir</tabstop>
+  <tabstop>buttonBaseDir</tabstop>
+  <tabstop>notes</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

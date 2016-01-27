@@ -601,6 +601,33 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>valueArea</tabstop>
+  <tabstop>defaultArea</tabstop>
+  <tabstop>valueMemory</tabstop>
+  <tabstop>defaultMemory</tabstop>
+  <tabstop>valueMap</tabstop>
+  <tabstop>defaultMap</tabstop>
+  <tabstop>valueDisk</tabstop>
+  <tabstop>defaultDisk</tabstop>
+  <tabstop>valueThreads</tabstop>
+  <tabstop>defaultThreads</tabstop>
+  <tabstop>valueDflWorkers</tabstop>
+  <tabstop>defaultDflWorkers</tabstop>
+  <tabstop>valueDflThreads</tabstop>
+  <tabstop>defaultDflThreads</tabstop>
+  <tabstop>comboTransformTarget</tabstop>
+  <tabstop>comboIncompatibleScale</tabstop>
+  <tabstop>spinLabSelectionSize</tabstop>
+  <tabstop>valueBaseDir</tabstop>
+  <tabstop>buttonBaseDir</tabstop>
+  <tabstop>valueTmpDir</tabstop>
+  <tabstop>buttonTmpDir</tabstop>
+  <tabstop>comboLogLevel</tabstop>
+  <tabstop>comboRaiseOn</tabstop>
+  <tabstop>comboTrapOn</tabstop>
+  <tabstop>tabWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

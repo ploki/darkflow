@@ -311,9 +311,11 @@ void OperatorWorker::dflDebug(const char *fmt, ...) const
 {
     va_list ap;
     char *msg;
+    int ret;
     va_start(ap, fmt);
-    vasprintf(&msg, fmt, ap);
+    ret = vasprintf(&msg, fmt, ap);
     va_end(ap);
+    if ( ret < 0 ) return;
     logMessage(Console::Debug, m_operator->getName(), msg);
     free(msg);
 }
@@ -322,9 +324,11 @@ void OperatorWorker::dflInfo(const char *fmt, ...) const
 {
     va_list ap;
     char *msg;
+    int ret;
     va_start(ap, fmt);
-    vasprintf(&msg, fmt, ap);
+    ret = vasprintf(&msg, fmt, ap);
     va_end(ap);
+    if ( ret < 0 ) return;
     logMessage(Console::Info, m_operator->getName(), msg);
     free(msg);
 }
@@ -333,9 +337,11 @@ void OperatorWorker::dflWarning(const char *fmt, ...) const
 {
     va_list ap;
     char *msg;
+    int ret;
     va_start(ap, fmt);
-    vasprintf(&msg, fmt, ap);
+    ret = vasprintf(&msg, fmt, ap);
     va_end(ap);
+    if ( ret < 0 ) return;
     logMessage(Console::Warning, m_operator->getName(), msg);
     free(msg);
 }
@@ -344,9 +350,11 @@ void OperatorWorker::dflError(const char *fmt, ...) const
 {
     va_list ap;
     char *msg;
+    int ret;
     va_start(ap, fmt);
-    vasprintf(&msg, fmt, ap);
+    ret = vasprintf(&msg, fmt, ap);
     va_end(ap);
+    if ( ret < 0 ) return;
     logMessage(Console::Error, m_operator->getName(), msg);
     free(msg);
 }
@@ -355,9 +363,11 @@ void OperatorWorker::dflCritical(const char *fmt, ...) const
 {
     va_list ap;
     char *msg;
+    int ret;
     va_start(ap, fmt);
-    vasprintf(&msg, fmt, ap);
+    ret = vasprintf(&msg, fmt, ap);
     va_end(ap);
+    if ( ret < 0 ) return;
     logMessage(Console::Critical, m_operator->getName(), msg);
     free(msg);
 }

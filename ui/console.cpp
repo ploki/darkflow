@@ -113,7 +113,9 @@ static void message(Console::Level level, const char *fmt, va_list ap)
 {
     Console::trap(level);
     char *msg;
-    vasprintf(&msg, fmt, ap);
+    int ret;
+    ret = vasprintf(&msg, fmt, ap);
+    if ( ret < 0 ) return;
     emit console->message(level, msg);
     free(msg);
 }

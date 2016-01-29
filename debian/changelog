@@ -1,0 +1,5 @@
+darkflow (2016.01.27-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Guillaume Gimenez <guillaume@blackmilk.fr>  Wed, 27 Jan 2016 21:49:19 +0100

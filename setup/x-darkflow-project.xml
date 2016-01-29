@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+ <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+   <mime-type type="application/x-darkflow-project">  
+   <comment>A DarkFlow project file</comment>
+   <comment xml:lang="fr">Un projet DarkFlow</comment>
+   <glob pattern="*.dflow"/>
+   <generic-icon name="darkflow"/>
+  </mime-type>
+ </mime-info>

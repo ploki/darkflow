@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=DarkFlow
+Type=Application
+Comment=A node base image processor for astronomers
+Exec=darkflow %U
+Terminal=false
+Icon=darkflow
+Categories=Graphics;2DGraphics;RasterGraphics;Qt5;
+MimeType=application/x-darkflow-project;
+
+X-Desktop-File-Install-Version=0.22

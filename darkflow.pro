@@ -351,4 +351,7 @@ unix {
     df_desktop_entry.files = setup/darkflow.desktop
     df_desktop_entry.path = /usr/share/applications/
     INSTALLS += df_desktop_entry
+    df_mime_xml.files = setup/x-darkflow-project.xml
+    df_mime_xml.path = /usr/share/mime/packages/
+    INSTALLS += df_mime_xml
 }

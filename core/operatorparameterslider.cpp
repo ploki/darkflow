@@ -115,9 +115,9 @@ void OperatorParameterSlider::setValue(const qreal &value)
 QJsonObject OperatorParameterSlider::save()
 {
     QJsonObject obj;
-    obj["type"] = "slider";
+    obj["type"] = QString("slider");
     obj["name"] = m_name;
-    obj["unit"] = Slider::unitToString(m_unit);
+    obj["unit"] = QString(Slider::unitToString(m_unit));
     obj["scale"] = Slider::scaleToString(m_scale);
     obj["min"] = m_min;
     obj["max"] = m_max;

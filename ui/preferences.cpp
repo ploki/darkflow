@@ -203,9 +203,7 @@ void Preferences::setMagickResources()
 bool Preferences::load(bool create)
 {
     const qreal mul = 1./(1<<30);
-
-    QString filename = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)
-            + "/config.json";
+    QString filename = getAppConfigLocation() + "/config.json";
     QFile file(filename);
     if ( !file.open(QIODevice::ReadOnly)) {
         if (create) {
@@ -344,11 +342,10 @@ void Preferences::save()
     QJsonDocument doc;
     doc.setObject(obj);
 
-    QString filename = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)
-            + "/config.json";
-    QDir dir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+    QString filename = getAppConfigLocation() + "/config.json";
+    QDir dir(getAppConfigLocation());
     if ( !dir.exists() ) {
-        if ( !dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)) ) {
+        if ( !dir.mkpath(getAppConfigLocation()) ) {
             dflCritical("Unable to create configuration directory");
             return;
         }
@@ -437,4 +434,15 @@ int Preferences::getNumThreads() const
 int Preferences::getLabSelectionSize() const
 {
     return m_labSelectionSize;
+}
+
+QString Preferences::getAppConfigLocation() const
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
+    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+#else
+    return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+            + "/" + DF_APPNAME;
+#endif
+
 }

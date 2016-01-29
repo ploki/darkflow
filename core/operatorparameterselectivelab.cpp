@@ -29,7 +29,7 @@ OperatorParameterSelectiveLab::OperatorParameterSelectiveLab(const QString &name
 QJsonObject OperatorParameterSelectiveLab::save()
 {
     QJsonObject obj;
-    obj["type"] = "selectiveLab";
+    obj["type"] = QString("selectiveLab");
     obj["name"] = m_name;
     obj["hue"] = m_hue;
     obj["coverage"] = m_coverage;

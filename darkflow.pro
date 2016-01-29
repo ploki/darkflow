@@ -6,6 +6,9 @@
 
 QT       += core gui
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+
 *-g++* | *clang* {
 # If you get linker errors about undefined references to symbols that
 # involve types in the std::__cxx11 namespace
@@ -65,9 +68,6 @@ win32 {
         icons/darkflow-32x32.ico \
         icons/darkflow-24x24.ico
 }
-
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QMAKE_INCDIR += core operators algorithms scene ui setup
 
@@ -341,3 +341,14 @@ DISTFILES += \
     l10n/darkflow_fr.ts
 
 TRANSLATIONS = l10n/darkflow_fr.ts
+
+unix {
+    target.path = /usr/bin/
+    INSTALLS += target
+    df_icons.files = icons/darkflow.png
+    df_icons.path = /usr/share/icons/hicolor/256x256/apps/
+    INSTALLS += df_icons
+    df_desktop_entry.files = setup/darkflow.desktop
+    df_desktop_entry.path = /usr/share/applications/
+    INSTALLS += df_desktop_entry
+}

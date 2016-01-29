@@ -1,6 +1,7 @@
 #ifndef HDR_H
 #define HDR_H
 
+#include <cmath>
 #include "lutbased.h"
 #include "ports.h"
 

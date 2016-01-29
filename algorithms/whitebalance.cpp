@@ -2,6 +2,7 @@
 #include "photo.h"
 #include "console.h"
 #include <Magick++.h>
+#include <cmath>
 
 WhiteBalance::WhiteBalance(qreal temperature,
                            qreal tint,

@@ -1,6 +1,9 @@
 #ifndef PORTS_H
 #define PORTS_H
 
+#include <QJsonValue>
+
+
 #if defined(WIN32) || defined(WIN64)
 # if defined(WIN64)
 #  define DF_ARCH "64-bit"

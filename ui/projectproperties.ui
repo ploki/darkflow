@@ -24,19 +24,9 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="project_name">
-         <property name="placeholderText">
-          <string>maybe the object name</string>
-         </property>
-         <property name="clearButtonEnabled">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1">
         <widget class="QPlainTextEdit" name="notes">
-         <property name="placeholderText">
+         <property name="toolTip">
           <string>maybe a description of your imaging session</string>
          </property>
         </widget>
@@ -74,14 +64,17 @@
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="project_file">
-         <property name="placeholderText">
+         <property name="toolTip">
           <string>Project file</string>
+         </property>
+         <property name="placeholderText">
+          <string/>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="valueBaseDir">
-         <property name="placeholderText">
+         <property name="toolTip">
           <string>A place near your project's assets</string>
          </property>
         </widget>
@@ -103,6 +96,16 @@
         <widget class="QPushButton" name="buttonBaseDir">
          <property name="text">
           <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="project_name">
+         <property name="toolTip">
+          <string>maybe the object name</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>false</bool>
          </property>
         </widget>
        </item>

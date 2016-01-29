@@ -51,7 +51,7 @@ QString OperatorParameterDropDown::currentValue() const
 QJsonObject OperatorParameterDropDown::save()
 {
     QJsonObject obj;
-    obj["type"] = "dropdown";
+    obj["type"] = QString("dropdown");
     obj["name"] = m_name;
     obj["currentValue"] = m_options[m_currentValue].C_option;
     return obj;

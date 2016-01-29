@@ -59,7 +59,7 @@ QJsonObject OperatorParameterFilesCollection::save()
 {
     QJsonObject obj;
     QJsonArray files;
-    obj["type"] = "filesCollection";
+    obj["type"] = QString("filesCollection");
     obj["name"] = m_name;
     foreach(const QString& file, m_collection) {
         dflDebug(tr("FilesCollection: saving a file"));

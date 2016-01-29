@@ -41,6 +41,7 @@ public:
     IncompatibleAction getIncompatibleAction() const;
     int getNumThreads() const;
     int getLabSelectionSize() const;
+    QString getAppConfigLocation() const;
 
 private:
     void getDefaultMagickResources();

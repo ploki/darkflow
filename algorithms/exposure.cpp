@@ -1,5 +1,6 @@
 #include "exposure.h"
 #include <Magick++.h>
+#include <cmath>
 
 using Magick::Quantum;
 

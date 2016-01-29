@@ -8,8 +8,12 @@
 
 /* macros defined in cc command line by pkg-config */
 #ifdef QuantumRange
+# ifdef MAGICKCORE_HDRI_ENABLE
 Q_STATIC_ASSERT(MAGICKCORE_HDRI_ENABLE == 0);
+# endif
+# ifdef MAGICKCORE_QUANTUM_DEPTH
 Q_STATIC_ASSERT(MAGICKCORE_QUANTUM_DEPTH == 16);
+# endif
 #else
 #define USING_GRAPHICSMAGICK
 #define QuantumRange (Quantum(65535))

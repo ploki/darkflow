@@ -687,8 +687,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>597</width>
-                 <height>512</height>
+                 <width>510</width>
+                 <height>510</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -811,8 +811,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>597</width>
-                 <height>512</height>
+                 <width>510</width>
+                 <height>510</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1323,6 +1323,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_saveView</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>saveViewClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>667</x>
+     <y>672</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>388</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>operatorNameChanged(Qstring)</slot>
@@ -1346,5 +1362,6 @@
   <slot>getInputsClicked()</slot>
   <slot>inputTypeChanged(int)</slot>
   <slot>nameReset()</slot>
+  <slot>saveViewClicked()</slot>
  </slots>
 </ui>

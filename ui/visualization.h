@@ -27,6 +27,9 @@ public:
     explicit Visualization(Operator *op, QWidget *parent = 0);
     ~Visualization();
 
+    void getViewGamma(qreal &gamma, qreal &x0) const;
+    qreal getViewExposure() const;
+
 signals:
     void operatorNameChanged(QString text);
 
@@ -49,6 +52,7 @@ public slots:
     void playClicked();
     void getInputsClicked();
     void fullScreenViewClicked();
+    void saveViewClicked();
 
     void histogramParamsChanged();
     void curveParamsChanged();

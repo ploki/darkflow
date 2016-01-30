@@ -282,8 +282,6 @@ static QPixmap convert(Magick::Image& image) {
 
 QPixmap Photo::imageToPixmap(double gamma, double x0, double exposureBoost)
 {
-    Q_UNUSED(gamma);
-    Q_UNUSED(x0);
     Q_ASSERT( m_status == Complete );
     Photo photo(*this);
     Exposure(exposureBoost).applyOn(photo);
@@ -306,7 +304,7 @@ static double calcGamma(double v) {
 QPixmap Photo::curveToPixmap(Photo::CurveView cv)
 {
     Q_ASSERT( m_status == Complete );
-    Magick::Image image("512x512", "black");
+    Magick::Image image(Magick::Geometry(512,512),Magick::Color(0,0,0));
     Magick::Image curve(this->curve());
     Magick::Pixels image_cache(image);
 
@@ -316,6 +314,10 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     }
 
     Magick::PixelPacket *pixels = image_cache.get(0,0, 512, 512);
+    if ( NULL == pixels ) {
+        dflError(DF_NULL_PIXELS);
+        return QPixmap();
+    }
     iGamma& g = iGamma::sRGB();
     const bool zoneV_18=false;
     //Vertical lines (input)
@@ -473,7 +475,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             }
         }
     }
-    Magick::Image image( "512x512" , "black" );
+    Magick::Image image( Magick::Geometry(512,512) , Magick::Color(0,0,0) );
 
     {
         Magick::Pixels image_cache(image);
@@ -641,6 +643,38 @@ void Photo::writeJPG(const QString &filename)
     f.write((char*)blob.data(), blob.length());
 }
 
+bool Photo::saveImage(const QString &filename, const QString &magick, double gamma, double x0, double exposureBoost)
+{
+    Q_ASSERT( m_status == Complete );
+    Photo photo(*this);
+    Exposure(exposureBoost).applyOn(photo);
+    iGamma(gamma, x0).applyOn(photo);
+    try {
+        Magick::Image& image = photo.image();
+        Q_UNUSED(magick);
+        //image.magick(magick.toStdString());
+        image.fileName(filename.toStdString());
+        Magick::Blob blob;
+        image.write(&blob);
+        QFile f(filename);
+        bool success;
+        success = f.open(QFile::WriteOnly);
+        if ( !success ) {
+            dflError(tr("Could not open file %0").arg(filename));
+            return false;
+        }
+        quint64 l = f.write((char*)blob.data(), blob.length());
+        if ( l != blob.length() ) {
+            dflError(tr("Could not save file %0").arg(filename));
+            return false;
+        }
+    }
+    catch (std::exception &e) {
+        dflError("%s", e.what());
+        return false;
+    }
+    return true;
+}
 int Photo::getSequenceNumber() const
 {
     return m_sequenceNumber;

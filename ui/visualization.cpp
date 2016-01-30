@@ -11,6 +11,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include <QWindow>
+#include <QFileDialog>
 
 #include <Magick++.h>
 #include <cmath>
@@ -149,25 +150,36 @@ void Visualization::zoomMinus()
     updateVisualizationZoom();
 }
 
+void Visualization::getViewGamma(qreal &gamma, qreal &x0) const
+{
+    gamma = 1.;
+    x0 = 0;
+    switch(ui->combo_gamma->currentIndex()) {
+    default:
+        dflWarning(tr("Visualization: Unknown combo_gamma selection"));
+    case 0: //As Input
+        gamma = 1.; x0 = 0; break;
+    case 1: //sRGB
+        gamma = 2.4L; x0 = 0.00304L; break;
+    case 2: //IUT BT.709
+        gamma = 2.222L; x0 = 0.018L; break;
+    case 3: //POW-2;
+        gamma = 2.L; x0 = 0.; break;
+    }
+}
+qreal Visualization::getViewExposure() const
+{
+    return qreal(ui->slider_exp->value())/100.;
+}
+
 void Visualization::expChanged()
 {
     if ( m_photo && m_photo->isComplete() ) {
-        int exposure = ui->slider_exp->value();
-        qreal gamma = 1., x0 = 0;
-        ui->value_exp->setText(tr("%0 EV").arg(qreal(ui->slider_exp->value())/100.));
-        switch(ui->combo_gamma->currentIndex()) {
-        default:
-            dflWarning(tr("Visualization: Unknown combo_gamma selection"));
-        case 0: //As Input
-            gamma = 1.; x0 = 0; break;
-        case 1: //sRGB
-            gamma = 2.4L; x0 = 0.00304L; break;
-        case 2: //IUT BT.709
-            gamma = 2.222L; x0 = 0.018L; break;
-        case 3: //POW-2;
-            gamma = 2.L; x0 = 0.; break;
-        }
-        m_pixmapItem->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,qreal(exposure)/100.)));
+        qreal exposure = getViewExposure();
+        qreal gamma, x0;
+        getViewGamma(gamma, x0);
+        ui->value_exp->setText(tr("%0 EV").arg(exposure));
+        m_pixmapItem->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,exposure)));
         m_scene->setSceneRect(0,0,m_photo->image().columns(),m_photo->image().rows());
     }
 }
@@ -216,6 +228,34 @@ void Visualization::fullScreenViewClicked()
 {
     m_fullScreenView->showFullScreen();
     //m_fullScreenView->showMaximized();
+}
+
+void Visualization::saveViewClicked()
+{
+    QString filename = QFileDialog::getSaveFileName(this,
+                                                    tr("Save view image"),
+                                                    "",
+                                                    tr("TIFF Images (*.tif *.tiff);;"
+                                                       "JPEG Images (*.jpg);;"),
+                                                    0, 0);
+    if ( filename.isEmpty() )
+        return;
+    qreal exposure = getViewExposure();
+    qreal gamma, x0;
+    getViewGamma(gamma, x0);
+    QString magick;
+    if ( filename.endsWith(".tif", Qt::CaseInsensitive) || filename.endsWith(".tiff", Qt::CaseInsensitive) ) {
+        magick="TIFF";
+    }
+    else if ( filename.endsWith(".jpg", Qt::CaseInsensitive) ) {
+        magick="JPG";
+    }
+    else {
+        //filename+=".tif";
+        //magick="TIFF";
+    }
+
+    m_photo->saveImage(filename, magick, gamma, x0, pow(2.,exposure));
 }
 
 void Visualization::histogramParamsChanged()

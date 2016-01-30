@@ -49,10 +49,7 @@ void OperatorParameterFilesCollection::setCollection(const QStringList &collecti
 QString OperatorParameterFilesCollection::currentValue() const
 {
     int count = m_collection.count();
-    if ( count > 1)
-        return QString("%0 files").arg(count);
-    else
-        return QString("%0 file").arg(count);
+    return tr("%n file(s)", "", count);
 }
 
 QJsonObject OperatorParameterFilesCollection::save()

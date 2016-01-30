@@ -2675,18 +2675,26 @@
 </context>
 <context>
     <name>OperatorParameterFilesCollection</name>
+    <message numerus="yes">
+        <location filename="../core/operatorparameterfilescollection.cpp" line="52"/>
+        <source>%n file(s)</source>
+        <translation type="unfinished">
+            <numerusform>%n fichier</numerusform>
+            <numerusform>%n fichiers</numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../core/operatorparameterfilescollection.cpp" line="65"/>
+        <location filename="../core/operatorparameterfilescollection.cpp" line="62"/>
         <source>FilesCollection: saving a file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorparameterfilescollection.cpp" line="75"/>
+        <location filename="../core/operatorparameterfilescollection.cpp" line="72"/>
         <source>FilesCollection: invalid parameter type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorparameterfilescollection.cpp" line="79"/>
+        <location filename="../core/operatorparameterfilescollection.cpp" line="76"/>
         <source>FilesCollection: invalid parameter name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2794,7 +2802,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorworker.cpp" line="392"/>
+        <location filename="../core/operatorworker.cpp" line="402"/>
         <source>Photo: %0, Error: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2817,17 +2825,17 @@
         <translation>Échec de la conversion en Pixmap</translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="709"/>
+        <location filename="../core/photo.cpp" line="713"/>
         <source>Photo: Invalid numbers in %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="789"/>
+        <location filename="../core/photo.cpp" line="793"/>
         <source>Unknown photo scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="814"/>
+        <location filename="../core/photo.cpp" line="818"/>
         <source>Image cache is on disk, threading disabled</source>
         <translation>Le cache d&apos;image est sur disque, parallèlisme désactivé</translation>
     </message>
@@ -3099,36 +3107,36 @@
     <message>
         <location filename="../ui/preferences.cpp" line="167"/>
         <location filename="../ui/preferences.cpp" line="182"/>
-        <location filename="../ui/preferences.cpp" line="248"/>
-        <location filename="../ui/preferences.cpp" line="252"/>
-        <location filename="../ui/preferences.cpp" line="256"/>
-        <location filename="../ui/preferences.cpp" line="260"/>
-        <location filename="../ui/preferences.cpp" line="264"/>
+        <location filename="../ui/preferences.cpp" line="246"/>
+        <location filename="../ui/preferences.cpp" line="250"/>
+        <location filename="../ui/preferences.cpp" line="254"/>
+        <location filename="../ui/preferences.cpp" line="258"/>
+        <location filename="../ui/preferences.cpp" line="262"/>
+        <location filename="../ui/preferences.cpp" line="308"/>
+        <location filename="../ui/preferences.cpp" line="309"/>
         <location filename="../ui/preferences.cpp" line="310"/>
         <location filename="../ui/preferences.cpp" line="311"/>
         <location filename="../ui/preferences.cpp" line="312"/>
-        <location filename="../ui/preferences.cpp" line="313"/>
-        <location filename="../ui/preferences.cpp" line="314"/>
         <source>unlimited</source>
         <translation>illimité</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="212"/>
+        <location filename="../ui/preferences.cpp" line="210"/>
         <source>Configuration file doesn&apos;t exist, creating one</source>
         <translation>Le fichier de configuration n&apos;existe pas, création.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="358"/>
+        <location filename="../ui/preferences.cpp" line="355"/>
         <source>Could not save configuration file %0</source>
         <translation>Ne peut pas enregistrer le fichier de configuration %0</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="406"/>
+        <location filename="../ui/preferences.cpp" line="403"/>
         <source>Temporary Directory</source>
         <translation>Répertoire temporaire</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="415"/>
+        <location filename="../ui/preferences.cpp" line="412"/>
         <source>Base Directory</source>
         <translation>Répertoire de base</translation>
     </message>
@@ -3212,48 +3220,48 @@
         <translation>DarkFlow - Propriétés du projet</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="30"/>
+        <location filename="../ui/projectproperties.ui" line="105"/>
         <source>maybe the object name</source>
         <translation>Peut-être le nom de l&apos;objet</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="40"/>
+        <location filename="../ui/projectproperties.ui" line="30"/>
         <source>maybe a description of your imaging session</source>
         <translation>Dites nous comment s&apos;est passé votre sortie</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="47"/>
+        <location filename="../ui/projectproperties.ui" line="37"/>
         <source>Notes:</source>
         <translation>Notes :</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="57"/>
+        <location filename="../ui/projectproperties.ui" line="47"/>
         <source>Project name:</source>
         <translation>Nom du projet :</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="64"/>
+        <location filename="../ui/projectproperties.ui" line="54"/>
         <source>Base directory:</source>
         <translation>Répertoire de base :</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="71"/>
+        <location filename="../ui/projectproperties.ui" line="61"/>
         <source>Project file:</source>
         <translation>Fichier du projet :</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="78"/>
+        <location filename="../ui/projectproperties.ui" line="68"/>
         <source>Project file</source>
         <translation>Fichier du projet</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="85"/>
+        <location filename="../ui/projectproperties.ui" line="78"/>
         <source>A place near your project&apos;s assets</source>
         <translation>Quelque-part pas loin de vos photos</translation>
     </message>
     <message>
-        <location filename="../ui/projectproperties.ui" line="92"/>
-        <location filename="../ui/projectproperties.ui" line="105"/>
+        <location filename="../ui/projectproperties.ui" line="85"/>
+        <location filename="../ui/projectproperties.ui" line="98"/>
         <source>...</source>
         <translation></translation>
     </message>
@@ -3374,8 +3382,12 @@
     </message>
     <message>
         <location filename="../ui/slider.ui" line="68"/>
+        <source>&amp;Magnitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Magnitude</source>
-        <translation>Magnitude</translation>
+        <translation type="vanished">Magnitude</translation>
     </message>
     <message>
         <location filename="../ui/slider.ui" line="78"/>

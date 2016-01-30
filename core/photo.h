@@ -115,6 +115,7 @@ public:
     QPixmap curveToPixmap(CurveView cv);
     QPixmap histogramToPixmap(HistogramScale scale, HistogramGeometry geometry);
     void writeJPG(const QString& filename);
+    bool saveImage(const QString& filename, const QString &magick, double gamma, double x0, double exposureBoost);
 
     int getSequenceNumber() const;
     void setSequenceNumber(int sequenceNumber);

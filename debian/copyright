@@ -3,11 +3,7 @@ Upstream-Name: darkflow
 Source: http://darkflow.org/
 
 Files: *
-Copyright: 2006-2016 Guillaume Gimenez
-License: Other
-
-Files: debian/*
-Copyright: 2016 Guillaume Gimenez <guillaume@blackmilk.fr>
+Copyright: 2006-2016 Guillaume Gimenez <guillaume@blackmilk.fr>
 License: BSD-3-Clause
 
 License: BSD-3-Clause

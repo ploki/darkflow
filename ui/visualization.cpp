@@ -61,6 +61,7 @@
 #include "console.h"
 #include "preferences.h"
 #include "darkflow.h"
+#include "cielab.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -120,7 +121,6 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(ui->graphicsView, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)), this, SLOT(rubberBandChanged(QRect,QPointF,QPointF)));
     connect(ui->tree_photos, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             this, SLOT(treeWidgetItemDoubleClicked(QTreeWidgetItem*,int)));
-    setWindowFlags(Qt::WindowStaysOnTopHint);
     ui->graphicsView->setMouseTracking(true);
     ui->value_EV_R->setAlignment(Qt::AlignRight);
     ui->value_EV_G->setAlignment(Qt::AlignRight);
@@ -613,16 +613,25 @@ void Visualization::updateTreeviewPhotos()
     tree->clear();
 
     QMap<QString, int> seen;
+    QColor buttonColor(QApplication::palette(static_cast<const QWidget *>(NULL)).color(QPalette::Button));
+    QColor green(buttonColor);
+    green.setRed(0); green.setBlue(0);
+    QColor lightGray(buttonColor);
+    int l, r,g,b;
+    lightGray.getRgb(&r,&g,&b);
+    l = LUMINANCE(r,g,b);
+    lightGray.setRgb(l,l,l);
+
 
     QTreeWidgetItem *tree_inputs = new QTreeWidgetItem(tree);
     tree_inputs->setText(0, tr("Inputs:"));
     tree_inputs->setFont(0,QFont("Sans", 14));
-    tree_inputs->setBackground(0,QBrush(Qt::lightGray));
+    tree_inputs->setBackground(0,QBrush(lightGray));
     foreach(OperatorInput *input, m_operator->m_inputs) {
         QTreeWidgetItem *tree_input = new QTreeWidgetItem(tree_inputs);
         tree_input->setText(0, input->name());
         tree_input->setFont(0, QFont("Sans", 12));
-        tree_input->setBackground(0, QBrush(Qt::green));
+        tree_input->setBackground(0, QBrush(green));
         int idx = 0;
         foreach(OperatorOutput *source, input->sources()) {
             QTreeWidgetItem *tree_source = new TreeOutputItem(source, idx, TreeOutputItem::Source, tree_input);
@@ -659,7 +668,7 @@ void Visualization::updateTreeviewPhotos()
     QTreeWidgetItem *tree_outputs = new QTreeWidgetItem(tree);
     tree_outputs->setText(0, tr("Outputs:"));
     tree_outputs->setFont(0, QFont("Sans", 14));
-    tree_outputs->setBackground(0, QBrush(Qt::lightGray));
+    tree_outputs->setBackground(0, QBrush(lightGray));
     int idx = 0;
     foreach(OperatorOutput *output, m_operator->m_outputs) {
         QTreeWidgetItem *tree_output = new TreeOutputItem(output,

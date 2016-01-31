@@ -28,10 +28,12 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
+#include "process.h"
 #include "tabletagsrow.h"
 #include <QTableWidget>
 #include "tablewidgetitem.h"
 #include "operator.h"
+#include "preferences.h"
 
 TableTagsRow::TableTagsRow(const QString& photoIdentity,
                            const QString &key,
@@ -117,7 +119,7 @@ void TableTagsRow::setColors()
         if ( m_dirty )
             color = Qt::darkRed;
         else
-            color = Qt::black;
+            color = preferences->color(QPalette::Text);
         break;
     case FromOperator:
         color = Qt::darkGreen;

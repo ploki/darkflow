@@ -38,8 +38,7 @@
 #include "processnode.h"
 #include "operatorparameterfilescollection.h"
 #include "filesselection.h"
-
-#define PEN_WIDTH 2
+#include "preferences.h"
 
 ProcessFilesCollection::ProcessFilesCollection(QRectF rect,
                                  OperatorParameterFilesCollection *filesCollection,
@@ -58,19 +57,21 @@ ProcessFilesCollection::ProcessFilesCollection(QRectF rect,
                                          filesCollection->filter(),
                                          NULL))
 {
-    setPen(QPen(Qt::black, PEN_WIDTH));
-    setBrush(QBrush(Qt::gray));
+    setPen(QPen(preferences->color(QPalette::Window), PEN_WIDTH));
+    setBrush(QBrush(preferences->color(QPalette::Base)));
     QPainterPath pp;
-    QRectF pathRect(rect.x()+rect.width()/2, rect.y(), rect.width()/2, rect.height());
+    QRectF pathRect(rect.x()+rect.width()/2+MARGIN, rect.y()+MARGIN, rect.width()/2-MARGIN*2, rect.height()-MARGIN*2);
     QRectF captionRect(rect.x(), rect.y(), rect.width()/2, rect.height());
     pp.addRect(pathRect);
     setPath(pp);
 
     m_caption = new QGraphicsTextItem(filesCollection->caption(),this);
     m_caption->setPos(captionRect.center()-m_caption->boundingRect().center());
+    m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));
 
     m_currentValue= new QGraphicsTextItem(filesCollection->currentValue(),this);
     m_currentValue->setPos(pathRect.center()-m_currentValue->boundingRect().center());
+    m_currentValue->setDefaultTextColor(preferences->color(QPalette::ButtonText));
     //connect(dropdown, SIGNAL(valueChanged(QString)), this, SLOT(valueChanged(QString)));
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setAcceptHoverEvents(true);
@@ -91,10 +92,10 @@ void ProcessFilesCollection::paint(QPainter *painter, const QStyleOptionGraphics
     Q_UNUSED(widget);
     painter->setRenderHint(QPainter::Antialiasing);
     if (m_mouseHover)
-        painter->setBrush(QBrush(Qt::white));
+        painter->setPen(QPen(preferences->color(QPalette::Highlight)));
     else
-        painter->setBrush(brush());
-    painter->setPen(pen());
+        painter->setPen(pen());
+    painter->setBrush(brush());
     painter->drawPath(path());
 
 }

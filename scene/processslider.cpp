@@ -30,13 +30,13 @@
  */
 #include <QPainter>
 
+#include "process.h"
 #include "processnode.h"
 #include "processslider.h"
 #include "slider.h"
 #include "operatorparameterslider.h"
 #include "operator.h"
-
-#define PEN_WIDTH 2
+#include "preferences.h"
 
 ProcessSlider::ProcessSlider(QRectF rect,
                              OperatorParameterSlider *slider,
@@ -57,19 +57,21 @@ ProcessSlider::ProcessSlider(QRectF rect,
                               m_slider->hardMax(),m_slider->parametersFilter(),
                               NULL))
 {
-    setPen(QPen(Qt::black, PEN_WIDTH));
-    setBrush(QBrush(Qt::gray));
+    setPen(QPen(preferences->color(QPalette::Window), PEN_WIDTH));
+    setBrush(QBrush(preferences->color(QPalette::Base)));
     QPainterPath pp;
-    QRectF pathRect(rect.x()+rect.width()/2, rect.y(), rect.width()/2, rect.height());
+    QRectF pathRect(rect.x()+rect.width()/2+MARGIN, rect.y()+MARGIN, rect.width()/2-MARGIN*2, rect.height()-MARGIN*2);
     QRectF captionRect(rect.x(), rect.y(), rect.width()/2, rect.height());
     pp.addRect(pathRect);
     setPath(pp);
 
     m_caption = new QGraphicsTextItem(m_slider->caption(),this);
     m_caption->setPos(captionRect.center()-m_caption->boundingRect().center());
+    m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));
 
     m_currentValue= new QGraphicsTextItem(m_slider->currentValue(),this);
     m_currentValue->setPos(pathRect.center()-m_currentValue->boundingRect().center());
+    m_currentValue->setDefaultTextColor(preferences->color(QPalette::ButtonText));
 
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     setAcceptHoverEvents(true);
@@ -91,10 +93,10 @@ void ProcessSlider::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget);
     painter->setRenderHint(QPainter::Antialiasing);
     if (m_mouseHover)
-        painter->setBrush(QBrush(Qt::white));
+        painter->setPen(QPen(preferences->color(QPalette::Highlight)));
     else
-        painter->setBrush(brush());
-    painter->setPen(pen());
+        painter->setPen(pen());
+    painter->setBrush(brush());
     painter->drawPath(path());
 
 }

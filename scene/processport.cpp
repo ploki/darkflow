@@ -40,6 +40,7 @@
 #include "processport.h"
 #include "process.h"
 #include "processnode.h"
+#include "preferences.h"
 
 ProcessPort::ProcessPort(QRectF rect,
                          const QString &portName,
@@ -55,8 +56,8 @@ ProcessPort::ProcessPort(QRectF rect,
     m_portIdx(portIdx)
 {
     const qreal flange=2.;
-    setPen(QPen(Qt::black));
     QGraphicsTextItem *textItem = new QGraphicsTextItem(this);
+    textItem->setDefaultTextColor(preferences->color(QPalette::WindowText));
     textItem->setPlainText(m_portName);
     qreal textW = textItem->boundingRect().width();
     qreal textH = textItem->boundingRect().height();
@@ -67,8 +68,8 @@ ProcessPort::ProcessPort(QRectF rect,
     qreal w = rect.width();
     qreal h = rect.height();
     y+= (h-unit*2)/2;
-    setPen(QPen(Qt::darkYellow));
-    setBrush(QBrush(Qt::yellow));
+    setPen(QPen(preferences->color(QPalette::Window), PEN_WIDTH));
+    setBrush(QBrush(preferences->color(QPalette::Highlight)));
 
     QVector<QPoint> points;
 
@@ -112,6 +113,7 @@ void ProcessPort::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+    painter->setPen(pen());
     painter->setBrush(brush());
     painter->setRenderHint(QPainter::Antialiasing);
     painter->drawPath(path());

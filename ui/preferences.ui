@@ -587,6 +587,203 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Style</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Color theme</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="7" column="2">
+           <widget class="QLineEdit" name="lineToolTipText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Workspace:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="lineButton">
+            <property name="text">
+             <string>#353535</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="lineHighlight">
+            <property name="text">
+             <string>#2A92DA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Background</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineAlternateBase">
+            <property name="text">
+             <string>#191919</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Base:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QLineEdit" name="lineToolTipBase">
+            <property name="text">
+             <string>#2A92DA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Button:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3">
+           <widget class="QCheckBox" name="checkBoxOnlyWorkspace">
+            <property name="text">
+             <string>Workspace only</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Highlight:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QLineEdit" name="lineButtonText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineWindow">
+            <property name="text">
+             <string>#2D2D2D</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Link:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineWindowText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Foreground</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLineEdit" name="lineHighlightedText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineBase">
+            <property name="text">
+             <string>#202020</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Tooltip:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Window:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="QLineEdit" name="lineLink">
+            <property name="text">
+             <string>#2A92DA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Dangling:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="2">
+           <widget class="QLineEdit" name="lineBrightText">
+            <property name="text">
+             <string>#700000</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -602,6 +799,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>valueArea</tabstop>
   <tabstop>defaultArea</tabstop>
   <tabstop>valueMemory</tabstop>
@@ -626,7 +824,20 @@
   <tabstop>comboLogLevel</tabstop>
   <tabstop>comboRaiseOn</tabstop>
   <tabstop>comboTrapOn</tabstop>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>checkBoxOnlyWorkspace</tabstop>
+  <tabstop>lineAlternateBase</tabstop>
+  <tabstop>lineWindow</tabstop>
+  <tabstop>lineWindowText</tabstop>
+  <tabstop>lineBase</tabstop>
+  <tabstop>lineText</tabstop>
+  <tabstop>lineButton</tabstop>
+  <tabstop>lineButtonText</tabstop>
+  <tabstop>lineHighlight</tabstop>
+  <tabstop>lineHighlightedText</tabstop>
+  <tabstop>lineToolTipBase</tabstop>
+  <tabstop>lineToolTipText</tabstop>
+  <tabstop>lineLink</tabstop>
+  <tabstop>lineBrightText</tabstop>
  </tabstops>
  <resources/>
  <connections>

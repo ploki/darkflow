@@ -37,8 +37,7 @@
 #include "processbutton.h"
 #include "process.h"
 #include "processnode.h"
-
-#define PEN_WIDTH 2
+#include "preferences.h"
 
 static QString buttonText(ProcessButton::ButtonType type)
 {
@@ -54,41 +53,13 @@ static QString buttonText(ProcessButton::ButtonType type)
     }
 }
 
-static QPen buttonPen(ProcessButton::ButtonType type)
-{
-    switch(type) {
-    case ProcessButton::Play: return QPen(Qt::darkGreen, PEN_WIDTH);
-    case ProcessButton::Abort: return QPen(Qt::darkMagenta, PEN_WIDTH);
-    case ProcessButton::Display: return QPen(Qt::darkYellow, PEN_WIDTH);
-    case ProcessButton::Close: return QPen(Qt::darkRed, PEN_WIDTH);
-    case ProcessButton::Help: return QPen(Qt::darkCyan, PEN_WIDTH);
-    case ProcessButton::Refresh: return QPen(Qt::darkBlue, PEN_WIDTH);
-    default:
-        return QPen(Qt::red, PEN_WIDTH);
-    }
-}
-
-static QBrush buttonBrush(ProcessButton::ButtonType type)
-{
-    switch(type) {
-    case ProcessButton::Play: return QBrush(Qt::green);
-    case ProcessButton::Abort: return QBrush(Qt::magenta);
-    case ProcessButton::Display: return QBrush(Qt::yellow);
-    case ProcessButton::Close: return QBrush(Qt::red);
-    case ProcessButton::Help: return QBrush(Qt::cyan);
-    case ProcessButton::Refresh: return QBrush(Qt::blue);
-    default:
-        return QBrush(Qt::red);
-    }
-}
-
 ProcessButton::ProcessButton(QRectF rect,
                              ProcessButton::ButtonType type,
                              Process *process,
                              ProcessNode *node) :
     QObject(NULL),
-    QGraphicsRectItem(QRectF(rect.x()+PEN_WIDTH,rect.y()+PEN_WIDTH,
-                             rect.width()-PEN_WIDTH*2,rect.height()-PEN_WIDTH*2),node),
+    QGraphicsRectItem(QRectF(rect.x()+PEN_WIDTH+MARGIN,rect.y()+PEN_WIDTH+MARGIN,
+                             rect.width()-PEN_WIDTH*2-MARGIN*2,rect.height()-PEN_WIDTH*2-MARGIN*2),node),
     m_process(process),
     m_node(node),
     m_type(type),
@@ -97,11 +68,12 @@ ProcessButton::ProcessButton(QRectF rect,
 {
     //qreal radius=3;
 
-    setPen(QPen(Qt::black,PEN_WIDTH));
-    setBrush(QBrush(Qt::darkGray));
+    setPen(QPen(preferences->color(QPalette::Window),PEN_WIDTH));
+    setBrush(QBrush(preferences->color(QPalette::Base)));
 
     QGraphicsTextItem *textItem = new QGraphicsTextItem(this);
     textItem->setPlainText(buttonText(m_type));
+    textItem->setDefaultTextColor(preferences->color(QPalette::ButtonText));
     QPointF textCenter = textItem->boundingRect().center();
     QPointF boxCenter = boundingRect().center();
     textItem->setPos(boxCenter-textCenter);
@@ -120,11 +92,11 @@ void ProcessButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
     if (m_mouseHover)
-        painter->setPen(buttonPen(m_type));
+        painter->setPen(preferences->color(QPalette::Highlight));
     else
         painter->setPen(pen());
     if (m_mousePress)
-        painter->setBrush(buttonBrush(m_type));
+        painter->setBrush(preferences->color(QPalette::Button));
     else
         painter->setBrush(brush());
 //        painter->setBrush(Qt::transparent);

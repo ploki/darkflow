@@ -47,6 +47,8 @@
 #include "processscene.h"
 #include "preferences.h"
 
+MainWindow *dflMainWindow = NULL;
+
 void MainWindow::showAboutDialog()
 {
     aboutDialog->show();
@@ -171,7 +173,7 @@ MainWindow::MainWindow(QWidget *parent) :
     resize( screenSize * 4 / 5);
     move((screenSize.width()-size().width())/2,
          (screenSize.height()-size().height())/2);
-    scene->setBackgroundBrush(QColor(0x2e,0x34,0x36));
+    setSceneBackgroundBrush(preferences->color(QPalette::AlternateBase));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->installEventFilter(this);
     /* viewport receives first wheel events, it must ignore it to prevent scrolls */
@@ -213,6 +215,11 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
         return true;
     }
     return QMainWindow::eventFilter(obj, event);
+}
+
+void MainWindow::setSceneBackgroundBrush(const QColor &color)
+{
+    scene->setBackgroundBrush(color);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -44,6 +44,7 @@
 #include "console.h"
 #include "operatorworker.h"
 #include "darkflow.h"
+#include "mainwindow.h"
 #include <Magick++.h>
 
 #include <omp.h>
@@ -97,7 +98,8 @@ Preferences::Preferences(QWidget *parent) :
   m_OpenMPThreads(dfl_max_threads()),
   m_currentTarget(sRGB),
   m_incompatibleAction(Error),
-  m_labSelectionSize(LAB_SEL_SIZE)
+  m_labSelectionSize(LAB_SEL_SIZE),
+  m_palette()
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
@@ -249,6 +251,7 @@ bool Preferences::load(bool create)
     QJsonObject path = obj["path"].toObject();
     QJsonObject logging = obj["logging"].toObject();
     QJsonObject pixels = obj["pixels"].toObject();
+    QJsonObject style = obj["style"].toObject();
 
     int dflWorkers = resources["darkflowWorkers"].toInt();
     int dflThreads = resources["darkflowThreads"].toInt();
@@ -317,8 +320,13 @@ bool Preferences::load(bool create)
     Console::setLevel(Console::Level(logging["level"].toInt()));
     Console::setRaiseLevel(Console::Level(logging["raise"].toInt()));
     Console::setTrapLevel(Console::Level(logging["trap"].toInt()));
+
+    loadStyle(style);
+
     return true;
 }
+
+
 
 void Preferences::save()
 {
@@ -326,6 +334,7 @@ void Preferences::save()
     QJsonObject pixels;
     QJsonObject path;
     QJsonObject logging;
+    QJsonObject style = saveStyle();
 
     QString areaStr = ui->valueArea->text();
     QString memoryStr = ui->valueMemory->text();
@@ -369,6 +378,7 @@ void Preferences::save()
     obj["pixels"] = pixels;
     obj["path"] = path;
     obj["logging"] = logging;
+    obj["style"] = style;
     QJsonDocument doc;
     doc.setObject(obj);
 
@@ -386,6 +396,99 @@ void Preferences::save()
         return;
     }
     saveFile.write(doc.toJson());
+}
+
+QJsonObject Preferences::saveStyle()
+{
+    QJsonObject obj;
+    QString alternateBase = ui->lineAlternateBase->text();
+    QString base = ui->lineBase->text();
+    QString text = ui->lineText->text();
+    QString window = ui->lineWindow->text();
+    QString windowText = ui->lineWindowText->text();
+    QString button = ui->lineButton->text();
+    QString buttonText = ui->lineButtonText->text();
+    QString highlight = ui->lineHighlight->text();
+    QString highlightedText = ui->lineHighlightedText->text();
+    QString toolTipBase = ui->lineToolTipBase->text();
+    QString toolTipText = ui->lineToolTipText->text();
+    QString link = ui->lineLink->text();
+    QString brightText = ui->lineBrightText->text();
+    bool onlyWorkspace = ui->checkBoxOnlyWorkspace->isChecked();
+
+    obj["alternateBase"] = alternateBase;
+    obj["base"] = base;
+    obj["text"] = text;
+    obj["window"] = window;
+    obj["windowText"] = windowText;
+    obj["button"] = button;
+    obj["buttonText"] = buttonText;
+    obj["highlight"] = highlight;
+    obj["highlightedText"] = highlightedText;
+    obj["toolTipBase"] = toolTipBase;
+    obj["toolTipText"] = toolTipText;
+    obj["link"] = link;
+    obj["brightText"] = brightText;
+    obj["onlyWorkspace"] = onlyWorkspace;
+    return obj;
+}
+
+void Preferences::loadStyle(QJsonObject &obj)
+{
+    if ( obj.isEmpty() )
+        obj = saveStyle();
+
+    QString alternateBase = obj["alternateBase"].toString();
+    QString base = obj["base"].toString();
+    QString text = obj["text"].toString();
+    QString window = obj["window"].toString();
+    QString windowText = obj["windowText"].toString();
+    QString button = obj["button"].toString();
+    QString buttonText = obj["buttonText"].toString();
+    QString highlight = obj["highlight"].toString();
+    QString highlightedText = obj["highlightedText"].toString();
+    QString toolTipBase = obj["toolTipBase"].toString();
+    QString toolTipText = obj["toolTipText"].toString();
+    QString link = obj["link"].toString();
+    QString brightText = obj["brightText"].toString();
+    bool onlyWorkspace = obj["onlyWorkspace"].toBool();
+
+    ui->lineAlternateBase->setText(alternateBase);
+    ui->lineBase->setText(base);
+    ui->lineText->setText(text);
+    ui->lineWindow->setText(window);
+    ui->lineWindowText->setText(windowText);
+    ui->lineButton->setText(button);
+    ui->lineButtonText->setText(buttonText);
+    ui->lineHighlight->setText(highlight);
+    ui->lineHighlightedText->setText(highlightedText);
+    ui->lineToolTipBase->setText(toolTipBase);
+    ui->lineToolTipText->setText(toolTipText);
+    ui->lineLink->setText(link);
+    ui->lineBrightText->setText(brightText);
+    ui->checkBoxOnlyWorkspace->setChecked(onlyWorkspace);
+
+    QPalette palette;
+    palette.setColor(QPalette::AlternateBase, alternateBase);
+    palette.setColor(QPalette::Base, base);
+    palette.setColor(QPalette::Text, text);
+    palette.setColor(QPalette::Window, window);
+    palette.setColor(QPalette::WindowText, windowText);
+    palette.setColor(QPalette::Button, button);
+    palette.setColor(QPalette::ButtonText, buttonText);
+    palette.setColor(QPalette::Highlight, highlight);
+    palette.setColor(QPalette::HighlightedText, highlightedText);
+    palette.setColor(QPalette::ToolTipBase, toolTipBase);
+    palette.setColor(QPalette::ToolTipText, toolTipText);
+    palette.setColor(QPalette::Link, link);
+    palette.setColor(QPalette::BrightText, brightText);
+    m_palette = palette;
+
+    if ( !onlyWorkspace)
+        qApp->setPalette(palette);
+    if (dflMainWindow)
+        dflMainWindow->setSceneBackgroundBrush(alternateBase);
+
 }
 
 void Preferences::clicked(QAbstractButton *button)
@@ -475,4 +578,9 @@ QString Preferences::getAppConfigLocation() const
             + "/" + DF_APPNAME;
 #endif
 
+}
+
+QColor Preferences::color(QPalette::ColorRole role)
+{
+    return m_palette.color(role);
 }

@@ -31,7 +31,9 @@
 #include "treeoutputitem.h"
 #include "operator.h"
 #include "operatoroutput.h"
+#include "preferences.h"
 #include <QObject>
+#include <QApplication>
 
 TreeOutputItem::TreeOutputItem(OperatorOutput *output,
                                int idx,
@@ -52,17 +54,20 @@ TreeOutputItem::TreeOutputItem(OperatorOutput *output,
 
 void TreeOutputItem::setCaption()
 {
+    QColor col = QApplication::palette(static_cast<const QWidget *>(NULL)).color(QPalette::Button);
     setFont(0, QFont("Sans", 12));
     if ( Source == m_role ) {
-        setBackground(0, QBrush(Qt::yellow));
+        col.setBlue(0);
+        setBackground(0, QBrush(col));
         setText(0, m_caption);
     }
     else if ( EnabledSink == m_role ) {
-        setBackground(0, QBrush(Qt::yellow));
+        col.setBlue(0);
+        setBackground(0, QBrush(col));
         setText(0, tr("☑ %0").arg(m_caption));
     }
     else {
-        setBackground(0, QBrush(Qt::gray));
+        setBackground(0, QBrush(col));
         setText(0, tr("☐ %0").arg(m_caption));
     }
 }

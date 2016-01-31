@@ -32,6 +32,7 @@
 #include "ui_slider.h"
 #include "console.h"
 #include "darkflow.h"
+#include "mainwindow.h"
 
 #include <cmath>
 
@@ -47,7 +48,7 @@ Slider::Slider(const QString &windowCaption,
                qreal hardMax,
                uint parametersFilter,
                QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent ? parent : dflMainWindow ),
     ui(new Ui::Slider),
     m_unit(unit),
     m_scale(scale),
@@ -130,7 +131,6 @@ Slider::Slider(const QString &windowCaption,
 
     setSlider();
     updateInputs();
-    setWindowFlags(Qt::Tool|Qt::WindowStaysOnTopHint);
 }
 
 Slider::~Slider()

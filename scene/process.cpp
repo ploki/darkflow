@@ -28,6 +28,7 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
+#include <QApplication>
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -590,4 +591,3 @@ ProcessScene *Process::scene() const
 {
     return m_scene;
 }
-

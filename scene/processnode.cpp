@@ -37,6 +37,7 @@
 #include <QUrl>
 #include <QDesktopWidget>
 
+#include "mainwindow.h"
 #include "process.h"
 #include "processnode.h"
 #include "processbutton.h"
@@ -61,8 +62,7 @@
 
 #include "visualization.h"
 #include "console.h"
-
-#define PEN_WIDTH 2
+#include "preferences.h"
 
 ProcessNode::ProcessNode(QPointF pos,
                          Operator *op,
@@ -76,13 +76,13 @@ ProcessNode::ProcessNode(QPointF pos,
     m_connections(),
     m_inPorts(),
     m_outPorts(),
-    m_visualization(new Visualization(op))
+    m_visualization(new Visualization(op, dflMainWindow))
 {
     qreal barHeight;
     qreal x = pos.x();
     qreal y = pos.y();
     QPainterPath pp;
-    qreal w = 200, h;
+    qreal w = 240, h;
     qreal xradius=3, yradius=3;
 
     QVector<OperatorInput*> inputs = op->getInputs();
@@ -95,11 +95,12 @@ ProcessNode::ProcessNode(QPointF pos,
     m_caption = new QGraphicsTextItem(this);
     m_caption->setPlainText(op->getName());
     m_caption->setPos(x, y);
+    m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));
     barHeight = m_caption->boundingRect().height();
     h = barHeight*(2+portRowsCount+parameterRowsCount);
 
-    setPen(QPen(Qt::black,PEN_WIDTH));
-    setBrush(QBrush(Qt::darkGray));
+    setPen(QPen(preferences->color(QPalette::Window),PEN_WIDTH));
+    setBrush(QBrush(preferences->color(QPalette::Button)));
     pp.addRoundedRect(x, y, w, h, xradius, yradius);
 
     setFlag(QGraphicsItem::ItemIsMovable);

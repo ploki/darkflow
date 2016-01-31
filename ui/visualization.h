@@ -24,7 +24,7 @@ class Visualization : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit Visualization(Operator *op, QWidget *parent = 0);
+    explicit Visualization(Operator *op, QWidget *parent);
     ~Visualization();
 
     void getViewGamma(qreal &gamma, qreal &x0) const;

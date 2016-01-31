@@ -33,24 +33,25 @@
 #include "processprogressbar.h"
 #include "process.h"
 #include "processnode.h"
-
-#define PEN_WIDTH 2
+#include "preferences.h"
 
 ProcessProgressBar::ProcessProgressBar(QRectF rect, Process *process, ProcessNode *node) :
     QObject(NULL),
-    QGraphicsRectItem(QRectF(rect.x()+PEN_WIDTH,rect.y()+PEN_WIDTH,
-                             rect.width()-PEN_WIDTH*2,rect.height()-PEN_WIDTH*2),node),
+    QGraphicsRectItem(QRectF(rect.x()+PEN_WIDTH+MARGIN*2,rect.y()+PEN_WIDTH+MARGIN*2,
+                             rect.width()-PEN_WIDTH*2-MARGIN*4,rect.height()-PEN_WIDTH*2-MARGIN*4),node),
+    m_rect(rect.x()+PEN_WIDTH+MARGIN*2,rect.y()+PEN_WIDTH+MARGIN*2,
+           rect.width()-PEN_WIDTH*2-MARGIN*4,rect.height()-PEN_WIDTH*2-MARGIN*4),
     m_overlay(NULL),
     m_process(process),
     m_node(node),
     m_progress(0),
     m_complete(1)
 {
-    m_overlay = new QGraphicsRectItem(boundingRect(),this);
-    m_overlay->setBrush(Qt::green);
-    m_overlay->setPen(QPen(Qt::black,2));
-    setBrush(Qt::darkRed);
-    setPen(QPen(Qt::black, PEN_WIDTH));
+    m_overlay = new QGraphicsRectItem(m_rect,this);
+    m_overlay->setBrush(preferences->color(QPalette::Highlight));
+    m_overlay->setPen(QPen(preferences->color(QPalette::Base),PEN_WIDTH));
+    setBrush(preferences->color(QPalette::Base));
+    setPen(QPen(preferences->color(QPalette::Window), PEN_WIDTH));
     setFlags(QGraphicsItem::ItemIsSelectable);
 }
 
@@ -66,9 +67,9 @@ void ProcessProgressBar::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setPen(pen());
     painter->setBrush(brush());
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->drawRect(boundingRect());
-    m_overlay->setRect(QRect(boundingRect().x(),boundingRect().y(),
-                             boundingRect().width()*double(m_progress)/double(m_complete) ,boundingRect().height()));
+    painter->drawRect(m_rect);
+    m_overlay->setRect(QRect(m_rect.x(),m_rect.y(),
+                             m_rect.width()*double(m_progress)/double(m_complete) ,m_rect.height()));
 }
 
 int ProcessProgressBar::type() const

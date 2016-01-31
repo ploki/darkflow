@@ -28,9 +28,12 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
+#include "process.h"
 #include "treephotoitem.h"
 #include "photo.h"
 #include "console.h"
+#include "preferences.h"
+#include <QApplication>
 
 TreePhotoItem::TreePhotoItem(const Photo &photo,
                              PhotoType type,
@@ -77,7 +80,7 @@ void TreePhotoItem::setType(TreePhotoItem::PhotoType type)
         setForeground(0, Qt::green);
     }
     else {
-        setForeground(0, Qt::black);
+        setForeground(0, QApplication::palette(static_cast<const QWidget *>(NULL)).color(QPalette::QPalette::Text));
     }
 
 }

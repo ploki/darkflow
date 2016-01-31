@@ -33,6 +33,7 @@
 #include <QGraphicsItem>
 #include <QCursor>
 
+#include "process.h"
 #include "processconnection.h"
 #include "processnode.h"
 #include "processport.h"
@@ -40,6 +41,7 @@
 #include "operator.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
+#include "preferences.h"
 
 ProcessConnection::ProcessConnection(ProcessPort *port) :
     QObject(NULL),
@@ -48,7 +50,7 @@ ProcessConnection::ProcessConnection(ProcessPort *port) :
     m_inPort(NULL)
 {
     //setPos(port->anchorScenePos());
-    setPen(QPen(Qt::black,4));
+    setPen(QPen(preferences->color(QPalette::Link),4));
     setBrush(Qt::NoBrush);
     setZValue(-1);
     connect(m_outPort, SIGNAL(positionChanged()), this, SLOT(portChanged()));
@@ -83,7 +85,7 @@ void ProcessConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     if ( m_inPort )
         painter->setPen(pen());
     else
-        painter->setPen(QPen(Qt::darkRed,4));
+        painter->setPen(QPen(preferences->color(QPalette::BrightText),4));
     painter->setRenderHint(QPainter::Antialiasing);
     painter->drawPath(path());
 }

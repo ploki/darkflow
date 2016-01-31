@@ -27,7 +27,7 @@ public:
                           bool displayGuide,
                           bool preview,
                           const Operator *op,
-                          QWidget *parent = 0);
+                          QWidget *parent);
     ~SelectiveLab();
 
     int hue() const;

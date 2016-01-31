@@ -37,6 +37,7 @@
 #include <QSet>
 #include <QPointF>
 #include <QPoint>
+#include <QPalette>
 
 class ProcessScene;
 class QGraphicsSceneContextMenuEvent;
@@ -47,6 +48,10 @@ class ProcessConnection;
 class QGraphicsItem;
 class QMenu;
 
+#define PEN_WIDTH 0
+#define MARGIN 2
+
+QColor processColor(QPalette::ColorRole role);
 
 class Process : public QObject
 {

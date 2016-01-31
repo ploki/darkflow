@@ -53,6 +53,7 @@ public slots:
     void progress(int p, int c);
 
 private:
+    QRect m_rect;
     QGraphicsRectItem *m_overlay;
     Process *m_process;
     ProcessNode *m_node;

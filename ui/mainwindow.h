@@ -23,6 +23,7 @@ public:
     ~MainWindow();
 
     bool eventFilter(QObject *, QEvent *);
+    void setSceneBackgroundBrush(const QColor& color);
 
 public slots:
     void showAboutDialog();
@@ -52,5 +53,7 @@ private:
     void newProcess();
 
 };
+
+extern MainWindow *dflMainWindow;
 
 #endif // MAINWINDOW_H

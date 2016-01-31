@@ -42,6 +42,7 @@ public:
     int getNumThreads() const;
     int getLabSelectionSize() const;
     QString getAppConfigLocation() const;
+    QColor color(QPalette::ColorRole role);
 
 private:
     void getDefaultMagickResources();
@@ -49,6 +50,8 @@ private:
     void setMagickResources();
     bool load(bool create=true);
     void save();
+    QJsonObject saveStyle();
+    void loadStyle(QJsonObject& obj);
 
 public slots:
     void clicked(QAbstractButton * button);
@@ -72,6 +75,7 @@ private:
     TransformTarget m_currentTarget;
     IncompatibleAction m_incompatibleAction;
     int m_labSelectionSize;
+    QPalette m_palette;
 };
 
 extern Preferences *preferences;

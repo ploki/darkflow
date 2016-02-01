@@ -67,7 +67,7 @@ void setAppPalette(QApplication &a)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
+    QApplication::setStyle(QStyleFactory::create("Fusion"));
     QString locale = QLocale::system().name().section('_', 0, 0);
     QTranslator translator;
     translator.load(QString(":/l10n/darkflow_") + locale);

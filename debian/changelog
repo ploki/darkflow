@@ -1,3 +1,9 @@
+darkflow (2016.02.01-1) unstable; urgency=medium
+
+  * dark theme and color costomization
+
+ -- Guillaume Gimenez <guillaume@blackmilk.fr>  Mon, 01 Feb 2016 07:37:23 +0100
+
 darkflow (2016.01.29-1) unstable; urgency=medium
 
   * Initial release

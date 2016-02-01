@@ -80,7 +80,7 @@ void TreePhotoItem::setType(TreePhotoItem::PhotoType type)
         setForeground(0, Qt::green);
     }
     else {
-        setForeground(0, QApplication::palette(static_cast<const QWidget *>(NULL)).color(QPalette::QPalette::Text));
+        setForeground(0, QApplication::palette(static_cast<const QWidget *>(NULL)).color(QPalette::Text));
     }
 
 }

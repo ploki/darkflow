@@ -10,11 +10,20 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
 *-g++* | *clang* {
+    *-g++-64 {
+        message("x64 build")
+    } else {
+        message("x86 build")
+        QMAKE_CFLAGS += -m32
+        QMAKE_CXXFLAGS += -m32
+        QMAKE_LFLAGS += -m32
+        QMAKE_CXXFLAGS_RELEASE += -msse2 -mfpmath=sse
+    }
 # If you get linker errors about undefined references to symbols that
 # involve types in the std::__cxx11 namespace
 #    QMAKE_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
     QMAKE_CXXFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
-    QMAKE_CXXFLAGS_RELEASE += -O3 -march=native -mfpmath=sse
+    QMAKE_CXXFLAGS_RELEASE += -O2
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_LFLAGS +=  -fopenmp
     QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT

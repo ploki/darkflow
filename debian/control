@@ -10,6 +10,7 @@ Homepage: http://darkflow.org/
 
 Package: darkflow
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dcraw
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: dcraw:i386 | dcraw:amd64
 Description: DarkFlow, a node based image processor for astronomers
  DarkFlow, a node based image processor for astronomers

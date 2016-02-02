@@ -1,3 +1,9 @@
+darkflow (2016.02.03-1) unstable; urgency=medium
+
+  * visualization window size reduced to fit in small screens
+
+ -- Guillaume Gimenez <guillaume@blackmilk.fr>  Wed, 03 Feb 2016 00:46:12 +0100
+
 darkflow (2016.02.01-1) unstable; urgency=medium
 
   * dark theme and color costomization

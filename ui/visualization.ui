@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>796</width>
-    <height>778</height>
+    <width>774</width>
+    <height>674</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -16,51 +22,47 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <item>
-       <widget class="QLineEdit" name="operatorName">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Operator Name</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="operatorNameReset">
-        <property name="text">
-         <string>Reset Name</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QWidget" name="widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QLabel" name="operatorClass">
+         <widget class="QLineEdit" name="operatorName">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>Operator Class</string>
+           <string>Name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="operatorNameReset">
+          <property name="text">
+           <string>Name</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QTreeWidget" name="tree_photos">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="indentation">
            <number>0</number>
           </property>
@@ -105,6 +107,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="button_close">
+          <property name="text">
+           <string>Close</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="widget_2" native="true">
@@ -124,482 +133,477 @@
            <attribute name="title">
             <string>Visualization</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <widget class="QSplitter" name="splitter_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
+             <widget class="QGraphicsView" name="graphicsView">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>5</horstretch>
+                <verstretch>5</verstretch>
+               </sizepolicy>
               </property>
-              <widget class="QGraphicsView" name="graphicsView">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>5</horstretch>
-                 <verstretch>5</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="backgroundBrush">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>0</green>
-                  <blue>0</blue>
-                 </color>
-                </brush>
-               </property>
-              </widget>
-              <widget class="QWidget" name="layoutWidget">
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_5">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="title">
-                   <string>Zoom</string>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_3">
-                   <item row="0" column="0">
-                    <widget class="QRadioButton" name="radio_fitVisible">
-                     <property name="text">
-                      <string>Fit visi&amp;ble</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QRadioButton" name="radio_zoomHalf">
-                     <property name="text">
-                      <string>&amp;1:2</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QRadioButton" name="radio_zoom1">
-                     <property name="text">
-                      <string>1:1</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QRadioButton" name="radio_zoomDouble">
-                     <property name="text">
-                      <string>&amp;2:1</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QRadioButton" name="radio_zoomCustom">
-                     <property name="text">
-                      <string>Custom:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_4">
-                     <item>
-                      <widget class="QPushButton" name="button_zoomPlus">
-                       <property name="text">
-                        <string>+</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="button_zoomMinus">
-                       <property name="text">
-                        <string>-</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="title">
-                   <string>Image Information</string>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_2">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_tool">
-                     <property name="text">
-                      <string>Tool:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QComboBox" name="combo_tool">
-                     <item>
-                      <property name="text">
-                       <string>No</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>ROI</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>1 point</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>2 points</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>3 points</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>n points</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label">
-                     <property name="text">
-                      <string>Treatment:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QComboBox" name="combo_treatment">
-                     <item>
-                      <property name="text">
-                       <string>Regular</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Reference</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Discarded</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>In Error</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_width">
-                     <property name="text">
-                      <string>Width:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLabel" name="value_width">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_height">
-                     <property name="text">
-                      <string>Height:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QLabel" name="value_height">
-                     <property name="text">
-                      <string>0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QLabel" name="value_ADU_R">
-                     <property name="font">
-                      <font>
-                       <family>Monospace</family>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>R:      0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QLabel" name="value_EV_R">
-                     <property name="font">
-                      <font>
-                       <family>Monospace</family>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>-16.00</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0">
-                    <widget class="QLabel" name="value_ADU_G">
-                     <property name="font">
-                      <font>
-                       <family>Monospace</family>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>G:      0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="1">
-                    <widget class="QLabel" name="value_EV_G">
-                     <property name="font">
-                      <font>
-                       <family>Monospace</family>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>-16.00</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0">
-                    <widget class="QLabel" name="value_ADU_B">
-                     <property name="font">
-                      <font>
-                       <family>Monospace</family>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>B:      0</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="1">
-                    <widget class="QLabel" name="value_EV_B">
-                     <property name="font">
-                      <font>
-                       <family>Monospace</family>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>-16.00</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                  <zorder>label_width</zorder>
-                  <zorder>value_width</zorder>
-                  <zorder>label_tool</zorder>
-                  <zorder>combo_tool</zorder>
-                  <zorder>label</zorder>
-                  <zorder>combo_treatment</zorder>
-                  <zorder>value_ADU_R</zorder>
-                  <zorder>value_height</zorder>
-                  <zorder>value_EV_R</zorder>
-                  <zorder>value_ADU_G</zorder>
-                  <zorder>value_ADU_B</zorder>
-                  <zorder>value_EV_G</zorder>
-                  <zorder>value_EV_B</zorder>
-                  <zorder>label_height</zorder>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="title">
-                   <string>Display assist</string>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout">
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_gamma">
-                     <property name="text">
-                      <string>Display:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QComboBox" name="combo_gamma">
-                     <item>
-                      <property name="text">
-                       <string>As Input</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>sRGB</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>IUT BT.709</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Square Root</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_slider">
-                     <property name="text">
-                      <string>Exp:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QSlider" name="slider_exp">
-                     <property name="minimum">
-                      <number>0</number>
-                     </property>
-                     <property name="maximum">
-                      <number>800</number>
-                     </property>
-                     <property name="singleStep">
-                      <number>25</number>
-                     </property>
-                     <property name="pageStep">
-                      <number>100</number>
-                     </property>
-                     <property name="value">
-                      <number>0</number>
-                     </property>
-                     <property name="tracking">
-                      <bool>false</bool>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="tickPosition">
-                      <enum>QSlider::TicksBelow</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_exp">
-                     <property name="text">
-                      <string>Exp:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QLabel" name="value_exp">
-                     <property name="text">
-                      <string>0 EV</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0" colspan="2">
-                    <widget class="QPushButton" name="button_fullScreen">
-                     <property name="text">
-                      <string>Full Screen</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QPushButton" name="button_saveView">
-                     <property name="text">
-                      <string>Save View...</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_input">
-                     <property name="text">
-                      <string>Pixels:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QComboBox" name="combo_input">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="editable">
-                      <bool>false</bool>
-                     </property>
-                     <item>
-                      <property name="text">
-                       <string>Linear</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Non-Linear</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>HDR</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
+              <property name="backgroundBrush">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>0</red>
+                 <green>0</green>
+                 <blue>0</blue>
+                </color>
+               </brush>
+              </property>
              </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_5">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Zoom</string>
+                </property>
+                <layout class="QFormLayout" name="formLayout_3">
+                 <item row="0" column="0">
+                  <widget class="QRadioButton" name="radio_fitVisible">
+                   <property name="text">
+                    <string>Fit visi&amp;ble</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QRadioButton" name="radio_zoomHalf">
+                   <property name="text">
+                    <string>&amp;1:2</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QRadioButton" name="radio_zoom1">
+                   <property name="text">
+                    <string>1:1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QRadioButton" name="radio_zoomDouble">
+                   <property name="text">
+                    <string>&amp;2:1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QRadioButton" name="radio_zoomCustom">
+                   <property name="text">
+                    <string>Custo&amp;m:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <item>
+                    <widget class="QPushButton" name="button_zoomPlus">
+                     <property name="text">
+                      <string>+</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="button_zoomMinus">
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Image Information</string>
+                </property>
+                <layout class="QFormLayout" name="formLayout_2">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_tool">
+                   <property name="text">
+                    <string>Tool:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="combo_tool">
+                   <item>
+                    <property name="text">
+                     <string>No</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>ROI</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>1 point</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>2 points</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>3 points</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>n points</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>Treatment:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QComboBox" name="combo_treatment">
+                   <item>
+                    <property name="text">
+                     <string>Regular</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Reference</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Discarded</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>In Error</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_width">
+                   <property name="text">
+                    <string>Width:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="value_width">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_height">
+                   <property name="text">
+                    <string>Height:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLabel" name="value_height">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="value_ADU_R">
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>R:      0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QLabel" name="value_EV_R">
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>-16.00</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="value_ADU_G">
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>G:      0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1">
+                  <widget class="QLabel" name="value_EV_G">
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>-16.00</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="value_ADU_B">
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>B:      0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="1">
+                  <widget class="QLabel" name="value_EV_B">
+                   <property name="font">
+                    <font>
+                     <family>Monospace</family>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>-16.00</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+                <zorder>label_width</zorder>
+                <zorder>value_width</zorder>
+                <zorder>label_tool</zorder>
+                <zorder>combo_tool</zorder>
+                <zorder>label</zorder>
+                <zorder>combo_treatment</zorder>
+                <zorder>value_ADU_R</zorder>
+                <zorder>value_height</zorder>
+                <zorder>value_EV_R</zorder>
+                <zorder>value_ADU_G</zorder>
+                <zorder>value_ADU_B</zorder>
+                <zorder>value_EV_G</zorder>
+                <zorder>value_EV_B</zorder>
+                <zorder>label_height</zorder>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="title">
+                 <string>Display assist</string>
+                </property>
+                <layout class="QFormLayout" name="formLayout">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_gamma">
+                   <property name="text">
+                    <string>Display:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QComboBox" name="combo_gamma">
+                   <item>
+                    <property name="text">
+                     <string>As Input</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>sRGB</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>IUT BT.709</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Square Root</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_slider">
+                   <property name="text">
+                    <string>Exp:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QSlider" name="slider_exp">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>800</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>25</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="tracking">
+                    <bool>false</bool>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksBelow</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_exp">
+                   <property name="text">
+                    <string>Exp:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLabel" name="value_exp">
+                   <property name="text">
+                    <string>0 EV</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0" colspan="2">
+                  <widget class="QPushButton" name="button_fullScreen">
+                   <property name="text">
+                    <string>Full Screen</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0" colspan="2">
+                  <widget class="QPushButton" name="button_saveView">
+                   <property name="text">
+                    <string>Save View...</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_input">
+                   <property name="text">
+                    <string>Pixels:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="combo_input">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="editable">
+                    <bool>false</bool>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>Linear</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Non-Linear</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>HDR</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -664,9 +668,15 @@
            <attribute name="title">
             <string>Histogram</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
              <widget class="QScrollArea" name="scrollArea_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>512</width>
@@ -687,8 +697,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
-                 <height>510</height>
+                 <width>675</width>
+                 <height>563</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -740,46 +750,31 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_3">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="title">
-               <string>Histogram</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <property name="sizeConstraint">
-                <enum>QLayout::SetMinimumSize</enum>
+             <widget class="QComboBox" name="combo_surface">
+              <item>
+               <property name="text">
+                <string>Lines</string>
                </property>
-               <item>
-                <widget class="QComboBox" name="combo_surface">
-                 <item>
-                  <property name="text">
-                   <string>Lines</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Surfaces</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="combo_log">
-                 <item>
-                  <property name="text">
-                   <string>Linear</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Logarithm</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
+              </item>
+              <item>
+               <property name="text">
+                <string>Surfaces</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="combo_log">
+              <item>
+               <property name="text">
+                <string>Linear</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Logarithm</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
@@ -788,7 +783,7 @@
            <attribute name="title">
             <string>Transfer function</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
+           <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
              <widget class="QScrollArea" name="scrollArea_curve">
               <property name="minimumSize">
@@ -812,7 +807,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>510</width>
-                 <height>510</height>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -843,45 +838,36 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_4">
-              <property name="title">
-               <string>Transfer Function</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_10">
-               <item>
-                <widget class="QComboBox" name="combo_cumulative">
-                 <item>
-                  <property name="text">
-                   <string>Cumulative</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Only this operator</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="combo_scale">
-                 <item>
-                  <property name="text">
-                   <string>sRGB Linear</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>sRGB level</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>log2</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
+             <widget class="QComboBox" name="combo_cumulative">
+              <item>
+               <property name="text">
+                <string>Cumulative</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Only this operator</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="combo_scale">
+              <item>
+               <property name="text">
+                <string>sRGB Linear</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>sRGB level</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>log2</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
@@ -892,20 +878,11 @@
       </widget>
      </widget>
     </item>
-    <item>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Close</set>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <tabstops>
-  <tabstop>operatorName</tabstop>
-  <tabstop>operatorNameReset</tabstop>
   <tabstop>tree_photos</tabstop>
   <tabstop>checkBox_autoPlay</tabstop>
   <tabstop>button_getInputs</tabstop>
@@ -929,32 +906,11 @@
   <tabstop>tag_buttonRemove</tabstop>
   <tabstop>tag_buttonReset</tabstop>
   <tabstop>table_tags</tabstop>
-  <tabstop>combo_surface</tabstop>
-  <tabstop>combo_log</tabstop>
   <tabstop>scrollArea_2</tabstop>
-  <tabstop>combo_cumulative</tabstop>
-  <tabstop>combo_scale</tabstop>
   <tabstop>scrollArea_curve</tabstop>
-  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>Visualization</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>447</x>
-     <y>700</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>438</x>
-     <y>329</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>radio_fitVisible</sender>
    <signal>clicked()</signal>
@@ -1336,6 +1292,22 @@
     <hint type="destinationlabel">
      <x>397</x>
      <y>388</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_close</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>663</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>357</y>
     </hint>
    </hints>
   </connection>

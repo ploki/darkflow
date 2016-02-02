@@ -79,5 +79,6 @@ private:
 };
 
 extern Preferences *preferences;
+extern QPalette dflOriginalPalette;
 
 #endif // PREFERENCES_H

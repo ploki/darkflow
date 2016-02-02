@@ -49,6 +49,8 @@
 
 #include <omp.h>
 
+QPalette dflOriginalPalette;
+
 #ifndef QuantumRange
 namespace Magick {
 class ResourceLimits {
@@ -486,6 +488,9 @@ void Preferences::loadStyle(QJsonObject &obj)
 
     if ( !onlyWorkspace)
         qApp->setPalette(palette);
+    else
+        qApp->setPalette(dflOriginalPalette);
+
     if (dflMainWindow)
         dflMainWindow->setSceneBackgroundBrush(alternateBase);
 

@@ -89,8 +89,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
     ui->operatorName->setText(m_operator->getName());
-    ui->operatorClass->setText(m_operator->getLocalizedClassIdentifier());
-    ui->operatorClass->setToolTip(m_operator->getClassIdentifier());
+    ui->operatorNameReset->setText(m_operator->getLocalizedClassIdentifier());
+    ui->operatorNameReset->setToolTip(m_operator->getClassIdentifier());
     setWindowTitle(m_operator->getName());
     connect(ui->operatorName, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
     connect(ui->tree_photos, SIGNAL(itemSelectionChanged()), this, SLOT(photoSelectionChanged()));

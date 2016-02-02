@@ -28,6 +28,7 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
+#include "preferences.h"
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTranslator>
@@ -38,6 +39,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QApplication::setStyle(QStyleFactory::create("Fusion"));
+    dflOriginalPalette = QApplication::palette(static_cast<const QWidget *>(NULL));
     QString locale = QLocale::system().name().section('_', 0, 0);
     QTranslator translator;
     translator.load(QString(":/l10n/darkflow_") + locale);

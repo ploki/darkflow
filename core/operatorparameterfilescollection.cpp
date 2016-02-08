@@ -32,6 +32,7 @@
 
 #include "operatorparameterfilescollection.h"
 #include "console.h"
+#include <QDir>
 
 OperatorParameterFilesCollection::OperatorParameterFilesCollection(
         const QString& name,
@@ -84,12 +85,14 @@ QString OperatorParameterFilesCollection::currentValue() const
 
 QJsonObject OperatorParameterFilesCollection::save()
 {
+    QDir baseDir(m_dir);
     QJsonObject obj;
     QJsonArray files;
     obj["type"] = QString("filesCollection");
     obj["name"] = m_name;
-    foreach(const QString& file, m_collection) {
+    foreach(QString file, m_collection) {
         dflDebug(tr("FilesCollection: saving a file"));
+        file = baseDir.relativeFilePath(file);
         files.push_back(file);
     }
     obj["files"] = files;
@@ -108,7 +111,10 @@ void OperatorParameterFilesCollection::load(const QJsonObject &obj)
     }
     QJsonArray files = obj["files"].toArray();
     foreach(QJsonValue val, files) {
-        m_collection.push_back(val.toString());
+        QString file = val.toString();
+        QDir baseDir(m_dir);
+        file = baseDir.absoluteFilePath(file);
+        m_collection.push_back(file);
     }
     emit updated();
 }

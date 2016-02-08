@@ -373,7 +373,7 @@ void Process::load(const QString& filename)
     setProjectFile(filename);
     setProjectName(obj["projectName"].toString());
     setNotes(obj["notes"].toString());
-    setBaseDirectory(obj["outputDirectory"].toString());
+    setBaseDirectory(obj["baseDirectory"].toString());
 
     foreach(QJsonValue val, obj["nodes"].toArray()) {
         QJsonObject obj = val.toObject();

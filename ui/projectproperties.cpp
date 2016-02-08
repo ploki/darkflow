@@ -30,6 +30,7 @@
  */
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QFileInfo>
 #include "projectproperties.h"
 #include "ui_projectproperties.h"
 #include "process.h"
@@ -102,11 +103,17 @@ void ProjectProperties::selectBaseDirectory()
 
 void ProjectProperties::accept()
 {
+    QString projectFile = ui->project_file->text();
+    QString baseDir = ui->valueBaseDir->text();
     if (m_process) {
+        if ( baseDir.isEmpty() ) {
+            QFileInfo finfo(projectFile);
+            baseDir = finfo.absoluteDir().absolutePath();
+        }
         m_process->setProjectName(ui->project_name->text());
-        m_process->setProjectFile(ui->project_file->text());
+        m_process->setProjectFile(projectFile);
         m_process->setNotes(ui->notes->toPlainText());
-        m_process->setBaseDirectory(ui->valueBaseDir->text());
+        m_process->setBaseDirectory(baseDir);
         if (m_andSave) {
             if ( m_process->projectFile().isEmpty())
                 QMessageBox::warning( this, this->objectName(),

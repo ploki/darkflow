@@ -64,7 +64,10 @@
            </sizepolicy>
           </property>
           <property name="indentation">
-           <number>0</number>
+           <number>5</number>
+          </property>
+          <property name="animated">
+           <bool>true</bool>
           </property>
           <attribute name="headerVisible">
            <bool>false</bool>
@@ -697,8 +700,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>675</width>
-                 <height>563</height>
+                 <width>597</width>
+                 <height>512</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -806,7 +809,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>510</width>
+                 <width>597</width>
                  <height>512</height>
                 </rect>
                </property>

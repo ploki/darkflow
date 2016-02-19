@@ -42,8 +42,8 @@ unix {
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
     QMAKE_CFLAGS += -DHAVE_FFMPEG
     CONFIG += link_pkgconfig
-    PKGCONFIG += Magick++ libavformat libavcodec libavutil
-    #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
+    PKGCONFIG += Magick++ libavformat libavcodec libavutil cfitsio
+    #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil cfitsio
 }
 
 win32 {
@@ -203,7 +203,9 @@ SOURCES +=\
     scene/processselectivelab.cpp \
     core/operatorparameterselectivelab.cpp \
     algorithms/selectivelabfilter.cpp \
-    operators/opselectivelabfilter.cpp
+    operators/opselectivelabfilter.cpp \
+    operators/oploadfits.cpp \
+    operators/workerloadfits.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -325,7 +327,9 @@ HEADERS  += \
     scene/processselectivelab.h \
     core/operatorparameterselectivelab.h \
     algorithms/selectivelabfilter.h \
-    operators/opselectivelabfilter.h
+    operators/opselectivelabfilter.h \
+    operators/oploadfits.h \
+    operators/workerloadfits.h
 
 FORMS    += \
     ui/aboutdialog.ui \

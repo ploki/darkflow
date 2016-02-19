@@ -58,6 +58,7 @@
 #include "console.h"
 
 #include "oploadraw.h"
+#include "oploadfits.h"
 #include "opexnihilo.h"
 #include "oppassthrough.h"
 #include "oprotate.h"
@@ -140,6 +141,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_scene->installEventFilter(this);
 
     m_availableOperators.push_back(new OpLoadRaw(this));
+    m_availableOperators.push_back(new OpLoadFits(this));
     m_availableOperators.push_back(new OpLoadImage(this));
 #ifdef HAVE_FFMPEG
     m_availableOperators.push_back(new OpLoadVideo(this));

@@ -54,12 +54,14 @@ public:
 
 public slots:
     void setColorSpace(int v);
+    void setOutputHDR(int v);
     void filesCollectionChanged();
 private:
     OperatorParameterFilesCollection *m_filesCollection;
     OperatorParameterDropDown *m_colorSpace;
     ColorSpace m_colorSpaceValue;
-
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
 #endif // OPLOADFITS_H

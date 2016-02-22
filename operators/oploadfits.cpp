@@ -53,13 +53,18 @@ OpLoadFits::OpLoadFits(Process *parent) :
                           tr("FITS Images (*.fits *.fit);;"
                           "All Files (*.*)"), this)),
     m_colorSpace(new OperatorParameterDropDown("colorSpace", tr("Color Space"), this, SLOT(setColorSpace(int)))),
-    m_colorSpaceValue(Linear)
+    m_colorSpaceValue(Linear),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR",  tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(false)
 {
     m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[Linear]), Linear, true);
     m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[sRGB]), sRGB);
     m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[IUT_BT_709]), IUT_BT_709);
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
     addParameter(m_filesCollection);
     addParameter(m_colorSpace);
+    addParameter(m_outputHDR);
     addOutput(new OperatorOutput(tr("Images"),this));
 }
 
@@ -71,13 +76,21 @@ OpLoadFits *OpLoadFits::newInstance()
 OperatorWorker *OpLoadFits::newWorker()
 {
     QVector<QString> filesCollection = m_filesCollection->collection().toVector();
-    return new WorkerLoadFits(filesCollection, m_colorSpaceValue, m_thread, this);
+    return new WorkerLoadFits(filesCollection, m_colorSpaceValue, m_outputHDRValue, m_thread, this);
 }
 
 void OpLoadFits::setColorSpace(int v)
 {
     if ( m_colorSpaceValue != v ) {
         m_colorSpaceValue = ColorSpace(v);
+        setOutOfDate();
+    }
+}
+
+void OpLoadFits::setOutputHDR(int v)
+{
+    if ( m_outputHDRValue != !!v ) {
+        m_outputHDRValue = !!v;
         setOutOfDate();
     }
 }

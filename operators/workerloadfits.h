@@ -41,14 +41,16 @@ class WorkerLoadFits : public OperatorWorker
     Q_OBJECT
 public:
     WorkerLoadFits(QVector<QString> filesCollection,
-                    OpLoadFits::ColorSpace colorSpace,
-                    QThread *thread,
-                    Operator *op);
+                   OpLoadFits::ColorSpace colorSpace,
+                   bool outputHDR,
+                   QThread *thread,
+                   Operator *op);
     Photo process(const Photo &, int, int);
     void play();
 private:
     QVector<QString> m_filesCollection;
     OpLoadFits::ColorSpace m_colorSpace;
+    bool m_outputHDR;
 };
 
 

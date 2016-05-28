@@ -135,9 +135,9 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
         pCodecCtx->flags|=CODEC_FLAG_TRUNCATED;
 
     if ( pCodecCtx->pix_fmt != AV_PIX_FMT_YUV420P &&
-         pCodecCtx->pix_fmt != AV_PIX_FMT_YUV410P)
-            return handle_error(tr("pix_fmt != PIX_FMT_YUV420P for file %0").arg(filename));
-
+         pCodecCtx->pix_fmt != AV_PIX_FMT_YUV410P &&
+         pCodecCtx->pix_fmt != AV_PIX_FMT_BGR24 )
+            return handle_error(tr("Unsupported pixel format for file %0").arg(filename));
     // Open codec
     if(avcodec_open2(pCodecCtx, pCodec, NULL)<0)
         return handle_error(tr("Could not open codec for file %0").arg(filename));
@@ -181,7 +181,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
          }
          do {
              if (avpkt.data) {
-                 av_free_packet(&avpkt);
+                 av_packet_unref(&avpkt);
                  avpkt.data = NULL;
                  avpkt.size = 0;
              }
@@ -199,7 +199,7 @@ loop_exit:
          push_frame(picture, filename, progress, complete, frame, frame_count);
          frame++;
          if (avpkt.data)
-             av_free_packet(&avpkt);
+             av_packet_unref(&avpkt);
      }
 
      avcodec_close(pCodecCtx);
@@ -249,6 +249,8 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             div = 2; break;
         case AV_PIX_FMT_YUV410P:
             div = 4; break;
+        case AV_PIX_FMT_BGR24:
+            break;
         default:
             dflWarning(tr("LoadVideo(Worker): Unsupported pixel format in file %0").arg(filename));
             return false;
@@ -276,17 +278,32 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
                     continue;
                 }
                 for ( int x = 0 ; x < w ; ++x ) {
-                    Q_ASSERT( x/div < picture->linesize[1] );
-                    Q_ASSERT( x/div < picture->linesize[2] );
-                    const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
-                    const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
-                    const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
+                    switch ( picture->format ) {
+                    case AV_PIX_FMT_BGR24: {
+                        const unsigned char c_b = picture->data[0][picture->linesize[0]*y + 3*x];
+                        const unsigned char c_g = picture->data[0][picture->linesize[0]*y + 3*x+1];
+                        const unsigned char c_r = picture->data[0][picture->linesize[0]*y + 3*x+2];
 
-                    quantum_t r, g, b;
-                    yuv420_to_rgb(c_y,c_u,c_v,r,g,b);
-                    pixels[x].red = r;
-                    pixels[x].green = g;
-                    pixels[x].blue = b;
+                        pixels[x].red = c_r*257;
+                        pixels[x].green = c_g*257;
+                        pixels[x].blue = c_b*257;
+                        break;
+                    }
+                    default: {
+                        Q_ASSERT( x/div < picture->linesize[1] );
+                        Q_ASSERT( x/div < picture->linesize[2] );
+                        const unsigned char c_y = picture->data[0][picture->linesize[0]*y + x];
+                        const unsigned char c_u = picture->data[1][picture->linesize[1]*(y/div) + x/2];
+                        const unsigned char c_v = picture->data[2][picture->linesize[2]*(y/div) + x/div];
+
+                        quantum_t r, g, b;
+                        yuv420_to_rgb(c_y,c_u,c_v,r,g,b);
+                        pixels[x].red = r;
+                        pixels[x].green = g;
+                        pixels[x].blue = b;
+                        break;
+                    }
+                    }
                 }
                 pixel_cache.sync();
             }

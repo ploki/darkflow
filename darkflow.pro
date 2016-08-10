@@ -8,37 +8,51 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-
+unix {
 *-g++* | *clang* {
-    *-g++-64 {
-        message("x64 build")
-    } else {
-        message("x86 build")
-        QMAKE_CFLAGS += -m32
-        QMAKE_CXXFLAGS += -m32
-        QMAKE_LFLAGS += -m32
-        QMAKE_CXXFLAGS_RELEASE += -msse2 -mfpmath=sse
+    !macx {
+        *-g++-64 {
+            message("x64 build")
+        } else {
+            message("x86 build")
+            QMAKE_CFLAGS += -m32
+            QMAKE_CXXFLAGS += -m32
+            QMAKE_LFLAGS += -m32
+            QMAKE_CXXFLAGS_RELEASE += -msse2 -mfpmath=sse
+        }
     }
 # If you get linker errors about undefined references to symbols that
 # involve types in the std::__cxx11 namespace
 #    QMAKE_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
-    QMAKE_CXXFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
+    QMAKE_CXXFLAGS += -Wall -D_REENTRANT
     QMAKE_CXXFLAGS_RELEASE += -O2
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
+    QMAKE_CFLAGS += -Wall -D_REENTRANT
+!macx {
+    QMAKE_CXXFLAGS += -fopenmp -Werror -Wno-deprecated-declarations
+    QMAKE_CFLAGS += -fopenmp -Werror -Wno-deprecated-declarations
     QMAKE_LFLAGS +=  -fopenmp
-    QMAKE_CFLAGS += -fopenmp -Wall -Werror -D_REENTRANT
+} else {
+}
+}
 }
 
-ICON = icons/darkflow.png \
-    icons/darkflow-256x256.ico \
-    icons/darkflow-128x128.ico \
-    icons/darkflow-96x96.ico \
-    icons/darkflow-64x64.ico \
-    icons/darkflow-48x48.ico \
-    icons/darkflow-32x32.ico \
-    icons/darkflow-24x24.ico
+!macx {
+    ICON = icons/darkflow.png \
+        icons/darkflow-256x256.ico \
+        icons/darkflow-128x128.ico \
+        icons/darkflow-96x96.ico \
+        icons/darkflow-64x64.ico \
+        icons/darkflow-48x48.ico \
+        icons/darkflow-32x32.ico \
+        icons/darkflow-24x24.ico
+}
 
 unix {
+    macx {
+        message("OSX build")
+        QT_CONFIG -= no-pkg-config
+    }
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
     QMAKE_CFLAGS += -DHAVE_FFMPEG
     CONFIG += link_pkgconfig
@@ -351,7 +365,7 @@ DISTFILES += \
 
 TRANSLATIONS = l10n/darkflow_fr.ts
 
-unix {
+unix:!macx {
     target.path = /usr/bin/
     INSTALLS += target
     df_icons.files = icons/darkflow.png

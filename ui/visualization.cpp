@@ -88,10 +88,23 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+#ifdef Q_OS_OSX
+    /* Don't let osx permit this window to be fullscreen.
+     * I can't figure out why multiple fullscreen views
+     * behave baddly
+     */
+    setWindowFlags(Qt::Tool);
+#else
+    /* Don't know why it is now required to permit fullscreen
+     * at least on linux
+     */
+    setWindowFlags(Qt::Window);
+#endif
     ui->operatorName->setText(m_operator->getName());
     ui->operatorNameReset->setText(m_operator->getLocalizedClassIdentifier());
     ui->operatorNameReset->setToolTip(m_operator->getClassIdentifier());
     setWindowTitle(m_operator->getName());
+    m_fullScreenView->setWindowTitle(m_operator->getName());
     connect(ui->operatorName, SIGNAL(textChanged(QString)), this, SLOT(nameChanged(QString)));
     connect(ui->tree_photos, SIGNAL(itemSelectionChanged()), this, SLOT(photoSelectionChanged()));
     connect(this, SIGNAL(operatorNameChanged(QString)), m_operator, SLOT(setName(QString)));
@@ -256,8 +269,14 @@ void Visualization::getInputsClicked()
 
 void Visualization::fullScreenViewClicked()
 {
+#ifdef Q_OS_OSX
+    /* No fullscreen for the fullscreen view on os X,
+     * maximized is a good trade-off
+     */
+    m_fullScreenView->showMaximized();
+#else
     m_fullScreenView->showFullScreen();
-    //m_fullScreenView->showMaximized();
+#endif
 }
 
 void Visualization::saveViewClicked()
@@ -591,6 +610,7 @@ void Visualization::updateTagsTable()
 void Visualization::nameChanged(QString text)
 {
     setWindowTitle(text);
+    m_fullScreenView->setWindowTitle(m_operator->getName());
     emit operatorNameChanged(text);
 }
 

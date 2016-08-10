@@ -38,6 +38,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+    QCoreApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents);
+#endif
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     dflOriginalPalette = QApplication::palette(static_cast<const QWidget *>(NULL));
     QString locale = QLocale::system().name().section('_', 0, 0);

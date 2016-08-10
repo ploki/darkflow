@@ -47,7 +47,7 @@
 #include "mainwindow.h"
 #include <Magick++.h>
 
-#include <omp.h>
+//#include <omp.h>
 
 QPalette dflOriginalPalette;
 

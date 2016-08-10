@@ -63,6 +63,7 @@ typedef long long int64_t;
 # define DF_PRINTF_FORMAT(x,y)
 # define DF_TRAP() __debugbreak()
 # define atomic_incr(ptr) do { InterlockedIncrement ((ptr)); } while(0)
+#endif /* __GNUC__ */
 
 # ifndef M_PI
 #  define M_PI 3.141592654L
@@ -79,7 +80,6 @@ typedef long long int64_t;
 # ifndef M_LN2
 #  define M_LN2 0.69314718L
 # endif
-#endif /* __GNUC__ */
 
 #ifdef DF_WINDOWS
 extern "C" {

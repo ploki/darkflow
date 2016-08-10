@@ -42,12 +42,21 @@
 static QString buttonText(ProcessButton::ButtonType type)
 {
     switch(type) {
+#ifdef Q_OS_MAC
+    case ProcessButton::Play: return ProcessButton::tr("⏯");
+    case ProcessButton::Abort:return ProcessButton::tr("⏹");
+    case ProcessButton::Display: return ProcessButton::tr("📝");
+    case ProcessButton::Close: return ProcessButton::tr("❌");
+    case ProcessButton::Help: return ProcessButton::tr("❓");
+    case ProcessButton::Refresh: return ProcessButton::tr("🔄");
+#else
     case ProcessButton::Play: return ProcessButton::tr("▶");
     case ProcessButton::Abort:return ProcessButton::tr("■");
     case ProcessButton::Display: return ProcessButton::tr("☷");
     case ProcessButton::Close: return ProcessButton::tr("❌");
     case ProcessButton::Help: return ProcessButton::tr("?");
     case ProcessButton::Refresh: return ProcessButton::tr("⟳");
+#endif
     default:
         return ProcessButton::tr("0");
     }

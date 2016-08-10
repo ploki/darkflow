@@ -125,6 +125,9 @@
    <property name="shortcut">
     <string>Ctrl+P</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
   </action>
   <action name="actionInterrupt">
    <property name="text">
@@ -141,10 +144,16 @@
    <property name="shortcut">
     <string>Ctrl+X</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionProperties">

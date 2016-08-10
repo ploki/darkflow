@@ -41,6 +41,12 @@
 #include <errno.h>
 #include <cstring>
 
+#if defined(Q_OS_OSX)
+#define __environ environ
+  extern char **environ;
+#define POSIX_SPAWN_USEVFORK 0
+#endif
+
 class PosixSpawnImpl {
     friend class PosixSpawn;
     PosixSpawnImpl() :
@@ -142,7 +148,13 @@ void PosixSpawn::start(const QString &program,
     posix_spawnattr_t attr;
     posix_spawn_file_actions_init(&file_actions);
     posix_spawnattr_init(&attr);
+#ifndef Q_OS_OSX
+    /* os X doesn't support posix spawn with vfork flag
+     * I hope it's implementation is still based on it
+     * since the syscall exists
+     */
     posix_spawnattr_setflags(&attr, POSIX_SPAWN_USEVFORK);
+#endif
     int peer[2] = { -1, -1 };
 
     if ( mode & QIODevice::ReadOnly) {

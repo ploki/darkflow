@@ -243,13 +243,13 @@ void ProcessNode::removeConnection(ProcessConnection *connection)
     m_connections.remove(connection);
 }
 
-QJsonObject ProcessNode::save()
+QJsonObject ProcessNode::save(const QString& baseDirStr)
 {
     QJsonObject obj;
     QPointF p = scenePos() + QPointF(boundingRect().x(), boundingRect().y());
     obj["x"] = p.x();
     obj["y"] = p.y();
-    m_operator->save(obj);
+    m_operator->save(obj, baseDirStr);
     return obj;
 }
 

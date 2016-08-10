@@ -142,7 +142,7 @@ void OperatorParameterSlider::setValue(const qreal &value)
     emit setOutOfDate();
 }
 
-QJsonObject OperatorParameterSlider::save()
+QJsonObject OperatorParameterSlider::save(const QString&)
 {
     QJsonObject obj;
     obj["type"] = QString("slider");

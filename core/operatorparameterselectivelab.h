@@ -51,7 +51,7 @@ public:
             bool previewEffect,
             Operator *op);
 
-    QJsonObject save();
+    QJsonObject save(const QString& baseDirStr);
     void load(const QJsonObject &obj);
 
     QString currentValue() const;

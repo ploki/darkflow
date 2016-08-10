@@ -121,8 +121,8 @@ public:
     static void operator_disconnect(Operator *outputOperator, int outputIdx,
                                     Operator *inputOperator, int inputIdx);
 
-    virtual void save(QJsonObject& obj);
-    virtual void load(QJsonObject& obj);
+    void save(QJsonObject& obj, const QString& baseDirStr);
+    void load(QJsonObject& obj);
 
     QString getName() const;
 

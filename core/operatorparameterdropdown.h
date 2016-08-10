@@ -67,7 +67,7 @@ public:
 
     QString currentValue() const;
 
-    QJsonObject save();
+    QJsonObject save(const QString& baseDirStr);
     void load(const QJsonObject &obj);
 
 signals:

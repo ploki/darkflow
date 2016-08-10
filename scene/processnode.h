@@ -69,7 +69,7 @@ public:
     int type() const;
     void addConnection(ProcessConnection *connection);
     void removeConnection(ProcessConnection *connection);
-    QJsonObject save();
+    QJsonObject save(const QString& baseDirStr);
 
     ProcessPort *inPort(int idx);
     ProcessPort *outPort(int idx);

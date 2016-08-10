@@ -83,9 +83,9 @@ QString OperatorParameterFilesCollection::currentValue() const
     return tr("%n file(s)", "", count);
 }
 
-QJsonObject OperatorParameterFilesCollection::save()
+QJsonObject OperatorParameterFilesCollection::save(const QString& baseDirStr)
 {
-    QDir baseDir(m_dir);
+    QDir baseDir(baseDirStr);
     QJsonObject obj;
     QJsonArray files;
     obj["type"] = QString("filesCollection");

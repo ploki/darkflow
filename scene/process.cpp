@@ -34,6 +34,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QFileInfo>
+#include <QDir>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
@@ -325,18 +327,19 @@ void Process::setProjectFile(const QString &projectFile)
 
 void Process::save()
 {
+    QDir projectFileDir(QFileInfo(projectFile()).absoluteDir());
     QJsonObject obj;
     QJsonArray nodes;
     QJsonArray connections;
     QJsonDocument doc;
     obj["projectName"]=projectName();
     obj["notes"]=notes();
-    obj["baseDirectory"]=baseDirectory();
+    obj["baseDirectory"]=projectFileDir.relativeFilePath(baseDirectory());
     foreach (QGraphicsItem *item, m_scene->items()) {
         if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeNode ) {
             ProcessNode *node = dynamic_cast<ProcessNode *>(item);
             dflDebug(tr("Process: saving a node"));
-            nodes.push_back(node->save());
+            nodes.push_back(node->save(baseDirectory()));
         }
         else if ( item->type() == QGraphicsItem::UserType + ProcessScene::UserTypeConnection ) {
             ProcessConnection *conn = dynamic_cast<ProcessConnection *>(item);
@@ -360,6 +363,7 @@ void Process::save()
 
 void Process::load(const QString& filename)
 {
+    QDir projectFileDir(QFileInfo(filename).absoluteDir());
     QFile loadFile(filename);
     if (!loadFile.open(QIODevice::ReadOnly))
     {
@@ -373,16 +377,15 @@ void Process::load(const QString& filename)
     setProjectFile(filename);
     setProjectName(obj["projectName"].toString());
     setNotes(obj["notes"].toString());
-    setBaseDirectory(obj["baseDirectory"].toString());
-
+    setBaseDirectory(projectFileDir.absoluteFilePath(obj["baseDirectory"].toString()));
     foreach(QJsonValue val, obj["nodes"].toArray()) {
         QJsonObject obj = val.toObject();
         bool operatorFound = false;
         foreach(Operator *op, m_availableOperators) {
             if ( op->getClassIdentifier() == obj["classIdentifier"].toString()) {
-                operatorFound = true;
                 qreal x = obj["x"].toDouble();
                 qreal y = obj["y"].toDouble();
+                operatorFound = true;
                 m_lastMousePosition.setX(x);
                 m_lastMousePosition.setY(y);
                 Operator *newOp = op->newInstance();

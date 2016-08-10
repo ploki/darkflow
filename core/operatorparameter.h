@@ -45,7 +45,7 @@ public:
                       const QString& caption,
                       Operator *op);
 
-    virtual QJsonObject save() = 0;
+    virtual QJsonObject save(const QString& baseDirStr) = 0;
     virtual void load(const QJsonObject& obj) = 0;
 
     QString caption() const;

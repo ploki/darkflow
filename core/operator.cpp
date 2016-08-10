@@ -466,7 +466,7 @@ void Operator::operator_disconnect(Operator *outputOperator, int outputIdx,
     emit inputOperator->stateChanged();
 }
 
-void Operator::save(QJsonObject &obj)
+void Operator::save(QJsonObject &obj, const QString& baseDirStr)
 {
     QJsonArray parameters;
     obj["enabled"] = m_enabled;
@@ -475,7 +475,7 @@ void Operator::save(QJsonObject &obj)
     obj["name"] = getName();
     foreach(OperatorParameter *parameter, m_parameters) {
         dflDebug(tr("Saving a parameter"));
-        parameters.push_back(parameter->save());
+        parameters.push_back(parameter->save(baseDirStr));
     }
     obj["parameters"] = parameters;
 

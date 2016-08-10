@@ -65,7 +65,7 @@ public:
     uint parametersFilter() const;
     QString currentValue() const;
 
-    QJsonObject save();
+    QJsonObject save(const QString& baseDirStr);
     void load(const QJsonObject &obj);
 
 public slots:

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+class GraphicsViewInteraction;
 
 namespace Ui {
 class FullScreenView;
@@ -17,7 +18,7 @@ class FullScreenView : public QMainWindow
 public:
     explicit FullScreenView(QGraphicsScene *scene, QWidget *parent = 0);
     bool eventFilter(QObject *, QEvent *);
-    void zoomUpdate();
+    void zoomUpdate(qreal factor);
 
 signals:
 
@@ -25,7 +26,7 @@ public slots:
 private:
     QGraphicsScene *m_scene;
     Ui::FullScreenView *ui;
-    int m_zoomLevel;
+    GraphicsViewInteraction *graphicsViewInteraction;
 };
 
 #endif // FULLSCREENVIEW_H

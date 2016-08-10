@@ -109,6 +109,7 @@ private:
     bool m_dirty;
     QVector<Operator*> m_availableOperators;
     QPointF m_lastMousePosition;
+    QPoint m_lastScreenPosition;
     ProcessConnection *m_conn;
     QMenu *m_contextMenu;
 

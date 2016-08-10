@@ -46,6 +46,7 @@
 #include "process.h"
 #include "processscene.h"
 #include "preferences.h"
+#include "graphicsviewinteraction.h"
 
 MainWindow *dflMainWindow = NULL;
 
@@ -73,6 +74,8 @@ void MainWindow::actionNewProject()
     if (resBtn == QMessageBox::Yes) {
         newProcess();
         projectProperties->modify(process);
+        graphicsViewInteraction->zoomSet(1);
+        ui->graphicsView->centerOn(0, 0);
     }
 }
 
@@ -137,6 +140,7 @@ void MainWindow::load(const QString &filename)
 {
     newProcess();
     process->load(filename);
+    graphicsViewInteraction->fitVisible();
 }
 
 void MainWindow::processStateChanged()
@@ -162,7 +166,10 @@ MainWindow::MainWindow(QWidget *parent) :
     projectProperties(new ProjectProperties(this)),
     scene(new ProcessScene(this)),
     process(0 /* postponed because of preferences */),
-    zoom(0)
+    zoomKey(false),
+    totalScaleFactor(1),
+    lastGestureFactor(1),
+    graphicsViewInteraction(0)
 {
     Console::init();
     preferences = new Preferences(this);
@@ -175,12 +182,11 @@ MainWindow::MainWindow(QWidget *parent) :
          (screenSize.height()-size().height())/2);
     setSceneBackgroundBrush(preferences->color(QPalette::AlternateBase));
     ui->graphicsView->setScene(scene);
-    ui->graphicsView->installEventFilter(this);
-    /* viewport receives first wheel events, it must ignore it to prevent scrolls */
-    ui->graphicsView->viewport()->installEventFilter(this);
-    ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsViewInteraction = new GraphicsViewInteraction(ui->graphicsView, this);
+    ui->graphicsView->centerOn(0,0);
+    graphicsViewInteraction->zoomSet(1);
     newProcess();
 }
 
@@ -193,28 +199,6 @@ MainWindow::~MainWindow()
     delete aboutDialog;
     delete ui;
     Console::fini();
-}
-
-bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-{
-    if ( event->type() == QEvent::Wheel )
-    {
-        int delta = dynamic_cast<QWheelEvent*>(event)->delta();
-        const int min = -5;
-        const int max = 5;
-        if(delta > 0)
-            zoom+=1;
-        else
-            zoom-=1;
-        zoom=qMax(qMin(zoom,max),min);
-        qreal factor = pow(3.,zoom/5.);
-        ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-        ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
-        event->accept();
-        return true;
-    }
-    return QMainWindow::eventFilter(obj, event);
 }
 
 void MainWindow::setSceneBackgroundBrush(const QColor &color)

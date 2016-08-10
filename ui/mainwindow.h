@@ -13,6 +13,7 @@ class Preferences;
 class ProjectProperties;
 class Process;
 class ProcessScene;
+class GraphicsViewInteraction;
 
 class MainWindow : public QMainWindow
 {
@@ -22,7 +23,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    bool eventFilter(QObject *, QEvent *);
     void setSceneBackgroundBrush(const QColor& color);
 
 public slots:
@@ -47,8 +47,10 @@ private:
     ProjectProperties *projectProperties;
     ProcessScene *scene;
     Process *process;
-    int zoom;
-
+    bool zoomKey;
+    qreal totalScaleFactor;
+    qreal lastGestureFactor;
+    GraphicsViewInteraction *graphicsViewInteraction;
     void closeEvent(QCloseEvent *event);
     void newProcess();
 

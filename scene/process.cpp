@@ -133,6 +133,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_dirty(false),
     m_availableOperators(),
     m_lastMousePosition(),
+    m_lastScreenPosition(),
     m_conn(NULL),
     m_contextMenu(new QMenu)
 {
@@ -468,6 +469,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     }
     m_lastMousePosition = me->scenePos();
     QEvent::Type type = event->type();
+    QGraphicsItem *node = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeNode);
     QGraphicsItem *button = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeButton);
     QGraphicsItem *portItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypePort);
     QGraphicsItem *connItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeConnection);
@@ -475,9 +477,11 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     QGraphicsItem *filesCollectionItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeFilesCollection);
     QGraphicsItem *sliderItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSlider);
     QGraphicsItem *selectiveLab = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSelectiveLab);
+    QGraphicsItem *progressItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeProgressBar);
     switch (type)
     {
     case QEvent::GraphicsSceneMousePress:
+        m_lastScreenPosition = me->screenPos();
         if (button) {
             dynamic_cast<ProcessButton*>(button)->mousePress();
             button->update();
@@ -519,6 +523,12 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         }
         break;
     case QEvent::GraphicsSceneMouseRelease:
+        if(!m_conn && !button && !node && !sliderItem &&
+                !portItem && !dropdownItem && !filesCollectionItem &&
+                !selectiveLab && !progressItem &&
+                m_lastScreenPosition.x() == me->screenPos().x() &&
+                m_lastScreenPosition.y() == me->screenPos().y())
+            spawnContextMenu(me->screenPos());
         if (button) {
             dynamic_cast<ProcessButton*>(button)->mouseRelease(me->screenPos());
             resetAllButtonsBut(button);

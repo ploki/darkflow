@@ -19,6 +19,7 @@ class OperatorOutput;
 class Photo;
 class QTreeWidgetItem;
 class TreePhotoItem;
+class GraphicsViewInteraction;
 
 class Visualization : public QMainWindow
 {
@@ -45,6 +46,7 @@ public slots:
     void zoomCustom();
     void zoomPlus();
     void zoomMinus();
+    void zoomChanged(qreal factor);
     void expChanged();
     void upToDate();
     void outOfDate();
@@ -74,14 +76,6 @@ private:
     Operator *m_operator;
     OperatorOutput *m_output;
     Photo *m_photo;
-    enum ZoomLevel {
-        ZoomFitVisible,
-        ZoomHalf,
-        ZoomOne,
-        ZoomDouble,
-        ZoomCustom
-    } m_zoomLevel;
-    int m_zoom;
     QString m_currentPhoto;
     const OperatorOutput *m_currentOutput;
     bool m_photoIsInput;
@@ -103,14 +97,12 @@ private:
         ToolNPoints,
     } m_tool;
     FullScreenView *m_fullScreenView;
+    GraphicsViewInteraction *graphicsViewInteraction;
 
     void clearAllTabs();
     void updateTabs();
     void updateTabsWithPhoto();
     void updateTabsWithOutput();
-    void updateVisualizationZoom();
-    void updateVisualizationFitVisible();
-    void transformView(qreal factor);
     void updateColorLabels(const QPointF& pos);
     void updateTagsTable();
     void setInputControlEnabled(bool v);

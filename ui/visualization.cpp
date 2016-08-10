@@ -46,6 +46,7 @@
 #include <Magick++.h>
 #include <cmath>
 
+#include "graphicsviewinteraction.h"
 #include "visualization.h"
 #include "ui_visualization.h"
 #include "operator.h"
@@ -69,8 +70,6 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_operator(op),
     m_output(NULL),
     m_photo(NULL),
-    m_zoomLevel(ZoomFitVisible),
-    m_zoom(0),
     m_currentPhoto(),
     m_currentOutput(0),
     m_photoIsInput(false),
@@ -84,7 +83,8 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     m_roi_p1(),
     m_roi_p2(),
     m_tool(ToolNone),
-    m_fullScreenView(new FullScreenView(m_scene, this))
+    m_fullScreenView(new FullScreenView(m_scene, this)),
+    graphicsViewInteraction(0)
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
@@ -113,7 +113,6 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     connect(m_operator, SIGNAL(progress(int,int)), this, SLOT(progress(int,int)));
     updateColorLabels(QPointF(-1,-1));
     updateTreeviewPhotos();
-    updateVisualizationZoom();
     setInputControlEnabled(false);
     clearTags();
     toolChanged(0);
@@ -130,14 +129,17 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->combo_gamma->setCurrentIndex(preferences->getCurrentTarget());
     m_scene->addItem(m_pixmapItem);
     m_scene->installEventFilter(this);
-    ui->graphicsView->installEventFilter(this);
+    graphicsViewInteraction = new GraphicsViewInteraction(ui->graphicsView, this);
+//    ui->graphicsView->installEventFilter(this);
     connect(ui->graphicsView, SIGNAL(rubberBandChanged(QRect,QPointF,QPointF)), this, SLOT(rubberBandChanged(QRect,QPointF,QPointF)));
     connect(ui->tree_photos, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             this, SLOT(treeWidgetItemDoubleClicked(QTreeWidgetItem*,int)));
+    connect(graphicsViewInteraction, SIGNAL(zoomChanged(qreal)), this, SLOT(zoomChanged(qreal)));
     ui->graphicsView->setMouseTracking(true);
     ui->value_EV_R->setAlignment(Qt::AlignRight);
     ui->value_EV_G->setAlignment(Qt::AlignRight);
     ui->value_EV_B->setAlignment(Qt::AlignRight);
+    graphicsViewInteraction->fitVisible();
 }
 
 Visualization::~Visualization()
@@ -149,48 +151,48 @@ Visualization::~Visualization()
 
 void Visualization::zoomFitVisible()
 {
-    m_zoomLevel=ZoomFitVisible;
-    updateVisualizationZoom();
+    graphicsViewInteraction->fitVisible();
 }
 
 void Visualization::zoomHalf()
 {
-    m_zoomLevel=ZoomHalf;
-    updateVisualizationZoom();
+    graphicsViewInteraction->zoomSet(.5);
 }
 
 void Visualization::zoomOne()
 {
-    m_zoomLevel=ZoomOne;
-    updateVisualizationZoom();
+    graphicsViewInteraction->zoomSet(1);
 }
 
 void Visualization::zoomDouble()
 {
-    m_zoomLevel=ZoomDouble;
-    updateVisualizationZoom();
+    graphicsViewInteraction->zoomSet(2);
 }
 
 void Visualization::zoomCustom()
 {
-    m_zoomLevel=ZoomCustom;
-    updateVisualizationZoom();
 }
 
 void Visualization::zoomPlus()
 {
-    if ( m_zoom < 20)
-        ++m_zoom;
     ui->radio_zoomCustom->click();
-    updateVisualizationZoom();
+    graphicsViewInteraction->zoomIn();
 }
 
 void Visualization::zoomMinus()
 {
-    if ( m_zoom > -20 )
-        --m_zoom;
     ui->radio_zoomCustom->click();
-    updateVisualizationZoom();
+    graphicsViewInteraction->zoomOut();
+}
+
+void Visualization::zoomChanged(qreal factor)
+{
+    if (factor<0)
+        ui->radio_fitVisible->click();
+    else if (factor==1)
+        ui->radio_zoom1->click();
+    else
+        ui->radio_zoomCustom->click();
 }
 
 void Visualization::getViewGamma(qreal &gamma, qreal &x0) const
@@ -397,6 +399,8 @@ void Visualization::tags_buttonResetClicked()
 
 void Visualization::toolChanged(int idx)
 {
+    Qt::TransformationMode transformationMode = Qt::FastTransformation;
+
     switch(idx) {
     default:
         dflWarning(tr("Visualization: Unknown tool combo index"));
@@ -411,6 +415,7 @@ void Visualization::toolChanged(int idx)
     case ToolNone:
         ui->graphicsView->setCursor(Qt::ArrowCursor);
         ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+        transformationMode = Qt::SmoothTransformation;
         break;
     case ToolROI:
         ui->graphicsView->setCursor(Qt::CrossCursor);
@@ -421,6 +426,8 @@ void Visualization::toolChanged(int idx)
         ui->graphicsView->setDragMode(QGraphicsView::NoDrag);
         break;
     }
+    if (m_pixmapItem)
+        m_pixmapItem->setTransformationMode(transformationMode);
 }
 
 void Visualization::treatmentChanged(int idx)
@@ -469,63 +476,6 @@ void Visualization::inputTypeChanged(int idx)
     case 2: value = TAG_SCALE_HDR; break;
     }
     m_operator->setTagOverride(m_photo->getIdentity(), TAG_SCALE, value);
-}
-
-void Visualization::updateVisualizationZoom()
-{
-    switch(m_zoomLevel) {
-    case ZoomFitVisible:
-        updateVisualizationFitVisible();
-        return;
-        break;
-    case ZoomHalf:
-        m_zoom=-5;
-        break;
-    case ZoomOne:
-        m_zoom=0;
-        break;
-    case ZoomDouble:
-        m_zoom=5;
-        break;
-    case ZoomCustom: default: break;
-    }
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    qreal factor = pow(2,qreal(m_zoom)/5);
-    transformView(factor);
-}
-
-void Visualization::updateVisualizationFitVisible()
-{
-    if ( m_zoomLevel == ZoomFitVisible && m_photo ) {
-        ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        QSize widgetSize = ui->graphicsView->size();
-        int w = m_photo->image().columns();
-        int h = m_photo->image().rows();
-        double factor;
-        if ( double(widgetSize.width())/double(widgetSize.height()) <=
-             double(w)/double(h) ) {
-            factor = double(widgetSize.width()-2)/double(w);
-        }
-        else {
-            factor = double(widgetSize.height()-2)/double(h);
-        }
-        transformView(factor);
-    }
-
-}
-
-void Visualization::transformView(qreal factor)
-{
-    if (factor >= 1 )
-        m_pixmapItem->setTransformationMode(Qt::FastTransformation);
-    else
-        m_pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-    ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    ui->graphicsView->setTransform(QTransform(factor, 0., 0., factor, 0, 0));
-
 }
 
 void Visualization::updateColorLabels(const QPointF& pos)
@@ -800,7 +750,6 @@ void Visualization::updateTabsWithPhoto()
     expChanged();
     curveParamsChanged();
     histogramParamsChanged();
-    updateVisualizationZoom();
     updateTagsTable();
     updateColorLabels(QPointF(-1,-1));
 #if 0
@@ -944,13 +893,8 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
     }
         break;
     case QEvent::Resize: {
-        updateVisualizationFitVisible();
-    }
-        break;
-    case QEvent::KeyRelease: {
-        fullScreenViewClicked();
-        event->accept();
-        return true;
+        if (ui->radio_fitVisible->isChecked())
+            graphicsViewInteraction->fitVisible();
     }
         break;
     default:break;

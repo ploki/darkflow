@@ -217,7 +217,8 @@ SOURCES +=\
     scene/processselectivelab.cpp \
     core/operatorparameterselectivelab.cpp \
     algorithms/selectivelabfilter.cpp \
-    operators/opselectivelabfilter.cpp
+    operators/opselectivelabfilter.cpp \
+    ui/graphicsviewinteraction.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -339,7 +340,8 @@ HEADERS  += \
     scene/processselectivelab.h \
     core/operatorparameterselectivelab.h \
     algorithms/selectivelabfilter.h \
-    operators/opselectivelabfilter.h
+    operators/opselectivelabfilter.h \
+    ui/graphicsviewinteraction.h
 
 FORMS    += \
     ui/aboutdialog.ui \

@@ -181,6 +181,7 @@ MainWindow::MainWindow(QWidget *parent) :
     move((screenSize.width()-size().width())/2,
          (screenSize.height()-size().height())/2);
     setSceneBackgroundBrush(preferences->color(QPalette::AlternateBase));
+    scene->setSceneRect(QRectF(-32768,-32768,65536,65536));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

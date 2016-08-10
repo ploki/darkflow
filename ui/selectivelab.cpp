@@ -79,6 +79,7 @@ SelectiveLab::SelectiveLab(const QString& windowCaption,
     }
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    setWindowFlags(Qt::Tool);
     ui->view->setMinimumSize(m_labSelectionSize, m_labSelectionSize);
     ui->view->resize(m_labSelectionSize, m_labSelectionSize);
 

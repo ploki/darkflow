@@ -64,6 +64,7 @@ Slider::Slider(const QString &windowCaption,
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
     setWindowTitle(windowCaption);
+    setWindowFlags(Qt::Tool);
     m_range = ui->slider_value->maximum() - ui->slider_value->minimum();
 
     if ( m_hardMin > m_min ) {

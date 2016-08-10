@@ -43,6 +43,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    setWindowFlags(Qt::Tool);
     ui->pixmapWidget->setPixmap(QPixmap(DF_ICON));
     ui->version->setText(tr("Dark Flow version %0 %1").arg(Version).arg(DF_ARCH));
     m_timer.setInterval(500);

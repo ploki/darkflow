@@ -44,6 +44,7 @@ ProjectProperties::ProjectProperties(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    setWindowFlags(Qt::Tool);
 }
 
 void ProjectProperties::modify(Process *process)

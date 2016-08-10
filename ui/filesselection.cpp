@@ -50,6 +50,7 @@ FilesSelection::FilesSelection(const QString& windowCaption,
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    setWindowFlags(Qt::Tool);
     ui->selectedFiles->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ui->selectedFiles->setModel(m_list);
 }

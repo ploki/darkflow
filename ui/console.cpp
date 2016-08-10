@@ -45,6 +45,7 @@ Console::Console(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    setWindowFlags(Qt::Tool);
     ui->textEdit->setStyleSheet("QTextEdit { background-color: black }");
     connect(this, SIGNAL(message(Level, QString)), this, SLOT(recvMessage(Level, QString)), Qt::QueuedConnection);
 }

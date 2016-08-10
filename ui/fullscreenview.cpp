@@ -49,6 +49,10 @@ FullScreenView::FullScreenView(QGraphicsScene *scene, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+#ifdef Q_OS_OSX
+    /* Expected to be fullscreen on other platforms */
+    setWindowFlags(Qt::Tool);
+#endif
     ui->graphicsView->setScene(m_scene);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

@@ -105,6 +105,7 @@ Preferences::Preferences(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    setWindowFlags(Qt::Tool);
     Magick::InitializeMagick("darkflow");
     getDefaultMagickResources();
 

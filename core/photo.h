@@ -36,6 +36,8 @@
 #include <QString>
 #include <Magick++.h>
 
+#include "ports.h"
+
 /* macros defined in cc command line by pkg-config */
 #ifdef QuantumRange
 # ifdef MAGICKCORE_HDRI_ENABLE
@@ -61,7 +63,65 @@ bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const
 bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const Magick::Image& image3, const Magick::Image& image4, const Magick::Image& image5, const Magick::Image& image6);
 int DfThreadLimit();
 
+
+
+
+#if defined(DFL_USE_GCD)
+
+#define dfl_threads(chunk, ...) \
+    schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
+
+#define dfl_block __block
+
+#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, \
+    __block__) \
+do \
+{\
+    size_t start = __start__; \
+    size_t end = __end__; \
+    size_t stride = __stride__; \
+    size_t n_strides = (end-start)/stride; \
+    int num_streads = (OnDiskCache __image_list__)?1:DfThreadLimit(); \
+    if (num_streads > 1 ) { \
+        dispatch_apply(n_strides, \
+                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), \
+                   ^(size_t idx) { \
+                       size_t start = idx*stride; \
+                       size_t end = start+stride; \
+                       for ( int __var__ = start ; __var__ < (int)end ; ++__var__) \
+                       { \
+                        __block__ \
+                       } \
+                   }); \
+    } else { \
+        n_strides = stride = 0; \
+    } \
+    for ( int __var__ = n_strides*stride ; __var__ < (int)end ; ++__var__) \
+        { \
+            __block__ \
+        } \
+} while (0)
+
+#define dfl_critical_section(__block__) dispatch_async(dfl_serial_queue, ^ {__block__})
+#else
+#define dfl_block volatile
 #define dfl_threads(chunk, ...) schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
+//"num_threads(OnDiskCache " STRINGIFY(__image_list__) " ?1:DfThreadLimit())"
+#define STRINGIFY(a) #a
+#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, \
+    __block__) \
+do {\
+    _Pragma(STRINGIFY(omp parallel for schedule(static, __stride__) num_threads((OnDiskCache __image_list__ )?1:DfThreadLimit()))) \
+    for(int __var__ = __start__ ; __var__ < __end__ ; ++__var__ ) \
+        { __block__ } \
+} while (0)
+
+#define dfl_critical_section(__block__) _Pragma("omp critical") { __block__ }
+
+
+#endif
+
+
 
 template<typename T>
 class Triplet {

@@ -34,6 +34,12 @@
 #include <QJsonValue>
 
 
+#if defined(Q_OS_OSX) && !defined(_OPENMP)
+#include <dispatch/dispatch.h>
+#define DFL_USE_GCD 1
+extern dispatch_queue_t dfl_serial_queue;
+#endif
+
 #if defined(WIN32) || defined(WIN64)
 # if defined(WIN64)
 #  define DF_ARCH "64-bit"
@@ -92,5 +98,7 @@ int vasprintf(char **strp, const char *fmt, va_list ap);
 
 #define DF_EQUALS(x, y, epsilon) (fabs((x)-(y)) < (epsilon))
 #define DF_ROUND(x) ((x) + 0.5)
+
+void init_platform();
 
 #endif // PORTS_H

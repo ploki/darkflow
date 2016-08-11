@@ -60,10 +60,10 @@ void WorkerLoadRaw::play()
 {
     QVector<QString> collection = m_loadraw->getCollection().toVector();
     int s = collection.count();
-    int p = 0;
-    volatile bool failure = false;
-#pragma omp parallel for shared(failure) dfl_threads(1)
-    for (int i = 0 ; i < s ; ++i) {
+    dfl_block int p = 0;
+    dfl_block bool failure = false;
+
+ dfl_parallel_for(i, 0, s, 1, (), {
         if ( failure || aborted() ) {
             failure = true;
             continue;
@@ -89,11 +89,10 @@ void WorkerLoadRaw::play()
             }
             setTags(collection[i], photo);
             photo.setSequenceNumber(i);
-#pragma omp critical
-            {
+            dfl_critical_section({
                 emit progress(++p, s);
                 outputPush(0, photo);
-            }
+            });
         }
         catch (std::exception &e) {
             dflError("%s", e.what());
@@ -103,7 +102,8 @@ void WorkerLoadRaw::play()
             dflError("Unknown exception");
             failure = true;
         }
-    }
+    });
+
     if ( failure || aborted() ) {
         emitFailure();
     }

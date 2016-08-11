@@ -8,6 +8,17 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+#openmp support in clang doesn't seem to be as good as gcc
+osx_openmp = 0
+
+contains(osx_openmp, 1) {
+    #qtcreator refuse to use the compiler kit I want...
+    QMAKE_LIBDIR = /usr/local/lib
+    QMAKE_LINK = clang++-3.8
+    QMAKE_CXX = "clang++-3.8 -stdlib=libc++"
+    QMAKE_CC = clang-3.8
+}
+
 unix {
 *-g++* | *clang* {
     !macx {
@@ -31,7 +42,7 @@ unix {
     QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations
     QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations
 
-    !macx {
+    !macx | contains(osx_openmp, 1) {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_CFLAGS += -fopenmp
         QMAKE_LFLAGS +=  -fopenmp

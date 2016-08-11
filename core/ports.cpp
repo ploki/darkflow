@@ -74,3 +74,14 @@ int vasprintf(char **res, char const *fmt, va_list args)
         return -1;
 }
 #endif
+
+#ifdef DFL_USE_GCD
+dispatch_queue_t dfl_serial_queue;
+#endif
+void init_platform()
+{
+#ifdef DFL_USE_GCD
+    dfl_serial_queue = dispatch_queue_create("org.darkflow.serial",
+                                             DISPATCH_QUEUE_SERIAL);
+#endif
+}

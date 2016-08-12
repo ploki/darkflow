@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>CFBundleIconFile</key>
+        <string>darkflow.icns</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleGetInfoString</key>
+        <string>A node based image processor for astronomers</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleExecutable</key>
+	<string>darkflow</string>
+	<key>CFBundleIdentifier</key>
+        <string>org.darkflow</string>
+	<key>NOTE</key>
+        <string>A node based image processor for astronomers</string>
+        <key>CFBundleDocumentTypes</key>
+        <array>
+                <dict>
+                        <key>CFBundleTypeExtensions</key>
+                        <array>
+                                <string>dflow</string>
+                        </array>
+                        <key>CFBundleTypeIconFile</key>
+                        <string>darkflow.icns</string>
+                        <key>CFBundleTypeName</key>
+                        <string>darkflow project</string>
+                        <key>CFBundleTypeRole</key>
+                        <string>Editor</string>
+                </dict>
+        </array>
+</dict>
+</plist>

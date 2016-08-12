@@ -28,12 +28,18 @@ unix {
     QMAKE_CXXFLAGS_RELEASE += -O2
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_CFLAGS += -Wall -D_REENTRANT
-!macx {
-    QMAKE_CXXFLAGS += -fopenmp -Werror -Wno-deprecated-declarations
-    QMAKE_CFLAGS += -fopenmp -Werror -Wno-deprecated-declarations
-    QMAKE_LFLAGS +=  -fopenmp
-} else {
-}
+    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations
+    QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations
+
+    !macx {
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_CFLAGS += -fopenmp
+        QMAKE_LFLAGS +=  -fopenmp
+    }
+    macx {
+        QMAKE_CFLAGS += -gdwarf-2
+        QMAKE_CXXFLAGS += -gdwarf-2
+    }
 }
 }
 
@@ -46,6 +52,9 @@ unix {
         icons/darkflow-48x48.ico \
         icons/darkflow-32x32.ico \
         icons/darkflow-24x24.ico
+} else {
+    ICON = icons/darkflow.icns
+    QMAKE_INFO_PLIST = setup/darkflow.plist
 }
 
 unix {

@@ -25,6 +25,8 @@ public:
 
     void setSceneBackgroundBrush(const QColor& color);
 
+    bool eventFilter(QObject *watched, QEvent *event);
+
 public slots:
     void showAboutDialog();
     void actionExit();

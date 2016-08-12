@@ -121,6 +121,29 @@ void MainWindow::actionLoad()
 
 }
 
+bool MainWindow::eventFilter(QObject *, QEvent *event)
+{
+    if (event->type() == QEvent::FileOpen) {
+        QFileOpenEvent *openEvent = static_cast<QFileOpenEvent*>(event);
+        QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+        if ( process->dirty() )
+            resBtn = QMessageBox::question( this, this->objectName(),
+                                            tr("Are you sure?\n"),
+                                            QMessageBox::No |
+                                            QMessageBox::Yes,
+                                            QMessageBox::Yes);
+        if (resBtn == QMessageBox::Yes) {
+            if ( !openEvent->file().isEmpty()) {
+                load(openEvent->file());
+                event->accept();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 void MainWindow::actionSaveAs()
 {
     projectProperties->modifyAndSave(process);
@@ -176,6 +199,7 @@ MainWindow::MainWindow(QWidget *parent) :
     process = new Process(scene, this);
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
+    QApplication::instance()->installEventFilter(this);
     QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
     resize( screenSize * 4 / 5);
     move((screenSize.width()-size().width())/2,

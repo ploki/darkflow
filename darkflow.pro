@@ -10,6 +10,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #openmp support in clang doesn't seem to be as good as gcc
 osx_openmp = 0
+force_gcd = 0
+
+contains(force_gcd, 1) {
+    QMAKE_CFLAGS += -fblocks -DDFL_USE_GCD=1
+    QMAKE_CXXFLAGS += -fblocks -DDFL_USE_GCD=1
+    QMAKE_LFLAGS += -fblocks -ldispatch -lBlocksRuntime
+    *-g++* {
+        error("Grand Central Dispatch not supported by g++")
+    }
+}
 
 contains(osx_openmp, 1) {
     #qtcreator refuse to use the compiler kit I want...
@@ -22,7 +32,7 @@ contains(osx_openmp, 1) {
 unix {
 *-g++* | *clang* {
     !macx {
-        *-g++-64 {
+        *-g++-64 | linux-clang {
             message("x64 build")
         } else {
             message("x86 build")

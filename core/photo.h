@@ -35,6 +35,7 @@
 #include <QMap>
 #include <QString>
 #include <Magick++.h>
+#include <memory>
 
 #include "ports.h"
 
@@ -78,17 +79,25 @@ int DfThreadLimit();
 class DflDispatch {
     QMutex m_mutex;
     QSemaphore sem;
+    bool do_release;
     dispatch_queue_t m_queue;
 public:
     DflDispatch(int numThreads) :
         m_mutex(),
         sem(numThreads),
+#ifdef DISPATCH_QUEUE_CONCURRENT
+        do_release(true),
         m_queue(dispatch_queue_create("org.darkflow.fakeOmp", DISPATCH_QUEUE_CONCURRENT))
+#else
+        do_release(false),
+        m_queue(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+#endif
     {
-        if (NULL == m_queue) {
+        if (0 == m_queue) {
             dflWarning(QObject::tr("Failed to create dispatch queue, going mono thread"));
             m_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             sem.acquire(numThreads-1);
+            do_release = false;
         }
     }
     dispatch_queue_t queue() { return m_queue; }
@@ -96,7 +105,8 @@ public:
     void release() { sem.release(1); }
     QMutex *mutex() { return &m_mutex; }
     ~DflDispatch() {
-        dispatch_release(m_queue);
+        if (do_release)
+            dispatch_release(m_queue);
     }
 };
 class Acquire {

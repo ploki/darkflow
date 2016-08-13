@@ -33,11 +33,12 @@
 
 #include <QJsonValue>
 
+#if defined(Q_OS_OSX) && !defined(_OPENMP) &&  !defined(DFL_USE_GCD)
+# define DFL_USE_GCD 1
+#endif
 
-#if defined(Q_OS_OSX) && !defined(_OPENMP)
+#if defined(DFL_USE_GCD)
 #include <dispatch/dispatch.h>
-#define DFL_USE_GCD 1
-extern dispatch_queue_t dfl_serial_queue;
 #endif
 
 #if defined(WIN32) || defined(WIN64)

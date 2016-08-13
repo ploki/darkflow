@@ -102,10 +102,10 @@ public:
                 iYellow.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
 
             try {
-                Magick::Pixels iCyan_cache(iCyan);
-                Magick::Pixels iMagenta_cache(iMagenta);
-                Magick::Pixels iYellow_cache(iYellow);
-                Magick::Pixels iLuminance_cache(iLuminance);
+                std::shared_ptr<Magick::Pixels> iCyan_cache(new Magick::Pixels(iCyan));
+                std::shared_ptr<Magick::Pixels> iMagenta_cache(new Magick::Pixels(iMagenta));
+                std::shared_ptr<Magick::Pixels> iYellow_cache(new Magick::Pixels(iYellow));
+                std::shared_ptr<Magick::Pixels> iLuminance_cache(new Magick::Pixels(iLuminance));
 
 
                 Photo photo(Photo::Linear);
@@ -116,13 +116,12 @@ public:
                 ResetImage(photo.image());
                 Magick::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
-                int line = 0;
-#pragma omp parallel for dfl_threads(4, iCyan, iMagenta, iYellow, iLuminance)
-                for ( int y = 0 ; y < int(h) ; ++y ) {
-                    const Magick::PixelPacket *pxl_Cyan = iCyan_cache.getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Magenta = iMagenta_cache.getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Yellow = iYellow_cache.getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Luminance = iLuminance_cache.getConst(0, y, w, 1);
+                dfl_block int line = 0;
+                dfl_parallel_for(y, 0, int(h), 4, (iCyan, iMagenta, iYellow, iLuminance), {
+                    const Magick::PixelPacket *pxl_Cyan = iCyan_cache->getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Magenta = iMagenta_cache->getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Yellow = iYellow_cache->getConst(0, y, w, 1);
+                    const Magick::PixelPacket *pxl_Luminance = iLuminance_cache->getConst(0, y, w, 1);
                     if ( m_error || !pxl_Cyan || !pxl_Magenta || !pxl_Yellow || !pxl_Luminance ) {
                         if (!m_error)
                             dflError(DF_NULL_PIXELS);
@@ -156,11 +155,11 @@ public:
                         pxl[y*w+x].green = clamp(rgb[1]);
                         pxl[y*w+x].blue = clamp(rgb[2]);
                     }
-#pragma omp critical
+                    dfl_critical_section(
                     {
                         emitProgress(i, photo_count,line++, h);
-                    }
-                }
+                    });
+                });
                 iPhoto_cache.sync();
                 outputPush(0, photo);
                 emitProgress(i, photo_count, 1, 1);

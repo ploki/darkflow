@@ -62,11 +62,9 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
 
     QVector<QPointF> points = inPhoto.getPoints();
     int n_points =  points.count();
-    QVector<Triplet<qreal> > colors(n_points);
+    std::shared_ptr<QVector<Triplet<qreal> > > colors(new QVector<Triplet<qreal> >(n_points));
     qreal radius_pow2 = m_radius*m_radius;
-
-#pragma omp parallel for dfl_threads(4, in, out)
-    for (int i = 0 ; i < n_points ; ++i ) {
+    dfl_parallel_for(i, 0, n_points, 4, (in, out), {
         int count = 0;
         Triplet<qreal> color;
         Q_ASSERT(color.red == 0 && color.green == 0 && color.blue == 0);
@@ -99,20 +97,19 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
         else {
             dflWarning(tr("missed a color"));
         }
-#pragma omp critical
+        dfl_critical_section(
         {
-            colors[i] = color;
-        }
-    }
+            (*colors)[i] = color;
+        });
+    });
 
     ResetImage(out);
     Magick::Pixels out_cache(out);
     Magick::PixelPacket *pxl = out_cache.get(0, 0, w, h);
 
-    int line=0;
+    dfl_block int line=0;
     qreal altitude = m_altitude*m_altitude;
-#pragma omp parallel for dfl_threads(4)
-    for (int y = 0 ; y < h ; ++y ) {
+    dfl_parallel_for(y, 0, h, 4, (), {
         for ( int x = 0 ; x < w ; ++x ) {
             Triplet<qreal> color;
             qreal coef = 0;
@@ -120,16 +117,16 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
                 qreal px = points[i].x();
                 qreal py = points[i].y();
                 if ( x == px && y == py ) {
-                    color = colors[i];
+                    color = (*colors)[i];
                     coef = 1;
                     break;
                 }
                 qreal dx = px-x;
                 qreal dy = py-y;
                 qreal dist = pow(dx*dx+dy*dy+altitude, m_pow);
-                color.red +=  double(colors[i].red)/dist;
-                color.green += double(colors[i].green)/dist;
-                color.blue += double(colors[i].blue)/dist;
+                color.red +=  double((*colors)[i].red)/dist;
+                color.green += double((*colors)[i].green)/dist;
+                color.blue += double((*colors)[i].blue)/dist;
                 coef+=1./dist;
             }
             if (hdr) {
@@ -144,11 +141,11 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
             }
 
         }
-#pragma omp critical
+        dfl_critical_section(
         {
             emitProgress(p, c, line++, h);
-        }
-    }
+        });
+    });
     out_cache.sync();
 
     outPhoto.setPoints(QVector<QPointF>());

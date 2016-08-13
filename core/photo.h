@@ -38,6 +38,13 @@
 
 #include "ports.h"
 
+#if defined(DFL_USE_GCD)
+#include <QMutex>
+#include <QMutexLocker>
+#include <QSemaphore>
+#include "console.h"
+#endif
+
 /* macros defined in cc command line by pkg-config */
 #ifdef QuantumRange
 # ifdef MAGICKCORE_HDRI_ENABLE
@@ -68,55 +75,96 @@ int DfThreadLimit();
 
 #if defined(DFL_USE_GCD)
 
+class DflDispatch {
+    QMutex m_mutex;
+    QSemaphore sem;
+    dispatch_queue_t m_queue;
+public:
+    DflDispatch(int numThreads) :
+        m_mutex(),
+        sem(numThreads),
+        m_queue(dispatch_queue_create("org.darkflow.fakeOmp", DISPATCH_QUEUE_CONCURRENT))
+    {
+        if (NULL == m_queue) {
+            dflWarning(QObject::tr("Failed to create dispatch queue, going mono thread"));
+            m_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            sem.acquire(numThreads-1);
+        }
+    }
+    dispatch_queue_t queue() { return m_queue; }
+    void acquire() { sem.acquire(1); }
+    void release() { sem.release(1); }
+    QMutex *mutex() { return &m_mutex; }
+    ~DflDispatch() {
+        dispatch_release(m_queue);
+    }
+};
+class Acquire {
+    std::shared_ptr<DflDispatch> m_dispatch;
+public:
+    Acquire(const std::shared_ptr<DflDispatch>& dispatch) :
+        m_dispatch(dispatch) {
+        m_dispatch->acquire();
+    }
+    ~Acquire() {
+        m_dispatch->release();
+    }
+};
+
 #define dfl_threads(chunk, ...) \
     schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
 
 #define dfl_block __block
 
-#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, \
-    __block__) \
+#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, ...) \
 do \
 {\
-    size_t start = __start__; \
-    size_t end = __end__; \
-    size_t stride = __stride__; \
-    size_t n_strides = (end-start)/stride; \
-    int num_streads = (OnDiskCache __image_list__)?1:DfThreadLimit(); \
-    if (num_streads > 1 ) { \
-        dispatch_apply(n_strides, \
-                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), \
-                   ^(size_t idx) { \
-                       size_t start = idx*stride; \
-                       size_t end = start+stride; \
-                       for ( int __var__ = start ; __var__ < (int)end ; ++__var__) \
+    size_t _dfl_start = __start__; \
+    size_t _dfl_end = __end__; \
+    size_t _dfl_stride = __stride__; \
+    size_t _dfl_n_strides = (_dfl_end-_dfl_start)/_dfl_stride; \
+    int _dfl_num_threads = (OnDiskCache __image_list__)?1:DfThreadLimit(); \
+    std::shared_ptr<DflDispatch> _dfl_dispatch(new DflDispatch(_dfl_num_threads)); \
+    if (_dfl_num_threads > 1 ) { \
+        dispatch_apply(_dfl_n_strides, \
+                   _dfl_dispatch->queue(), \
+                   ^(size_t _dfl_idx) { \
+                       Acquire sem(_dfl_dispatch); \
+                       size_t i_start = _dfl_idx * _dfl_stride + _dfl_start; \
+                       size_t i_end = i_start + _dfl_stride; \
+                       for ( int __var__ = i_start ; __var__ < (int)i_end ; ++__var__) \
                        { \
-                        __block__ \
+                        __VA_ARGS__ \
                        } \
                    }); \
     } else { \
-        n_strides = stride = 0; \
+        _dfl_n_strides = _dfl_stride = 0; \
     } \
-    for ( int __var__ = n_strides*stride ; __var__ < (int)end ; ++__var__) \
+    for ( int __var__ = _dfl_n_strides*_dfl_stride + _dfl_start ; __var__ < (int)_dfl_end ; ++__var__) \
         { \
-            __block__ \
+            __VA_ARGS__ \
         } \
 } while (0)
 
-#define dfl_critical_section(__block__) dispatch_async(dfl_serial_queue, ^ {__block__})
+#define dfl_critical_section(...) do { \
+    QMutexLocker lock(_dfl_dispatch->mutex()); \
+    __VA_ARGS__ \
+    } while (0)
+#define dfl_block_array(type, name, size) type _block_kludge_ ## name[size]; __block type * name = _block_kludge_ ## name
 #else
+#define dfl_block_array(type, name, size) type name[size]
 #define dfl_block volatile
 #define dfl_threads(chunk, ...) schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
 //"num_threads(OnDiskCache " STRINGIFY(__image_list__) " ?1:DfThreadLimit())"
 #define STRINGIFY(a) #a
-#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, \
-    __block__) \
+#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, ...) \
 do {\
     _Pragma(STRINGIFY(omp parallel for schedule(static, __stride__) num_threads((OnDiskCache __image_list__ )?1:DfThreadLimit()))) \
     for(int __var__ = __start__ ; __var__ < __end__ ; ++__var__ ) \
-        { __block__ } \
+        { __VA_ARGS__ } \
 } while (0)
 
-#define dfl_critical_section(__block__) _Pragma("omp critical") { __block__ }
+#define dfl_critical_section(...) _Pragma("omp critical") { __VA_ARGS__ }
 
 
 #endif

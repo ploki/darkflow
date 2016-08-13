@@ -49,9 +49,9 @@ void ColorFilter::applyOnImage(Magick::Image &image, bool hdr)
     ResetImage(image);
     int h = image.rows(),
             w = image.columns();
-    Magick::Pixels src_cache(srcImage);
-    Magick::Pixels pixel_cache(image);
-    qreal rgb[3];
+    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    dfl_block_array(qreal, rgb, 3);
     if (hdr) {
         rgb[0] = log2(m_rgb[0])*4096;
         rgb[1] = log2(m_rgb[1])*4096;
@@ -62,11 +62,10 @@ void ColorFilter::applyOnImage(Magick::Image &image, bool hdr)
         rgb[1] = m_rgb[1];
         rgb[2] = m_rgb[2];
     }
-    bool error=false;
-#pragma omp parallel for dfl_threads(4, srcImage, image)
-    for (int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        const Magick::PixelPacket *src = src_cache.getConst(0,y,w,1);
+    dfl_block bool error=false;
+    dfl_parallel_for(y, 0, h, 4, (image, srcImage), {
+        Magick::PixelPacket *pixels = pixel_cache->get(0,y,w,1);
+        const Magick::PixelPacket *src = src_cache->getConst(0,y,w,1);
         if ( error || !pixels || !src ) {
             if (!error)
                 dflError(DF_NULL_PIXELS);
@@ -86,6 +85,6 @@ void ColorFilter::applyOnImage(Magick::Image &image, bool hdr)
                 pixels[x].blue=clamp<double>(src[x].blue*rgb[2],0,QuantumRange);
             }
         }
-        pixel_cache.sync();
-    }
+        pixel_cache->sync();
+    });
 }

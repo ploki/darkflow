@@ -280,16 +280,15 @@ Image Photo::newCurve(Photo::Gamma gamma)
 static QPixmap convert(Magick::Image& image) {
     int h = image.rows(),
             w = image.columns();
-    Magick::Pixels pixel_cache(image);
+    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
     unsigned char pgm_header[256];
     int header_size = snprintf((char*)pgm_header, sizeof pgm_header,
              "P6\n%d %d\n%d\n",w,h,255);
     unsigned char *buf = (unsigned char *)malloc(header_size+w*h*3*1);
     memcpy(buf, pgm_header, header_size);
-    bool error=false;
-#pragma omp parallel for dfl_threads(4, image)
-    for ( int y = 0 ; y < h ; ++y ) {
-        const Magick::PixelPacket *pixels = pixel_cache.getConst(0,y,w,1);
+    dfl_block bool error=false;
+    dfl_parallel_for(y, 0, h, 4, (image), {
+        const Magick::PixelPacket *pixels = pixel_cache->getConst(0,y,w,1);
         if ( error || !pixels ) {
             if ( !error )
                 dflCritical(DF_NULL_PIXELS);
@@ -301,7 +300,7 @@ static QPixmap convert(Magick::Image& image) {
             buf[header_size+y*w*3+x*3+1]=pixels[x].green/256;
             buf[header_size+y*w*3+x*3+2]=pixels[x].blue/256;
         }
-    }
+    });
   QPixmap pix(w,h);
    bool ret = pix.loadFromData(buf, header_size+w*h*3*1, "PPM", Qt::AutoColor|Qt::AvoidDither);
    if ( !ret )
@@ -474,36 +473,36 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
 
     bool adt = (geometry == HistogramLines);
     bool hlog = (scale == HistogramLogarithmic);
-    int x,y;
+    int x;
 
     int w = photo.columns(),
             h = photo.rows();
 
     const int range = 512;
-    unsigned long histo[range][3]={{0}};
-    unsigned long maxi=0;
+    dfl_block_array(unsigned long, histo, range*3);
+    memset(histo, 0, range*3*sizeof(*histo));
+    dfl_block unsigned long maxi=0;
 
     {
-        Magick::Pixels photo_cache(photo);
-#pragma omp parallel for dfl_threads(4, photo)
-        for ( y = 0 ; y < h ; ++y ) {
-            const Magick::PixelPacket *pixels = photo_cache.getConst(0,y,w,1);
+        std::shared_ptr<Magick::Pixels> photo_cache(new Magick::Pixels(photo));
+        dfl_parallel_for(y, 0, h, 4, (photo), {
+            const Magick::PixelPacket *pixels = photo_cache->getConst(0,y,w,1);
             if (!pixels ) continue;
-            for ( x = 0 ; x < w ; ++x ) {
+            for ( int x = 0 ; x < w ; ++x ) {
                 int r=(range-1)*pixels[x].red/QuantumRange;
                 int g=(range-1)*pixels[x].green/QuantumRange;
                 int b=(range-1)*pixels[x].blue/QuantumRange;
                 Q_ASSERT(r < range);
                 Q_ASSERT(g < range);
                 Q_ASSERT(b < range);
-                atomic_incr(&histo[r][0]);
-                atomic_incr(&histo[g][1]);
-                atomic_incr(&histo[b][2]);
-                if ( r > 2 && r < (range-1) && histo[r][0] > maxi ) maxi=histo[r][0];
-                if ( g > 2 && g < (range-1) && histo[g][1] > maxi ) maxi=histo[g][1];
-                if ( b > 2 && b < (range-1) && histo[b][2] > maxi ) maxi=histo[b][2];
+                atomic_incr(&histo[r+0*range]);
+                atomic_incr(&histo[g+1*range]);
+                atomic_incr(&histo[b+2*range]);
+                if ( r > 2 && r < (range-1) && histo[r+0*range] > maxi ) maxi=histo[r+0*range];
+                if ( g > 2 && g < (range-1) && histo[g+1*range] > maxi ) maxi=histo[g+1*range];
+                if ( b > 2 && b < (range-1) && histo[b+2*range] > maxi ) maxi=histo[b+2*range];
             }
-        }
+        });
     }
     Magick::Image image( Magick::Geometry(512,512) , Magick::Color(0,0,0) );
 
@@ -516,24 +515,24 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             quantum_t qb;
             if ( hlog )
             {
-                qg = (range-1)*log(histo[x][1])/log(maxi);
-                qr = (range-1)*log(histo[x][0])/log(maxi);
-                qb = (range-1)*log(histo[x][2])/log(maxi);
+                qg = (range-1)*log(histo[x+1*range])/log(maxi);
+                qr = (range-1)*log(histo[x+0*range])/log(maxi);
+                qb = (range-1)*log(histo[x+2*range])/log(maxi);
             }
             else
             {
-                qg = (range-1)*(double)histo[x][1]/(double)maxi;
-                qr = (range-1)*(double)histo[x][0]/(double)maxi;
-                qb = (range-1)*(double)histo[x][2]/(double)maxi;
+                qg = (range-1)*(double)histo[x+1*range]/(double)maxi;
+                qr = (range-1)*(double)histo[x+0*range]/(double)maxi;
+                qb = (range-1)*(double)histo[x+2*range]/(double)maxi;
             }
 
             if ( qr > (range-1) ) qr = (range-1);
             if ( qg > (range-1) ) qg = (range-1);
             if ( qb > (range-1) ) qb = (range-1);
 
-            if ( qr == 0 && histo[x][0] > 0 ) qr=1;
-            if ( qg == 0 && histo[x][1] > 0 ) qg=1;
-            if ( qb == 0 && histo[x][2] > 0 ) qb=1;
+            if ( qr == 0 && histo[x+0*range] > 0 ) qr=1;
+            if ( qg == 0 && histo[x+1*range] > 0 ) qg=1;
+            if ( qb == 0 && histo[x+2*range] > 0 ) qb=1;
             for (int i = 0 ; i < qr ; ++i )
             {
                 PXL(x, (range-1)-i).red = QuantumRange;
@@ -621,14 +620,13 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
             marks=marks_linear;
             c = C_linear;
         }
-#pragma omp parallel for dfl_threads(4, srcImage, image)
-        for ( int y = 0 ; y < range ; ++y ) {
+        dfl_parallel_for(y, 0, range, 4, (srcImage, image), {
             for ( int x = 0 ; x < range ; ++x ) {
                 PXL(x,y).red = src[y*range+x].red;
                 PXL(x,y).green = src[y*range+x].green;
                 PXL(x,y).blue = src[y*range+x].blue;
             }
-        }
+        });
         for ( int i = 0 ; marks[i] != 0 ; ++i ) {
             x = marks[i];
             for (int y = 0 ; y < range ; ++ y ) {

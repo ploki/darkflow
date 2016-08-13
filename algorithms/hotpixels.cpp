@@ -44,50 +44,6 @@ HotPixels::HotPixels(double delta, bool aggressive, bool naive, QObject *parent)
 {
 }
 
-void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
-{
-    Magick::Image input(image);
-    ResetImage(image);
-
-    Magick::Pixels
-            output_cache(image),
-            input_cache(input);
-
-    int w = image.columns();
-    int h = image.rows();
-    bool error=false;
-#pragma omp parallel for dfl_threads(4, input, image)
-    for ( int y = 1 ; y < h-1 ; ++y ) {
-        Magick::PixelPacket *output_pixels = output_cache.get(0,y,w,1);
-        const Magick::PixelPacket *input_pixels[3];
-        input_pixels[0] = input_cache.getConst(0,y-1,w,1);
-        input_pixels[1] = input_cache.getConst(0,y,w,1);
-        input_pixels[2] = input_cache.getConst(0,y+1,w,1);
-        if ( error || !output_pixels || !input_pixels[0] || !input_pixels[1] || !input_pixels[2] ) {
-            if (!error)
-                dflError(DF_NULL_PIXELS);
-            error=true;
-            continue;
-        }
-        for ( int x = 1 ; x < w-1 ; ++x ) {
-            extended_quantum_t max_rgb[3]={0,0,0};
-            extended_quantum_t min_rgb[3]={QuantumRange,QuantumRange,QuantumRange};
-            extended_quantum_t sum_rgb[3]={0,0,0};
-            extended_quantum_t rgb[3];
-            extended_quantum_t nrgb[3];
-            extended_quantum_t other_channels=0;
-
-            if (hdr) {
-                rgb[0]=DF_ROUND(fromHDR(input_pixels[1][x].red));
-                rgb[1]=DF_ROUND(fromHDR(input_pixels[1][x].green));
-                rgb[2]=DF_ROUND(fromHDR(input_pixels[1][x].blue));
-            }
-            else {
-                rgb[0]=input_pixels[1][x].red;
-                rgb[1]=input_pixels[1][x].green;
-                rgb[2]=input_pixels[1][x].blue;
-            }
-
 #define color_op_naive(q) \
     sum_rgb[q]+=nrgb[q];
 
@@ -135,6 +91,50 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
     if ( sum_rgb[q]*m_delta < rgb[q] ) rgb[q]=sum_rgb[q]; \
     if ( sum_rgb[q]/m_delta > rgb[q] ) rgb[q]=sum_rgb[q];
 
+void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
+{
+    Magick::Image input(image);
+    ResetImage(image);
+
+    std::shared_ptr<Magick::Pixels>
+            output_cache(new Magick::Pixels(image)),
+            input_cache(new Magick::Pixels(input));
+
+    int w = image.columns();
+    int h = image.rows();
+    dfl_block bool error=false;
+    dfl_parallel_for(y, 1, h-1, 4, (input, image), {
+        Magick::PixelPacket *output_pixels = output_cache->get(0,y,w,1);
+        const Magick::PixelPacket *input_pixels[3];
+        input_pixels[0] = input_cache->getConst(0,y-1,w,1);
+        input_pixels[1] = input_cache->getConst(0,y,w,1);
+        input_pixels[2] = input_cache->getConst(0,y+1,w,1);
+        if ( error || !output_pixels || !input_pixels[0] || !input_pixels[1] || !input_pixels[2] ) {
+            if (!error)
+                dflError(DF_NULL_PIXELS);
+            error=true;
+            continue;
+        }
+        for ( int x = 1 ; x < w-1 ; ++x ) {
+            extended_quantum_t max_rgb[3]={0,0,0};
+            extended_quantum_t min_rgb[3]={QuantumRange,QuantumRange,QuantumRange};
+            extended_quantum_t sum_rgb[3]={0,0,0};
+            extended_quantum_t rgb[3];
+            extended_quantum_t nrgb[3];
+            extended_quantum_t other_channels=0;
+
+            if (hdr) {
+                rgb[0]=DF_ROUND(fromHDR(input_pixels[1][x].red));
+                rgb[1]=DF_ROUND(fromHDR(input_pixels[1][x].green));
+                rgb[2]=DF_ROUND(fromHDR(input_pixels[1][x].blue));
+            }
+            else {
+                rgb[0]=input_pixels[1][x].red;
+                rgb[1]=input_pixels[1][x].green;
+                rgb[2]=input_pixels[1][x].blue;
+            }
+
+
             if ( m_naive ) {
                 loop_code_naive(-1,-1); loop_code_naive(-1, 0); loop_code_naive(-1, 1);
                 loop_code_naive( 0,-1);                         loop_code_naive( 0, 1);
@@ -160,18 +160,6 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
                 }
             }
 
-
-
-#undef loop_code
-#undef loop_code_naive
-#undef color_op
-#undef color_op_naive
-#undef color_op2
-#undef color_op2_naive
-#undef color_op2_aggressive
-#undef color_op2_naive_aggressive
-            //end of loops unroll
-
             if (hdr) {
                 output_pixels[x].red=toHDR(rgb[0]>QuantumRange?QuantumRange:rgb[0]);
                 output_pixels[x].green=toHDR(rgb[1]>QuantumRange?QuantumRange:rgb[1]);
@@ -183,6 +171,6 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
                 output_pixels[x].blue=rgb[2]>QuantumRange?QuantumRange:rgb[2];
             }
         }
-        output_cache.sync();
-    }
+        output_cache->sync();
+    });
 }

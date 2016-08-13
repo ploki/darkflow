@@ -60,18 +60,16 @@ HDR::HDR(bool revert, QObject *parent) :
     m_revert(revert)
 {
 
-#pragma omp parallel for dfl_threads(1024)
-    for(int i = 0 ; i <= int(QuantumRange) ; ++i ) {
+    dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         m_hdrLut[i] = clamp( revert
                           ? DF_ROUND(fromHDR(i))
                           : i);
-    }
-#pragma omp parallel for dfl_threads(1024)
-    for(int i = 0 ; i <= int(QuantumRange) ; ++i ) {
+    });
+    dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         m_lut[i] = clamp( revert
                           ? i
                           : toHDR(i));
-    }
+    });
 }
 
 void HDR::applyOn(Photo &photo)

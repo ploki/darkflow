@@ -52,8 +52,7 @@ DesaturateShadows::DesaturateShadows(qreal highlightLimit,
     double low = high - log2(range);
     double threshold_high = highlightLimit * QuantumRange;
     double threshold_low =  threshold_high / range;
-#pragma omp parallel for dfl_threads(1024)
-    for ( int i = 0 ; i < int(QuantumRange)+1 ; ++i ) {
+    dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         if ( i < threshold_low ) {
             m_lut[i]=saturation;
         }
@@ -64,7 +63,7 @@ DesaturateShadows::DesaturateShadows(qreal highlightLimit,
             //lut[i] = (sin(M_PI/(low-high)*(high+log(i/double(QuantumRange))/log(2))+M_PI/2.)+1.)/2.;
             m_lut[i] = ( saturation - 1. ) * (1.-(sin(M_PI/(low-high)*(high+log(i/double(QuantumRange))/log(2))+M_PI/2.)+1.)/2.) + 1.;
         }
-    }
+    });
 }
 
 DesaturateShadows::~DesaturateShadows()
@@ -79,13 +78,12 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
     int h = image.rows(),
             w = image.columns();
 
-    Magick::Pixels src_cache(srcImage);
-    Magick::Pixels pixel_cache(image);
-    bool error=false;
-#pragma omp parallel for dfl_threads(4, srcImage, image)
-    for ( int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        const Magick::PixelPacket *src = src_cache.getConst(0,y,w,1);
+    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    dfl_block bool error=false;
+    dfl_parallel_for(y, 0, h, 4, (image, srcImage), {
+        Magick::PixelPacket *pixels = pixel_cache->get(0,y,w,1);
+        const Magick::PixelPacket *src = src_cache->getConst(0,y,w,1);
         if ( error || !pixels || !src ) {
             if ( !error )
                 dflError(DF_NULL_PIXELS);
@@ -130,7 +128,7 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
                 pixels[x].blue = src[x].blue;
             }
         }
-        pixel_cache.sync();
-    }
+        pixel_cache->sync();
+    });
 }
 

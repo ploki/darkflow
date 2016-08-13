@@ -244,9 +244,9 @@ void WorkerBlend::play()
             ResetImage(underflow.image());
             ResetImage(overflow.image());
 
-            Magick::Pixels src_cache(srcImage);
-            Magick::Pixels underflow_cache(underflow.image());
-            Magick::Pixels overflow_cache(overflow.image());
+            std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+            std::shared_ptr<Magick::Pixels> underflow_cache(new Magick::Pixels(underflow.image()));
+            std::shared_ptr<Magick::Pixels> overflow_cache(new Magick::Pixels(overflow.image()));
             imageA_cache = new Magick::Pixels(*imageA);
             int w = srcImage.columns();
             int h = srcImage.rows();
@@ -266,21 +266,19 @@ void WorkerBlend::play()
                 c_w = imageC->columns();
                 c_h = imageC->rows();
             }
-            int line = 0;
+            dfl_block int line = 0;
             bool aHDR = photoA.getScale() == Photo::HDR;
             bool bHDR = photoB && photoB->getScale() == Photo::HDR;
             bool cHDR = photoC && photoC->getScale() == Photo::HDR ;
             bool anyHDR = false;
             if ( m_outputHDR || aHDR || bHDR || cHDR)
                 anyHDR = true;
-
-#pragma omp parallel for dfl_threads(4, srcImage, imageA?*imageA:Magick::Image(), imageB?*imageB:Magick::Image(), imageC?*imageC:Magick::Image(), overflow.image(), underflow.image())
-            for ( int y = 0 ; y < h ; ++y ) {
+            dfl_parallel_for(y, 0, h, 4, (srcImage, imageA?*imageA:Magick::Image(), imageB?*imageB:Magick::Image(), imageC?*imageC:Magick::Image(), overflow.image(), underflow.image()), {
                 if ( m_error || aborted() )
                     continue;
-                const Magick::PixelPacket *src = src_cache.get(0, y, w, 1);
-                Magick::PixelPacket *pxl_u = underflow_cache.get(0, y, w, 1);
-                Magick::PixelPacket *pxl_o = overflow_cache.get(0, y, w, 1);
+                const Magick::PixelPacket *src = src_cache->get(0, y, w, 1);
+                Magick::PixelPacket *pxl_u = underflow_cache->get(0, y, w, 1);
+                Magick::PixelPacket *pxl_o = overflow_cache->get(0, y, w, 1);
                 Magick::PixelPacket *pxl_A = imageA_cache->get(0, y, w, 1);
                 const Magick::PixelPacket *pxl_B = NULL;
                 const Magick::PixelPacket *pxl_C = NULL;
@@ -323,15 +321,15 @@ void WorkerBlend::play()
                                          m_outputHDR);
                 }
                 imageA_cache->sync();
-                underflow_cache.sync();
-                overflow_cache.sync();
-#pragma omp critical
+                underflow_cache->sync();
+                overflow_cache->sync();
+                dfl_critical_section(
                 {
                     if ( line % 100 == 0)
                         emitProgress(n, a_count, line, h);
                     ++line;
-                }
-            }
+                });
+            });
 
             if ( b_h == 1 && b_w == 1 &&
                  c_h == 1 && c_w == 1 ) {

@@ -119,13 +119,12 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image, bool hdr)
     int h = image.rows(),
             w = image.columns();
 
-    Magick::Pixels src_cache(srcImage);
-    Magick::Pixels pixel_cache(image);
-    bool error=false;
-#pragma omp parallel for dfl_threads(4, srcImage, image)
-    for ( int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
-        const Magick::PixelPacket *src = src_cache.getConst(0,y,w,1);
+    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    dfl_block bool error=false;
+    dfl_parallel_for(y, 0, h, 4, (image, srcImage), {
+        Magick::PixelPacket *pixels = pixel_cache->get(0,y,w,1);
+        const Magick::PixelPacket *src = src_cache->getConst(0,y,w,1);
         if ( error || ! pixels || !src ) {
             if (!error)
                 dflError(DF_NULL_PIXELS);
@@ -176,6 +175,6 @@ void ShapeDynamicRange::applyOnImage(Magick::Image& image, bool hdr)
             pixels[x].blue = clamp(rgb[2]);
 
         }
-        pixel_cache.sync();
-    }
+        pixel_cache->sync();
+    });
 }

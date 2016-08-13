@@ -143,8 +143,8 @@ bool WorkerIntegration::play_onInput(int idx)
             if ( ! m_integrationPlane ) {
                 createPlanes(image);
             }
-            Magick::Pixels pixel_cache(image);
-            int line = 0;
+            std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+            dfl_block int line = 0;
 
             bool hdr = photo.getScale() == Photo::HDR;
             bool hdrExposureAltered = false;
@@ -162,10 +162,9 @@ bool WorkerIntegration::play_onInput(int idx)
             }
 
 #define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
-#pragma omp parallel for dfl_threads(4, image)
-            for ( int y = 0 ; y < m_h ; ++y ) {
+            dfl_parallel_for(y, 0, m_h, 4, (image), {
                 if ( y+cy < 0 || y+cy >= m_h ) continue;
-                const Magick::PixelPacket *pixels = pixel_cache.getConst(0, y+cy, m_w, 1);
+                const Magick::PixelPacket *pixels = pixel_cache->getConst(0, y+cy, m_w, 1);
                 if ( !pixels ) continue;
                 for ( int x = 0 ; x < m_w ; ++x ) {
                     if ( x+cx < 0 || x+cx >= m_w ) continue;
@@ -204,13 +203,13 @@ bool WorkerIntegration::play_onInput(int idx)
                         ++SUBPXL(m_countPlane,x,y,2);
                     }
                 }
-#pragma omp critical
+                dfl_critical_section(
                 {
                     ++line;
                     if ( 0 == line % 100 )
                         emitProgress(photoN, photoCount, line, m_h);
-                }
-            }
+                });
+            });
             ++photoN;
         }
         catch (std::exception &e) {
@@ -225,11 +224,10 @@ bool WorkerIntegration::play_onInput(int idx)
         newPhoto.createImage(m_w, m_h);
         newPhoto.setTag(TAG_NAME, tr("Integration"));
         Magick::Image& newImage = newPhoto.image();
-        Magick::Pixels pixel_cache(newImage);
+        std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(newImage));
         qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );
-#pragma omp parallel for dfl_threads(4, newImage)
-        for ( int y = 0 ; y < m_h ; ++y ) {
-            Magick::PixelPacket *pixels = pixel_cache.get(0, y, m_w, 1);
+        dfl_parallel_for(y, 0, m_h, 4, (newImage), {
+            Magick::PixelPacket *pixels = pixel_cache->get(0, y, m_w, 1);
             for ( int x = 0 ; x < m_w ; ++x ) {
                 Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
                 if (m_outputHDR) {
@@ -255,8 +253,8 @@ bool WorkerIntegration::play_onInput(int idx)
                                 clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
                 }
             }
-            pixel_cache.sync();
-        }
+            pixel_cache->sync();
+        });
         if (m_outputHDR)
             newPhoto.setScale(Photo::HDR);
         outputPush(0, newPhoto);

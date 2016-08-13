@@ -37,14 +37,12 @@ using Magick::Quantum;
 Exposure::Exposure(qreal multiplier, QObject *parent) :
     LutBased(parent)
 {
-#pragma omp parallel for dfl_threads(1024)
-    for ( int i = 0 ; i <= int(QuantumRange) ; ++i ) {
+    dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         m_lut[i] = clamp<quantum_t>(multiplier*i, 0, QuantumRange);
-    }
+    });
 
     qreal hdrMultiplier = log2(multiplier)*4096;
-#pragma omp parallel for dfl_threads(1024)
-    for ( int i = 0 ; i <= int(QuantumRange) ; ++i ) {
+    dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         m_hdrLut[i] = clamp<quantum_t>(hdrMultiplier+i, 0, QuantumRange);
-    }
+    });
 }

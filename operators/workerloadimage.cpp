@@ -53,11 +53,10 @@ void WorkerLoadImage::play()
     QVector<QString>& collection = m_filesCollection;
 
     int s = collection.count();
-    int p = 0;
-    volatile bool failure = false;
+    dfl_block int p = 0;
+    dfl_block bool failure = false;
 
-#pragma omp parallel for shared(failure) dfl_threads(1)
-    for (int i = 0 ; i < s ; ++i) {
+    dfl_parallel_for(i, 0, s, 1, (), {
         if ( failure || aborted() ) {
             failure = true;
             continue;
@@ -93,10 +92,10 @@ void WorkerLoadImage::play()
                 photo.setTag(TAG_SCALE, gamma == Photo::Linear
                              ? TAG_SCALE_LINEAR
                              : TAG_SCALE_NONLINEAR);
-#pragma omp critical
-                {
+
+                dfl_critical_section({
                     outputPush(0, photo);
-                }
+                });
                 ++plane;
             }
         }
@@ -109,12 +108,11 @@ void WorkerLoadImage::play()
             failure = true;
         }
 
-#pragma omp critical
-        {
+        dfl_critical_section({
             if ( !failure )
                 emit progress(++p, s);
-        }
-    }
+        });
+    });
     if ( failure ) {
         emitFailure();
     }

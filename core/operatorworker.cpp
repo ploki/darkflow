@@ -267,18 +267,16 @@ bool OperatorWorker::play_onInput(int idx)
 bool OperatorWorker::play_onInputParallel(int idx)
 {
     int c = 0;
-    int p = 0;
+    dfl_block int p = 0;
     c = m_inputs[idx].count();
-
-#pragma omp parallel for dfl_threads(1)
-    for (int i = 0 ; i < c ; ++i ) {
+    dfl_parallel_for(i, 0, c, 1, (), {
         if ( m_error || aborted() )
             continue;
         Photo photo;
-#pragma omp critical
-        {
+
+        dfl_critical_section({
             photo = m_inputs[idx][i];
-        }
+        });
         Photo newPhoto;
         if ( !m_operator->isCompatible(photo) ) {
             switch ( preferences->getIncompatibleAction()) {
@@ -309,14 +307,13 @@ bool OperatorWorker::play_onInputParallel(int idx)
             }
             newPhoto.setSequenceNumber(i);
         }
-#pragma omp critical
-        {
+        dfl_critical_section({
             if ( !m_error ) {
                 emit progress(++p, c);
                 m_outputs[0].push_back(newPhoto);
             }
-        }
-    }
+        });
+    });
     if ( m_error ) {
         dflDebug(tr("In error, sending failure"));
         emitFailure();

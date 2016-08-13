@@ -102,17 +102,16 @@ public:
         Magick::Image srcImage(image);
         ResetImage(image);
         ResetImage(overflow);
-        Magick::Pixels src_cache(srcImage);
-        Magick::Pixels image_cache(image);
-        Magick::Pixels flatfield_cache(flatfield);
-        Magick::Pixels overflow_cache(overflow);
-        int line=0;
-#pragma omp parallel for dfl_threads(4, srcImage, image, flatfield, overflow)
-        for ( int y = 0 ; y < h ; ++y ) {
-            Magick::PixelPacket *image_pixels = image_cache.get(0, y, w, 1);
-            Magick::PixelPacket *overflow_pixels = overflow_cache.get(0, y, w, 1);
-            const Magick::PixelPacket *flatfield_pixels = flatfield_cache.getConst(0, y, w, 1);
-            const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
+        std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+        std::shared_ptr<Magick::Pixels> image_cache(new Magick::Pixels(image));
+        std::shared_ptr<Magick::Pixels> flatfield_cache(new Magick::Pixels(flatfield));
+        std::shared_ptr<Magick::Pixels> overflow_cache(new Magick::Pixels(overflow));
+        dfl_block int line=0;
+        dfl_parallel_for(y, 0, h, 4, (srcImage, image, flatfield, overflow), {
+            Magick::PixelPacket *image_pixels = image_cache->get(0, y, w, 1);
+            Magick::PixelPacket *overflow_pixels = overflow_cache->get(0, y, w, 1);
+            const Magick::PixelPacket *flatfield_pixels = flatfield_cache->getConst(0, y, w, 1);
+            const Magick::PixelPacket *src = src_cache->getConst(0, y, w, 1);
             if ( m_error || !image_pixels || !overflow_pixels || !flatfield_pixels || !src ) {
                 if ( !m_error )
                     dflError(DF_NULL_PIXELS);
@@ -180,15 +179,15 @@ public:
                             clamp<quantum_t>(b);
                 }
             }
-#pragma omp critical
+            dfl_critical_section(
             {
                 if ( line % 100 == 0 )
                     emitProgress(p, c, line, h);
                 ++line;
-            }
-            image_cache.sync();
-            overflow_cache.sync();
-        }
+            });
+            image_cache->sync();
+            overflow_cache->sync();
+        });
     }
 
     void play() {

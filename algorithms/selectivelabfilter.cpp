@@ -60,8 +60,8 @@ void SelectiveLabFilter::applyOnImage(Magick::Image &image, bool hdr)
             w = image.columns();
     Magick::Image srcImage(image);
     ResetImage(image);
-    Magick::Pixels src_cache(srcImage);
-    Magick::Pixels pixel_cache(image);
+    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
 
     double saturation = m_saturation;
     double value = m_exposure;
@@ -102,11 +102,10 @@ void SelectiveLabFilter::applyOnImage(Magick::Image &image, bool hdr)
     //calcul de l'angle d'application
     theta = M_PI * double((360+m_hue)%360)/180.;
 
-    bool error = false;
-#pragma omp parallel for dfl_threads(4, srcImage, image)
-    for ( int y = 0 ; y < h ; ++y ) {
-        const Magick::PixelPacket *src = src_cache.getConst(0,y,w,1);
-        Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
+    dfl_block bool error = false;
+    dfl_parallel_for(y, 0, h, 4, (image, srcImage), {
+        const Magick::PixelPacket *src = src_cache->getConst(0,y,w,1);
+        Magick::PixelPacket *pixels = pixel_cache->get(0,y,w,1);
         if ( error || !src || !pixels ) {
             if ( !error )
                 dflError(DF_NULL_PIXELS);
@@ -183,6 +182,6 @@ void SelectiveLabFilter::applyOnImage(Magick::Image &image, bool hdr)
                 pixels[x].blue=rgb[2];
             }
         }
-        pixel_cache.sync();
-    }
+        pixel_cache->sync();
+    });
 }

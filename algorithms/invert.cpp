@@ -36,9 +36,8 @@ using Magick::Quantum;
 Invert::Invert(QObject *parent) :
     LutBased(parent)
 {
-#pragma omp parallel for dfl_threads(1024)
-    for ( int i = 0 ; i <= int(QuantumRange) ; ++i) {
+    dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         m_lut[i] = QuantumRange-i;
         m_hdrLut[i] = toHDR(double(QuantumRange)-fromHDR(i));
-    }
+    });
 }

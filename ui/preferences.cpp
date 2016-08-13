@@ -47,8 +47,9 @@
 #include "mainwindow.h"
 #include <Magick++.h>
 
-//#include <omp.h>
-
+#ifdef DFL_USE_GCD
+#include <thread>
+#endif
 QPalette dflOriginalPalette;
 
 #ifndef QuantumRange
@@ -71,8 +72,8 @@ public:
 #endif
 
 static int dfl_max_threads() {
-#if 0
-    return omp_get_max_threads();
+#ifdef DFL_USE_GCD
+    return std::thread::hardware_concurrency();
 #else
     int n = 0;
 #pragma omp parallel reduction(+:n)

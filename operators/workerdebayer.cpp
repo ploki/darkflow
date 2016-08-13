@@ -98,13 +98,12 @@ static Photo debayerMask(const Photo &photo, u_int32_t filters)
 
     int w = srcImage.columns();
     int h = srcImage.rows();
-    Magick::Pixels src_cache(srcImage);
-    Magick::Pixels dst_cache(dst);
-    bool error=false;
-#pragma omp parallel for dfl_threads(4, srcImage, dst)
-    for (int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixel = dst_cache.get(0, y, w, 1);
-        const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
+    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
+    std::shared_ptr<Magick::Pixels> dst_cache(new Magick::Pixels(dst));
+    dfl_block bool error=false;
+    dfl_parallel_for(y, 0, h, 4, (srcImage, dst), {
+       Magick::PixelPacket *pixel = dst_cache->get(0, y, w, 1);
+        const Magick::PixelPacket *src = src_cache->getConst(0, y, w, 1);
         if ( error || !pixel || !src ) {
             if (!error)
                 dflError(DF_NULL_PIXELS);
@@ -123,8 +122,8 @@ static Photo debayerMask(const Photo &photo, u_int32_t filters)
                 pixel[x].red = 0; pixel[x].green = 0; pixel[x].blue = src[x].blue; break;
             }
         }
-        dst_cache.sync();
-    }
+        dst_cache->sync();
+    });
     return newPhoto;
 }
 
@@ -143,9 +142,8 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
     Magick::Pixels dst_cache(dst);
     const Magick::PixelPacket *image_pixels = image_cache.getConst(0, 0, w*2, h*2);
     Magick::PixelPacket *pixels = dst_cache.get(0, 0, w, h);
-    bool failure = false;
-#pragma omp parallel for dfl_threads(4, image, dst)
-    for ( int y = 0 ; y < h ; ++y ) {
+    dfl_block bool failure = false;
+    dfl_parallel_for(y, 0, h, 4, (image, dst), {
         for ( int x = 0 ; x < w ; ++x ) {
             if ( failure ) continue;
             int count[3] = {};
@@ -166,7 +164,7 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
             pixels[y*w+x].green=rgb[1];
             pixels[y*w+x].blue=rgb[2];
         }
-    }
+    });
     dst_cache.sync();
     if ( failure ) {
         dflError(WorkerDebayer::tr("Debayer(Worker): missing color component"));

@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QString>
 #include <QPixmap>
+#include <QElapsedTimer>
 #include <QRectF>
 #include <Magick++.h>
 #include <cmath>
@@ -853,15 +854,23 @@ Photo::Gamma Photo::getScale() const
     }
 }
 
-
-
-
 void ResetImage(Magick::Image &image)
 {
+    QElapsedTimer timer;
+      timer.start();
     int w = image.columns();
     int h = image.rows();
+    /*
+     * modifyImage() seems to be armfull on windows (see 181e16ffd7d2053d318f807a3e9c0d40af35ac63)
+     * but seems to be quicker than creating a new image, at least on OS X
+     */
+#if defined(DF_WINDOWS)
     image = Magick::Image(Magick::Geometry(w, h), Magick::Color(0,0,0));
     image.quantizeColorSpace(Magick::RGBColorspace);
+#else
+    image.modifyImage();
+#endif
+    dflDebug("Reset image(%d, %d) cost: %lld ms", w, h, timer.elapsed());
 }
 
 bool OnDiskCache()

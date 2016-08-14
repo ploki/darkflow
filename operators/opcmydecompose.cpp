@@ -64,21 +64,20 @@ public:
                 ResetImage(iMagenta);
                 ResetImage(iYellow);
                 ResetImage(iLuminance);
-                Ordinary::Pixels src_cache(srcImage);
-                Ordinary::Pixels iCyan_cache(iCyan);
-                Ordinary::Pixels iMagenta_cache(iMagenta);
-                Ordinary::Pixels iYellow_cache(iYellow);
-                Ordinary::Pixels iLuminance_cache(iLuminance);
+                std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+                std::shared_ptr<Ordinary::Pixels> iCyan_cache(new Ordinary::Pixels(iCyan));
+                std::shared_ptr<Ordinary::Pixels> iMagenta_cache(new Ordinary::Pixels(iMagenta));
+                std::shared_ptr<Ordinary::Pixels> iYellow_cache(new Ordinary::Pixels(iYellow));
+                std::shared_ptr<Ordinary::Pixels> iLuminance_cache(new Ordinary::Pixels(iLuminance));
                 int w = srcImage.columns();
                 int h = srcImage.rows();
-                int line = 0;
-#pragma omp parallel for dfl_threads(4, srcImage, iCyan, iMagenta, iYellow, iLuminance)
-                for ( int y = 0 ; y < h ; ++y ) {
-                    const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Cyan = iCyan_cache.get(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Magenta = iMagenta_cache.get(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Yellow = iYellow_cache.get(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Luminance = iLuminance_cache.get(0, y, w, 1);
+                dfl_block int line = 0;
+                dfl_parallel_for(y, 0, h, 4, (srcImage, iCyan, iMagenta, iYellow, iLuminance), {
+                    const Magick::PixelPacket *src = src_cache->getConst(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Cyan = iCyan_cache->get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Magenta = iMagenta_cache->get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Yellow = iYellow_cache->get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Luminance = iLuminance_cache->get(0, y, w, 1);
                     if ( m_error || !src || !pxl_Cyan || !pxl_Magenta || !pxl_Yellow || !pxl_Luminance ) {
                         if ( !m_error )
                             dflError(DF_NULL_PIXELS);
@@ -96,15 +95,14 @@ public:
                         pxl_Yellow[x].green = pxl_Yellow[x].blue = pxl_Yellow[x].red =
                                 (quantum_t(src[x].red) + quantum_t(src[x].green))/2;
                     }
-                    iCyan_cache.sync();
-                    iMagenta_cache.sync();
-                    iYellow_cache.sync();
-                    iLuminance_cache.sync();
-#pragma omp critical
-                    {
+                    iCyan_cache->sync();
+                    iMagenta_cache->sync();
+                    iYellow_cache->sync();
+                    iLuminance_cache->sync();
+                    dfl_critical_section({
                         emitProgress(p, c, line++, h);
-                    }
-                }
+                    });
+                });
                 outputPush(0, pLuminance);
                 outputPush(1, pCyan);
                 outputPush(2, pMagenta);

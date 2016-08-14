@@ -54,21 +54,23 @@ public:
         int h = image.rows();
         int w = image.columns();
         Q_ASSERT(QuantumRange + 1 == 1<<16);
-        unsigned int histo[QuantumRange+1][3] = {};
+        const int range = QuantumRange+1;
+        //default thread stack size way too small on OS X (512kiB)
+        //dfl_block_array(unsigned int, histo, range * 3);
+        unsigned int *histo = (unsigned int*)calloc(range * 3, sizeof(*histo));
         Ordinary::Pixels pixel_cache(image);
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,0, w, h);
-#pragma omp parallel for dfl_threads(4)
-        for ( int y = 0 ; y < h ; ++y ) {
+        dfl_parallel_for(y, 0, h, 4, (), {
                 if ( !pixels ) continue;
                 for ( int x = 0 ; x < w ; ++x ) {
                         quantum_t r=pixels[x].red;
                         quantum_t g=pixels[x].green;
                         quantum_t b=pixels[x].blue;
-                        atomic_incr(&histo[r][0]);
-                        atomic_incr(&histo[g][1]);
-                        atomic_incr(&histo[b][2]);
+                        atomic_incr(&histo[r+0*range]);
+                        atomic_incr(&histo[g+1*range]);
+                        atomic_incr(&histo[b+2*range]);
                 }
-        }
+        });
 
         quantum_t whitepoint=0,blackpoint=0;
         double perc_wp=(1.-m_whitePoint)*3*w*h;
@@ -77,7 +79,7 @@ public:
         int total=0;
         //white point
         for ( int i=int(QuantumRange) ; i>=0 ; --i ) {
-                total+=histo[i][0]+histo[i][1]+histo[i][2];
+                total+=histo[i+0*range]+histo[i+1*range]+histo[i+2*range];
                 if ( total >= perc_wp ) {
                         whitepoint=i;
                         break;
@@ -87,7 +89,7 @@ public:
         total=0;
         //black point
         for ( int i=0 ; i <= int(QuantumRange) ; ++i ) {
-                total+=histo[i][0]+histo[i][1]+histo[i][2];
+                total+=histo[i+0*range]+histo[i+1*range]+histo[i+2*range];
                 if ( total >= perc_bp ) {
                         blackpoint=i;
                         break;
@@ -101,6 +103,7 @@ public:
         newPhoto.curve().level(blackpoint,
                                whitepoint,
                                m_gamma);
+        free(histo);
         return newPhoto;
     }
 

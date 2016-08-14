@@ -481,7 +481,6 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
 
     const int range = 512;
     dfl_block_array(unsigned long, histo, range*3);
-    memset(histo, 0, range*3*sizeof(*histo));
     dfl_block unsigned long maxi=0;
 
     {

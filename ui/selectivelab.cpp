@@ -291,10 +291,9 @@ Photo SelectiveLab::createPhoto(int level, bool clipToGamut)
     int h = image.rows();
     double v = double(level)/100.;
 
-    Ordinary::Pixels pixel_cache(image);
-#pragma omp parallel for dfl_threads(4, image)
-    for ( int y = 0 ; y < h ; ++y ) {
-        Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
+    std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
+    dfl_parallel_for(y, 0, h, 4, (image), {
+        Magick::PixelPacket *pixels = pixel_cache->get(0,y,w,1);
         if ( !pixels ) continue;
         for ( int x = 0 ; x < w ; ++x ) {
             quantum_t rgb[3];
@@ -317,8 +316,8 @@ Photo SelectiveLab::createPhoto(int level, bool clipToGamut)
                 pixels[x].blue=rgb[2];
             }
         }
-        pixel_cache.sync();
-    }
+        pixel_cache->sync();
+    });
 
     return photo;
 }
@@ -364,13 +363,10 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
     const Magick::PixelPacket *src = src_cache.getConst(0, 0, w, h);
     Magick::PixelPacket *dst = dst_cache.get(0, 0, w, h);
 
-#pragma omp parallel for dfl_threads(1024)
-    for (int i = 0 ; i < s ; ++i )
-        dst[i] = src[i];
+    memcpy(dst, src, 1024*sizeof(*dst));
 
     s = m_labSelectionSize*m_labSelectionSize/4;
-#pragma omp parallel for dfl_threads(1024)
-    for ( int i = 0 ; i < s ; i+=4 ) {
+    dfl_parallel_for(i, 0, s, 1024, (), {
         double t = 2*M_PI*i/s;
         double mul;
         int x, y, c;
@@ -414,7 +410,7 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
         p = dst+y*w+x;
         if ( l < 16384 ) c = QuantumRange; else c = 0;
         p->red = p->green = p->blue = c;
-    }
+    });
     const int center = w*m_labSelectionSize/2+m_labSelectionSize/2;
     dst[center].red = dst[center].green = dst[center].blue = QuantumRange;
     dst[center-1].red = dst[center-1].green = dst[center-1].blue = QuantumRange;

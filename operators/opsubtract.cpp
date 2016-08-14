@@ -63,19 +63,18 @@ public:
         Magick::Image &srcImage(minuend);
         ResetImage(minuend);
         ResetImage(underflow);
-        Ordinary::Pixels src_cache(srcImage);
-        Ordinary::Pixels minuend_cache(minuend);
-        Ordinary::Pixels subtrahend_cache(subtrahend);
-        Ordinary::Pixels *addend_cache = NULL;
+        std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+        std::shared_ptr<Ordinary::Pixels> minuend_cache(new Ordinary::Pixels(minuend));
+        std::shared_ptr<Ordinary::Pixels> subtrahend_cache(new Ordinary::Pixels(subtrahend));
+        std::shared_ptr<Ordinary::Pixels> addend_cache(0);
         if (addend)
-            addend_cache = new Ordinary::Pixels(*addend);
-        Ordinary::Pixels underflow_cache(underflow);
-#pragma omp parallel for dfl_threads(4, srcImage, minuend, subtrahend, addend?*addend:Magick::Image())
-        for ( int y = 0 ; y < h ; ++y ) {
-            const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
-            Magick::PixelPacket *minuend_pixels = minuend_cache.get(0, y, w, 1);
-            Magick::PixelPacket *underflow_pixels = underflow_cache.get(0, y, w,1);
-            const Magick::PixelPacket *subtrahend_pixels = subtrahend_cache.getConst(0, (1 == s_h ? 0 : y), s_w, 1);
+            addend_cache.reset(new Ordinary::Pixels(*addend));
+        std::shared_ptr<Ordinary::Pixels> underflow_cache(new Ordinary::Pixels(underflow));
+        dfl_parallel_for(y, 0, h, 4, (srcImage, minuend, subtrahend, addend?*addend:Magick::Image()), {
+            const Magick::PixelPacket *src = src_cache->getConst(0, y, w, 1);
+            Magick::PixelPacket *minuend_pixels = minuend_cache->get(0, y, w, 1);
+            Magick::PixelPacket *underflow_pixels = underflow_cache->get(0, y, w,1);
+            const Magick::PixelPacket *subtrahend_pixels = subtrahend_cache->getConst(0, (1 == s_h ? 0 : y), s_w, 1);
             const Magick::PixelPacket *addend_pixels = NULL;
             if ( addend_cache )
                 addend_pixels = addend_cache->getConst(0, (1 == s_h ? 0 : y), s_w, 1);
@@ -100,9 +99,9 @@ public:
                 minuend_pixels[x].green = clamp<quantum_t>(g, 0, QuantumRange);
                 minuend_pixels[x].blue = clamp<quantum_t>(b, 0, QuantumRange);
             }
-            minuend_cache.sync();
-            underflow_cache.sync();
-        }
+            minuend_cache->sync();
+            underflow_cache->sync();
+        });
     }
 
     void play() {

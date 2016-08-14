@@ -166,9 +166,9 @@ do \
     QMutexLocker lock(_dfl_dispatch->mutex()); \
     __VA_ARGS__ \
     } while (0)
-#define dfl_block_array(type, name, size) type _block_kludge_ ## name[size]; __block type * name = _block_kludge_ ## name
+#define dfl_block_array(type, name, size) type _block_kludge_ ## name[size] = {}; __block type * name = &_block_kludge_ ## name[0]
 #else
-#define dfl_block_array(type, name, size) type name[size]
+#define dfl_block_array(type, name, size) type name[size] = {}
 #define dfl_block volatile
 #define dfl_threads(chunk, ...) schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
 //"num_threads(OnDiskCache " STRINGIFY(__image_list__) " ?1:DfThreadLimit())"

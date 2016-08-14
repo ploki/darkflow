@@ -64,21 +64,20 @@ public:
                 ResetImage(iGreen);
                 ResetImage(iBlue);
                 ResetImage(iLuminance);
-                Ordinary::Pixels src_cache(srcImage);
-                Ordinary::Pixels iRed_cache(iRed);
-                Ordinary::Pixels iGreen_cache(iGreen);
-                Ordinary::Pixels iBlue_cache(iBlue);
-                Ordinary::Pixels iLuminance_cache(iLuminance);
+                std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+                std::shared_ptr<Ordinary::Pixels> iRed_cache(new Ordinary::Pixels(iRed));
+                std::shared_ptr<Ordinary::Pixels> iGreen_cache(new Ordinary::Pixels(iGreen));
+                std::shared_ptr<Ordinary::Pixels> iBlue_cache(new Ordinary::Pixels(iBlue));
+                std::shared_ptr<Ordinary::Pixels> iLuminance_cache(new Ordinary::Pixels(iLuminance));
                 int w = srcImage.columns();
                 int h = srcImage.rows();
-                int line = 0;
-#pragma omp parallel for dfl_threads(4, srcImage, iRed, iGreen, iBlue, iLuminance)
-                for ( int y = 0 ; y < h ; ++y ) {
-                    const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Red = iRed_cache.get(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Green = iGreen_cache.get(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Blue = iBlue_cache.get(0, y, w, 1);
-                    Magick::PixelPacket *pxl_Luminance = iLuminance_cache.get(0, y, w, 1);
+                dfl_block int line = 0;
+                dfl_parallel_for(y, 0, h, 4, (srcImage, iRed, iGreen, iBlue, iLuminance),{
+                    const Magick::PixelPacket *src = src_cache->getConst(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Red = iRed_cache->get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Green = iGreen_cache->get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Blue = iBlue_cache->get(0, y, w, 1);
+                    Magick::PixelPacket *pxl_Luminance = iLuminance_cache->get(0, y, w, 1);
                     if ( m_error || !src || !pxl_Red || !pxl_Green || !pxl_Blue || !pxl_Luminance ) {
                         if ( !m_error )
                             dflError(DF_NULL_PIXELS);
@@ -92,15 +91,14 @@ public:
                         pxl_Luminance[x].green =
                         pxl_Luminance[x].blue = DF_ROUND(LUMINANCE_PIXEL(src[x]));
                     }
-                    iRed_cache.sync();
-                    iGreen_cache.sync();
-                    iBlue_cache.sync();
-                    iLuminance_cache.sync();
-#pragma omp critical
-                    {
+                    iRed_cache->sync();
+                    iGreen_cache->sync();
+                    iBlue_cache->sync();
+                    iLuminance_cache->sync();
+                    dfl_critical_section({
                         emitProgress(p, c, line++, h);
-                    }
-                }
+                    });
+                });
                 outputPush(0, pLuminance);
                 outputPush(1, pRed);
                 outputPush(2, pGreen);

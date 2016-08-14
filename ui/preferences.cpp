@@ -102,7 +102,8 @@ Preferences::Preferences(QWidget *parent) :
   m_currentTarget(sRGB),
   m_incompatibleAction(Error),
   m_labSelectionSize(LAB_SEL_SIZE),
-  m_palette()
+  m_palette(),
+  m_atWork(0)
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
@@ -595,4 +596,19 @@ QString Preferences::getAppConfigLocation() const
 QColor Preferences::color(QPalette::ColorRole role)
 {
     return m_palette.color(role);
+}
+
+void Preferences::incrAtWork()
+{
+    atomic_incr(&m_atWork);
+}
+
+void Preferences::decrAtWork()
+{
+    atomic_decr(&m_atWork);
+}
+
+unsigned long Preferences::getAtWork()
+{
+    return m_atWork;
 }

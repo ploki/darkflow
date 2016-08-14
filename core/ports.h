@@ -64,12 +64,14 @@ typedef long long int64_t;
 # define DF_PRINTF_FORMAT(x,y) __attribute__((format(printf,x,y)))
 # define DF_TRAP() do { __asm__("int3"); } while(0)
 # define atomic_incr(ptr) do { __sync_fetch_and_add ((ptr), 1); } while(0)
+# define atomic_decr(ptr) do { __sync_fetch_and_add ((ptr), -1); } while(0)
 
 #else /* not GCC */
 
 # define DF_PRINTF_FORMAT(x,y)
 # define DF_TRAP() __debugbreak()
 # define atomic_incr(ptr) do { InterlockedIncrement ((ptr)); } while(0)
+# define atomic_incr(ptr) do { InterlockedDecrement ((ptr)); } while(0)
 #endif /* __GNUC__ */
 
 # ifndef M_PI

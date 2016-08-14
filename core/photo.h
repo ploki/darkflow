@@ -38,6 +38,7 @@
 #include <memory>
 
 #include "ports.h"
+#include "preferences.h"
 
 #if defined(DFL_USE_GCD)
 #include <QMutex>
@@ -71,7 +72,11 @@ bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const
 bool OnDiskCache(const Magick::Image& image1, const Magick::Image& image2, const Magick::Image& image3, const Magick::Image& image4, const Magick::Image& image5, const Magick::Image& image6);
 int DfThreadLimit();
 
-
+class AtWork {
+public:
+    AtWork() { preferences->incrAtWork(); }
+    ~AtWork() { preferences->decrAtWork(); }
+};
 
 
 #if defined(DFL_USE_GCD)
@@ -139,6 +144,7 @@ do \
         dispatch_apply(_dfl_n_strides, \
                    _dfl_dispatch->queue(), \
                    ^(size_t _dfl_idx) { \
+                       AtWork atWork; \
                        Acquire sem(_dfl_dispatch); \
                        size_t i_start = _dfl_idx * _dfl_stride + _dfl_start; \
                        size_t i_end = i_start + _dfl_stride; \
@@ -151,8 +157,8 @@ do \
         _dfl_n_strides = _dfl_stride = 0; \
     } \
     for ( int __var__ = _dfl_n_strides*_dfl_stride + _dfl_start ; __var__ < (int)_dfl_end ; ++__var__) \
-        { \
-            __VA_ARGS__ \
+        { AtWork atWork; \
+            { __VA_ARGS__ } \
         } \
 } while (0)
 
@@ -171,7 +177,7 @@ do \
 do {\
     _Pragma(STRINGIFY(omp parallel for schedule(static, __stride__) num_threads((OnDiskCache __image_list__ )?1:DfThreadLimit()))) \
     for(int __var__ = __start__ ; __var__ < __end__ ; ++__var__ ) \
-        { __VA_ARGS__ } \
+        { AtWork atWork; { __VA_ARGS__ } }\
 } while (0)
 
 #define dfl_critical_section(...) _Pragma("omp critical") { __VA_ARGS__ }

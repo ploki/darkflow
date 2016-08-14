@@ -44,6 +44,9 @@ public:
     int getLabSelectionSize() const;
     QString getAppConfigLocation() const;
     QColor color(QPalette::ColorRole role);
+    void incrAtWork();
+    void decrAtWork();
+    unsigned long getAtWork();
 
 private:
     void getDefaultMagickResources();
@@ -77,6 +80,7 @@ private:
     IncompatibleAction m_incompatibleAction;
     int m_labSelectionSize;
     QPalette m_palette;
+    unsigned long m_atWork;
 };
 
 extern Preferences *preferences;

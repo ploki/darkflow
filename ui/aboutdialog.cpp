@@ -33,6 +33,7 @@
 #include "darkflow.h"
 #include "ports.h"
 #include "darkflow-version.iss"
+#include "preferences.h"
 
 #include <Magick++.h>
 
@@ -68,4 +69,5 @@ void AboutDialog::updateUsage()
     ui->lineMemory->setText(tr("%0 GB").arg(double(memory)/(1<<30), 0, 'f', 3));
     ui->lineMap->setText(tr("%0 GB").arg(double(map)/(1<<30), 0, 'f', 3));
     ui->lineDisk->setText(tr("%0 GB").arg(double(disk)/(1<<30), 0, 'f', 3));
+    ui->lineWorkers->setText(tr("%0").arg(preferences->getAtWork()));
 }

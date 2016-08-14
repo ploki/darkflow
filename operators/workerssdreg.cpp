@@ -55,19 +55,17 @@ public:
     int py = rect.y();
     int w = rect.width();
     int h = rect.height();
-    Ordinary::Pixels cache(image);
+    std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(image));
     Region *region = new Region(worker, w, h);
-    #pragma omp parallel for dfl_threads(4, image)
-    for (int y = 0 ; y < h ; ++y)
-      {
-        const Magick::PixelPacket *pixels = cache.getConst(px,py+y,w,1);
+    dfl_parallel_for(y, 0, h, 4, (image), {
+        const Magick::PixelPacket *pixels = cache->getConst(px,py+y,w,1);
         for (int x = 0; x < w ; ++x )
           {
             region->buffer[y*w+x]=
               //(double(pixels[x].red)+pixels[x].green+pixels[x].blue)/3;
               pow(pow(double(pixels[x].red)*pixels[x].green*pixels[x].blue,1./3.)/QuantumRange, 1/2.2)*QuantumRange;
           }
-      }
+      });
     return region;
   }
 
@@ -86,8 +84,7 @@ public:
       int ssd_sz = dh*dw;
       double *ssd = new double[ssd_sz];
       memset(ssd, 0, ssd_sz * sizeof(*ssd));
-#pragma omp parallel for dfl_threads(1)
-      for ( int dy = 0 ; dy < dh ; ++dy )
+      dfl_parallel_for(dy, 0, dh, 1, (), {
           for ( int dx = 0 ; dx < dw ; ++dx )
               //needle window
               for ( int y = 0 ; y < h ; ++y )
@@ -96,6 +93,7 @@ public:
                               - double(buffer[y*w+x])/QuantumRange;
                       ssd[dy*dw+dx] += d*d;
                   }
+      });
       delete haystack;
       double min = ssd[0];
       int min_pos = 0;

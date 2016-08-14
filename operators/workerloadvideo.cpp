@@ -266,11 +266,10 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             photo.setSequenceNumber(n);
             photo.setTag(TAG_SCALE, TAG_SCALE_NONLINEAR);
             Magick::Image& image=photo.image();
-            Ordinary::Pixels pixel_cache(image);
-            bool error = false;
-#pragma omp parallel for dfl_threads(4, image)
-            for ( int y = 0 ; y < h ; ++y ) {
-                Magick::PixelPacket *pixels = pixel_cache.get(0, y, w, 1);
+            std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
+            dfl_block bool error = false;
+            dfl_parallel_for(y, 0, h, 4, (image), {
+                Magick::PixelPacket *pixels = pixel_cache->get(0, y, w, 1);
                 if (error || !pixels) {
                     if (!error)
                         dflWarning(DF_NULL_PIXELS);
@@ -305,8 +304,8 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
                     }
                     }
                 }
-                pixel_cache.sync();
-            }
+                pixel_cache->sync();
+            });
             outputPush(0, photo);
             --m_count;
         }

@@ -55,21 +55,20 @@ normalizeImage(Magick::Image& image, int w, int h, bool center)
     Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
     int o_x = (w-k_w)/2;
     int o_y = (h-k_h)/2;
-    Ordinary::Pixels i_cache(image);
-    Ordinary::Pixels n_cache(nk);
-#pragma omp parallel for dfl_threads(4, image, nk)
-    for ( int y = 0 ; y < k_h ; ++y ) {
-        const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, k_w, 1);
+    std::shared_ptr<Ordinary::Pixels> i_cache(new Ordinary::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> n_cache(new Ordinary::Pixels(nk));
+    dfl_parallel_for(y, 0, k_h, 4, (image, nk), {
+        const Magick::PixelPacket * k_pixel = i_cache->getConst(0, y, k_w, 1);
         Magick::PixelPacket * n_pixel;
         if (center)
-            n_pixel = n_cache.get(o_x, o_y+y, k_w, 1);
+            n_pixel = n_cache->get(o_x, o_y+y, k_w, 1);
         else
-            n_pixel = n_cache.get(0, y, k_w, 1);
+            n_pixel = n_cache->get(0, y, k_w, 1);
         for ( int x = 0 ; x < k_w ; ++x ) {
             n_pixel[x] = k_pixel[x];
         }
-        n_cache.sync();
-    }
+        n_cache->sync();
+    });
     return nk;
 }
 static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
@@ -77,17 +76,16 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
     int w = image.columns();
     int h = image.rows();
     Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
-    Ordinary::Pixels i_cache(image);
-    Ordinary::Pixels n_cache(nk);
-#pragma omp parallel for dfl_threads(4, image, nk)
-    for ( int y = 0 ; y < h ; ++y ) {
-        const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, w, 1);
-        Magick::PixelPacket * n_pixel= n_cache.get(0, (y+o_y+h)%h, w, 1);
+    std::shared_ptr<Ordinary::Pixels> i_cache(new Ordinary::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> n_cache(new Ordinary::Pixels(nk));
+    dfl_parallel_for(y, 0, h, 4, (image, nk), {
+        const Magick::PixelPacket * k_pixel = i_cache->getConst(0, y, w, 1);
+        Magick::PixelPacket * n_pixel= n_cache->get(0, (y+o_y+h)%h, w, 1);
         for ( int x = 0 ; x < w ; ++x ) {
             n_pixel[(x+o_x+w)%w] = k_pixel[x];
         }
-        n_cache.sync();
-    }
+        n_cache->sync();
+    });
     return nk;
 
 }
@@ -133,14 +131,14 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
     Magick::Image Rp(Magick::Geometry(w, h), Magick::Color(0,0,0));
     ResetImage(Rm);
     ResetImage(Rp);
-    Ordinary::Pixels Am_cache(Am);
-    Ordinary::Pixels Ap_cache(Ap);
-    Ordinary::Pixels Bm_cache(Bm);
-    Ordinary::Pixels Bp_cache(Bp);
-    Ordinary::Pixels Rm_cache(Rm);
-    Ordinary::Pixels Rp_cache(Rp);
+    std::shared_ptr<Ordinary::Pixels> Am_cache(new Ordinary::Pixels(Am));
+    std::shared_ptr<Ordinary::Pixels> Ap_cache(new Ordinary::Pixels(Ap));
+    std::shared_ptr<Ordinary::Pixels> Bm_cache(new Ordinary::Pixels(Bm));
+    std::shared_ptr<Ordinary::Pixels> Bp_cache(new Ordinary::Pixels(Bp));
+    std::shared_ptr<Ordinary::Pixels> Rm_cache(new Ordinary::Pixels(Rm));
+    std::shared_ptr<Ordinary::Pixels> Rp_cache(new Ordinary::Pixels(Rp));
 
-    const Magick::PixelPacket *center_pxl = Bm_cache.getConst(w/2, h/2, 1, 1);
+    const Magick::PixelPacket *center_pxl = Bm_cache->getConst(w/2, h/2, 1, 1);
     quantum_t red = center_pxl[0].red;
     quantum_t green = center_pxl[0].green;
     quantum_t blue = center_pxl[0].blue;
@@ -149,30 +147,29 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
     dflDebug("comp.green=%d, luminosity=%f",green, 1./luminosity);
     dflDebug("comp.blue=%d, luminosity=%f",blue, 1./luminosity);
 
-#pragma omp parallel for dfl_threads(4, Am, Ap, Bm, Bp, Rm, Rp)
-    for ( int y = 0 ; y < h ; ++y ) {
-       const Magick::PixelPacket *Am_pxl = Am_cache.getConst(0, y, w, 1);
-       const Magick::PixelPacket *Ap_pxl = Ap_cache.getConst(0, y, w, 1);
-       const Magick::PixelPacket *Bm_pxl = Bm_cache.getConst(0, y, w, 1);
-       const Magick::PixelPacket *Bp_pxl = Bp_cache.getConst(0, y, w, 1);
-       Magick::PixelPacket *Rm_pxl = Rm_cache.get(0, y, w, 1);
-       Magick::PixelPacket *Rp_pxl = Rp_cache.get(0, y, w, 1);
-       for ( int x = 0 ; x < w ; ++x ) {
-
-           Q_UNUSED(Am_pxl);
-           Q_UNUSED(Bm_pxl);
-           Q_UNUSED(luminosity);
 #define RM(comp) \
     Rm_pxl[x].comp = clamp( luminosity * double(Bm_pxl[x].comp) / double(Am_pxl[x].comp?Am_pxl[x].comp:1))
-           RM(red); RM(green); RM(blue);
 #define mod(a,b) (a)%(b)
 #define RP(comp) \
     Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) - quantum_t(Ap_pxl[x].comp)+ 65536+32768, 65536)
+
+    dfl_parallel_for(y, 0, h, 4, (Am, Ap, Bm, Bp, Rm, Rp), {
+       const Magick::PixelPacket *Am_pxl = Am_cache->getConst(0, y, w, 1);
+       const Magick::PixelPacket *Ap_pxl = Ap_cache->getConst(0, y, w, 1);
+       const Magick::PixelPacket *Bm_pxl = Bm_cache->getConst(0, y, w, 1);
+       const Magick::PixelPacket *Bp_pxl = Bp_cache->getConst(0, y, w, 1);
+       Magick::PixelPacket *Rm_pxl = Rm_cache->get(0, y, w, 1);
+       Magick::PixelPacket *Rp_pxl = Rp_cache->get(0, y, w, 1);
+       for ( int x = 0 ; x < w ; ++x ) {
+           Q_UNUSED(Am_pxl);
+           Q_UNUSED(Bm_pxl);
+           Q_UNUSED(luminosity);
+           RM(red); RM(green); RM(blue);
            RP(red); RP(green); RP(blue);
        }
-       Rm_cache.sync();
-       Rp_cache.sync();
-    }
+       Rm_cache->sync();
+       Rp_cache->sync();
+    });
     Rm.inverseFourierTransform(Rp, true);
     image=Rm;
 #endif

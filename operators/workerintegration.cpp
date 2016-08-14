@@ -143,7 +143,7 @@ bool WorkerIntegration::play_onInput(int idx)
             if ( ! m_integrationPlane ) {
                 createPlanes(image);
             }
-            std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+            std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
             dfl_block int line = 0;
 
             bool hdr = photo.getScale() == Photo::HDR;
@@ -224,7 +224,7 @@ bool WorkerIntegration::play_onInput(int idx)
         newPhoto.createImage(m_w, m_h);
         newPhoto.setTag(TAG_NAME, tr("Integration"));
         Magick::Image& newImage = newPhoto.image();
-        std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(newImage));
+        std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(newImage));
         qreal mul = ( m_normalizationType == OpIntegration::Custom ? m_customNormalizationValue : 1. );
         dfl_parallel_for(y, 0, m_h, 4, (newImage), {
             Magick::PixelPacket *pixels = pixel_cache->get(0, y, m_w, 1);

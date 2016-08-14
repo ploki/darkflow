@@ -60,8 +60,8 @@ void SelectiveLabFilter::applyOnImage(Magick::Image &image, bool hdr)
             w = image.columns();
     Magick::Image srcImage(image);
     ResetImage(image);
-    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
-    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+    std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
 
     double saturation = m_saturation;
     double value = m_exposure;

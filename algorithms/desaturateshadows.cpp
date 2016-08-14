@@ -78,8 +78,8 @@ void DesaturateShadows::applyOnImage(Magick::Image& image, bool hdr)
     int h = image.rows(),
             w = image.columns();
 
-    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
-    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+    std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
     dfl_block bool error=false;
     dfl_parallel_for(y, 0, h, 4, (image, srcImage), {
         Magick::PixelPacket *pixels = pixel_cache->get(0,y,w,1);

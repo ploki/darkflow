@@ -49,8 +49,8 @@ unix {
     QMAKE_CXXFLAGS_RELEASE += -O2
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_CFLAGS += -Wall -D_REENTRANT
-    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations
-    QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations
+    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations -Wno-deprecated-register
+    QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations -Wno-deprecated-register
 
     !macx | contains(osx_openmp, 1) {
         QMAKE_CXXFLAGS += -fopenmp
@@ -248,7 +248,8 @@ SOURCES +=\
     core/operatorparameterselectivelab.cpp \
     algorithms/selectivelabfilter.cpp \
     operators/opselectivelabfilter.cpp \
-    ui/graphicsviewinteraction.cpp
+    ui/graphicsviewinteraction.cpp \
+    core/ordinary.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -371,7 +372,8 @@ HEADERS  += \
     core/operatorparameterselectivelab.h \
     algorithms/selectivelabfilter.h \
     operators/opselectivelabfilter.h \
-    ui/graphicsviewinteraction.h
+    ui/graphicsviewinteraction.h \
+    core/ordinary.h
 
 FORMS    += \
     ui/aboutdialog.ui \

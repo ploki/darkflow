@@ -47,7 +47,7 @@
 #include "console.h"
 #include "preferences.h"
 
-using namespace Magick;
+using Magick::Quantum;
 
 Photo::Photo(Photo::Gamma gamma, QObject *parent) :
     QObject(parent),
@@ -61,7 +61,7 @@ Photo::Photo(Photo::Gamma gamma, QObject *parent) :
     setScale(gamma);
 }
 
-Photo::Photo(const Blob &blob, Photo::Gamma gamma, QObject *parent) :
+Photo::Photo(const Magick::Blob &blob, Photo::Gamma gamma, QObject *parent) :
     QObject(parent),
     m_image(blob),
     m_curve(newCurve(gamma)),
@@ -118,8 +118,8 @@ bool Photo::load(const QString &filename)
         return false;
     QByteArray data = file.readAll();
     try {
-        Blob blob(data.data(), data.length());
-        m_image = Image(blob);
+        Magick::Blob blob(data.data(), data.length());
+        m_image = Magick::Image(blob);
         m_status = Photo::Complete;
     }
     catch (std::exception& e) {
@@ -136,7 +136,7 @@ bool Photo::load(const QString &filename)
 bool Photo::save(const QString &filename, const QString &magick)
 {
     try {
-        Blob blob;
+        Magick::Blob blob;
         m_image.write(&blob, magick.toStdString());
         QFile file(filename);
         file.open(QFile::WriteOnly);
@@ -156,7 +156,7 @@ bool Photo::save(const QString &filename, const QString &magick)
 void Photo::createImage(long width, long height)
 {
     try {
-        m_image = Magick::Image(Geometry(width,height),Color(0,0,0));
+        m_image = Magick::Image(Magick::Geometry(width,height),Magick::Color(0,0,0));
         m_image.quantizeColorSpace(Magick::RGBColorspace);
         m_status = Complete;
     }
@@ -178,7 +178,7 @@ QVector<qreal> Photo::pixelColor(unsigned x, unsigned y)
          y >= m_image.rows() )
         return rgb;
     try {
-        Magick::Pixels cache(m_image);
+        Ordinary::Pixels cache(m_image);
         const Magick::PixelPacket *pixel = cache.getConst(x,y,1,1);
         if (pixel) {
             if ( getScale() == HDR ) {
@@ -210,12 +210,12 @@ Magick::Image& Photo::image()
     return m_image;
 }
 
-const Image &Photo::curve() const
+const Magick::Image &Photo::curve() const
 {
     return m_curve;
 }
 
-Image &Photo::curve()
+Magick::Image &Photo::curve()
 {
     return m_curve;
 }
@@ -244,12 +244,12 @@ QString Photo::getTag(const QString &name) const
 }
 
 
-Image Photo::newCurve(Photo::Gamma gamma)
+Magick::Image Photo::newCurve(Photo::Gamma gamma)
 {
-    Image curve;
+    Magick::Image curve;
     curve.size("65536x1");
-    Pixels curve_cache(curve);
-    PixelPacket *pixels = curve_cache.get(0,0,65536,1);
+    Ordinary::Pixels curve_cache(curve);
+    Magick::PixelPacket *pixels = curve_cache.get(0,0,65536,1);
     for ( int i = 0 ; i < 65536 ; ++i )
         pixels[i].red = pixels[i].green = pixels[i].blue = i;
     curve_cache.sync();
@@ -280,7 +280,7 @@ Image Photo::newCurve(Photo::Gamma gamma)
 static QPixmap convert(Magick::Image& image) {
     int h = image.rows(),
             w = image.columns();
-    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
     unsigned char pgm_header[256];
     int header_size = snprintf((char*)pgm_header, sizeof pgm_header,
              "P6\n%d %d\n%d\n",w,h,255);
@@ -335,7 +335,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     Q_ASSERT( m_status == Complete );
     Magick::Image image(Magick::Geometry(512,512),Magick::Color(0,0,0));
     Magick::Image curve(this->curve());
-    Magick::Pixels image_cache(image);
+    Ordinary::Pixels image_cache(image);
 
     if ( getScale() == HDR ) {
         ::HDR hdrRevert(true);
@@ -403,7 +403,7 @@ QPixmap Photo::curveToPixmap(Photo::CurveView cv)
     else if ( cv == Log2 )
         curve.gamma(1.L/2.2L);
 
-    Magick::Pixels curve_cache(curve);
+    Ordinary::Pixels curve_cache(curve);
     const Magick::PixelPacket *curve_pixels = curve_cache.getConst(0,0,65536,1);
     for ( int x=0 ; x < 65536 ; ++x ) {
         double x0 = log(double(x+1)/65536.L)/log(2);
@@ -484,7 +484,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
     dfl_block unsigned long maxi=0;
 
     {
-        std::shared_ptr<Magick::Pixels> photo_cache(new Magick::Pixels(photo));
+        std::shared_ptr<Ordinary::Pixels> photo_cache(new Ordinary::Pixels(photo));
         dfl_parallel_for(y, 0, h, 4, (photo), {
             const Magick::PixelPacket *pixels = photo_cache->getConst(0,y,w,1);
             if (!pixels ) continue;
@@ -507,7 +507,7 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
     Magick::Image image( Magick::Geometry(512,512) , Magick::Color(0,0,0) );
 
     {
-        Magick::Pixels image_cache(image);
+        Ordinary::Pixels image_cache(image);
         Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
         for ( x=0 ; x < range ; ++x ) {
             quantum_t qr;
@@ -553,8 +553,8 @@ QPixmap Photo::histogramToPixmap(Photo::HistogramScale scale, Photo::HistogramGe
     {
         Magick::Image srcImage(image);
         ResetImage(image);
-        Magick::Pixels src_cache(srcImage);
-        Magick::Pixels image_cache(image);
+        Ordinary::Pixels src_cache(srcImage);
+        Ordinary::Pixels image_cache(image);
         Magick::PixelPacket *pixels = image_cache.get(0, 0, range, range);
         const Magick::PixelPacket *src = src_cache.get(0, 0, range, range);
         iGamma& g = iGamma::sRGB();
@@ -856,11 +856,11 @@ Photo::Gamma Photo::getScale() const
 
 
 
-void ResetImage(Image &image)
+void ResetImage(Magick::Image &image)
 {
     int w = image.columns();
     int h = image.rows();
-    image = Image(Geometry(w, h), Magick::Color(0,0,0));
+    image = Magick::Image(Magick::Geometry(w, h), Magick::Color(0,0,0));
     image.quantizeColorSpace(Magick::RGBColorspace);
 }
 
@@ -869,34 +869,34 @@ bool OnDiskCache()
     return false;
 }
 
-bool OnDiskCache(const Image &image)
+bool OnDiskCache(const Magick::Image &image)
 {
-    bool onDisk = MagickCore::GetImagePixelCacheType(const_cast<Image&>(image).image()) == MagickCore::DiskCache;
+    bool onDisk = MagickCore::GetImagePixelCacheType(const_cast<Magick::Image&>(image).image()) == MagickCore::DiskCache;
     if (onDisk)
         dflDebug(Photo::tr("Image cache is on disk, threading disabled"));
     return onDisk;
 }
 
-bool OnDiskCache(const Image &image1, const Image &image2)
+bool OnDiskCache(const Magick::Image &image1, const Magick::Image &image2)
 {
     return OnDiskCache(image1) || OnDiskCache(image2);
 }
 
-bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3)
+bool OnDiskCache(const Magick::Image &image1, const Magick::Image &image2, const Magick::Image &image3)
 {
     return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3);
 }
 
-bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3, const Image &image4)
+bool OnDiskCache(const Magick::Image &image1, const Magick::Image &image2, const Magick::Image &image3, const Magick::Image &image4)
 {
     return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3) || OnDiskCache(image4);
 }
 
-bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3, const Image &image4, const Image &image5)
+bool OnDiskCache(const Magick::Image &image1, const Magick::Image &image2, const Magick::Image &image3, const Magick::Image &image4, const Magick::Image &image5)
 {
     return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3) || OnDiskCache(image4) || OnDiskCache(image5);
 }
-bool OnDiskCache(const Image &image1, const Image &image2, const Image &image3, const Image &image4, const Image &image5, const Image &image6)
+bool OnDiskCache(const Magick::Image &image1, const Magick::Image &image2, const Magick::Image &image3, const Magick::Image &image4, const Magick::Image &image5, const Magick::Image &image6)
 {
     return OnDiskCache(image1) || OnDiskCache(image2) || OnDiskCache(image3) || OnDiskCache(image4) || OnDiskCache(image5) || OnDiskCache(image6);
 }

@@ -98,8 +98,8 @@ static Photo debayerMask(const Photo &photo, u_int32_t filters)
 
     int w = srcImage.columns();
     int h = srcImage.rows();
-    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
-    std::shared_ptr<Magick::Pixels> dst_cache(new Magick::Pixels(dst));
+    std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+    std::shared_ptr<Ordinary::Pixels> dst_cache(new Ordinary::Pixels(dst));
     dfl_block bool error=false;
     dfl_parallel_for(y, 0, h, 4, (srcImage, dst), {
        Magick::PixelPacket *pixel = dst_cache->get(0, y, w, 1);
@@ -138,8 +138,8 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
     int h = dst.rows();
 
     ResetImage(dst);
-    Magick::Pixels image_cache(image);
-    Magick::Pixels dst_cache(dst);
+    Ordinary::Pixels image_cache(image);
+    Ordinary::Pixels dst_cache(dst);
     const Magick::PixelPacket *image_pixels = image_cache.getConst(0, 0, w*2, h*2);
     Magick::PixelPacket *pixels = dst_cache.get(0, 0, w, h);
     dfl_block bool failure = false;
@@ -217,7 +217,7 @@ imageToBayer(Magick::Image& image, u_int32_t filters)
     int w = image.columns();
     int h = image.rows();
     uint16_t *buffer = newBayer(w, h);
-    Magick::Pixels cache(image);
+    Ordinary::Pixels cache(image);
     const Magick::PixelPacket *pixel = cache.getConst(0, 0, w, h);
     for ( int y = 0 ; y < h ; ++y ) {
         for (int x = 0 ; x < w ; ++x ) {
@@ -240,7 +240,7 @@ bufferToImage(uint16_t *buffer, int w, int h) {
     Magick::Image image(Magick::Geometry(w,h), Magick::Color(0,0,0));
     ResetImage(image);
     int s = w * h;
-    Magick::Pixels cache(image);
+    Ordinary::Pixels cache(image);
     Magick::PixelPacket *pixel = cache.get(0, 0, w, h);
     for(int i = 0 ; i < s ; ++i) {
         pixel[i].red = buffer[i*3+0];

@@ -64,11 +64,11 @@ public:
                 ResetImage(iMagenta);
                 ResetImage(iYellow);
                 ResetImage(iLuminance);
-                Magick::Pixels src_cache(srcImage);
-                Magick::Pixels iCyan_cache(iCyan);
-                Magick::Pixels iMagenta_cache(iMagenta);
-                Magick::Pixels iYellow_cache(iYellow);
-                Magick::Pixels iLuminance_cache(iLuminance);
+                Ordinary::Pixels src_cache(srcImage);
+                Ordinary::Pixels iCyan_cache(iCyan);
+                Ordinary::Pixels iMagenta_cache(iMagenta);
+                Ordinary::Pixels iYellow_cache(iYellow);
+                Ordinary::Pixels iLuminance_cache(iLuminance);
                 int w = srcImage.columns();
                 int h = srcImage.rows();
                 int line = 0;

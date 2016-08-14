@@ -54,7 +54,7 @@ private slots:
         if (photo.isComplete()) {
             try {
                 Magick::Image& image = photo.image();
-                Magick::Pixels cache(image);
+                Ordinary::Pixels cache(image);
                 unsigned w = image.columns();
                 unsigned h = image.rows();
                 for (unsigned y = 0 ; y < h ; ++y) {

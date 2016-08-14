@@ -100,6 +100,8 @@ int vasprintf(char **strp, const char *fmt, va_list ap);
 #define DF_EQUALS(x, y, epsilon) (fabs((x)-(y)) < (epsilon))
 #define DF_ROUND(x) ((x) + 0.5)
 
+#include "ordinary.h"
+
 void init_platform();
 
 #endif // PORTS_H

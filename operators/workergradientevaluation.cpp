@@ -57,7 +57,7 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
     bool hdr = srcPhoto.getScale() == Photo::HDR;
     int w = in.columns();
     int h = in.rows();
-    Magick::Pixels cache(in);
+    Ordinary::Pixels cache(in);
     const Magick::PixelPacket *pixels = cache.getConst(0, 0, w, h);
 
     QVector<QPointF> points = inPhoto.getPoints();
@@ -104,7 +104,7 @@ Photo WorkerGradientEvaluation::process(const Photo &srcPhoto, int p, int c)
     });
 
     ResetImage(out);
-    Magick::Pixels out_cache(out);
+    Ordinary::Pixels out_cache(out);
     Magick::PixelPacket *pxl = out_cache.get(0, 0, w, h);
 
     dfl_block int line=0;

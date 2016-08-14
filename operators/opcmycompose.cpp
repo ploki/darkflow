@@ -102,10 +102,10 @@ public:
                 iYellow.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
 
             try {
-                std::shared_ptr<Magick::Pixels> iCyan_cache(new Magick::Pixels(iCyan));
-                std::shared_ptr<Magick::Pixels> iMagenta_cache(new Magick::Pixels(iMagenta));
-                std::shared_ptr<Magick::Pixels> iYellow_cache(new Magick::Pixels(iYellow));
-                std::shared_ptr<Magick::Pixels> iLuminance_cache(new Magick::Pixels(iLuminance));
+                std::shared_ptr<Ordinary::Pixels> iCyan_cache(new Ordinary::Pixels(iCyan));
+                std::shared_ptr<Ordinary::Pixels> iMagenta_cache(new Ordinary::Pixels(iMagenta));
+                std::shared_ptr<Ordinary::Pixels> iYellow_cache(new Ordinary::Pixels(iYellow));
+                std::shared_ptr<Ordinary::Pixels> iLuminance_cache(new Ordinary::Pixels(iLuminance));
 
 
                 Photo photo(Photo::Linear);
@@ -114,7 +114,7 @@ public:
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
                 photo.setTag(TAG_NAME, "LCMY Composition");
                 ResetImage(photo.image());
-                Magick::Pixels iPhoto_cache(photo.image());
+                Ordinary::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 dfl_block int line = 0;
                 dfl_parallel_for(y, 0, int(h), 4, (iCyan, iMagenta, iYellow, iLuminance), {

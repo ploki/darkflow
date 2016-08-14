@@ -40,6 +40,7 @@ public:
     TransformTarget getCurrentTarget() const;
     IncompatibleAction getIncompatibleAction() const;
     int getNumThreads() const;
+    int getMagickNumThreads() const;
     int getLabSelectionSize() const;
     QString getAppConfigLocation() const;
     QColor color(QPalette::ColorRole role);

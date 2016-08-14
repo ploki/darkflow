@@ -55,7 +55,7 @@ public:
     int py = rect.y();
     int w = rect.width();
     int h = rect.height();
-    Magick::Pixels cache(image);
+    Ordinary::Pixels cache(image);
     Region *region = new Region(worker, w, h);
     #pragma omp parallel for dfl_threads(4, image)
     for (int y = 0 ; y < h ; ++y)

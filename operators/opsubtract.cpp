@@ -63,13 +63,13 @@ public:
         Magick::Image &srcImage(minuend);
         ResetImage(minuend);
         ResetImage(underflow);
-        Magick::Pixels src_cache(srcImage);
-        Magick::Pixels minuend_cache(minuend);
-        Magick::Pixels subtrahend_cache(subtrahend);
-        Magick::Pixels *addend_cache = NULL;
+        Ordinary::Pixels src_cache(srcImage);
+        Ordinary::Pixels minuend_cache(minuend);
+        Ordinary::Pixels subtrahend_cache(subtrahend);
+        Ordinary::Pixels *addend_cache = NULL;
         if (addend)
-            addend_cache = new Magick::Pixels(*addend);
-        Magick::Pixels underflow_cache(underflow);
+            addend_cache = new Ordinary::Pixels(*addend);
+        Ordinary::Pixels underflow_cache(underflow);
 #pragma omp parallel for dfl_threads(4, srcImage, minuend, subtrahend, addend?*addend:Magick::Image())
         for ( int y = 0 ; y < h ; ++y ) {
             const Magick::PixelPacket *src = src_cache.getConst(0, y, w, 1);

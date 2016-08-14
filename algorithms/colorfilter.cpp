@@ -49,8 +49,8 @@ void ColorFilter::applyOnImage(Magick::Image &image, bool hdr)
     ResetImage(image);
     int h = image.rows(),
             w = image.columns();
-    std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
-    std::shared_ptr<Magick::Pixels> pixel_cache(new Magick::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+    std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
     dfl_block_array(qreal, rgb, 3);
     if (hdr) {
         rgb[0] = log2(m_rgb[0])*4096;

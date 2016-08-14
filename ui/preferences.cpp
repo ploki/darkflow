@@ -571,6 +571,11 @@ int Preferences::getNumThreads() const
     return m_OpenMPThreads;
 }
 
+int Preferences::getMagickNumThreads() const
+{
+    return Magick::ResourceLimits::thread();
+}
+
 int Preferences::getLabSelectionSize() const
 {
     return m_labSelectionSize;

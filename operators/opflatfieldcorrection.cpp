@@ -56,7 +56,7 @@ public:
             bool hdr = photo.getScale() == Photo::HDR;
             try  {
                 Magick::Image& image = photo.image();
-                Magick::Pixels pixels_cache(image);
+                Ordinary::Pixels pixels_cache(image);
                 int w = image.columns();
                 int h = image.rows();
                 Triplet<real> max;
@@ -102,10 +102,10 @@ public:
         Magick::Image srcImage(image);
         ResetImage(image);
         ResetImage(overflow);
-        std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
-        std::shared_ptr<Magick::Pixels> image_cache(new Magick::Pixels(image));
-        std::shared_ptr<Magick::Pixels> flatfield_cache(new Magick::Pixels(flatfield));
-        std::shared_ptr<Magick::Pixels> overflow_cache(new Magick::Pixels(overflow));
+        std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+        std::shared_ptr<Ordinary::Pixels> image_cache(new Ordinary::Pixels(image));
+        std::shared_ptr<Ordinary::Pixels> flatfield_cache(new Ordinary::Pixels(flatfield));
+        std::shared_ptr<Ordinary::Pixels> overflow_cache(new Ordinary::Pixels(overflow));
         dfl_block int line=0;
         dfl_parallel_for(y, 0, h, 4, (srcImage, image, flatfield, overflow), {
             Magick::PixelPacket *image_pixels = image_cache->get(0, y, w, 1);

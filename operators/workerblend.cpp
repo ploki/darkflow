@@ -235,19 +235,19 @@ void WorkerBlend::play()
         Magick::Image *imageB = NULL;
         Magick::Image *imageC = NULL;
 
-        Magick::Pixels *imageA_cache = NULL;
-        Magick::Pixels *imageB_cache = NULL;
-        Magick::Pixels *imageC_cache = NULL;
+        Ordinary::Pixels *imageA_cache = NULL;
+        Ordinary::Pixels *imageB_cache = NULL;
+        Ordinary::Pixels *imageC_cache = NULL;
         try {
             Q_ASSERT(NULL != imageA);
             ResetImage(*imageA);
             ResetImage(underflow.image());
             ResetImage(overflow.image());
 
-            std::shared_ptr<Magick::Pixels> src_cache(new Magick::Pixels(srcImage));
-            std::shared_ptr<Magick::Pixels> underflow_cache(new Magick::Pixels(underflow.image()));
-            std::shared_ptr<Magick::Pixels> overflow_cache(new Magick::Pixels(overflow.image()));
-            imageA_cache = new Magick::Pixels(*imageA);
+            std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+            std::shared_ptr<Ordinary::Pixels> underflow_cache(new Ordinary::Pixels(underflow.image()));
+            std::shared_ptr<Ordinary::Pixels> overflow_cache(new Ordinary::Pixels(overflow.image()));
+            imageA_cache = new Ordinary::Pixels(*imageA);
             int w = srcImage.columns();
             int h = srcImage.rows();
             int b_w = 0;
@@ -256,13 +256,13 @@ void WorkerBlend::play()
             int c_h = 0;
             if ( photoB ) {
                 imageB = &photoB->image();
-                imageB_cache = new Magick::Pixels(*imageB);
+                imageB_cache = new Ordinary::Pixels(*imageB);
                 b_w = imageB->columns();
                 b_h = imageB->rows();
             }
             if ( photoC ) {
                 imageC = &photoC->image();
-                imageC_cache = new Magick::Pixels(*imageC);
+                imageC_cache = new Ordinary::Pixels(*imageC);
                 c_w = imageC->columns();
                 c_h = imageC->rows();
             }
@@ -335,8 +335,8 @@ void WorkerBlend::play()
                  c_h == 1 && c_w == 1 ) {
                 Magick::Image & srcCurve(photoA.curve());
                 ResetImage(photoA.curve());
-                Magick::Pixels src_cache(srcCurve);
-                Magick::Pixels curve_cache(photoA.curve());
+                Ordinary::Pixels src_cache(srcCurve);
+                Ordinary::Pixels curve_cache(photoA.curve());
                 const Magick::PixelPacket *src = src_cache.getConst(0, 0, 65536, 1);
                 Magick::PixelPacket *pxl_A = curve_cache.get(0, 0, 65536, 1);
                 const Magick::PixelPacket *pxl_B = NULL;

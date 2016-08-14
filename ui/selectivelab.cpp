@@ -291,7 +291,7 @@ Photo SelectiveLab::createPhoto(int level, bool clipToGamut)
     int h = image.rows();
     double v = double(level)/100.;
 
-    Magick::Pixels pixel_cache(image);
+    Ordinary::Pixels pixel_cache(image);
 #pragma omp parallel for dfl_threads(4, image)
     for ( int y = 0 ; y < h ; ++y ) {
         Magick::PixelPacket *pixels = pixel_cache.get(0,y,w,1);
@@ -359,8 +359,8 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
     int w = srcImage.columns();
     int h = srcImage.rows();
     int s = w*h;
-    Magick::Pixels src_cache(srcImage);
-    Magick::Pixels dst_cache(image);
+    Ordinary::Pixels src_cache(srcImage);
+    Ordinary::Pixels dst_cache(image);
     const Magick::PixelPacket *src = src_cache.getConst(0, 0, w, h);
     Magick::PixelPacket *dst = dst_cache.get(0, 0, w, h);
 

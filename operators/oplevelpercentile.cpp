@@ -55,7 +55,7 @@ public:
         int w = image.columns();
         Q_ASSERT(QuantumRange + 1 == 1<<16);
         unsigned int histo[QuantumRange+1][3] = {};
-        Magick::Pixels pixel_cache(image);
+        Ordinary::Pixels pixel_cache(image);
         const Magick::PixelPacket *pixels = pixel_cache.getConst(0,0, w, h);
 #pragma omp parallel for dfl_threads(4)
         for ( int y = 0 ; y < h ; ++y ) {

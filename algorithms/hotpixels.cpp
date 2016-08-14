@@ -96,9 +96,9 @@ void HotPixels::applyOnImage(Magick::Image &image, bool hdr)
     Magick::Image input(image);
     ResetImage(image);
 
-    std::shared_ptr<Magick::Pixels>
-            output_cache(new Magick::Pixels(image)),
-            input_cache(new Magick::Pixels(input));
+    std::shared_ptr<Ordinary::Pixels>
+            output_cache(new Ordinary::Pixels(image)),
+            input_cache(new Ordinary::Pixels(input));
 
     int w = image.columns();
     int h = image.rows();

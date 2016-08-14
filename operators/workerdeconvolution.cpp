@@ -55,8 +55,8 @@ normalizeImage(Magick::Image& image, int w, int h, bool center)
     Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
     int o_x = (w-k_w)/2;
     int o_y = (h-k_h)/2;
-    Magick::Pixels i_cache(image);
-    Magick::Pixels n_cache(nk);
+    Ordinary::Pixels i_cache(image);
+    Ordinary::Pixels n_cache(nk);
 #pragma omp parallel for dfl_threads(4, image, nk)
     for ( int y = 0 ; y < k_h ; ++y ) {
         const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, k_w, 1);
@@ -77,8 +77,8 @@ static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
     int w = image.columns();
     int h = image.rows();
     Magick::Image nk(Magick::Geometry(w, h), Magick::Color(0,0,0));
-    Magick::Pixels i_cache(image);
-    Magick::Pixels n_cache(nk);
+    Ordinary::Pixels i_cache(image);
+    Ordinary::Pixels n_cache(nk);
 #pragma omp parallel for dfl_threads(4, image, nk)
     for ( int y = 0 ; y < h ; ++y ) {
         const Magick::PixelPacket * k_pixel = i_cache.getConst(0, y, w, 1);
@@ -133,12 +133,12 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Magick::Image& kernel, qr
     Magick::Image Rp(Magick::Geometry(w, h), Magick::Color(0,0,0));
     ResetImage(Rm);
     ResetImage(Rp);
-    Magick::Pixels Am_cache(Am);
-    Magick::Pixels Ap_cache(Ap);
-    Magick::Pixels Bm_cache(Bm);
-    Magick::Pixels Bp_cache(Bp);
-    Magick::Pixels Rm_cache(Rm);
-    Magick::Pixels Rp_cache(Rp);
+    Ordinary::Pixels Am_cache(Am);
+    Ordinary::Pixels Ap_cache(Ap);
+    Ordinary::Pixels Bm_cache(Bm);
+    Ordinary::Pixels Bp_cache(Bp);
+    Ordinary::Pixels Rm_cache(Rm);
+    Ordinary::Pixels Rp_cache(Rp);
 
     const Magick::PixelPacket *center_pxl = Bm_cache.getConst(w/2, h/2, 1, 1);
     quantum_t red = center_pxl[0].red;

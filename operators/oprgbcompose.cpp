@@ -102,17 +102,17 @@ public:
                 if ( iBlue.columns() != w || iBlue.rows() != h )
                     iBlue.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
 
-                std::shared_ptr<Magick::Pixels> iRed_cache(new Magick::Pixels(iRed));
-                std::shared_ptr<Magick::Pixels> iGreen_cache(new Magick::Pixels(iGreen));
-                std::shared_ptr<Magick::Pixels> iBlue_cache(new Magick::Pixels(iBlue));
-                std::shared_ptr<Magick::Pixels> iLuminance_cache(new Magick::Pixels(iLuminance));
+                std::shared_ptr<Ordinary::Pixels> iRed_cache(new Ordinary::Pixels(iRed));
+                std::shared_ptr<Ordinary::Pixels> iGreen_cache(new Ordinary::Pixels(iGreen));
+                std::shared_ptr<Ordinary::Pixels> iBlue_cache(new Ordinary::Pixels(iBlue));
+                std::shared_ptr<Ordinary::Pixels> iLuminance_cache(new Ordinary::Pixels(iLuminance));
 
                 Photo photo(Photo::Linear);
                 photo.createImage(w, h);
                 photo.setSequenceNumber(i);
                 photo.setIdentity(m_operator->uuid() + ":" + QString::number(i));
                 photo.setTag(TAG_NAME, tr("LRGB Composition"));
-                Magick::Pixels iPhoto_cache(photo.image());
+                Ordinary::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 dfl_block int line = 0;
                 dfl_parallel_for(y, 0, int(h), 4, (iLuminance, iRed, iGreen, iBlue), {

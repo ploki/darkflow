@@ -363,7 +363,7 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
     const Magick::PixelPacket *src = src_cache.getConst(0, 0, w, h);
     Magick::PixelPacket *dst = dst_cache.get(0, 0, w, h);
 
-    memcpy(dst, src, 1024*sizeof(*dst));
+    memcpy(dst, src, w*h*sizeof(*dst));
 
     s = m_labSelectionSize*m_labSelectionSize/4;
     dfl_parallel_for(i, 0, s, 1024, (), {

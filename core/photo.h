@@ -172,15 +172,19 @@ do \
 #define dfl_block volatile
 #define dfl_threads(chunk, ...) schedule(static, chunk) num_threads(OnDiskCache(__VA_ARGS__)?1:DfThreadLimit())
 //"num_threads(OnDiskCache " STRINGIFY(__image_list__) " ?1:DfThreadLimit())"
-#define STRINGIFY(a) #a
+#if defined(DF_WINDOWS)
+#define DF_PRAGMA(pragma_string) __pragma(pragma_string)
+#else
+#define DF_PRAGMA(pragma_string) _Pragma(#pragma_string)
+#endif
 #define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, ...) \
 do {\
-    _Pragma(STRINGIFY(omp parallel for schedule(static, __stride__) num_threads((OnDiskCache __image_list__ )?1:DfThreadLimit()))) \
+    DF_PRAGMA(omp parallel for schedule(static, __stride__) num_threads((OnDiskCache __image_list__ )?1:DfThreadLimit())) \
     for(int __var__ = __start__ ; __var__ < __end__ ; ++__var__ ) \
         { AtWork atWork; { __VA_ARGS__ } }\
 } while (0)
 
-#define dfl_critical_section(...) _Pragma("omp critical") { __VA_ARGS__ }
+#define dfl_critical_section(...) DF_PRAGMA(omp critical) { __VA_ARGS__ }
 
 
 #endif

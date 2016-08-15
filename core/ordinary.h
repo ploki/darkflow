@@ -1,15 +1,15 @@
 #ifndef PIXELS_H
 #define PIXELS_H
 
-#include <Magick++.h>
-#include <QMap>
-#include <QMutex>
-#include <pthread.h>
-#include <memory>
-
 #if defined(_OPENMP)
 # define Ordinary Magick
 #else
+# include <Magick++.h>
+# include <QMap>
+# include <QMutex>
+# include <pthread.h>
+# include <memory>
+
 /*
  * I'm sorry to inform you that image magick doesn't support access
  * from multiple threads outside OpenMP. by the way, contexts are

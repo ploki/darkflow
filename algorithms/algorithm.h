@@ -27,7 +27,8 @@
  * Authors:
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
- */#ifndef MANIPULATION_H
+ */
+#ifndef MANIPULATION_H
 #define MANIPULATION_H
 
 #include <QObject>

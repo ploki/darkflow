@@ -60,6 +60,7 @@ unix {
     macx {
         QMAKE_CFLAGS += -gdwarf-2
         QMAKE_CXXFLAGS += -gdwarf-2
+        QMAKE_LFLAGS += -rpath @executable_path/../Frameworks -rpath @executable_path/../Library
     }
 }
 }
@@ -395,7 +396,8 @@ DISTFILES += \
     setup/darkflow-x86.iss \
     setup/darkflow-common.iss \
     setup/darkflow-version.iss \
-    l10n/darkflow_fr.ts
+    l10n/darkflow_fr.ts \
+    setup/osx_prepare_bundle.sh
 
 TRANSLATIONS = l10n/darkflow_fr.ts
 

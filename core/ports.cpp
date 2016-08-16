@@ -75,6 +75,40 @@ int vasprintf(char **res, char const *fmt, va_list args)
 }
 #endif
 
+#if defined(Q_OS_OSX)
+#include <QDir>
+#include <QApplication>
+
+static void
+init_osx()
+{
+    QString path = getenv("PATH")?:"";
+    QDir dir(QApplication::applicationDirPath());
+    if(!path.isEmpty())
+        path += ":";
+    path += dir.absolutePath();
+    setenv("PATH", path.toLocal8Bit(), 1);
+
+    if ( !dir.cdUp() ) return;
+    if ( !dir.cd("Library/ImageMagick/modules-Q16/coders/") ) return;
+    setenv("MAGICK_CODER_MODULE_PATH", dir.absolutePath().toLocal8Bit().data(), 1);
+
+    if ( !dir.cdUp() ) return;
+    if ( !dir.cd("filters/") ) return;
+    setenv("MAGICK_CODER_FILTER_PATH", dir.absolutePath().toLocal8Bit().data(), 1);
+
+    if ( !dir.cdUp() ) return;
+    if ( !dir.cdUp() ) return;
+    if ( !dir.cd("config-Q16/") ) return;
+    setenv("MAGICK_CONFIGURE_PATH", dir.absolutePath().toLocal8Bit().data(), 1);
+}
+
+#endif
+
+
 void init_platform()
 {
+#if defined(Q_OS_OSX)
+    init_osx();
+#endif
 }

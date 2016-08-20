@@ -129,9 +129,6 @@
           <property name="currentIndex">
            <number>0</number>
           </property>
-          <property name="tabBarAutoHide">
-           <bool>false</bool>
-          </property>
           <widget class="QWidget" name="tab_visualization">
            <attribute name="title">
             <string>Visualization</string>

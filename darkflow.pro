@@ -45,12 +45,12 @@ unix {
 # If you get linker errors about undefined references to symbols that
 # involve types in the std::__cxx11 namespace
 #    QMAKE_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
-    QMAKE_CXXFLAGS += -Wall -D_REENTRANT
+    QMAKE_CXXFLAGS += -std=c++11 -Wall -D_REENTRANT
     QMAKE_CXXFLAGS_RELEASE += -O2
     QMAKE_CXXFLAGS_DEBUG += -ggdb3
     QMAKE_CFLAGS += -Wall -D_REENTRANT
-    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations -Wno-deprecated-register
-    QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations -Wno-deprecated-register
+    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations
+    QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations
 
     !macx | contains(osx_openmp, 1) {
         QMAKE_CXXFLAGS += -fopenmp

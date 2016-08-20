@@ -1,0 +1,32 @@
+FROM ubuntu:xenial
+
+MAINTAINER Guillaume Gimenez <guillaume@blackmilk.fr>
+
+WORKDIR /root
+
+RUN dpkg --add-architecture i386
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y dpkg-dev debhelper qtbase5-dev:i386 qtbase5-dev-tools libstdc++-5-dev:i386 libavcodec-dev:i386 libavformat-dev:i386 libmagick++-6.q16-dev:i386
+RUN apt-get install -y libmagickcore-6-arch-config:i386
+RUN apt-get install -y gcc-multilib g++-multilib
+
+RUN ln -s /usr/lib/x86_64-linux-gnu/qt5/bin/moc /usr/lib/i386-linux-gnu/qt5/bin
+RUN ln -s /usr/lib/x86_64-linux-gnu/qt5/bin/uic /usr/lib/i386-linux-gnu/qt5/bin
+RUN ln -s /usr/lib/x86_64-linux-gnu/qt5/bin/rcc /usr/lib/i386-linux-gnu/qt5/bin
+RUN ln -s /usr/lib/i386-linux-gnu /usr/lib/i686-linux-gnu
+RUN ln -s /usr/bin/strip /usr/bin/i686-linux-gnu-strip
+
+ENV src darkflow
+COPY . $src/
+
+VOLUME /artifacts
+
+CMD ( cd $src && PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig/ \
+                 DEB_TARGET_GNU_TYPE=i386-linux-gnu \
+                 debian/rules && \
+                 PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig/ \
+                 dpkg-buildpackage -ai386 ) && cp darkflow*.deb /artifacts
+
+# docker build -f setup/Dockerfile/xenial.i386 -t darkflow/xenial.i386 .
+# docker run -v $PWD/pkg/xenial.i386:/artifacts  darkflow/xenial.i386

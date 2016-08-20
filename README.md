@@ -39,24 +39,24 @@ $ make
 $ ./darkflow
 ```
 
-### Debian packages
+### Debian and Ubuntu packages
 
-The current binary distribution needs ImageMagick 6.9.3 from experimental.
-
-``` bash
-$ echo deb http://darkflow.org/debian/ experimental main | sudo tee /etc/apt/sources.list.d/darkflow.list
-$ apt-get update
-$ apt-get install darkflow
-```
-
-### Ubuntu packages
+Currently supported distributions
+ - Debian stretch amd64 and i386
+ - Ubuntu xenial amd64 and i386
+ - Ubuntu wily amd64
 
 ``` bash
-$ echo deb http://darkflow.org/ubuntu/ wily main | sudo tee /etc/apt/sources.list.d/darkflow.list
-$ apt-get update
-$ apt-get install darkflow
+$ sudo apt-get install lsb-release
+$ echo deb http://darkflow.org/$(lsb_release -si).$(dpkg --print-architecture)/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/darkflow.list
+$ sudo apt-get update
+$ sudo apt-get install darkflow
 ```
 
 ### Windows packages
 
-Windows (x86 and x64) packages are available at http://darkflow.org/download/
+Windows (x86 and x64) packages are available at http://darkflow.org/download/windows/
+
+### Macintosh OS X app
+
+OS X package is available at http://darkflow.org/download/osx/

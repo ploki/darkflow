@@ -1,0 +1,50 @@
+FROM ubuntu:xenial
+
+MAINTAINER Guillaume Gimenez <guillaume@blackmilk.fr>
+
+WORKDIR /root
+
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y dpkg-dev debhelper qtbase5-dev qtbase5-dev-tools libmagick++-dev libavcodec-dev libavformat-dev
+
+RUN apt-get install -y wget
+ENV imver 6.9.2.10
+RUN wget http://darkflow.org/download/imagemagick/imagemagick_$imver+dfsg-2.debian.tar.xz
+RUN wget http://darkflow.org/download/imagemagick/imagemagick_$imver+dfsg-2.dsc
+RUN wget http://darkflow.org/download/imagemagick/imagemagick_$imver+dfsg.orig.tar.xz
+
+RUN tar xvfJ imagemagick_$imver+dfsg.orig.tar.xz
+RUN tar xvfJ imagemagick_$imver+dfsg-2.debian.tar.xz -C ImageMagick-*/
+
+RUN apt-get install -y dh-autoreconf chrpath libfftw3-dev libopenjp2-7-dev libperl-dev libpango1.0-dev librsvg2-bin pkg-kde-tools doxygen graphviz libxml2-utils xsltproc
+RUN ( cd ImageMagick-*/ && perl -pi -e s/doxygen-latex,//g debian/control)
+RUN ( cd ImageMagick-*/ && dpkg-buildpackage )
+
+RUN REV=$(dpkg -l | awk '/libmagick..-dev/ {print $3}') ; \
+    dpkg -r $(dpkg -l | awk '/'$REV'/ { print $2 }')
+RUN dpkg -i imagemagick-6-common_$imver+dfsg-2_all.deb \
+            imagemagick-common_$imver+dfsg-2_all.deb \
+            libmagick++-6-headers_$imver+dfsg-2_all.deb \
+            libmagick++-6.q16-6_$imver+dfsg-2_amd64.deb \
+            libmagick++-6.q16-dev_$imver+dfsg-2_amd64.deb \
+            libmagick++-dev_$imver+dfsg-2_all.deb \
+            libmagickcore-6-arch-config_$imver+dfsg-2_amd64.deb \
+            libmagickcore-6-headers_$imver+dfsg-2_all.deb \
+            libmagickcore-6.q16-2-extra_$imver+dfsg-2_amd64.deb \
+            libmagickcore-6.q16-2_$imver+dfsg-2_amd64.deb \
+            libmagickcore-6.q16-dev_$imver+dfsg-2_amd64.deb \
+            libmagickcore-dev_$imver+dfsg-2_all.deb \
+            libmagickwand-6-headers_$imver+dfsg-2_all.deb \
+            libmagickwand-6.q16-2_$imver+dfsg-2_amd64.deb \
+            libmagickwand-6.q16-dev_$imver+dfsg-2_amd64.deb \
+            libmagickwand-dev_$imver+dfsg-2_all.deb
+
+ENV src darkflow
+COPY . $src/
+
+VOLUME /artifacts
+CMD ( cd $src && dpkg-buildpackage ) && cp *.deb /artifacts
+
+# docker build -f setup/Dockerfile/xenial.amd64 -t darkflow/xenial.amd64 .
+# docker run -v $PWD/pkg/xenial.amd64:/artifacts  darkflow/xenial.amd64

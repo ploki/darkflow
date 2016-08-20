@@ -152,8 +152,8 @@ bool WorkerIntegration::play_onInput(int idx)
             QString hdrHighStr = photo.getTag(TAG_HDR_HIGH);
             QString hdrLowStr = photo.getTag(TAG_HDR_LOW);
             qreal hdrComp = 1,
-                    hdrHigh,
-                    hdrLow;
+                    hdrHigh = QuantumRange,
+                    hdrLow = 0;
             if ( ! hdrCompStr.isEmpty() && !hdrHighStr.isEmpty() && !hdrLowStr.isEmpty() ) {
                 hdrExposureAltered = true;
                 hdrComp = hdrCompStr.toDouble();

@@ -46,7 +46,6 @@ public:
     QPointF position() const;
 private:
     Visualization *m_vis;
-    int m_number;
 };
 
 #endif // VISPOINT_H

@@ -40,8 +40,7 @@ VisPoint::VisPoint(QPointF pos,
                    int number,
                    QGraphicsItem *parent) :
     QGraphicsPathItem(parent),
-    m_vis(vis),
-    m_number(number)
+    m_vis(vis)
 {
     qreal x = pos.x();
     qreal y = pos.y();

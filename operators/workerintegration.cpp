@@ -154,12 +154,12 @@ bool WorkerIntegration::play_onInput(int idx)
                 hdrHigh = hdrHighStr.toDouble() * QuantumRange;
                 hdrLow = hdrLowStr.toDouble() * QuantumRange;
             }
-            TransformView view(photo, m_scale, reference);
-            if (view.inError()) {
+            std::shared_ptr<TransformView> view(new TransformView(photo, m_scale, reference));
+            if (view->inError()) {
                 dflError(tr("view in error"));
                 continue;
             }
-            if (!view.loadPixels()) {
+            if (!view->loadPixels()) {
                 dflError(tr("unable to load pixels"));
                 continue;
             }
@@ -168,7 +168,7 @@ bool WorkerIntegration::play_onInput(int idx)
             dfl_parallel_for(y, 0, m_h, 4, (), {
                 for ( int x = 0 ; x < m_w ; ++x ) {
                     bool defined;
-                    Magick::PixelPacket pixel = view.getPixel(x,y,&defined);
+                    Magick::PixelPacket pixel = view->getPixel(x,y,&defined);
                     if (!defined)
                         continue;
                     integration_plane_t red, green, blue;

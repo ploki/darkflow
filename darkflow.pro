@@ -250,7 +250,8 @@ SOURCES +=\
     algorithms/selectivelabfilter.cpp \
     operators/opselectivelabfilter.cpp \
     ui/graphicsviewinteraction.cpp \
-    core/ordinary.cpp
+    core/ordinary.cpp \
+    core/transformview.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -374,7 +375,8 @@ HEADERS  += \
     algorithms/selectivelabfilter.h \
     operators/opselectivelabfilter.h \
     ui/graphicsviewinteraction.h \
-    core/ordinary.h
+    core/ordinary.h \
+    core/transformview.h
 
 FORMS    += \
     ui/aboutdialog.ui \

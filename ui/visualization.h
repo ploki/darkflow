@@ -139,8 +139,9 @@ private:
     bool eventFilter(QObject *obj, QEvent *event);
     void drawROI();
     void storeROI();
-    void clearPoints(Tool tool);
-    void addPoint(QPointF scenePos);
+    void reloadPoints();
+    bool clearPoints(Tool tool);
+    void addPoint(QPointF scenePos, int pointNumber);
     void removePoints(QPointF scenePos);
 
 };

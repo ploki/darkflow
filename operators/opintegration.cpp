@@ -61,7 +61,8 @@ OpIntegration::OpIntegration(Process *parent) :
     m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", tr("Normalization"), this, SLOT(setNormalizationType(int)))),
     m_customNormalization(new OperatorParameterSlider("normalizationValue", tr("Custom Norm."), tr("Integration Custom Normalization"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
-    m_outputHDRValue(false)
+    m_outputHDRValue(false),
+    m_scale(new OperatorParameterSlider("scale", tr("Scale"), tr("Integration scale"), Slider::Value, Slider::Logarithmic, Slider::Real, 1./4., 4, 1, 1./4., 4., Slider::FilterPercent, this))
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Integrated Image"), this));
@@ -83,6 +84,7 @@ OpIntegration::OpIntegration(Process *parent) :
     addParameter(m_lower);
     addParameter(m_normalizationTypeDropDown);
     addParameter(m_customNormalization);
+    addParameter(m_scale);
     addParameter(m_outputHDR);
 }
 
@@ -99,6 +101,7 @@ OperatorWorker *OpIntegration::newWorker()
                                  m_normalizationType,
                                  m_customNormalization->value(),
                                  m_outputHDRValue,
+                                 m_scale->value(),
                                  m_thread, this);
 }
 

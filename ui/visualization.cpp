@@ -800,17 +800,7 @@ void Visualization::updateTabsWithPhoto()
         ui->combo_treatment->blockSignals(state);
     }
 
-    clearPoints(ToolNone);
-    QString pointsTag = m_photo->getTag(TAG_POINTS);
-    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_POINTS) ) {
-        pointsTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_POINTS);
-    }
-    QStringList coords = pointsTag.split(';');
-    foreach(QString coord, coords) {
-        QStringList coordStr = coord.split(',');
-        if (coordStr.count() != 2) continue;
-        addPoint(QPointF(coordStr[0].toDouble(),coordStr[1].toDouble()));
-    }
+    reloadPoints();
 }
 
 void Visualization::updateTabsWithOutput()
@@ -885,9 +875,11 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
              m_photoIsInput ) {
             removePoints(me->scenePos());
           if ( me->button() == Qt::LeftButton ) {
-                addPoint(me->scenePos());
-                clearPoints(m_tool);
+                addPoint(me->scenePos(), m_points.count()+1);
+                bool evicted = clearPoints(m_tool);
                 storePoints();
+                if (evicted)
+                    reloadPoints();
           }
         }
     }
@@ -936,8 +928,27 @@ void Visualization::storeROI()
     m_operator->setTagOverride(m_photo->getIdentity(),TAG_ROI, roiTag);
 }
 
-void Visualization::clearPoints(Tool tool)
+
+void Visualization::reloadPoints()
 {
+    clearPoints(ToolNone);
+    QString pointsTag = m_photo->getTag(TAG_POINTS);
+    if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_POINTS) ) {
+        pointsTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_POINTS);
+    }
+    QStringList coords = pointsTag.split(';');
+
+    for ( int i = 0 ; i < coords.count() ; ++i ) {
+        QString &coord = coords[coords.count()-i-1];
+        QStringList coordStr = coord.split(',');
+        if (coordStr.count() != 2) continue;
+        addPoint(QPointF(coordStr[0].toDouble(),coordStr[1].toDouble()), i+1);
+    }
+}
+
+bool Visualization::clearPoints(Tool tool)
+{
+    bool evicted = false;
     int maxPoints = 0;
     switch(tool) {
     case ToolNone:
@@ -962,12 +973,14 @@ void Visualization::clearPoints(Tool tool)
     while(m_points.count() > maxPoints ) {
         m_scene->removeItem(m_points.last());
         m_points.pop_back();
+        evicted = true;
     }
+    return evicted;
 }
 
-void Visualization::addPoint(QPointF scenePos)
+void Visualization::addPoint(QPointF scenePos, int pointNumber)
 {
-    VisPoint *point = new VisPoint(scenePos, this);
+    VisPoint *point = new VisPoint(scenePos, this, pointNumber);
     m_scene->addItem(point);
     m_points.prepend(point);
 }
@@ -992,13 +1005,14 @@ void Visualization::storePoints()
 {
     if ( !m_photo ) return;
     QString pointsTag;
-    foreach(VisPoint *point, m_points) {
+    for ( int i = 0 ; i < m_points.count() ; ++i ) {
+        VisPoint *point = m_points[i];
         if ( pointsTag.count() )
             pointsTag += ";";
         point->scenePos();
-        pointsTag += QString::number(point->mapToScene(point->boundingRect().center()).x()) +
+        pointsTag += QString::number(point->position().x()) +
                 "," +
-                QString::number(point->mapToScene(point->boundingRect().center()).y());
+                QString::number(point->position().y());
     }
     if ( pointsTag.count() )
         m_operator->setTagOverride(m_photo->getIdentity(),TAG_POINTS, pointsTag);

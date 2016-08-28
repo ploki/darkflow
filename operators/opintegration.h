@@ -75,6 +75,7 @@ private:
     OperatorParameterSlider *m_customNormalization;
     OperatorParameterDropDown *m_outputHDR;
     bool m_outputHDRValue;
+    OperatorParameterSlider *m_scale;
 
 };
 

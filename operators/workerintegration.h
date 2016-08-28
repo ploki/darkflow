@@ -49,6 +49,7 @@ public:
                       OpIntegration::NormalizationType normalizationType,
                       qreal customNormalizationValue,
                       bool outputHDR,
+                      qreal scale,
                       QThread *thread, OpIntegration *op);
     ~WorkerIntegration();
     Photo process(const Photo &, int, int) { throw 0; }
@@ -70,6 +71,7 @@ public:
     int m_h;
     qreal m_offX;
     qreal m_offY;
+    qreal m_scale;
 
 private:
     void createPlanes(Magick::Image&);

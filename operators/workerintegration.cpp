@@ -34,6 +34,8 @@
 #include "photo.h"
 #include "algorithm.h"
 #include "hdr.h"
+#include "transformview.h"
+#include "cielab.h"
 #include <Magick++.h>
 #include <cmath>
 
@@ -49,6 +51,7 @@ WorkerIntegration::WorkerIntegration(OpIntegration::RejectionType rejectionType,
                                      OpIntegration::NormalizationType normalizationType,
                                      qreal customNormalizationValue,
                                      bool outputHDR,
+                                     qreal scale,
                                      QThread *thread,
                                      OpIntegration *op) :
     OperatorWorker(thread, op),
@@ -63,7 +66,8 @@ WorkerIntegration::WorkerIntegration(OpIntegration::RejectionType rejectionType,
     m_w(0),
     m_h(0),
     m_offX(0),
-    m_offY(0)
+    m_offY(0),
+    m_scale(scale)
 {
 }
 
@@ -114,7 +118,7 @@ bool WorkerIntegration::play_onInput(int idx)
     photoCount=m_inputs[0].count();
 
     bool firstFrame=true;
-    qreal ff_x = 0, ff_y = 0;
+    QVector<QPointF> reference;
 
     foreach(Photo photo, m_inputs[0]) {
         if ( aborted() ) {
@@ -125,25 +129,15 @@ bool WorkerIntegration::play_onInput(int idx)
             dflWarning(tr("%0 is non-linear").arg(photo.getIdentity()));
         }
         QVector<QPointF> points = photo.getPoints();
-        qreal lcx=0, lcy=0;
-        if ( points.count() > 0 ) {
-            lcx = points[0].x();
-            lcy = points[0].y();
-            if ( firstFrame ) {
+        if ( firstFrame ) {
                 firstFrame = false;
-                ff_x = lcx;
-                ff_y = lcy;
-            }
+                reference = photo.getPoints();
         }
-        int cx = DF_ROUND(lcx - ff_x);
-        int cy = DF_ROUND(lcy - ff_y);
 
         try {
-            Magick::Image& image = photo.image();
             if ( ! m_integrationPlane ) {
-                createPlanes(image);
+                createPlanes(photo.image());
             }
-            std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
             dfl_block int line = 0;
 
             bool hdr = photo.getScale() == Photo::HDR;
@@ -160,36 +154,41 @@ bool WorkerIntegration::play_onInput(int idx)
                 hdrHigh = hdrHighStr.toDouble() * QuantumRange;
                 hdrLow = hdrLowStr.toDouble() * QuantumRange;
             }
+            TransformView view(photo, m_scale, reference);
+            if (view.inError()) {
+                dflError(tr("view in error"));
+                continue;
+            }
+            if (!view.loadPixels()) {
+                dflError(tr("unable to load pixels"));
+                continue;
+            }
 
 #define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
-            dfl_parallel_for(y, 0, m_h, 4, (image), {
-                if ( y+cy < 0 || y+cy >= m_h ) continue;
-                const Magick::PixelPacket *pixels = pixel_cache->getConst(0, y+cy, m_w, 1);
-                if ( !pixels ) continue;
+            dfl_parallel_for(y, 0, m_h, 4, (), {
                 for ( int x = 0 ; x < m_w ; ++x ) {
-                    if ( x+cx < 0 || x+cx >= m_w ) continue;
-
+                    bool defined;
+                    Magick::PixelPacket pixel = view.getPixel(x,y,&defined);
+                    if (!defined)
+                        continue;
                     integration_plane_t red, green, blue;
                     if ( hdr ) {
-                     red = fromHDR(pixels[x+cx].red);
-                     green = fromHDR(pixels[x+cx].green);
-                     blue = fromHDR(pixels[x+cx].blue);
+                     red = fromHDR(pixel.red);
+                     green = fromHDR(pixel.green);
+                     blue = fromHDR(pixel.blue);
                     }
                     else {
-                        red = pixels[x+cx].red;
-                        green = pixels[x+cx].green;
-                        blue = pixels[x+cx].blue;
+                        red = pixel.red;
+                        green = pixel.green;
+                        blue = pixel.blue;
                     }
                     if ( hdrExposureAltered ) {
-                        if ( red >= hdrLow && red <= hdrHigh ) {
+                        qreal lum = LUMINANCE(red, green, blue);
+                        if ( lum >= hdrLow && lum <= hdrHigh ) {
                             SUBPXL(m_integrationPlane,x,y,0) += red / hdrComp;
                             ++SUBPXL(m_countPlane,x,y,0);
-                        }
-                        if ( green >= hdrLow && green <= hdrHigh ) {
                             SUBPXL(m_integrationPlane,x,y,1) += green / hdrComp;
                             ++SUBPXL(m_countPlane,x,y,1);
-                        }
-                        if ( blue >= hdrLow && blue <= hdrHigh ) {
                             SUBPXL(m_integrationPlane,x,y,2) += blue / hdrComp;
                             ++SUBPXL(m_countPlane,x,y,2);
                         }
@@ -271,8 +270,8 @@ bool WorkerIntegration::play_onInput(int idx)
 
 void WorkerIntegration::createPlanes(Magick::Image &image)
 {
-    m_w = image.columns();
-    m_h = image.rows();
+    m_w = image.columns() * m_scale;
+    m_h = image.rows() * m_scale;
     m_integrationPlane = new integration_plane_t[m_w*m_h*3];
     m_countPlane = new int[m_w*m_h*3];
     ::memset(m_integrationPlane, 0, m_w*m_h*3*sizeof(integration_plane_t));

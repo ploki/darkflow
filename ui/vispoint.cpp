@@ -37,9 +37,11 @@
 
 VisPoint::VisPoint(QPointF pos,
                    Visualization *vis,
+                   int number,
                    QGraphicsItem *parent) :
     QGraphicsPathItem(parent),
-    m_vis(vis)
+    m_vis(vis),
+    m_number(number)
 {
     qreal x = pos.x();
     qreal y = pos.y();
@@ -49,6 +51,7 @@ VisPoint::VisPoint(QPointF pos,
     pp.lineTo(x+10,y);
     pp.moveTo(x,y-10);
     pp.lineTo(x,y+10);
+    pp.addText(x+7,y-7, QFont("Sans",5,5,false), QString::number(number,10));
     setPath(pp);
     setPen(QPen(Qt::green, 1));
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -77,4 +80,10 @@ QVariant VisPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QV
 int VisPoint::type() const
 {
     return Type;
+}
+
+QPointF VisPoint::position() const
+{
+    QPointF pos(boundingRect().x()+10.5, boundingRect().y()+boundingRect().height()-10.5);
+    return mapToScene(pos);
 }

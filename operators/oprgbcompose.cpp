@@ -32,9 +32,11 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
+#include "operatorparameterdropdown.h"
 #include "algorithm.h"
 #include "console.h"
 #include "cielab.h"
+#include "hdr.h"
 
 static Photo
 blackDot()
@@ -43,9 +45,11 @@ blackDot()
 }
 
 class WorkerRGBCompose : public OperatorWorker {
+    bool m_outputHDR;
 public:
-    WorkerRGBCompose(QThread *thread, Operator *op) :
-        OperatorWorker(thread, op)
+    WorkerRGBCompose(bool outputHDR, QThread *thread, Operator *op) :
+        OperatorWorker(thread, op),
+        m_outputHDR(outputHDR)
     {}
     Photo process(const Photo &, int , int ) {
         throw 0;
@@ -115,6 +119,10 @@ public:
                 Ordinary::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 dfl_block int line = 0;
+                bool hdrLuminance = pLuminance.getScale() == Photo::HDR;
+                bool hdrRed = pRed.getScale() == Photo::HDR;
+                bool hdrGreen = pGreen.getScale() == Photo::HDR;
+                bool hdrBlue = pBlue.getScale() == Photo::HDR;
                 dfl_parallel_for(y, 0, int(h), 4, (iLuminance, iRed, iGreen, iBlue), {
                     const Magick::PixelPacket *pxl_Red = iRed_cache->getConst(0, y, w, 1);
                     const Magick::PixelPacket *pxl_Green = iGreen_cache->getConst(0, y, w, 1);
@@ -126,25 +134,33 @@ public:
                         continue;
                     }
                     for ( unsigned x = 0 ; x < w ; ++x ) {
-                        quantum_t red = pxl_Red?pxl_Red[x].red:0;
-                        quantum_t green = pxl_Green?pxl_Green[x].green:0;
-                        quantum_t blue = pxl_Blue?pxl_Blue[x].blue:0;
+                        double red, green, blue;
+                        red = pxl_Red?(hdrRed?fromHDR(pxl_Red[x].red):pxl_Red[x].red):0;
+                        green = pxl_Green?(hdrGreen?fromHDR(pxl_Green[x].green):pxl_Green[x].green):0;
+                        blue = pxl_Blue?(hdrBlue?fromHDR(pxl_Blue[x].blue):pxl_Blue[x].blue):0;
 
                         if ( l_count ) {
-                            double lum = LUMINANCE(pxl_Luminance?pxl_Luminance[x].red:0,
-                                                   pxl_Luminance?pxl_Luminance[x].green:0,
-                                                   pxl_Luminance?pxl_Luminance[x].blue:0);
+                            double lum = LUMINANCE(pxl_Luminance?(hdrLuminance?fromHDR(pxl_Luminance[x].red):pxl_Luminance[x].red):0,
+                                                   pxl_Luminance?(hdrLuminance?fromHDR(pxl_Luminance[x].green):pxl_Luminance[x].green):0,
+                                                   pxl_Luminance?(hdrLuminance?fromHDR(pxl_Luminance[x].blue):pxl_Luminance[x].blue):0);
                             double cur = LUMINANCE(red,
                                                    green,
                                                    blue);
                             double mul = lum/cur;
-                            red = clamp<quantum_t>(DF_ROUND(mul*red));
-                            green =  clamp<quantum_t>(DF_ROUND(mul*green));
-                            blue = clamp<quantum_t>(DF_ROUND(mul*blue));
+                            red = mul*red;
+                            green =  mul*green;
+                            blue = mul*blue;
                         }
-                        pxl[y*w+x].red=red;
-                        pxl[y*w+x].green=green;
-                        pxl[y*w+x].blue=blue;
+                        if (m_outputHDR) {
+                            pxl[y*w+x].red = toHDR(red);
+                            pxl[y*w+x].green = toHDR(green);
+                            pxl[y*w+x].blue = toHDR(blue);
+                        }
+                        else {
+                            pxl[y*w+x].red=clamp<quantum_t>(DF_ROUND(red));
+                            pxl[y*w+x].green=clamp<quantum_t>(DF_ROUND(green));
+                            pxl[y*w+x].blue=clamp<quantum_t>(DF_ROUND(blue));
+                        }
                     }
                     dfl_critical_section(
                     {
@@ -152,6 +168,8 @@ public:
                     });
                 });
                 iPhoto_cache.sync();
+                if (m_outputHDR)
+                    photo.setScale(Photo::HDR);
                 outputPush(0, photo);
                 emitProgress(i, photo_count, 1, 1);
             }
@@ -176,13 +194,19 @@ public:
 };
 
 OpRGBCompose::OpRGBCompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Compose"), Operator::NonHDR, parent)
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Compose"), Operator::All, parent),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(false)
 {
     addInput(new OperatorInput(tr("Luminance"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Red"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Green"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Blue"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("RGB"), this));
+
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
+    addParameter(m_outputHDR);
 }
 
 OpRGBCompose *OpRGBCompose::newInstance()
@@ -192,5 +216,13 @@ OpRGBCompose *OpRGBCompose::newInstance()
 
 OperatorWorker *OpRGBCompose::newWorker()
 {
-    return new WorkerRGBCompose(m_thread, this);
+    return new WorkerRGBCompose(m_outputHDRValue, m_thread, this);
+}
+
+void OpRGBCompose::setOutputHDR(int type)
+{
+    if ( m_outputHDRValue != !!type ) {
+        m_outputHDRValue = !!type;
+        setOutOfDate();
+    }
 }

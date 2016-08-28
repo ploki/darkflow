@@ -34,6 +34,8 @@
 #include "operator.h"
 #include <QObject>
 
+class OperatorParameterDropDown;
+
 class OpRGBCompose : public Operator
 {
     Q_OBJECT
@@ -41,6 +43,13 @@ public:
     OpRGBCompose(Process *parent);
     OpRGBCompose *newInstance();
     OperatorWorker *newWorker();
+
+public slots:
+    void setOutputHDR(int type);
+
+private:
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
 #endif // OPRGBCOMPOSE_H

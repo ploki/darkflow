@@ -37,12 +37,7 @@
 #include "console.h"
 #include "cielab.h"
 #include "hdr.h"
-
-static Photo
-blackDot()
-{
-    return Photo(Magick::Image(Magick::Geometry(1,1), Magick::Color(0,0,0)), Photo::Linear);
-}
+#include "transformview.h"
 
 class WorkerRGBCompose : public OperatorWorker {
     bool m_outputHDR;
@@ -68,49 +63,66 @@ public:
             Photo pRed;
             Photo pGreen;
             Photo pBlue;
-            if ( l_count )
+            Photo *photos[4] = {};
+            std::shared_ptr<TransformView> tvLuminance(0);
+            std::shared_ptr<TransformView> tvRed(0);
+            std::shared_ptr<TransformView> tvGreen(0);
+            std::shared_ptr<TransformView> tvBlue(0);
+            unsigned w = 0, h = 0;
+            QVector<QPointF> reference;
+
+            if ( l_count ) {
                 pLuminance = m_inputs[0][i%l_count];
-            else
-                pLuminance = blackDot();
-
-            if ( r_count )
+                photos[0] = &pLuminance;
+            }
+            if ( r_count ) {
                 pRed = m_inputs[1][i%r_count];
-            else
-                pRed = blackDot();
-
-            if ( g_count )
+                photos[2] = &pRed;
+            }
+            if ( g_count ) {
                 pGreen = m_inputs[2][i%g_count];
-            else
-                pGreen = blackDot();
-
-            if ( b_count )
+                photos[1] = &pGreen;
+            }
+            if ( b_count ) {
                 pBlue = m_inputs[3][i%b_count];
-            else
-                pBlue = blackDot();
+                photos[3] = &pBlue;
+            }
+            Photo *refPhoto = Photo::findReference(photos, sizeof(photos)/sizeof(*photos));
+            if (refPhoto) {
+                reference = refPhoto->getPoints();
+                w = refPhoto->image().columns();
+                h = refPhoto->image().rows();
+            }
+            if ( l_count ) {
+                tvLuminance.reset(new TransformView(pLuminance, 1, reference));
+                if (tvLuminance->inError() || !tvLuminance->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
+            if ( r_count ) {
+                tvRed.reset(new TransformView(pRed, 1, reference));
+                if (tvRed->inError() || !tvRed->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
+            if ( g_count ) {
+                tvGreen.reset(new TransformView(pGreen, 1, reference));
+                if (tvGreen->inError() || !tvGreen->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
+            if ( b_count ) {
+                tvBlue.reset(new TransformView(pBlue, 1, reference));
+                if (tvBlue->inError() || !tvBlue->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
 
             try {
-                Magick::Image& iLuminance = pLuminance.image();
-                Magick::Image& iRed = pRed.image();
-                Magick::Image& iGreen = pGreen.image();
-                Magick::Image& iBlue = pBlue.image();
-
-                unsigned w = qMax(qMax(qMax(iLuminance.columns(),iRed.columns()), iGreen.columns()), iBlue.columns());
-                unsigned h = qMax(qMax(qMax(iLuminance.rows(),iRed.rows()), iGreen.rows()), iBlue.rows());
-
-                if ( iLuminance.columns() != w || iLuminance.rows() != h )
-                    iLuminance.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-                if ( iRed.columns() != w || iRed.rows() != h )
-                    iRed.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-                if ( iGreen.columns() != w || iGreen.rows() != h )
-                    iGreen.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-                if ( iBlue.columns() != w || iBlue.rows() != h )
-                    iBlue.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-
-                std::shared_ptr<Ordinary::Pixels> iRed_cache(new Ordinary::Pixels(iRed));
-                std::shared_ptr<Ordinary::Pixels> iGreen_cache(new Ordinary::Pixels(iGreen));
-                std::shared_ptr<Ordinary::Pixels> iBlue_cache(new Ordinary::Pixels(iBlue));
-                std::shared_ptr<Ordinary::Pixels> iLuminance_cache(new Ordinary::Pixels(iLuminance));
-
                 Photo photo(Photo::Linear);
                 photo.createImage(w, h);
                 photo.setSequenceNumber(i);
@@ -123,26 +135,29 @@ public:
                 bool hdrRed = pRed.getScale() == Photo::HDR;
                 bool hdrGreen = pGreen.getScale() == Photo::HDR;
                 bool hdrBlue = pBlue.getScale() == Photo::HDR;
-                dfl_parallel_for(y, 0, int(h), 4, (iLuminance, iRed, iGreen, iBlue), {
-                    const Magick::PixelPacket *pxl_Red = iRed_cache->getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Green = iGreen_cache->getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Blue = iBlue_cache->getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Luminance = iLuminance_cache->getConst(0, y, w, 1);
-                    if ( m_error || !pxl_Red || !pxl_Green || !pxl_Blue || !pxl_Luminance ) {
-                        if ( !m_error )
-                            dflError(DF_NULL_PIXELS);
+                dfl_parallel_for(y, 0, int(h), 4, (), {
+                    if ( m_error ) {
                         continue;
                     }
                     for ( unsigned x = 0 ; x < w ; ++x ) {
-                        double red, green, blue;
-                        red = pxl_Red?(hdrRed?fromHDR(pxl_Red[x].red):pxl_Red[x].red):0;
-                        green = pxl_Green?(hdrGreen?fromHDR(pxl_Green[x].green):pxl_Green[x].green):0;
-                        blue = pxl_Blue?(hdrBlue?fromHDR(pxl_Blue[x].blue):pxl_Blue[x].blue):0;
-
-                        if ( l_count ) {
-                            double lum = LUMINANCE(pxl_Luminance?(hdrLuminance?fromHDR(pxl_Luminance[x].red):pxl_Luminance[x].red):0,
-                                                   pxl_Luminance?(hdrLuminance?fromHDR(pxl_Luminance[x].green):pxl_Luminance[x].green):0,
-                                                   pxl_Luminance?(hdrLuminance?fromHDR(pxl_Luminance[x].blue):pxl_Luminance[x].blue):0);
+                        double red=0, green=0, blue=0;
+                        if (tvRed) {
+                            quantum_t q = tvRed->getPixel(x, y, 0).red;
+                            red = hdrRed?fromHDR(q):q;
+                        }
+                        if (tvGreen) {
+                            quantum_t q = tvGreen->getPixel(x, y, 0).green;
+                            green = hdrGreen?fromHDR(q):q;
+                        }
+                        if (tvBlue) {
+                            quantum_t q = tvBlue->getPixel(x, y, 0).blue;
+                            blue = hdrBlue?fromHDR(q):q;
+                        }
+                        if ( tvLuminance ) {
+                            Magick::PixelPacket pixel = tvLuminance->getPixel(x, y, 0);
+                            double lum = LUMINANCE((hdrLuminance?fromHDR(pixel.red):pixel.red),
+                                                   (hdrLuminance?fromHDR(pixel.green):pixel.green),
+                                                   (hdrLuminance?fromHDR(pixel.blue):pixel.blue));
                             double cur = LUMINANCE(red,
                                                    green,
                                                    blue);

@@ -31,6 +31,7 @@ public:
     bool loadPixels();
 
     void map(qreal x, qreal y, qreal *tx, qreal *ty);
+    void invMap(qreal x, qreal y, qreal *tx, qreal *ty);
     Magick::PixelPacket getPixel(int x, int y, bool *definedp);
 
 };

@@ -68,34 +68,25 @@ TransformView::TransformView(const Photo &photo, qreal scale, QVector<QPointF> r
                     current[0].y()-reference[0].y());
             break;
         case 2: {
-#if 0
-            // instead of doing successives transforms
-            // I add a dummy point and fallthrough to 3 points
-            current.push_back(QPointF(current[0].x()+(current[1].y()-current[0].y()),
-                                      current[0].y()+(current[1].x()-current[0].x())));
-            reference.push_back(QPointF(reference[0].x()+(reference[1].y()-reference[0].y()),
-                                        reference[0].y()+(reference[1].x()-reference[0].x())));
-
-#else
             QLineF r = QLineF(0, 0,
                               reference[1].x() - reference[0].x(),
                               reference[1].y() - reference[0].y());
             QLineF c = QLineF(0, 0,
                               current[1].x() - current[0].x(),
                               current[1].y() - current[0].y());
-            qreal factor = r.length()/c.length();
 
-            //read in reverse order
-            m_transform.translate(current[0].x()-reference[0].x(),
-                    current[0].y()-reference[0].y());
-            m_transform.translate(current[0].x(), current[0].y());
-            m_transform.rotate(c.angleTo(r));
+            qreal x = (reference[1].x() + reference[0].x())/2.,
+                  y = (reference[1].y() + reference[0].y())/2.;
+            qreal dx = (current[1].x()+current[0].x())/2.,
+                  dy = (current[1].y()+current[0].y())/2.;
+            qreal factor = c.length()/r.length();
+            qreal angle = c.angleTo(r);
+
+            m_transform.translate(dx, dy);
+            m_transform.rotate(angle);
             m_transform.scale(factor, factor);
-            m_transform.scale(r.p2().x()/c.p2().x(),
-                              r.p2().y()/c.p2().y());
-            m_transform.translate(- current[0].x(), - current[0].y());
+            m_transform.translate(-x, -y);
             break;
-#endif
         }
         case 3: {
 #if 0
@@ -192,6 +183,12 @@ void TransformView::map(qreal x, qreal y, qreal *tx, qreal *ty)
     m_transform.map(x,y,tx,ty);
 }
 
+void TransformView::invMap(qreal x, qreal y, qreal *tx, qreal *ty)
+{
+    QTransform trans = m_transform.inverted();
+    trans.map(x,y,tx,ty);
+}
+
 Magick::PixelPacket TransformView::getPixel(int px, int py, bool *definedp)
 {
     Magick::PixelPacket pixel = {};
@@ -204,14 +201,18 @@ Magick::PixelPacket TransformView::getPixel(int px, int py, bool *definedp)
     qreal ex, ey;
     map(px,py, &sx, &sy);
     map(px+1,py+1, &ex, &ey);
-    if ( sx < 0 || sx > m_w ||
-         sy < 0 || sy > m_h ||
-         ex < 0 || ex > m_w ||
-         ey < 0 || ey > m_h) {
+    if ( sx < 0 || sx >= m_w ||
+         sy < 0 || sy >= m_h ||
+         ex < 0 || ex >= m_w ||
+         ey < 0 || ey >= m_h) {
         if (definedp)
             *definedp = false;
+        //qDebug("out of bound: p: %d,%d proj: %f,%f",px,py,sx,sy);
         return pixel;
     }
+
+    if ( sx > ex ) qSwap(sx, ex);
+    if ( sy > ey ) qSwap(sy, ey);
     if (definedp)
         *definedp = true;
     //qDebug("? y:(%f => %f), x:(%f => %f)\n> y:(%d => %d), x:(%d => %d)", sy,ey,sx,ex, int(sy),int(ey+1),int(sx),int(ex+1));
@@ -223,9 +224,9 @@ Magick::PixelPacket TransformView::getPixel(int px, int py, bool *definedp)
         for ( int x = sx ; x <= ex ; ++x ) {
             qreal dx = (double(x+1) > ex ? ex : double(x+1))
                      - (double(x) < sx ? sx : double(x));
-            //qDebug("> y: %d, x: %d, dy: %f, dx: %f", y, x, dy, dx);
-            pixel = m_pixels[int(y)*m_w+int(x)];
             qreal ds = fabs(dx*dy);
+            //qDebug("> y: %d, x: %d, dy: %f, dx: %f, ds: %f", y, x, dy, dx, ds);
+            pixel = m_pixels[int(y)*m_w+int(x)];
             if (m_hdr) {
                 red += ds*fromHDR(pixel.red);
                 green += ds*fromHDR(pixel.green);

@@ -117,6 +117,7 @@
 #include "ophdr.h"
 #include "opselectivelabfilter.h"
 #include "opsave.h"
+#include "opairydisk.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -214,7 +215,6 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpMultiplexer(4, this));
     m_availableOperators.push_back(new OpMultiplexer(5, this));
     m_availableOperators.push_back(new OpMultiplexer(6, this));
-
 
 
     m_availableOperators.push_back(new OpSubtract(this));

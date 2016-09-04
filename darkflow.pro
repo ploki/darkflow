@@ -254,7 +254,8 @@ SOURCES +=\
     core/transformview.cpp \
     operators/opsave.cpp \
     scene/processdirectory.cpp \
-    core/operatorparameterdirectory.cpp
+    core/operatorparameterdirectory.cpp \
+    operators/opairydisk.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -382,7 +383,8 @@ HEADERS  += \
     core/transformview.h \
     operators/opsave.h \
     scene/processdirectory.h \
-    core/operatorparameterdirectory.h
+    core/operatorparameterdirectory.h \
+    operators/opairydisk.h
 
 FORMS    += \
     ui/aboutdialog.ui \

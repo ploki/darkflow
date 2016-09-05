@@ -81,7 +81,7 @@ private slots:
             int w = image.columns();
             int h = image.rows();
             double *pixels = new double[w*h*3];
-            double max = 0;
+            dfl_block double max = 0;
             int sq_p = m_precision*m_precision;
             dfl_parallel_for(y, 0, h, 4, (), {
                 if (aborted())

@@ -118,6 +118,7 @@
 #include "opselectivelabfilter.h"
 #include "opsave.h"
 #include "opairydisk.h"
+#include "opwienerdeconvolution.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -185,6 +186,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpReduceNoise(this));
     m_availableOperators.push_back(new OpHotPixels(this));
     m_availableOperators.push_back(new OpDeconvolution(this));
+    m_availableOperators.push_back(new OpWienerDeconvolution(this));
 
     m_availableOperators.push_back(new OpInvert(this));
     m_availableOperators.push_back(new OpBlur(this));

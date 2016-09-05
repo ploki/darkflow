@@ -255,7 +255,9 @@ SOURCES +=\
     operators/opsave.cpp \
     scene/processdirectory.cpp \
     core/operatorparameterdirectory.cpp \
-    operators/opairydisk.cpp
+    operators/opairydisk.cpp \
+    operators/opwienerdeconvolution.cpp \
+    operators/workerwienerdeconvolution.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -384,7 +386,9 @@ HEADERS  += \
     operators/opsave.h \
     scene/processdirectory.h \
     core/operatorparameterdirectory.h \
-    operators/opairydisk.h
+    operators/opairydisk.h \
+    operators/opwienerdeconvolution.h \
+    operators/workerwienerdeconvolution.h
 
 FORMS    += \
     ui/aboutdialog.ui \

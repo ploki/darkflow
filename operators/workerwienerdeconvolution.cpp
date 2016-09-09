@@ -32,13 +32,15 @@
 #include "workerwienerdeconvolution.h"
 #include <list>
 #include "algorithm.h"
+#include "discretefouriertransform.h"
 
 using Magick::Quantum;
 
-WorkerWienerDeconvolution::WorkerWienerDeconvolution(qreal luminosity, qreal snr, QThread *thread, OpWienerDeconvolution *op) :
+WorkerWienerDeconvolution::WorkerWienerDeconvolution(qreal luminosity, qreal snr, int iterations, QThread *thread, OpWienerDeconvolution *op) :
     OperatorWorker(thread, op),
     m_luminosity(luminosity),
-    m_snr(snr)
+    m_snr(snr),
+    m_iterations(iterations)
 {
 }
 
@@ -72,6 +74,7 @@ normalizeImage(Magick::Image& image, int w, int h, bool center)
     });
     return nk;
 }
+
 static inline Magick::Image roll(Magick::Image& image, int o_x, int o_y)
 {
     int w = image.columns();
@@ -100,77 +103,24 @@ void WorkerWienerDeconvolution::deconv(Magick::Image& image, Magick::Image& kern
     dflCritical(tr("Fourier Transformation not available with GraphicsMagick"));
     return;
 #else
-    std::list<Magick::Image> fft_image;
-    std::list<Magick::Image> fft_kernel;
     Magick::Image nk = normalizeImage(kernel, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), true);
     Magick::Image ni = normalizeImage(image, qMax(image.columns(),image.rows()), qMax(image.columns(),image.rows()), false);
 
     Magick::Image nnk = roll(nk,-int(nk.columns())/2, -int(nk.rows())/2);
 
-    Magick::forwardFourierTransformImage(&fft_image, ni, true);
-    Magick::forwardFourierTransformImage(&fft_kernel, nnk, true);
-    dflDebug("fft_image.size = %ld", long(fft_image.size()));
-    dflDebug("fft_kernel.size = %ld", long(fft_kernel.size()));
-    dflDebug("w1=%ld, h1=%ld, w2=%ld, h2=%ld",
-           long(fft_image.front().columns()),
-           long(fft_image.front().rows()),
-           long(fft_image.back().columns()),
-           long(fft_image.back().rows())
-           );
-    Magick::Image& Bm=fft_image.front();
-    Magick::Image& Bp=fft_image.back();
-    Magick::Image& Am=fft_kernel.front();
-    Magick::Image& Ap=fft_kernel.back();
-    int w = Am.columns();
-    int h = Am.rows();
+    DiscreteFourierTransform fft_image(ni);
+    DiscreteFourierTransform fft_kernel(nnk);
 
-    Magick::Image Rm(Magick::Geometry(w, h), Magick::Color(0,0,0));
-    Magick::Image Rp(Magick::Geometry(w, h), Magick::Color(0,0,0));
-    ResetImage(Rm);
-    ResetImage(Rp);
-    std::shared_ptr<Ordinary::Pixels> Am_cache(new Ordinary::Pixels(Am));
-    std::shared_ptr<Ordinary::Pixels> Ap_cache(new Ordinary::Pixels(Ap));
-    std::shared_ptr<Ordinary::Pixels> Bm_cache(new Ordinary::Pixels(Bm));
-    std::shared_ptr<Ordinary::Pixels> Bp_cache(new Ordinary::Pixels(Bp));
-    std::shared_ptr<Ordinary::Pixels> Rm_cache(new Ordinary::Pixels(Rm));
-    std::shared_ptr<Ordinary::Pixels> Rp_cache(new Ordinary::Pixels(Rp));
-
-    const Magick::PixelPacket *center_pxl = Bm_cache->getConst(w/2, h/2, 1, 1);
-    quantum_t red = center_pxl[0].red;
-    quantum_t green = center_pxl[0].green;
-    quantum_t blue = center_pxl[0].blue;
-    Q_UNUSED(red); Q_UNUSED(green); Q_UNUSED(blue);
-    dflDebug("comp.red=%d, luminosity=%f",red, 1./luminosity);
-    dflDebug("comp.green=%d, luminosity=%f",green, 1./luminosity);
-    dflDebug("comp.blue=%d, luminosity=%f",blue, 1./luminosity);
-
+    fft_kernel.wienerFilter(1./m_snr);
+    for (int i = 0 ; i < m_iterations ; ++i)
+        fft_image *= fft_kernel;
 
 #define RM(comp) \
     Rm_pxl[x].comp = clamp( luminosity*double(Bm_pxl[x].comp)*(double(Am_pxl[x].comp)/(double(Am_pxl[x].comp)*Am_pxl[x].comp+1./m_snr)))
 #define mod(a,b) (a)%(b)
 #define RP(comp) \
     Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) - quantum_t(Ap_pxl[x].comp) + 65535 + 32768, 65536)
-
-
-    dfl_parallel_for(y, 0, h, 4, (Am, Ap, Bm, Bp, Rm, Rp), {
-       const Magick::PixelPacket *Am_pxl = Am_cache->getConst(0, y, w, 1);
-       const Magick::PixelPacket *Ap_pxl = Ap_cache->getConst(0, y, w, 1);
-       const Magick::PixelPacket *Bm_pxl = Bm_cache->getConst(0, y, w, 1);
-       const Magick::PixelPacket *Bp_pxl = Bp_cache->getConst(0, y, w, 1);
-       Magick::PixelPacket *Rm_pxl = Rm_cache->get(0, y, w, 1);
-       Magick::PixelPacket *Rp_pxl = Rp_cache->get(0, y, w, 1);
-       for ( int x = 0 ; x < w ; ++x ) {
-           Q_UNUSED(Am_pxl);
-           Q_UNUSED(Bm_pxl);
-           Q_UNUSED(luminosity);
-           RM(red); RM(green); RM(blue);
-           RP(red); RP(green); RP(blue);
-       }
-       Rm_cache->sync();
-       Rp_cache->sync();
-    });
-    Rm.inverseFourierTransform(Rp, true);
-    image=Rm;
+    image = fft_image.reverse(luminosity);
 #endif
 }
 

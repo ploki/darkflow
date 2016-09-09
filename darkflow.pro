@@ -87,8 +87,9 @@ unix {
     QMAKE_CXXFLAGS += -DHAVE_FFMPEG
     QMAKE_CFLAGS += -DHAVE_FFMPEG
     CONFIG += link_pkgconfig
-    PKGCONFIG += Magick++ libavformat libavcodec libavutil
+    PKGCONFIG += Magick++ libavformat libavcodec libavutil fftw3
     #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
+    LIBS += -lfftw3_threads
 }
 
 win32 {
@@ -257,7 +258,8 @@ SOURCES +=\
     core/operatorparameterdirectory.cpp \
     operators/opairydisk.cpp \
     operators/opwienerdeconvolution.cpp \
-    operators/workerwienerdeconvolution.cpp
+    operators/workerwienerdeconvolution.cpp \
+    algorithms/discretefouriertransform.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -388,7 +390,8 @@ HEADERS  += \
     core/operatorparameterdirectory.h \
     operators/opairydisk.h \
     operators/opwienerdeconvolution.h \
-    operators/workerwienerdeconvolution.h
+    operators/workerwienerdeconvolution.h \
+    algorithms/discretefouriertransform.h
 
 FORMS    += \
     ui/aboutdialog.ui \

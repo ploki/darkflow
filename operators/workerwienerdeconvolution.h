@@ -39,12 +39,15 @@ class WorkerWienerDeconvolution : public OperatorWorker
 {
     Q_OBJECT
 public:
-    WorkerWienerDeconvolution(qreal luminosity, qreal snr, QThread *thread, OpWienerDeconvolution *op);
+    WorkerWienerDeconvolution(qreal luminosity,
+                              qreal snr,
+                              int iterations, QThread *thread, OpWienerDeconvolution *op);
     Photo process(const Photo &, int, int);
     void play();
 private:
     qreal m_luminosity;
     qreal m_snr;
+    int m_iterations;
     void deconv(Magick::Image &image, Magick::Image &kernel, qreal luminosity);
 };
 

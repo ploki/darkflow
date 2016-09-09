@@ -38,13 +38,15 @@
 OpWienerDeconvolution::OpWienerDeconvolution(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Wiener Deconvolution"), Operator::NonHDR, parent),
     m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Wiener Deconvolution Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
-    m_snr(new OperatorParameterSlider("snr", tr("SNR"), tr("Wiener Deconvolution SNR"), Slider::Value, Slider::Logarithmic, Slider::Real, 1, 10000, 1000, 1, 100000, Slider::FilterPixels, this))
+    m_snr(new OperatorParameterSlider("snr", tr("SNR"), tr("Wiener Deconvolution SNR"), Slider::Value, Slider::Logarithmic, Slider::Real, 1, 10000, 1000, 1, 100000, Slider::FilterPixels, this)),
+    m_iterations(new OperatorParameterSlider("iterations", tr("Iterations"), tr("Wiener Deconvolution Iterations"), Slider::Value, Slider::Linear, Slider::Integer, 1, 100, 1, 1, 100000, Slider::FilterPixels, this))
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Kernel"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_luminosity);
     addParameter(m_snr);
+    addParameter(m_iterations);
 }
 
 OpWienerDeconvolution *OpWienerDeconvolution::newInstance()
@@ -54,5 +56,5 @@ OpWienerDeconvolution *OpWienerDeconvolution::newInstance()
 
 OperatorWorker *OpWienerDeconvolution::newWorker()
 {
-    return new WorkerWienerDeconvolution(m_luminosity->value(), m_snr->value(), m_thread, this);
+    return new WorkerWienerDeconvolution(m_luminosity->value(), m_snr->value(), m_iterations->value(), m_thread, this);
 }

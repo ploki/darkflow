@@ -46,6 +46,7 @@ public:
 private:
     OperatorParameterSlider *m_luminosity;
     OperatorParameterSlider *m_snr;
+    OperatorParameterSlider *m_iterations;
 };
 
 #endif // OPWIENERDECONVOLUTION_H

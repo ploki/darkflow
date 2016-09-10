@@ -259,7 +259,9 @@ SOURCES +=\
     operators/opairydisk.cpp \
     operators/opwienerdeconvolution.cpp \
     operators/workerwienerdeconvolution.cpp \
-    algorithms/discretefouriertransform.cpp
+    algorithms/discretefouriertransform.cpp \
+    operators/opdftforward.cpp \
+    operators/opdftbackward.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -391,7 +393,9 @@ HEADERS  += \
     operators/opairydisk.h \
     operators/opwienerdeconvolution.h \
     operators/workerwienerdeconvolution.h \
-    algorithms/discretefouriertransform.h
+    algorithms/discretefouriertransform.h \
+    operators/opdftforward.h \
+    operators/opdftbackward.h
 
 FORMS    += \
     ui/aboutdialog.ui \

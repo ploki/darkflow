@@ -119,6 +119,8 @@
 #include "opsave.h"
 #include "opairydisk.h"
 #include "opwienerdeconvolution.h"
+#include "opdftforward.h"
+#include "opdftbackward.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -176,6 +178,13 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpEqualize(this));
     m_availableOperators.push_back(new OpGradientEvaluation(this));
 
+    m_availableOperators.push_back(new OpDFTForward(this));
+    m_availableOperators.push_back(new OpDFTBackward(this));
+    m_availableOperators.push_back(new OpAiryDisk(this));
+    m_availableOperators.push_back(new OpConvolution(this));
+    m_availableOperators.push_back(new OpDeconvolution(this));
+    m_availableOperators.push_back(new OpWienerDeconvolution(this));
+
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
     m_availableOperators.push_back(new OpSelectiveLabFilter(this));
@@ -185,13 +194,10 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpDespeckle(this));
     m_availableOperators.push_back(new OpReduceNoise(this));
     m_availableOperators.push_back(new OpHotPixels(this));
-    m_availableOperators.push_back(new OpDeconvolution(this));
-    m_availableOperators.push_back(new OpWienerDeconvolution(this));
 
     m_availableOperators.push_back(new OpInvert(this));
     m_availableOperators.push_back(new OpBlur(this));
     m_availableOperators.push_back(new OpGaussianBlur(this));
-    m_availableOperators.push_back(new OpConvolution(this));
 
     m_availableOperators.push_back(new OpBlend(this));
     m_availableOperators.push_back(new OpIntegration(this));

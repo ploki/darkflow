@@ -36,6 +36,7 @@
 
 class Process;
 class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
 class OpAiryDisk : public Operator
 {
@@ -43,9 +44,12 @@ class OpAiryDisk : public Operator
 public:
     OpAiryDisk(Process *parent);
     ~OpAiryDisk();
-    OpAiryDisk *newInstance();
 
+public slots:
+    OpAiryDisk *newInstance();
     OperatorWorker* newWorker();
+    void setOutputHDR(int);
+
 private:
     OperatorParameterSlider *m_diameter;
     OperatorParameterSlider *m_focal;
@@ -53,6 +57,8 @@ private:
     OperatorParameterSlider *m_offset;
     OperatorParameterSlider *m_width;
     OperatorParameterSlider *m_precision;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
 #endif // OPAIRYDISK_H

@@ -27,13 +27,16 @@
  * Authors:
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
- */#include "opairydisk.h"
+ */
+#include "opairydisk.h"
 #include "operatoroutput.h"
 #include "operatorworker.h"
 #include "photo.h"
 #include "console.h"
 #include "algorithm.h"
 #include "operatorparameterslider.h"
+#include "operatorparameterdropdown.h"
+#include "hdr.h"
 
 using Magick::Quantum;
 #define lred  612e-9
@@ -50,6 +53,7 @@ class AiryDisk : public OperatorWorker
     double m_offset;
     int m_w;
     int m_precision;
+    bool m_outputHDR;
     double m_I0;
 public:
     AiryDisk(double diam,
@@ -58,6 +62,7 @@ public:
              double offset,
              double w,
              double precision,
+             bool outputHDR,
              QThread *thread, OpAiryDisk *op) :
         OperatorWorker(thread, op),
         m_diam(diam),
@@ -66,6 +71,7 @@ public:
         m_offset(offset),
         m_w(w),
         m_precision(precision),
+        m_outputHDR(outputHDR),
         m_I0(QuantumRange)
     {
     }
@@ -110,7 +116,7 @@ private slots:
                     pixels[y*w*3+x*3+0] = rgb[0];
                     pixels[y*w*3+x*3+1] = rgb[1];
                     pixels[y*w*3+x*3+2] = rgb[2];
-                    max = qMax(max,qMax(rgb[0],qMax(rgb[1], rgb[2])));
+                    max = qMax(double(max),qMax(rgb[0],qMax(rgb[1], rgb[2])));
                 }
 
             });
@@ -127,9 +133,16 @@ private slots:
                     continue;
                 }
                 for (int x = 0 ; x < w ; ++x ) {
-                    pxl[x].red = clamp<quantum_t>(cor * pixels[y*w*3+x*3+0]);
-                    pxl[x].green = clamp<quantum_t>(cor * pixels[y*w*3+x*3+1]);
-                    pxl[x].blue = clamp<quantum_t>(cor * pixels[y*w*3+x*3+2]);
+                    if (m_outputHDR) {
+                        pxl[x].red = toHDR(cor * pixels[y*w*3+x*3+0]);
+                        pxl[x].green = toHDR(cor * pixels[y*w*3+x*3+1]);
+                        pxl[x].blue = toHDR(cor * pixels[y*w*3+x*3+2]);
+                    }
+                    else {
+                        pxl[x].red = clamp<quantum_t>(cor * pixels[y*w*3+x*3+0]);
+                        pxl[x].green = clamp<quantum_t>(cor * pixels[y*w*3+x*3+1]);
+                        pxl[x].blue = clamp<quantum_t>(cor * pixels[y*w*3+x*3+2]);
+                    }
                 }
                 cache->sync();
             });
@@ -139,6 +152,8 @@ private slots:
             }
             else {
                 photo.setTag(TAG_NAME, "Airy Disk");
+                if (m_outputHDR)
+                    photo.setScale(Photo::HDR);
                 outputPush(0, photo);
                 emitSuccess();
             }
@@ -147,21 +162,28 @@ private slots:
 };
 
 OpAiryDisk::OpAiryDisk(Process *parent) :
-    Operator(OP_SECTION_ASSETS, QT_TRANSLATE_NOOP("Operator", "Airy Disk"), Operator::NA, parent),
+    Operator(OP_SECTION_FREQUENCY_DOMAIN, QT_TRANSLATE_NOOP("Operator", "Airy Disk"), Operator::NA, parent),
     m_diameter(new OperatorParameterSlider("diameter",tr("Diameter"), tr("Airy disk - Diameter in mm"), Slider::Value, Slider::Logarithmic, Slider::Real, 20, 1000, 200, 1, 10000, Slider::FilterPixels, this)),
     m_focal(new OperatorParameterSlider("focal",tr("Focal length"), tr("Airy disk - Focal length in mm"), Slider::Value, Slider::Logarithmic, Slider::Real, 200, 5000, 2000, 1, 100000, Slider::FilterPixels, this)),
     m_pixel_sz(new OperatorParameterSlider("pixelSize",tr("Pixel size"), tr("Airy disk - Pixel size in µm"), Slider::Value, Slider::Logarithmic, Slider::Real, 1, 32, 8.45, 0.001, 100, Slider::FilterPixels, this)),
     m_offset(new OperatorParameterSlider("offset",tr("Offset"), tr("Airy disk - Offset in fraction of pixels"), Slider::Value, Slider::Linear, Slider::Real, 0, 1, 0.5, 0, 1, Slider::FilterPixels, this)),
-    m_width(new OperatorParameterSlider("width",tr("Width"), tr("Airy disk - Image width"), Slider::Value, Slider::Linear, Slider::Integer, 0, 100, 50, 0, 2000, Slider::FilterPixels, this)),
-    m_precision(new OperatorParameterSlider("precision",tr("Precision"), tr("Airy disk - Precision in subdivisions"), Slider::Value, Slider::Linear, Slider::Integer, 1, 10, 5, 1, 200, Slider::FilterPixels, this))
+    m_width(new OperatorParameterSlider("width",tr("Width"), tr("Airy disk - Image width"), Slider::Value, Slider::Linear, Slider::Integer, 0, 1024, 512, 0, 65535, Slider::FilterPixels, this)),
+    m_precision(new OperatorParameterSlider("precision",tr("Precision"), tr("Airy disk - Precision in subdivisions"), Slider::Value, Slider::Linear, Slider::Integer, 1, 10, 5, 1, 200, Slider::FilterPixels, this)),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(true)
 {
     addOutput(new OperatorOutput(tr("Airy Disk"), this));
+
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true, true);
+
     addParameter(m_diameter);
     addParameter(m_focal);
     addParameter(m_pixel_sz);
     addParameter(m_offset);
     addParameter(m_width);
     addParameter(m_precision);
+    addParameter(m_outputHDR);
 }
 
 OpAiryDisk::~OpAiryDisk()
@@ -182,5 +204,14 @@ OperatorWorker *OpAiryDisk::newWorker()
                         m_offset->value(),
                         m_width->value(),
                         m_precision->value(),
+                        m_outputHDRValue,
                         m_thread, this);
+}
+
+void OpAiryDisk::setOutputHDR(int type)
+{
+    if ( m_outputHDRValue != !!type ) {
+        m_outputHDRValue = !!type;
+        setOutOfDate();
+    }
 }

@@ -48,7 +48,11 @@ private:
     qreal m_luminosity;
     qreal m_snr;
     int m_iterations;
-    void deconv(Magick::Image &image, Magick::Image &kernel, qreal luminosity);
+    void deconv(Magick::Image &image,
+                Photo::Gamma imageScale,
+                Magick::Image &kernel,
+                Photo::Gamma kernelScale,
+                qreal luminosity);
 };
 
 #endif // WORKERWIENERDECONVOLUTION_H

@@ -58,6 +58,7 @@ class OperatorWorker;
 #define OP_SECTION_COSMETIC Operator::tr("Cosmetic")
 #define OP_SECTION_EFFECTS Operator::tr("Effects")
 #define OP_SECTION_DEPRECATED Operator::tr("Deprecated")
+#define OP_SECTION_FREQUENCY_DOMAIN Operator::tr("Frequency Domain")
 
 class Algorithm;
 

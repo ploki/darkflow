@@ -341,4 +341,7 @@ private:
 #define TAG_SCALE_LINEAR "Linear"
 #define TAG_SCALE_NONLINEAR "Non-linear"
 #define TAG_SCALE_HDR "HDR"
+#define TAG_DFT_NORMALIZATION "DFT Normalization"
+#define TAG_DFT_WIDTH "DFT Original Width"
+#define TAG_DFT_HEIGHT "DFT Original Height"
 #endif // IMAGE_H

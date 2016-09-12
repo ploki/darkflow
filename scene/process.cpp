@@ -161,6 +161,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpHDR(this));
     m_availableOperators.push_back(new OpLevel(this));
     m_availableOperators.push_back(new OpLevelPercentile(this));
+    m_availableOperators.push_back(new OpInvert(this));
 
     m_availableOperators.push_back(new OpWhiteBalance(this));
     m_availableOperators.push_back(new OpBlackBody(this));
@@ -184,6 +185,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpConvolution(this));
     m_availableOperators.push_back(new OpDeconvolution(this));
     m_availableOperators.push_back(new OpWienerDeconvolution(this));
+    m_availableOperators.push_back(new OpBlur(this));
+    m_availableOperators.push_back(new OpGaussianBlur(this));
 
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
@@ -194,10 +197,6 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpDespeckle(this));
     m_availableOperators.push_back(new OpReduceNoise(this));
     m_availableOperators.push_back(new OpHotPixels(this));
-
-    m_availableOperators.push_back(new OpInvert(this));
-    m_availableOperators.push_back(new OpBlur(this));
-    m_availableOperators.push_back(new OpGaussianBlur(this));
 
     m_availableOperators.push_back(new OpBlend(this));
     m_availableOperators.push_back(new OpIntegration(this));

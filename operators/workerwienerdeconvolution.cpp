@@ -53,13 +53,6 @@ void WorkerWienerDeconvolution::deconv(Magick::Image& image, Photo::Gamma imageS
                                        Magick::Image& kernel, Photo::Gamma kernelScale,
                                        qreal luminosity)
 {
-#ifdef USING_GRAPHICSMAGICK
-    Q_UNUSED(image);
-    Q_UNUSED(kernel);
-    Q_UNUSED(luminosity);
-    dflCritical(tr("Fourier Transformation not available with GraphicsMagick"));
-    return;
-#else
     Magick::Image nk = DiscreteFourierTransform::normalize(kernel, qMax(image.columns(),image.rows()), true);
     Magick::Image ni = DiscreteFourierTransform::normalize(image, qMax(image.columns(),image.rows()), false);
 
@@ -71,14 +64,7 @@ void WorkerWienerDeconvolution::deconv(Magick::Image& image, Photo::Gamma imageS
     fft_kernel.wienerFilter(1./m_snr);
     for (int i = 0 ; i < m_iterations ; ++i)
         fft_image *= fft_kernel;
-
-#define RM(comp) \
-    Rm_pxl[x].comp = clamp( luminosity*double(Bm_pxl[x].comp)*(double(Am_pxl[x].comp)/(double(Am_pxl[x].comp)*Am_pxl[x].comp+1./m_snr)))
-#define mod(a,b) (a)%(b)
-#define RP(comp) \
-    Rp_pxl[x].comp = mod( quantum_t(Bp_pxl[x].comp) - quantum_t(Ap_pxl[x].comp) + 65535 + 32768, 65536)
     image = fft_image.reverse(luminosity);
-#endif
 }
 
 void WorkerWienerDeconvolution::play()

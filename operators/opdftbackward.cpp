@@ -38,12 +38,14 @@
 #include <Magick++.h>
 
 class WorkerDFTBackward : public OperatorWorker {
-    bool m_outputHDR;
+    //bool m_outputHDR;
 public:
     WorkerDFTBackward(bool outputHDR, QThread *thread, OpDFTBackward *op)
-        : OperatorWorker(thread, op),
-          m_outputHDR(outputHDR)
-    {}
+        : OperatorWorker(thread, op) /*,
+          m_outputHDR(outputHDR) */
+    {
+        Q_UNUSED(outputHDR);
+    }
     Photo process(const Photo &, int, int) { throw 0; }
     bool play_onInput(int idx) {
         Q_UNUSED(idx);

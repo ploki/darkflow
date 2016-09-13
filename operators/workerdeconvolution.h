@@ -32,7 +32,7 @@
 #define WORKERDECONVOLUTION_H
 
 #include <operatorworker.h>
-
+#include "photo.h"
 class OpDeconvolution;
 
 class WorkerDeconvolution : public OperatorWorker
@@ -44,7 +44,9 @@ public:
     void play();
 private:
     qreal m_luminosity;
-    void deconv(Magick::Image &image, Magick::Image &kernel, qreal luminosity);
+    void deconv(Magick::Image &image, Photo::Gamma imageScale,
+                Magick::Image &kernel, Photo::Gamma kernelScale,
+                qreal luminosity);
 };
 
 #endif // WORKERDECONVOLUTION_H

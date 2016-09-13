@@ -232,10 +232,11 @@ Magick::Image DiscreteFourierTransform::imagePhase()
 
 DiscreteFourierTransform &DiscreteFourierTransform::operator/=(const DiscreteFourierTransform &other)
 {
+    const double min = 1e-12;
     for (int i = 0, s = m_h*m_w ; i < s ; ++i ) {
-        red[i] /=  ( other.red[i] == 0. ? 1e-12 : other.red[i]);
-        green[i] /= ( other.green[i] == 0. ? 1e-12 : other.green[i]);
-        blue[i] /= ( other.blue[i] == 0. ? 1e-12 : other.blue[i]);
+        red[i] /=  ( std::abs(other.red[i]) < min ? min : other.red[i]);
+        green[i] /= ( std::abs(other.green[i]) < min ? min : other.green[i]);
+        blue[i] /= ( std::abs(other.blue[i]) < min ? min : other.blue[i]);
     }
     return *this;
 }
@@ -262,10 +263,11 @@ DiscreteFourierTransform &DiscreteFourierTransform::conj()
 
 DiscreteFourierTransform &DiscreteFourierTransform::inv()
 {
+    const double min = 1e-12;
     for (int i = 0, s = m_h*m_w ; i < s ; ++i ) {
-        red[i] = 1. / ( red[i] == 0. ? 1e-12 : red[i]);
-        green[i] = 1. / ( green[i] == 0. ? 1e-12 : green[i]);
-        blue[i] = 1. / ( blue[i] == 0. ? 1e-12 : blue[i]);
+        red[i] = 1. / ( std::abs(red[i]) < min ? min : red[i]);
+        green[i] = 1. / ( std::abs(green[i]) < min ? min : green[i]);
+        blue[i] = 1. / ( std::abs(blue[i]) < min ? min : blue[i]);
     }
     return *this;
 }

@@ -63,6 +63,7 @@
 #include "preferences.h"
 #include "darkflow.h"
 #include "cielab.h"
+#include "process.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -283,30 +284,49 @@ void Visualization::fullScreenViewClicked()
 
 void Visualization::saveViewClicked()
 {
+    QString filters[][3] = {
+        tr("JPEG Images (*.jpg *.jpeg)"), "JPG", ".jpg:.jpeg",
+        tr("TIFF Images (*.tif *.tiff)"), "TIFF", ".tif:.tiff",
+        tr("FITS Images (*.fits)"), "FITS", ".fits"
+    };
+    QString filter;
+    for (int i = 0, s = sizeof(filters)/sizeof(*filters) ; i < s ; ++i ) {
+        if ( 0 != i )
+            filter += ";;";
+        filter += filters[i][0];
+    }
+    QString selectedFilter;
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save view image"),
-                                                    "",
-                                                    tr("TIFF Images (*.tif *.tiff);;"
-                                                       "JPEG Images (*.jpg);;"),
-                                                    0, 0);
+                                                    this->m_operator->m_process->baseDirectory(),
+                                                    filter,
+                                                    &selectedFilter, 0);
     if ( filename.isEmpty() )
         return;
     qreal exposure = getViewExposure();
     qreal gamma, x0;
     getViewGamma(gamma, x0);
     QString magick;
-    if ( filename.endsWith(".tif", Qt::CaseInsensitive) || filename.endsWith(".tiff", Qt::CaseInsensitive) ) {
-        magick="TIFF";
+    bool filterFound = false;
+    for (int i = 0, s = sizeof(filters)/sizeof(*filters) ; i < s ; ++i ) {
+        if ( selectedFilter == filters[i][0] ) {
+            filterFound = true;
+            magick = filters[i][1];
+            QStringList extensions = filters[i][2].split(":");
+            bool extFound = false;
+            foreach(const QString &extension, extensions) {
+                if (filename.endsWith(extension, Qt::CaseInsensitive))
+                    extFound = true;
+            }
+            if (!extFound) {
+                filename+=filters[i][2].split(":").first();
+            }
+        }
     }
-    else if ( filename.endsWith(".jpg", Qt::CaseInsensitive) ) {
-        magick="JPG";
-    }
-    else {
-        //filename+=".tif";
-        //magick="TIFF";
-    }
-
-    m_photo->saveImage(filename, magick, gamma, x0, pow(2.,exposure));
+    if (filterFound)
+        m_photo->saveImage(filename, magick, gamma, x0, pow(2.,exposure));
+    else
+        dflCritical(tr("Unspecified file type for '%0'").arg(filename));
 }
 
 void Visualization::histogramParamsChanged()

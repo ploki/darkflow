@@ -92,7 +92,9 @@ void WorkerLoadImage::play()
                 photo.setSequenceNumber(i);
                 photo.setTag(TAG_SCALE, gamma == Photo::Linear
                              ? TAG_SCALE_LINEAR
-                             : TAG_SCALE_NONLINEAR);
+                             : gamma == Photo::HDR
+                                 ? TAG_SCALE_HDR
+                                 : TAG_SCALE_NONLINEAR);
 
                 dfl_critical_section({
                     outputPush(0, photo);

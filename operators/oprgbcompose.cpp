@@ -32,20 +32,19 @@
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
+#include "operatorparameterdropdown.h"
 #include "algorithm.h"
 #include "console.h"
 #include "cielab.h"
-
-static Photo
-blackDot()
-{
-    return Photo(Magick::Image(Magick::Geometry(1,1), Magick::Color(0,0,0)), Photo::Linear);
-}
+#include "hdr.h"
+#include "transformview.h"
 
 class WorkerRGBCompose : public OperatorWorker {
+    bool m_outputHDR;
 public:
-    WorkerRGBCompose(QThread *thread, Operator *op) :
-        OperatorWorker(thread, op)
+    WorkerRGBCompose(bool outputHDR, QThread *thread, Operator *op) :
+        OperatorWorker(thread, op),
+        m_outputHDR(outputHDR)
     {}
     Photo process(const Photo &, int , int ) {
         throw 0;
@@ -64,49 +63,66 @@ public:
             Photo pRed;
             Photo pGreen;
             Photo pBlue;
-            if ( l_count )
+            Photo *photos[4] = {};
+            std::shared_ptr<TransformView> tvLuminance(0);
+            std::shared_ptr<TransformView> tvRed(0);
+            std::shared_ptr<TransformView> tvGreen(0);
+            std::shared_ptr<TransformView> tvBlue(0);
+            unsigned w = 0, h = 0;
+            QVector<QPointF> reference;
+
+            if ( l_count ) {
                 pLuminance = m_inputs[0][i%l_count];
-            else
-                pLuminance = blackDot();
-
-            if ( r_count )
+                photos[0] = &pLuminance;
+            }
+            if ( r_count ) {
                 pRed = m_inputs[1][i%r_count];
-            else
-                pRed = blackDot();
-
-            if ( g_count )
+                photos[2] = &pRed;
+            }
+            if ( g_count ) {
                 pGreen = m_inputs[2][i%g_count];
-            else
-                pGreen = blackDot();
-
-            if ( b_count )
+                photos[1] = &pGreen;
+            }
+            if ( b_count ) {
                 pBlue = m_inputs[3][i%b_count];
-            else
-                pBlue = blackDot();
+                photos[3] = &pBlue;
+            }
+            Photo *refPhoto = Photo::findReference(photos, sizeof(photos)/sizeof(*photos));
+            if (refPhoto) {
+                reference = refPhoto->getPoints();
+                w = refPhoto->image().columns();
+                h = refPhoto->image().rows();
+            }
+            if ( l_count ) {
+                tvLuminance.reset(new TransformView(pLuminance, 1, reference));
+                if (tvLuminance->inError() || !tvLuminance->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
+            if ( r_count ) {
+                tvRed.reset(new TransformView(pRed, 1, reference));
+                if (tvRed->inError() || !tvRed->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
+            if ( g_count ) {
+                tvGreen.reset(new TransformView(pGreen, 1, reference));
+                if (tvGreen->inError() || !tvGreen->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
+            if ( b_count ) {
+                tvBlue.reset(new TransformView(pBlue, 1, reference));
+                if (tvBlue->inError() || !tvBlue->loadPixels()) {
+                    m_error = true;
+                    continue;
+                }
+            }
 
             try {
-                Magick::Image& iLuminance = pLuminance.image();
-                Magick::Image& iRed = pRed.image();
-                Magick::Image& iGreen = pGreen.image();
-                Magick::Image& iBlue = pBlue.image();
-
-                unsigned w = qMax(qMax(qMax(iLuminance.columns(),iRed.columns()), iGreen.columns()), iBlue.columns());
-                unsigned h = qMax(qMax(qMax(iLuminance.rows(),iRed.rows()), iGreen.rows()), iBlue.rows());
-
-                if ( iLuminance.columns() != w || iLuminance.rows() != h )
-                    iLuminance.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-                if ( iRed.columns() != w || iRed.rows() != h )
-                    iRed.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-                if ( iGreen.columns() != w || iGreen.rows() != h )
-                    iGreen.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-                if ( iBlue.columns() != w || iBlue.rows() != h )
-                    iBlue.extent(Magick::Geometry(w, h), Magick::Color(0,0,0), Magick::NorthWestGravity);
-
-                std::shared_ptr<Ordinary::Pixels> iRed_cache(new Ordinary::Pixels(iRed));
-                std::shared_ptr<Ordinary::Pixels> iGreen_cache(new Ordinary::Pixels(iGreen));
-                std::shared_ptr<Ordinary::Pixels> iBlue_cache(new Ordinary::Pixels(iBlue));
-                std::shared_ptr<Ordinary::Pixels> iLuminance_cache(new Ordinary::Pixels(iLuminance));
-
                 Photo photo(Photo::Linear);
                 photo.createImage(w, h);
                 photo.setSequenceNumber(i);
@@ -115,36 +131,51 @@ public:
                 Ordinary::Pixels iPhoto_cache(photo.image());
                 Magick::PixelPacket *pxl = iPhoto_cache.get(0, 0, w, h);
                 dfl_block int line = 0;
-                dfl_parallel_for(y, 0, int(h), 4, (iLuminance, iRed, iGreen, iBlue), {
-                    const Magick::PixelPacket *pxl_Red = iRed_cache->getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Green = iGreen_cache->getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Blue = iBlue_cache->getConst(0, y, w, 1);
-                    const Magick::PixelPacket *pxl_Luminance = iLuminance_cache->getConst(0, y, w, 1);
-                    if ( m_error || !pxl_Red || !pxl_Green || !pxl_Blue || !pxl_Luminance ) {
-                        if ( !m_error )
-                            dflError(DF_NULL_PIXELS);
+                bool hdrLuminance = pLuminance.getScale() == Photo::HDR;
+                bool hdrRed = pRed.getScale() == Photo::HDR;
+                bool hdrGreen = pGreen.getScale() == Photo::HDR;
+                bool hdrBlue = pBlue.getScale() == Photo::HDR;
+                dfl_parallel_for(y, 0, int(h), 4, (), {
+                    if ( m_error ) {
                         continue;
                     }
                     for ( unsigned x = 0 ; x < w ; ++x ) {
-                        quantum_t red = pxl_Red?pxl_Red[x].red:0;
-                        quantum_t green = pxl_Green?pxl_Green[x].green:0;
-                        quantum_t blue = pxl_Blue?pxl_Blue[x].blue:0;
-
-                        if ( l_count ) {
-                            double lum = LUMINANCE(pxl_Luminance?pxl_Luminance[x].red:0,
-                                                   pxl_Luminance?pxl_Luminance[x].green:0,
-                                                   pxl_Luminance?pxl_Luminance[x].blue:0);
+                        double red=0, green=0, blue=0;
+                        if (tvRed) {
+                            quantum_t q = tvRed->getPixel(x, y, 0).red;
+                            red = hdrRed?fromHDR(q):q;
+                        }
+                        if (tvGreen) {
+                            quantum_t q = tvGreen->getPixel(x, y, 0).green;
+                            green = hdrGreen?fromHDR(q):q;
+                        }
+                        if (tvBlue) {
+                            quantum_t q = tvBlue->getPixel(x, y, 0).blue;
+                            blue = hdrBlue?fromHDR(q):q;
+                        }
+                        if ( tvLuminance ) {
+                            Magick::PixelPacket pixel = tvLuminance->getPixel(x, y, 0);
+                            double lum = LUMINANCE((hdrLuminance?fromHDR(pixel.red):pixel.red),
+                                                   (hdrLuminance?fromHDR(pixel.green):pixel.green),
+                                                   (hdrLuminance?fromHDR(pixel.blue):pixel.blue));
                             double cur = LUMINANCE(red,
                                                    green,
                                                    blue);
                             double mul = lum/cur;
-                            red = clamp<quantum_t>(DF_ROUND(mul*red));
-                            green =  clamp<quantum_t>(DF_ROUND(mul*green));
-                            blue = clamp<quantum_t>(DF_ROUND(mul*blue));
+                            red = mul*red;
+                            green =  mul*green;
+                            blue = mul*blue;
                         }
-                        pxl[y*w+x].red=red;
-                        pxl[y*w+x].green=green;
-                        pxl[y*w+x].blue=blue;
+                        if (m_outputHDR) {
+                            pxl[y*w+x].red = toHDR(red);
+                            pxl[y*w+x].green = toHDR(green);
+                            pxl[y*w+x].blue = toHDR(blue);
+                        }
+                        else {
+                            pxl[y*w+x].red=clamp<quantum_t>(DF_ROUND(red));
+                            pxl[y*w+x].green=clamp<quantum_t>(DF_ROUND(green));
+                            pxl[y*w+x].blue=clamp<quantum_t>(DF_ROUND(blue));
+                        }
                     }
                     dfl_critical_section(
                     {
@@ -152,6 +183,8 @@ public:
                     });
                 });
                 iPhoto_cache.sync();
+                if (m_outputHDR)
+                    photo.setScale(Photo::HDR);
                 outputPush(0, photo);
                 emitProgress(i, photo_count, 1, 1);
             }
@@ -176,13 +209,19 @@ public:
 };
 
 OpRGBCompose::OpRGBCompose(Process *parent) :
-    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Compose"), Operator::NonHDR, parent)
+    Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "LRGB Compose"), Operator::All, parent),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(false)
 {
     addInput(new OperatorInput(tr("Luminance"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Red"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Green"), OperatorInput::Set, this));
     addInput(new OperatorInput(tr("Blue"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("RGB"), this));
+
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
+    addParameter(m_outputHDR);
 }
 
 OpRGBCompose *OpRGBCompose::newInstance()
@@ -192,5 +231,13 @@ OpRGBCompose *OpRGBCompose::newInstance()
 
 OperatorWorker *OpRGBCompose::newWorker()
 {
-    return new WorkerRGBCompose(m_thread, this);
+    return new WorkerRGBCompose(m_outputHDRValue, m_thread, this);
+}
+
+void OpRGBCompose::setOutputHDR(int type)
+{
+    if ( m_outputHDRValue != !!type ) {
+        m_outputHDRValue = !!type;
+        setOutOfDate();
+    }
 }

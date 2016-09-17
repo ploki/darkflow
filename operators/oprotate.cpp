@@ -35,6 +35,7 @@
 #include "operatorparameterdropdown.h"
 #include "photo.h"
 #include <Magick++.h>
+#include <QTransform>
 
 class RotateWorker : public OperatorWorker {
 public:
@@ -48,9 +49,31 @@ Photo RotateWorker::process(const Photo& photo, int p, int c) {
     Q_UNUSED(c);
     Photo newPhoto(photo);
     qreal angle = dynamic_cast<OpRotate*>(m_operator)->angle();
+    //qreal rad = M_PI*angle/180.;
+    QTransform transform;
+
+    qreal w = double(newPhoto.image().columns())/2,
+            h = double(newPhoto.image().rows())/2;
 
     dflDebug(tr("apply rotation of %0 °").arg(angle));
     newPhoto.image().rotate(angle);
+    //read in reverse order
+    //transform.translate(w*cos(rad)+h*sin(rad), -w*sin(rad)+h*cos(rad));
+    transform.rotate(angle);
+    //transform.translate(-w, -h);
+    QVector<QPointF> points = newPhoto.getPoints(),
+            newPoints;
+    qreal x,y, xmin = 0, ymin = 0;
+    transform.map(0, 0, &x, &y); if (x < xmin) xmin = x; if (y < ymin) ymin = y;
+    transform.map(0, h, &x, &y); if (x < xmin) xmin = x; if (y < ymin) ymin = y;
+    transform.map(w, 0, &x, &y); if (x < xmin) xmin = x; if (y < ymin) ymin = y;
+    transform.map(w, h, &x, &y); if (x < xmin) xmin = x; if (y < ymin) ymin = y;
+    for ( int i = 0, s = points.count() ; i < s ; ++i ) {
+        qreal x, y;
+        transform.map(points[i].x(), points[i].y(), &x, &y);
+        newPoints.push_back(QPointF(x-2*xmin,y-2*ymin));
+    }
+    newPhoto.setPoints(newPoints);
     return newPhoto;
 }
 

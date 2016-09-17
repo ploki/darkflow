@@ -108,6 +108,9 @@ QRectF WorkerIntegration::computePlanesDimensions()
     return QRectF(x1,y1,x2-x1,y2-y1);
 }
 
+//Debug only, it breaks process with spurious points
+//#define TRANSFORM_POINTS
+
 bool WorkerIntegration::play_onInput(int idx)
 {
     Q_UNUSED(idx);
@@ -117,9 +120,19 @@ bool WorkerIntegration::play_onInput(int idx)
     Q_ASSERT( m_inputs.count() == 1 );
     photoCount=m_inputs[0].count();
 
-    bool firstFrame=true;
     QVector<QPointF> reference;
-
+#ifdef TRANSFORM_POINTS
+    QVector<QPointF> transformed;
+#endif
+    Photo *refPhoto = Photo::findReference(m_inputs[0]);
+    if (refPhoto) {
+        reference = refPhoto->getPoints();
+    }
+    else {
+        //no photo to process. not an error
+        emitSuccess();
+        return false;
+    }
     foreach(Photo photo, m_inputs[0]) {
         if ( aborted() ) {
             emitFailure();
@@ -129,14 +142,10 @@ bool WorkerIntegration::play_onInput(int idx)
             dflWarning(tr("%0 is non-linear").arg(photo.getIdentity()));
         }
         QVector<QPointF> points = photo.getPoints();
-        if ( firstFrame ) {
-                firstFrame = false;
-                reference = photo.getPoints();
-        }
 
         try {
             if ( ! m_integrationPlane ) {
-                createPlanes(photo.image());
+                createPlanes(refPhoto->image());
             }
             dfl_block int line = 0;
 
@@ -163,6 +172,24 @@ bool WorkerIntegration::play_onInput(int idx)
                 dflError(tr("unable to load pixels"));
                 continue;
             }
+#ifdef TRANSFORM_POINTS
+            {
+                qreal x, y;
+                view->map(0,0, &x, &y);
+                dflInfo("=> corner 1 in destination: %f, %f",x ,y);
+                view->map(m_w,0, &x, &y);
+                dflInfo("=> corner 2 in destination: %f, %f",x ,y);
+                view->map(m_w,m_h, &x, &y);
+                dflInfo("=> corner 3 in destination: %f, %f",x ,y);
+                view->map(0,m_h, &x, &y);
+                dflInfo("=> corner 4 in destination: %f, %f",x ,y);
+                for (int i = 0, s = points.count() ; i < s ; ++i) {
+                    qreal x, y;
+                    view->invMap(points[i].x(), points[i].y(), &x, &y);
+                    transformed.push_back(QPointF(x, y));
+                }
+            }
+#endif
 
 #define SUBPXL(plane, x,y,c) plane[(y)*m_w*3+(x)*3+(c)]
             dfl_parallel_for(y, 0, m_h, 4, (), {
@@ -230,32 +257,35 @@ bool WorkerIntegration::play_onInput(int idx)
             for ( int x = 0 ; x < m_w ; ++x ) {
                 Q_ASSERT( y*m_w*3+x*3+2 < m_w*m_h*3);
                 if (m_outputHDR) {
-                    if ( m_countPlane[y*m_w*3+x*3+0] )
-                        pixels[x].red   =
-                                clamp<quantum_t>(toHDR(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0]), 0, QuantumRange);
-                    if ( m_countPlane[y*m_w*3+x*3+1] )
-                        pixels[x].green =
-                                clamp<quantum_t>(toHDR(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1]), 0, QuantumRange);
-                    if ( m_countPlane[y*m_w*3+x*3+2] )
-                        pixels[x].blue  =
-                                clamp<quantum_t>(toHDR(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2]), 0, QuantumRange);
+                    pixels[x].red = ( m_countPlane[y*m_w*3+x*3+0] )
+                        ? toHDR(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0])
+                        : 0;
+                    pixels[x].green = ( m_countPlane[y*m_w*3+x*3+1] )
+                        ? toHDR(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1])
+                        : 0;
+                    pixels[x].blue = ( m_countPlane[y*m_w*3+x*3+2] )
+                        ? toHDR(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2])
+                        : 0;
                 }
                 else {
-                    if ( m_countPlane[y*m_w*3+x*3+0] )
-                        pixels[x].red   =
-                                clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange);
-                    if ( m_countPlane[y*m_w*3+x*3+1] )
-                        pixels[x].green =
-                                clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange);
-                    if ( m_countPlane[y*m_w*3+x*3+2] )
-                        pixels[x].blue  =
-                                clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange);
+                    pixels[x].red = ( m_countPlane[y*m_w*3+x*3+0] )
+                        ? clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+0]/m_countPlane[y*m_w*3+x*3+0], 0, QuantumRange)
+                        : 0;
+                    pixels[x].green = ( m_countPlane[y*m_w*3+x*3+1] )
+                        ? clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+1]/m_countPlane[y*m_w*3+x*3+1], 0, QuantumRange)
+                        : 0;
+                    pixels[x].blue = ( m_countPlane[y*m_w*3+x*3+2] )
+                        ? clamp<quantum_t>(mul*m_integrationPlane[y*m_w*3+x*3+2]/m_countPlane[y*m_w*3+x*3+2], 0, QuantumRange)
+                        : 0;
                 }
             }
             pixel_cache->sync();
         });
         if (m_outputHDR)
             newPhoto.setScale(Photo::HDR);
+#ifdef TRANSFORM_POINTS
+    newPhoto.setPoints(transformed);
+#endif
         outputPush(0, newPhoto);
     }
     catch (std::exception &e) {

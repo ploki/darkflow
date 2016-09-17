@@ -294,6 +294,9 @@ public:
     void setScale(Gamma gamma);
     Gamma getScale() const;
 
+    static Photo *findReference(QVector<Photo>& photos);
+    static Photo *findReference(Photo **photos, int count);
+
 private:
     Magick::Image m_image;
     Magick::Image m_curve;

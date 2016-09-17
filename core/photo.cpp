@@ -853,6 +853,62 @@ Photo::Gamma Photo::getScale() const
     }
 }
 
+Photo *Photo::findReference(QVector<Photo> &photos)
+{
+    int p = -1;
+    int count = photos.count();
+    if (0 == count)
+        return NULL;
+    for (int i = 0 ; i < count ; ++i) {
+        QString tag = photos[i].getTag(TAG_TREAT);
+        if (tag == TAG_TREAT_DISCARDED ||
+            tag == TAG_TREAT_ERROR)
+            continue;
+        if (tag == TAG_TREAT_REFERENCE) {
+            p = i;
+            break;
+        }
+    }
+    if ( -1 == p )
+        for (int i = 0 ; i < count ; ++i) {
+            QString tag = photos[i].getTag(TAG_TREAT);
+            if (tag != TAG_TREAT_DISCARDED &&
+                tag != TAG_TREAT_ERROR) {
+                p = i;
+                break;
+            }
+        }
+    if ( -1 == p )
+        return NULL;
+    return &photos[p];
+}
+
+Photo *Photo::findReference(Photo **photos, int count)
+{
+    int p = -1;
+    for (int i = 0 ; i < count ; ++i) {
+        if (0 == photos[i])
+            continue;
+        if (photos[i]->getTag(TAG_TREAT) == TAG_TREAT_REFERENCE) {
+            p = i;
+            break;
+        }
+    }
+    if ( -1 == p ) {
+        for (int i = 0 ; i < count ; ++i ) {
+            if (photos[i] &&
+                photos[i]->getTag(TAG_TREAT) != TAG_TREAT_DISCARDED &&
+                photos[i]->getTag(TAG_TREAT) != TAG_TREAT_ERROR) {
+                p = i;
+                break;
+            }
+        }
+    }
+    if ( -1 == p )
+        return NULL;
+    return photos[p];
+}
+
 void ResetImage(Magick::Image &image)
 {
     QElapsedTimer timer;

@@ -39,7 +39,8 @@
 static const char *ColorSpaceStr[] = {
     QT_TRANSLATE_NOOP("OpLoadImage", "Linear"),
     QT_TRANSLATE_NOOP("OpLoadImage", "sRGB"),
-    QT_TRANSLATE_NOOP("OpLoadImage", "IUT BT.709")
+    QT_TRANSLATE_NOOP("OpLoadImage", "IUT BT.709"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "HDR")
 };
 
 OpLoadImage::OpLoadImage(Process *parent) :
@@ -58,6 +59,7 @@ OpLoadImage::OpLoadImage(Process *parent) :
     m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[Linear]), Linear, true);
     m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[sRGB]), sRGB);
     m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[IUT_BT_709]), IUT_BT_709);
+    m_colorSpace->addOption(DF_TR_AND_C(ColorSpaceStr[HDR]), HDR);
     addParameter(m_filesCollection);
     addParameter(m_colorSpace);
     addOutput(new OperatorOutput(tr("Images"),this));

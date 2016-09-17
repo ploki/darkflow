@@ -28,44 +28,45 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef PROCESSSCENE_H
-#define PROCESSSCENE_H
+#ifndef PROCESSDIRECTORY_H
+#define PROCESSDIRECTORY_H
 
-#include <QGraphicsScene>
-#include <QPointF>
+#include <QGraphicsPathItem>
+#include <QRect>
+#include "processscene.h"
 
-
-class QGraphicsSceneContextMenuEvent;
+class OperatorParameterDirectory;
+class Process;
 class ProcessNode;
+class QGraphicsTextItem;
 
-class ProcessScene : public QGraphicsScene
+class ProcessDirectory : public QObject, public QGraphicsPathItem
 {
     Q_OBJECT
 public:
+    enum { Type = QGraphicsItem::UserType + ProcessScene::UserTypeDirectory };
 
-    enum {
-        UserTypeNode = 1,
-        UserTypePort,
-        UserTypeConnection,
-        UserTypeButton,
-        UserTypeProgressBar,
-        UserTypeDropDown,
-        UserTypeFilesCollection,
-        UserTypeSlider,
-        UserTypeSelectiveLab,
-        UserTypeDirectory,
-    };
+    ProcessDirectory(QRectF rect,
+                     OperatorParameterDirectory *directory,
+                     Process *process,
+                     ProcessNode *node);
+    ~ProcessDirectory();
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    int type() const;
 
-    explicit ProcessScene(QWidget *parent = 0);
-
-protected:
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
-signals:
-    void contextMenuSignal(QGraphicsSceneContextMenuEvent *event);
-
+    void clicked(QPoint);
 public slots:
 
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
+private:
+    Process *m_process;
+    ProcessNode *m_node;
+    OperatorParameterDirectory *m_directory;
+    QGraphicsTextItem *m_caption;
+    QGraphicsTextItem *m_currentValue;
+    bool m_mouseHover;
 };
 
-#endif // PROCESSSCENE_H
+#endif // PROCESSDIRECTORY_H

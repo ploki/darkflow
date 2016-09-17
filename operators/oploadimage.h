@@ -48,7 +48,8 @@ public:
     typedef enum {
         Linear,
         sRGB,
-        IUT_BT_709
+        IUT_BT_709,
+        HDR
     } ColorSpace;
 
 

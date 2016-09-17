@@ -60,6 +60,9 @@
 #include "operatorparameterselectivelab.h"
 #include "processselectivelab.h"
 
+#include "operatorparameterdirectory.h"
+#include "processdirectory.h"
+
 #include "visualization.h"
 #include "console.h"
 #include "preferences.h"
@@ -140,6 +143,9 @@ void ProcessNode::addParameters(QVector<OperatorParameter*>& parameters, qreal s
         }
         else if ( OperatorParameterSelectiveLab *sl = dynamic_cast<OperatorParameterSelectiveLab*>(parameters[i])) {
             new ProcessSelectiveLab(QRectF(x,y+size*i+offset, w, size), sl, m_process, this);
+        }
+        else if ( OperatorParameterDirectory *directory = dynamic_cast<OperatorParameterDirectory*>(parameters[i])) {
+            new ProcessDirectory(QRectF(x,y+size*i+offset, w, size), directory, m_process, this);
         }
         else {
             dflWarning("ProcessNode: Unknown parameter type");

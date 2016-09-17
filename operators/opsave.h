@@ -28,44 +28,36 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef PROCESSSCENE_H
-#define PROCESSSCENE_H
+#ifndef OPSAVE_H
+#define OPSAVE_H
 
-#include <QGraphicsScene>
-#include <QPointF>
+#include <QObject>
+#include <operator.h>
 
+class OperatorParameterDirectory;
+class OperatorParameterDropDown;
 
-class QGraphicsSceneContextMenuEvent;
-class ProcessNode;
-
-class ProcessScene : public QGraphicsScene
+class OpSave : public Operator
 {
     Q_OBJECT
 public:
-
-    enum {
-        UserTypeNode = 1,
-        UserTypePort,
-        UserTypeConnection,
-        UserTypeButton,
-        UserTypeProgressBar,
-        UserTypeDropDown,
-        UserTypeFilesCollection,
-        UserTypeSlider,
-        UserTypeSelectiveLab,
-        UserTypeDirectory,
-    };
-
-    explicit ProcessScene(QWidget *parent = 0);
-
-protected:
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
-signals:
-    void contextMenuSignal(QGraphicsSceneContextMenuEvent *event);
-
-public slots:
-
+    typedef enum {
+        SaveFITS,
+        SaveTIFF,
+        SaveJPEG
+    } SaveType;
+    OpSave(Process *parent);
+    OpSave *newInstance();
+    OperatorWorker *newWorker();
+private slots:
+    void selectType(int v);
+    void selectBackup(int v);
+private:
+    OperatorParameterDirectory *m_directory;
+    OperatorParameterDropDown *m_fileType;
+    SaveType m_fileTypeValue;
+    OperatorParameterDropDown *m_backup;
+    bool m_backupValue;
 };
 
-#endif // PROCESSSCENE_H
+#endif // OPSAVE_H

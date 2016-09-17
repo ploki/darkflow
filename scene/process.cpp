@@ -56,6 +56,7 @@
 #include "processfilescollection.h"
 #include "processslider.h"
 #include "processselectivelab.h"
+#include "processdirectory.h"
 
 #include "console.h"
 
@@ -115,6 +116,7 @@
 #include "opcolor.h"
 #include "ophdr.h"
 #include "opselectivelabfilter.h"
+#include "opsave.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -147,6 +149,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 #ifdef HAVE_FFMPEG
     m_availableOperators.push_back(new OpLoadVideo(this));
 #endif
+    m_availableOperators.push_back(new OpSave(this));
 
     m_availableOperators.push_back(new OpExposure(this));
     m_availableOperators.push_back(new OpShapeDynamicRange(this));
@@ -477,6 +480,7 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
     QGraphicsItem *filesCollectionItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeFilesCollection);
     QGraphicsItem *sliderItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSlider);
     QGraphicsItem *selectiveLab = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeSelectiveLab);
+    QGraphicsItem *directory = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeDirectory);
     QGraphicsItem *progressItem = findItem(me->scenePos(), QGraphicsItem::UserType + ProcessScene::UserTypeProgressBar);
     switch (type)
     {
@@ -518,6 +522,11 @@ bool Process::eventFilter(QObject *obj, QEvent *event)
         }
         if (selectiveLab) {
             dynamic_cast<ProcessSelectiveLab*>(selectiveLab)->clicked(me->screenPos());
+            event->accept();
+            return true;
+        }
+        if (directory) {
+            dynamic_cast<ProcessDirectory*>(directory)->clicked(me->screenPos());
             event->accept();
             return true;
         }

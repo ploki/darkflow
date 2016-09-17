@@ -28,44 +28,37 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef PROCESSSCENE_H
-#define PROCESSSCENE_H
+#ifndef OPERATORPARAMETERDIRECTORY_H
+#define OPERATORPARAMETERDIRECTORY_H
 
-#include <QGraphicsScene>
-#include <QPointF>
+#include "operatorparameter.h"
 
-
-class QGraphicsSceneContextMenuEvent;
-class ProcessNode;
-
-class ProcessScene : public QGraphicsScene
+class OperatorParameterDirectory : public OperatorParameter
 {
     Q_OBJECT
 public:
+    OperatorParameterDirectory(
+            const QString& name,
+            const QString& caption,
+            const QString& baseDir,
+            const QString& currentValue,
+            Operator *op);
+    ~OperatorParameterDirectory();
 
-    enum {
-        UserTypeNode = 1,
-        UserTypePort,
-        UserTypeConnection,
-        UserTypeButton,
-        UserTypeProgressBar,
-        UserTypeDropDown,
-        UserTypeFilesCollection,
-        UserTypeSlider,
-        UserTypeSelectiveLab,
-        UserTypeDirectory,
-    };
+    void askForDirectory();
 
-    explicit ProcessScene(QWidget *parent = 0);
-
-protected:
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-
+    QString currentValue() const;
+    QJsonObject save(const QString& baseDirStr);
+    void load(const QJsonObject &obj);
 signals:
-    void contextMenuSignal(QGraphicsSceneContextMenuEvent *event);
+    /* used to notify ProcessDirectory */
+    void valueChanged(const QString& value);
 
-public slots:
+    void updated();
 
+private:
+    QString m_baseDir;
+    QString m_currentValue;
 };
 
-#endif // PROCESSSCENE_H
+#endif // OPERATORPARAMETERDIRECTORY_H

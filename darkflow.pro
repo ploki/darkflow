@@ -251,7 +251,10 @@ SOURCES +=\
     operators/opselectivelabfilter.cpp \
     ui/graphicsviewinteraction.cpp \
     core/ordinary.cpp \
-    core/transformview.cpp
+    core/transformview.cpp \
+    operators/opsave.cpp \
+    scene/processdirectory.cpp \
+    core/operatorparameterdirectory.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -376,7 +379,10 @@ HEADERS  += \
     operators/opselectivelabfilter.h \
     ui/graphicsviewinteraction.h \
     core/ordinary.h \
-    core/transformview.h
+    core/transformview.h \
+    operators/opsave.h \
+    scene/processdirectory.h \
+    core/operatorparameterdirectory.h
 
 FORMS    += \
     ui/aboutdialog.ui \

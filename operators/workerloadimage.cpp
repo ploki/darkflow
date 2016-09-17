@@ -71,6 +71,7 @@ void WorkerLoadImage::play()
             case OpLoadImage::Linear: gamma = Photo::Linear; break;
             case OpLoadImage::IUT_BT_709: gamma = Photo::IUT_BT_709; break;
             case OpLoadImage::sRGB: gamma = Photo::sRGB; break;
+            case OpLoadImage::HDR: gamma = Photo::HDR; break;
             }
             int plane = 0;
             int count = images.size();

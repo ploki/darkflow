@@ -59,7 +59,9 @@ ATrousWaveletTransform::ATrousWaveletTransform(Photo &photo,
     m_image(new Triplet<double>[m_w*m_h]),
     m_tmp(new Triplet<double>[m_w*m_h]),
     m_kOrder(kOrder),
-    m_kernel(new double[kOrder*kOrder])
+    m_kernel(new double[kOrder*kOrder]),
+    m_identity(photo.getIdentity()),
+    m_name(photo.getTag(TAG_NAME))
 {
     kernel_1D_to_2D(kernel, m_kernel, m_kOrder);
     Magick::Image& image = photo.image();
@@ -163,6 +165,11 @@ Photo ATrousWaveletTransform::transform(int n, int nPlanes, Photo::Gamma scale, 
     if (!lastPlane)
         for (int i=0, s = m_w*m_h ; i < s ; ++i)
             m_image[i] = m_tmp[i];
+    plane.setIdentity(m_identity+QString(":W:%0").arg(n+1));
+    plane.setTag(TAG_NAME, m_name+QString(":W:%0").arg(n+1));
+    sign.setIdentity(m_identity+QString(":S:%0").arg(n+1));
+    sign.setTag(TAG_NAME, m_name+QString(":S:%0").arg(n+1));
+
     return plane;
 }
 

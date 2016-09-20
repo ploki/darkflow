@@ -28,27 +28,31 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef ATROUSWAVELETTRANSFORM_H
-#define ATROUSWAVELETTRANSFORM_H
+#ifndef OPDWTBACKWARD_H
+#define OPDWTBACKWARD_H
 
-#include "photo.h"
+#include "operator.h"
+#include <QObject>
+#include <QVector>
 
-class ATrousWaveletTransform
+class OperatorParameterDropDown;
+class OperatorParameterSlider;
+
+class OpDWTBackward : public Operator
 {
-    int m_w;
-    int m_h;
-    Triplet<double> *m_image;
-    Triplet<double> *m_tmp;
-    int m_kOrder;
-    double *m_kernel;
-    QString m_identity;
-    QString m_name;
+    Q_OBJECT
 public:
-    ATrousWaveletTransform(Photo &photo, const double *kernel, int kSize);
-    ~ATrousWaveletTransform();
-    Photo transform(int n, int nPlanes, Photo::Gamma scale, Photo &sign);
-    void construct(Photo &plane, int n);
-    Photo getConstruction();
+    OpDWTBackward(int nPlanes, Process *parent);
+    OpDWTBackward *newInstance();
+    OperatorWorker *newWorker();
+
+private slots:
+    void selectOutputHDR(int v);
+private:
+    int m_planes;
+    QVector<OperatorParameterSlider*> m_coefs;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
-#endif // ATROUSWAVELETTRANSFORM_H
+#endif // OPDWTBACKWARD_H

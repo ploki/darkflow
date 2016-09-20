@@ -263,7 +263,8 @@ SOURCES +=\
     operators/opdftforward.cpp \
     operators/opdftbackward.cpp \
     operators/opdwtforward.cpp \
-    algorithms/atrouswavelettransform.cpp
+    algorithms/atrouswavelettransform.cpp \
+    operators/opdwtbackward.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -399,7 +400,8 @@ HEADERS  += \
     operators/opdftforward.h \
     operators/opdftbackward.h \
     operators/opdwtforward.h \
-    algorithms/atrouswavelettransform.h
+    algorithms/atrouswavelettransform.h \
+    operators/opdwtbackward.h
 
 FORMS    += \
     ui/aboutdialog.ui \

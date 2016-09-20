@@ -31,6 +31,7 @@
 #include "atrouswavelettransform.h"
 #include "hdr.h"
 #include <Magick++.h>
+#include "console.h"
 
 using Magick::Quantum;
 
@@ -155,9 +156,9 @@ Photo ATrousWaveletTransform::transform(int n, int nPlanes, Photo::Gamma scale, 
                                  pPlane[x].green = pixel.green;
                                  pPlane[x].blue = pixel.blue;
                              }
-                             cSign->sync();
-                             cPlane->sync();
                          }
+                         cSign->sync();
+                         cPlane->sync();
                      });
     if (!lastPlane)
         for (int i=0, s = m_w*m_h ; i < s ; ++i)

@@ -43,7 +43,7 @@ static const char *BlendModeStr[] = {
 
 
 OpBlend::OpBlend(Process *parent) :
-    Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Blend"), Operator::All, parent),
+    Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Arithmetic"), Operator::All, parent),
     m_mode1(new OperatorParameterDropDown("mode1", tr("A « B"), this, SLOT(selectMode1(int)))),
     m_mode2(new OperatorParameterDropDown("mode2", tr("AB « C"), this, SLOT(selectMode2(int)))),
     m_mode1Value(Multiply),
@@ -51,6 +51,9 @@ OpBlend::OpBlend(Process *parent) :
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
     m_outputHDRValue(false)
 {
+    //previous name was Blend...
+    //here for compat with existing projects
+    m_classIdentifier = "Blend";
     registerOptions(m_mode1);
     registerOptions(m_mode2);
     addParameter(m_mode1);

@@ -109,9 +109,9 @@ OpDWTForward::OpDWTForward(int nPlanes, Process *parent) :
     m_algorithm(new OperatorParameterDropDown("algorithm", tr("Algorithm"), this, SLOT(selectAlgorithm(int)))),
     m_algorithmValue(AlgorithmATrous),
     m_wavelet(new OperatorParameterDropDown("wavelet", tr("Wavelet"), this, SLOT(selectWavelet(int)))),
-    m_waveletValue(WaveletLinear),
+    m_waveletValue(WaveletB3Spline),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(selectOutputHDR(int)))),
-    m_outputHDRValue(false)
+    m_outputHDRValue(true)
 {
     m_classIdentifier = m_classIdentifier.arg(m_planes);
     m_name = m_name.arg(m_planes);
@@ -123,11 +123,11 @@ OpDWTForward::OpDWTForward(int nPlanes, Process *parent) :
     addOutput(new OperatorOutput(tr("Sign"), this));
     m_algorithm->addOption(DF_TR_AND_C(AlgorithmStr[AlgorithmATrous]), AlgorithmATrous, true);
 
-    m_wavelet->addOption(DF_TR_AND_C(WaveletStr[WaveletLinear]), WaveletLinear, true);
-    m_wavelet->addOption(DF_TR_AND_C(WaveletStr[WaveletB3Spline]), WaveletB3Spline);
+    m_wavelet->addOption(DF_TR_AND_C(WaveletStr[WaveletLinear]), WaveletLinear);
+    m_wavelet->addOption(DF_TR_AND_C(WaveletStr[WaveletB3Spline]), WaveletB3Spline, true);
 
-    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
-    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true, true);
 
     addParameter(m_algorithm);
     addParameter(m_wavelet);

@@ -163,7 +163,7 @@ private slots:
 
 OpAiryDisk::OpAiryDisk(Process *parent) :
     Operator(OP_SECTION_FREQUENCY_DOMAIN, QT_TRANSLATE_NOOP("Operator", "Airy Disk"), Operator::NA, parent),
-    m_diameter(new OperatorParameterSlider("diameter",tr("Diameter"), tr("Airy disk - Diameter in mm"), Slider::Value, Slider::Logarithmic, Slider::Real, 20, 1000, 200, 1, 10000, Slider::FilterPixels, this)),
+    m_diameter(new OperatorParameterSlider("diameter",tr("Aperture"), tr("Airy disk - Aperture in mm"), Slider::Value, Slider::Logarithmic, Slider::Real, 20, 1000, 200, 1, 10000, Slider::FilterPixels, this)),
     m_focal(new OperatorParameterSlider("focal",tr("Focal length"), tr("Airy disk - Focal length in mm"), Slider::Value, Slider::Logarithmic, Slider::Real, 200, 5000, 2000, 1, 100000, Slider::FilterPixels, this)),
     m_pixel_sz(new OperatorParameterSlider("pixelSize",tr("Pixel size"), tr("Airy disk - Pixel size in µm"), Slider::Value, Slider::Logarithmic, Slider::Real, 1, 32, 8.45, 0.001, 100, Slider::FilterPixels, this)),
     m_offset(new OperatorParameterSlider("offset",tr("Offset"), tr("Airy disk - Offset in fraction of pixels"), Slider::Value, Slider::Linear, Slider::Real, 0, 1, 0.5, 0, 1, Slider::FilterPixels, this)),

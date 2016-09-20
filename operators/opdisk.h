@@ -28,32 +28,31 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPDWTBACKWARD_H
-#define OPDWTBACKWARD_H
+#ifndef OPDISK_H
+#define OPDISK_H
 
 #include "operator.h"
 #include <QObject>
-#include <QVector>
 
 class OperatorParameterDropDown;
 class OperatorParameterSlider;
 
-class OpDWTBackward : public Operator
+class OpDisk : public Operator
 {
     Q_OBJECT
 public:
-    OpDWTBackward(int nPlanes, Process *parent);
-    OpDWTBackward *newInstance();
+    OpDisk(Process *parent);
+    OpDisk *newInstance();
     OperatorWorker *newWorker();
 
 private slots:
-    void selectOutputHDR(int v);
+    void selectColor(int v);
+
 private:
-    int m_planes;
-    QVector<OperatorParameterSlider*> m_coefs;
-    OperatorParameterSlider *m_luminosity;
-    OperatorParameterDropDown *m_outputHDR;
-    bool m_outputHDRValue;
+    OperatorParameterDropDown *m_color;
+    quantum_t m_colorValue;
+    OperatorParameterSlider *m_diameter;
+    OperatorParameterSlider *m_centerHole;
 };
 
-#endif // OPDWTBACKWARD_H
+#endif // OPDISK_H

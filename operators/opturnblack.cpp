@@ -28,32 +28,48 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPDWTBACKWARD_H
-#define OPDWTBACKWARD_H
+#include "opturnblack.h"
+#include "operatorworker.h"
+#include "operatorinput.h"
+#include "operatoroutput.h"
+#include <Magick++.h>
 
-#include "operator.h"
-#include <QObject>
-#include <QVector>
-
-class OperatorParameterDropDown;
-class OperatorParameterSlider;
-
-class OpDWTBackward : public Operator
-{
-    Q_OBJECT
+class WorkerTurnBlack : public OperatorWorker {
 public:
-    OpDWTBackward(int nPlanes, Process *parent);
-    OpDWTBackward *newInstance();
-    OperatorWorker *newWorker();
-
-private slots:
-    void selectOutputHDR(int v);
-private:
-    int m_planes;
-    QVector<OperatorParameterSlider*> m_coefs;
-    OperatorParameterSlider *m_luminosity;
-    OperatorParameterDropDown *m_outputHDR;
-    bool m_outputHDRValue;
+    WorkerTurnBlack(QThread *thread, Operator *op) :
+        OperatorWorker(thread, op)
+    {}
+    Photo process(const Photo &photo, int, int) {
+        Photo newPhoto(photo);
+        Magick::Image &image = newPhoto.image();
+        ResetImage(image);
+        int w = image.columns(),
+            h = image.rows();
+        std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(image));
+        dfl_parallel_for(y, 0, h, 4, (image), {
+                             Magick::PixelPacket *pixels = cache->get(0, y, w, 1);
+                             for (int x = 0 ; x < w ; ++x) {
+                                 pixels[x].red = pixels[x].green = pixels[x].blue = 0;
+                             }
+                             cache->sync();
+                         });
+        return newPhoto;
+    }
 };
 
-#endif // OPDWTBACKWARD_H
+OpTurnBlack::OpTurnBlack(Process *parent) :
+    Operator(OP_SECTION_TOOLS, QT_TRANSLATE_NOOP("Operator", "Turn black"), Operator::All, parent)
+{
+    addInput(new OperatorInput(tr("Images"),OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Black frame"), this));
+}
+
+OpTurnBlack *OpTurnBlack::newInstance()
+{
+    return new OpTurnBlack(m_process);
+}
+
+OperatorWorker *OpTurnBlack::newWorker()
+{
+    return new WorkerTurnBlack(m_thread, this);
+}

@@ -28,32 +28,19 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPDWTBACKWARD_H
-#define OPDWTBACKWARD_H
+#ifndef OPTURNBLACK_H
+#define OPTURNBLACK_H
 
 #include "operator.h"
 #include <QObject>
-#include <QVector>
 
-class OperatorParameterDropDown;
-class OperatorParameterSlider;
-
-class OpDWTBackward : public Operator
+class OpTurnBlack : public Operator
 {
     Q_OBJECT
 public:
-    OpDWTBackward(int nPlanes, Process *parent);
-    OpDWTBackward *newInstance();
+    OpTurnBlack(Process *parent);
+    OpTurnBlack *newInstance();
     OperatorWorker *newWorker();
-
-private slots:
-    void selectOutputHDR(int v);
-private:
-    int m_planes;
-    QVector<OperatorParameterSlider*> m_coefs;
-    OperatorParameterSlider *m_luminosity;
-    OperatorParameterDropDown *m_outputHDR;
-    bool m_outputHDRValue;
 };
 
-#endif // OPDWTBACKWARD_H
+#endif // OPTURNBLACK_H

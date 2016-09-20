@@ -41,15 +41,18 @@ using Magick::Quantum;
 class WorkerDWTBackward : public OperatorWorker {
     int m_planes;
     QVector<double> m_coefs;
+    double m_luminosity;
     bool m_outputHDR;
 public:
     WorkerDWTBackward(int planes,
                       QVector<double> coefs,
+                      double luminosity,
                       bool outputHDR,
                       QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
         m_planes(planes),
         m_coefs(coefs),
+        m_luminosity(luminosity),
         m_outputHDR(outputHDR)
     {}
     Photo process(const Photo &, int, int) {
@@ -120,16 +123,41 @@ public:
             output.setIdentity(m_operator->uuid()+QString(":%0").arg(i));
             output.setTag(TAG_NAME, tr("reconstruction"));
             output.createImage(w, h);
+            Photo underflow(m_outputHDR ? Photo::HDR : Photo::Linear);
+            underflow.setIdentity(m_operator->uuid()+QString(":u:%0").arg(i));
+            underflow.setTag(TAG_NAME, tr("underflow"));
+            underflow.createImage(w, h);
+            Photo overflow(m_outputHDR ? Photo::HDR : Photo::Linear);
+            overflow.setIdentity(m_operator->uuid()+QString(":o:%0").arg(i));
+            overflow.setTag(TAG_NAME, tr("overflow"));
+            overflow.createImage(w, h);
             std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(output.image()));
-            dfl_parallel_for(y, 0, h, 4, (output.image()), {
+            std::shared_ptr<Ordinary::Pixels> uCache(new Ordinary::Pixels(underflow.image()));
+            std::shared_ptr<Ordinary::Pixels> oCache(new Ordinary::Pixels(overflow.image()));
+            dfl_parallel_for(y, 0, h, 4, (output.image(), underflow.image(), overflow.image()), {
                                  Magick::PixelPacket *pixel = cache->get(0, y, w, 1);
+                                 Magick::PixelPacket *u = uCache->get(0, y, w, 1);
+                                 Magick::PixelPacket *o = oCache->get(0, y, w, 1);
                                  for (int x = 0 ; x < w ; ++x) {
+                                     img[y*w+x] *= m_luminosity;
                                      if (m_outputHDR) {
+                                         if (img[y*w+x].red < 0) u[x].red = toHDR(-img[y*w+x].red);
+                                         if (img[y*w+x].green < 0) u[x].green = toHDR(-img[y*w+x].green);
+                                         if (img[y*w+x].blue < 0) u[x].blue = toHDR(-img[y*w+x].blue);
+                                         if (img[y*w+x].red > QuantumRange ) o[x].red = toHDR(img[y*w+x].red-QuantumRange);
+                                         if (img[y*w+x].green > QuantumRange ) o[x].green = toHDR(img[y*w+x].green-QuantumRange);
+                                         if (img[y*w+x].blue > QuantumRange ) o[x].blue = toHDR(img[y*w+x].blue-QuantumRange);
                                          pixel[x].red = toHDR(img[y*w+x].red);
                                          pixel[x].green = toHDR(img[y*w+x].green);
                                          pixel[x].blue = toHDR(img[y*w+x].blue);
                                      }
                                      else {
+                                         if (img[y*w+x].red < 0) u[x].red = clamp<quantum_t>(-img[y*w+x].red);
+                                         if (img[y*w+x].green < 0) u[x].green = clamp<quantum_t>(-img[y*w+x].green);
+                                         if (img[y*w+x].blue < 0) u[x].blue = clamp<quantum_t>(-img[y*w+x].blue);
+                                         if (img[y*w+x].red > QuantumRange ) o[x].red = clamp<quantum_t>(img[y*w+x].red-QuantumRange);
+                                         if (img[y*w+x].green > QuantumRange ) o[x].green = clamp<quantum_t>(img[y*w+x].green-QuantumRange);
+                                         if (img[y*w+x].blue > QuantumRange ) o[x].blue = clamp<quantum_t>(img[y*w+x].blue-QuantumRange);
                                          pixel[x].red = clamp<quantum_t>(img[y*w+x].red);
                                          pixel[x].green = clamp<quantum_t>(img[y*w+x].green);
                                          pixel[x].blue = clamp<quantum_t>(img[y*w+x].blue);
@@ -138,6 +166,8 @@ public:
                              });
             delete img; img = 0;
             outputPush(0, output);
+            outputPush(1, overflow);
+            outputPush(2, underflow);
         }
         emitSuccess();
     }
@@ -149,11 +179,13 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
              Operator::All, parent),
     m_planes(nPlanes),
     m_coefs(nPlanes),
+    m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Deconvolution Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(selectOutputHDR(int)))),
     m_outputHDRValue(false)
 {
     m_classIdentifier = m_classIdentifier.arg(m_planes);
     m_name = m_name.arg(m_planes);
+
     for (int i = 1 ; i <= m_planes ; ++i) {
         QString name = tr("Plane %0").arg(i);
         addInput(new OperatorInput(name, OperatorInput::Set, this));
@@ -167,12 +199,15 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
                                                  Slider::FilterExposureFromOne, this);
         addParameter(m_coefs[i-1]);
     }
-    addInput(new OperatorInput(tr("Sign"), OperatorInput::Set, this));
-    addOutput(new OperatorOutput(tr("Images"), this));
-
+    addParameter(m_luminosity);
     m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
     m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
     addParameter(m_outputHDR);
+
+    addInput(new OperatorInput(tr("Sign"), OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Images"), this));
+    addOutput(new OperatorOutput(tr("Overflow"), this));
+    addOutput(new OperatorOutput(tr("Underflow"), this));
 }
 
 OpDWTBackward *OpDWTBackward::newInstance()
@@ -186,7 +221,7 @@ OperatorWorker *OpDWTBackward::newWorker()
     for (int i = 0 ; i < m_planes ; ++i ) {
         coefs.push_back(m_coefs[i]->value());
     }
-    return new WorkerDWTBackward(m_planes, coefs, m_outputHDRValue, m_thread, this);
+    return new WorkerDWTBackward(m_planes, coefs, m_luminosity->value(), m_outputHDRValue, m_thread, this);
 }
 
 void OpDWTBackward::selectOutputHDR(int v)

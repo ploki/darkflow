@@ -123,6 +123,8 @@
 #include "opdftbackward.h"
 #include "opdwtforward.h"
 #include "opdwtbackward.h"
+#include "opturnblack.h"
+#include "opdisk.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -226,6 +228,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpSsdReg(this));
 
+    m_availableOperators.push_back(new OpTurnBlack(this));
+    m_availableOperators.push_back(new OpDisk(this));
     m_availableOperators.push_back(new OpDemultiplexer(2, this));
     m_availableOperators.push_back(new OpDemultiplexer(3, this));
     m_availableOperators.push_back(new OpDemultiplexer(4, this));

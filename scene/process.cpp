@@ -121,6 +121,7 @@
 #include "opwienerdeconvolution.h"
 #include "opdftforward.h"
 #include "opdftbackward.h"
+#include "opdwtforward.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -187,6 +188,13 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpWienerDeconvolution(this));
     m_availableOperators.push_back(new OpBlur(this));
     m_availableOperators.push_back(new OpGaussianBlur(this));
+    m_availableOperators.push_back(new OpDWTForward(1, this));
+    m_availableOperators.push_back(new OpDWTForward(2, this));
+    m_availableOperators.push_back(new OpDWTForward(3, this));
+    m_availableOperators.push_back(new OpDWTForward(5, this));
+    m_availableOperators.push_back(new OpDWTForward(8, this));
+    m_availableOperators.push_back(new OpDWTForward(13, this));
+    m_availableOperators.push_back(new OpDWTForward(21, this));
 
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));

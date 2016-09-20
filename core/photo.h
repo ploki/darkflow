@@ -205,10 +205,29 @@ public:
         blue=t.blue;
         return *this;
     }
+    Triplet& operator+=(const Triplet& t) {
+        red+=t.red;
+        green+=t.green;
+        blue+=t.blue;
+        return *this;
+    }
+    Triplet& operator-=(const Triplet& t) {
+        red-=t.red;
+        green-=t.green;
+        blue-=t.blue;
+        return *this;
+    }
+    Triplet& operator*=(const T& c) {
+        red*=c;
+        green*=c;
+        blue*=c;
+        return *this;
+    }
     T red;
     T green;
     T blue;
 };
+
 
 class QRectF;
 

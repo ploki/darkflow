@@ -261,7 +261,9 @@ SOURCES +=\
     operators/workerwienerdeconvolution.cpp \
     algorithms/discretefouriertransform.cpp \
     operators/opdftforward.cpp \
-    operators/opdftbackward.cpp
+    operators/opdftbackward.cpp \
+    operators/opdwtforward.cpp \
+    algorithms/atrouswavelettransform.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -395,7 +397,9 @@ HEADERS  += \
     operators/workerwienerdeconvolution.h \
     algorithms/discretefouriertransform.h \
     operators/opdftforward.h \
-    operators/opdftbackward.h
+    operators/opdftbackward.h \
+    operators/opdwtforward.h \
+    algorithms/atrouswavelettransform.h
 
 FORMS    += \
     ui/aboutdialog.ui \

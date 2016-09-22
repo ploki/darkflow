@@ -53,6 +53,14 @@ public:
         ReverseImaginary
     } ReverseType;
 
+    typedef enum {
+        WindowNone,
+        WindowHamming,
+        WindowHann,
+        WindowNuttal,
+        WindowBlackmanNuttal,
+        WindowBlackmanHarris
+    } WindowFunction;
     DiscreteFourierTransform(Magick::Image& image, Photo::Gamma scale);
     DiscreteFourierTransform(Magick::Image& magnitude, Magick::Image& phase, Photo::Gamma scale, double normalization);
     ~DiscreteFourierTransform();
@@ -73,6 +81,7 @@ public:
 
     static Magick::Image normalize(Magick::Image& image, int w, bool center);
     static Magick::Image roll(Magick::Image& image, int o_x, int o_y);
+    static Magick::Image window(Magick::Image& image, WindowFunction function);
 };
 
 #endif // DISCRETEFOURIERTRANSFORM_H

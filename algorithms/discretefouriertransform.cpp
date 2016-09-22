@@ -35,6 +35,7 @@
 #include "algorithm.h"
 #include "console.h"
 #include "hdr.h"
+#include "preferences.h"
 
 using Magick::Quantum;
 
@@ -54,6 +55,7 @@ DiscreteFourierTransform::DiscreteFourierTransform(Magick::Image &image, Photo::
       green(reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w))),
       blue(reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w)))
 {
+    fftw_plan_with_nthreads(preferences->getNumThreads());
     std::complex<double> *input = reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w));
     //std::complex<double> *output = reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w));
     Ordinary::Pixels cache(image);
@@ -354,4 +356,95 @@ Magick::Image DiscreteFourierTransform::roll(Magick::Image &image, int o_x, int 
         n_cache->sync();
     });
     return nk;
+}
+
+static double
+Hamming(int n, int N)
+{
+    const double alpha = .54;
+    const double beta = 1. - .54;
+    return alpha - beta * cos ((2. * M_PI * n)/double(N - 1));
+}
+
+static double
+Hann(int n, int N)
+{
+    return 0.5 * ( 1. - cos ((2. * M_PI * n)/double(N - 1)) );
+}
+
+
+static double
+None(int, int)
+{
+    throw 0;
+}
+
+static double
+Nuttal(int n, int N)
+{
+    const double a0 = 0.355768;
+    const double a1 = 0.487396;
+    const double a2 = 0.144232;
+    const double a3 = 0.012604;
+    return a0
+            - a1 * cos ((2. * M_PI * n)/double(N - 1))
+            + a2 * cos ((4. * M_PI * n)/double(N - 1))
+            - a3 * cos ((6. * M_PI * n)/double(N - 1));
+}
+
+static double
+BlackmanNuttal(int n, int N)
+{
+    const double a0 = 0.3635819;
+    const double a1 = 0.4891775;
+    const double a2 = 0.1365995;
+    const double a3 = 0.0106411;
+    return a0
+            - a1 * cos ((2. * M_PI * n)/double(N - 1))
+            + a2 * cos ((4. * M_PI * n)/double(N - 1))
+            - a3 * cos ((6. * M_PI * n)/double(N - 1));
+}
+
+static double
+BlackmanHarris(int n, int N)
+{
+    const double a0 = 0.35875;
+    const double a1 = 0.48829;
+    const double a2 = 0.14128;
+    const double a3 = 0.01168;
+    return a0
+            - a1 * cos ((2. * M_PI * n)/double(N - 1))
+            + a2 * cos ((4. * M_PI * n)/double(N - 1))
+            - a3 * cos ((6. * M_PI * n)/double(N - 1));
+}
+
+Magick::Image DiscreteFourierTransform::window(Magick::Image& image, DiscreteFourierTransform::WindowFunction function)
+{
+    double (*func)(int, int) = None;
+    switch(function) {
+    default:
+    case WindowNone: return image;
+    case WindowHamming: func = Hamming; break;
+    case WindowHann: func = Hann; break;
+    case WindowNuttal: func = Nuttal; break;
+    case WindowBlackmanNuttal: func = BlackmanNuttal; break;
+    case WindowBlackmanHarris: func = BlackmanHarris; break;
+    }
+    int w = image.columns();
+    int h = image.rows();
+    Magick::Image dstImage(Magick::Geometry(w, h), Magick::Color(0, 0, 0));
+    std::shared_ptr<Ordinary::Pixels> srcCache(new Ordinary::Pixels(image));
+    std::shared_ptr<Ordinary::Pixels> dstCache(new Ordinary::Pixels(dstImage));
+    dfl_parallel_for(y, 0, h, 4, (image, dstImage), {
+                         const Magick::PixelPacket *srcPixels = srcCache->getConst(0, y, w, 1);
+                         Magick::PixelPacket *dstPixels = dstCache->get(0, y, w, 1);
+                         for (int x = 0 ; x < w ; ++x) {
+                             double coef = func(x, w) * func(y, h);
+                             dstPixels[x].red = coef * srcPixels[x].red;
+                             dstPixels[x].green = coef * srcPixels[x].green;
+                             dstPixels[x].blue = coef * srcPixels[x].blue;
+                         }
+                         dstCache->sync();
+                     });
+    return dstImage;
 }

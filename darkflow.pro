@@ -266,7 +266,8 @@ SOURCES +=\
     algorithms/atrouswavelettransform.cpp \
     operators/opdwtbackward.cpp \
     operators/opturnblack.cpp \
-    operators/opdisk.cpp
+    operators/opdisk.cpp \
+    operators/opphasecorrelationreg.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -405,7 +406,8 @@ HEADERS  += \
     algorithms/atrouswavelettransform.h \
     operators/opdwtbackward.h \
     operators/opturnblack.h \
-    operators/opdisk.h
+    operators/opdisk.h \
+    operators/opphasecorrelationreg.h
 
 FORMS    += \
     ui/aboutdialog.ui \

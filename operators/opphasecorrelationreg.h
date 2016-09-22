@@ -28,51 +28,19 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DISCRETEFOURIERTRANSFORM_H
-#define DISCRETEFOURIERTRANSFORM_H
+#ifndef OPPHASECORRELATIONREG_H
+#define OPPHASECORRELATIONREG_H
 
-#include <complex>
-#include <fftw3.h>
-#include "photo.h"
+#include "operator.h"
+#include <QObject>
 
-namespace Magick {
-class Image;
-}
-class DiscreteFourierTransform
+class OpPhaseCorrelationReg : public Operator
 {
-    int m_w;
-    int m_h;
-    std::complex<double> *red;
-    std::complex<double> *green;
-    std::complex<double> *blue;
+    Q_OBJECT
 public:
-    typedef enum {
-        ReverseMagnitude,
-        ReversePhase,
-        ReverseReal,
-        ReverseImaginary
-    } ReverseType;
-
-    DiscreteFourierTransform(Magick::Image& image, Photo::Gamma scale);
-    DiscreteFourierTransform(Magick::Image& magnitude, Magick::Image& phase, Photo::Gamma scale, double normalization);
-    ~DiscreteFourierTransform();
-    Magick::Image reverse(double luminosity, ReverseType type = ReverseReal);
-    Magick::Image imageMagnitude(Photo::Gamma scale, double *normalizationp);
-    Magick::Image imagePhase();
-
-    DiscreteFourierTransform& operator/=(const DiscreteFourierTransform& other);
-    DiscreteFourierTransform& operator*=(const DiscreteFourierTransform& other);
-
-    DiscreteFourierTransform& conj();
-    DiscreteFourierTransform& inv();
-    DiscreteFourierTransform& abs();
-    DiscreteFourierTransform& wienerFilter(double k);
-
-    DiscreteFourierTransform(const DiscreteFourierTransform &other);
-
-
-    static Magick::Image normalize(Magick::Image& image, int w, bool center);
-    static Magick::Image roll(Magick::Image& image, int o_x, int o_y);
+    OpPhaseCorrelationReg(Process *parent);
+    OpPhaseCorrelationReg *newInstance();
+    OperatorWorker *newWorker();
 };
 
-#endif // DISCRETEFOURIERTRANSFORM_H
+#endif // OPPHASECORRELATIONREG_H

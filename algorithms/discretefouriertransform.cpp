@@ -138,7 +138,7 @@ DiscreteFourierTransform::~DiscreteFourierTransform()
     fftw_free(blue);
 }
 
-Magick::Image DiscreteFourierTransform::reverse(double luminosity)
+Magick::Image DiscreteFourierTransform::reverse(double luminosity, ReverseType type)
 {
     Magick::Image image(Magick::Geometry(m_w, m_h), Magick::Color(0, 0, 0));
     image.modifyImage();
@@ -160,7 +160,16 @@ Magick::Image DiscreteFourierTransform::reverse(double luminosity)
         fftw_execute(plan);
         for ( int y = 0 ; y < m_h ; ++y ) {
             for ( int x = 0 ; x < m_w ; ++x ) {
-                quantum_t pixel = clamp(luminosity*output[y*m_w+x].real()*QuantumRange/(m_w*m_h));
+                std::complex<double> cV = output[y*m_w+x];
+                double v = 0;
+                switch (type) {
+                case ReverseMagnitude: v = std::abs(cV); break;
+                case ReversePhase: v = std::arg(cV); break;
+                case ReverseReal: v = cV.real(); break;
+                case ReverseImaginary: v = cV.imag(); break;
+                }
+
+                quantum_t pixel = clamp(luminosity*v*QuantumRange/(m_w*m_h));
                 switch(c) {
                 case 0: pixels[y*m_w+x].red = pixel; break;
                 case 1: pixels[y*m_w+x].green = pixel; break;
@@ -268,6 +277,16 @@ DiscreteFourierTransform &DiscreteFourierTransform::inv()
         red[i] = 1. / ( std::abs(red[i]) < min ? min : red[i]);
         green[i] = 1. / ( std::abs(green[i]) < min ? min : green[i]);
         blue[i] = 1. / ( std::abs(blue[i]) < min ? min : blue[i]);
+    }
+    return *this;
+}
+
+DiscreteFourierTransform &DiscreteFourierTransform::abs()
+{
+    for (int i = 0, s = m_h*m_w ; i < s ; ++i ) {
+        red[i] = std::abs(red[i]);
+        green[i] = std::abs(green[i]);
+        blue[i] = std::abs(blue[i]);
     }
     return *this;
 }

@@ -105,7 +105,7 @@ public:
 
 
 OpDisk::OpDisk(Process *parent) :
-    Operator(OP_SECTION_TOOLS, QT_TRANSLATE_NOOP("Operator", "Disk"), Operator::All, parent),
+    Operator(OP_SECTION_FREQUENCY_DOMAIN, QT_TRANSLATE_NOOP("Operator", "Disk"), Operator::All, parent),
     m_color(new OperatorParameterDropDown("color", tr("Color"), this, SLOT(selectColor(int)))),
     m_colorValue(QuantumRange),
     m_diameter(new OperatorParameterSlider("diameter", tr("Diameter"), tr("Disk - Diameter in pixels"), Slider::Value, Slider::Linear, Slider::Real, 0, 1000, 200, 0, 16384, Slider::FilterPixels, this)),

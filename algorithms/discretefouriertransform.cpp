@@ -418,18 +418,30 @@ BlackmanHarris(int n, int N)
             - a3 * cos ((6. * M_PI * n)/double(N - 1));
 }
 
-Magick::Image DiscreteFourierTransform::window(Magick::Image& image, DiscreteFourierTransform::WindowFunction function)
+static double
+windowFunction(DiscreteFourierTransform::WindowFunction function, int n, int N)
 {
     double (*func)(int, int) = None;
     switch(function) {
     default:
-    case WindowNone: return image;
-    case WindowHamming: func = Hamming; break;
-    case WindowHann: func = Hann; break;
-    case WindowNuttal: func = Nuttal; break;
-    case WindowBlackmanNuttal: func = BlackmanNuttal; break;
-    case WindowBlackmanHarris: func = BlackmanHarris; break;
+    case DiscreteFourierTransform::WindowNone: return 1;
+    case DiscreteFourierTransform::WindowHamming: func = Hamming; break;
+    case DiscreteFourierTransform::WindowHann: func = Hann; break;
+    case DiscreteFourierTransform::WindowNuttal: func = Nuttal; break;
+    case DiscreteFourierTransform::WindowBlackmanNuttal: func = BlackmanNuttal; break;
+    case DiscreteFourierTransform::WindowBlackmanHarris: func = BlackmanHarris; break;
     }
+    int m = N/4;
+    if ( n >= m && n < (N-m))
+        return 1;
+    if ( n < m )
+        return func(n, 2*m);
+    n = N/2 - N-n;
+    return func(n, 2*m);
+}
+
+Magick::Image DiscreteFourierTransform::window(Magick::Image& image, DiscreteFourierTransform::WindowFunction function)
+{
     int w = image.columns();
     int h = image.rows();
     Magick::Image dstImage(Magick::Geometry(w, h), Magick::Color(0, 0, 0));
@@ -439,7 +451,7 @@ Magick::Image DiscreteFourierTransform::window(Magick::Image& image, DiscreteFou
                          const Magick::PixelPacket *srcPixels = srcCache->getConst(0, y, w, 1);
                          Magick::PixelPacket *dstPixels = dstCache->get(0, y, w, 1);
                          for (int x = 0 ; x < w ; ++x) {
-                             double coef = func(x, w) * func(y, h);
+                             double coef = windowFunction(function, x, w) * windowFunction(function, y, h);
                              dstPixels[x].red = coef * srcPixels[x].red;
                              dstPixels[x].green = coef * srcPixels[x].green;
                              dstPixels[x].blue = coef * srcPixels[x].blue;

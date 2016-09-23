@@ -267,7 +267,8 @@ SOURCES +=\
     operators/opdwtbackward.cpp \
     operators/opturnblack.cpp \
     operators/opdisk.cpp \
-    operators/opphasecorrelationreg.cpp
+    operators/opphasecorrelationreg.cpp \
+    operators/opwindowfunction.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -407,7 +408,8 @@ HEADERS  += \
     operators/opdwtbackward.h \
     operators/opturnblack.h \
     operators/opdisk.h \
-    operators/opphasecorrelationreg.h
+    operators/opphasecorrelationreg.h \
+    operators/opwindowfunction.h
 
 FORMS    += \
     ui/aboutdialog.ui \

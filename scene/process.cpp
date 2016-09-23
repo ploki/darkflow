@@ -126,6 +126,7 @@
 #include "opturnblack.h"
 #include "opdisk.h"
 #include "opphasecorrelationreg.h"
+#include "opwindowfunction.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -186,6 +187,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpDisk(this));
     m_availableOperators.push_back(new OpAiryDisk(this));
+    m_availableOperators.push_back(new OpWindowFunction(this));
     m_availableOperators.push_back(new OpDeconvolution(this));
     m_availableOperators.push_back(new OpWienerDeconvolution(this));
     m_availableOperators.push_back(new OpConvolution(this));

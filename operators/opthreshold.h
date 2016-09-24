@@ -35,18 +35,29 @@
 #include <operator.h>
 
 class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
 class OpThreshold : public Operator
 {
     Q_OBJECT
 public:
+    typedef enum {
+        ComponentLuminosity,
+        ComponentRGB
+    } Component;
+
     OpThreshold(Process *parent);
     OpThreshold *newInstance();
     OperatorWorker *newWorker();
 
+public slots:
+    void selectComponent(int v);
+
 private:
     OperatorParameterSlider *m_high;
     OperatorParameterSlider *m_low;
+    OperatorParameterDropDown *m_component;
+    Component m_componentValue;
 };
 
 #endif // OPTHRESHOLD_H

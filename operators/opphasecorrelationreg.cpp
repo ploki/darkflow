@@ -32,14 +32,22 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "operatorworker.h"
+#include "operatorparameterdropdown.h"
+#include "operatorparameterslider.h"
 #include "discretefouriertransform.h"
 #include "cielab.h"
 
 
 class WorkerPhaseCorrelation : public OperatorWorker {
+    DiscreteFourierTransform::WindowFunction m_window;
+    double m_opening;
 public:
-    WorkerPhaseCorrelation(QThread *thread, Operator *op) :
-        OperatorWorker(thread, op)
+    WorkerPhaseCorrelation(DiscreteFourierTransform::WindowFunction window,
+                           double opening,
+                           QThread *thread, Operator *op) :
+        OperatorWorker(thread, op),
+        m_window(window),
+        m_opening(opening)
     {}
     Photo process(const Photo &, int , int ) {
         throw 0;
@@ -48,16 +56,19 @@ public:
     void play() {
         int count = m_inputs[0].count();
         DiscreteFourierTransform *dftB = nullptr;
+        Photo *refPhoto = Photo::findReference(m_inputs[0]);
+
         for (int i = 0 ; i < count ; ++i) {
             if (NULL == dftB) {
-                Magick::Image imB = m_inputs[0][i].image();
-                imB = DiscreteFourierTransform::window(imB, DiscreteFourierTransform::WindowHamming);
+                Magick::Image imB = refPhoto ? refPhoto->image() : m_inputs[0][i].image();
+                Photo::Gamma scale = refPhoto ? refPhoto->getScale() : m_inputs[0][i].getScale();
+                imB = DiscreteFourierTransform::window(imB, scale, m_window, m_opening);
                 imB = DiscreteFourierTransform::roll(imB, imB.columns()/2, imB.rows()/2);
-                dftB = new DiscreteFourierTransform(imB, m_inputs[0][i].getScale());
+                dftB = new DiscreteFourierTransform(imB, scale);
                 dftB->conj();
             }
             Magick::Image imA = m_inputs[0][i].image();
-            imA = DiscreteFourierTransform::window(imA, DiscreteFourierTransform::WindowHamming);
+            imA = DiscreteFourierTransform::window(imA, m_inputs[0][i].getScale(), m_window, m_opening);
             imA = DiscreteFourierTransform::roll(imA, imA.columns()/2, imA.rows()/2);
             DiscreteFourierTransform dftA(imA, m_inputs[0][i].getScale());
             dftA *= (*dftB);
@@ -139,11 +150,23 @@ public:
 };
 
 OpPhaseCorrelationReg::OpPhaseCorrelationReg(Process *parent) :
-    Operator(OP_SECTION_REGISTRATION, QT_TRANSLATE_NOOP("Operator","Phase Correlation"), Operator::All, parent)
+    Operator(OP_SECTION_REGISTRATION, QT_TRANSLATE_NOOP("Operator","Phase Correlation"), Operator::All, parent),
+    m_window(new OperatorParameterDropDown("window", tr("Window"), this, SLOT(selectWindow(int)))),
+    m_windowValue(DiscreteFourierTransform::WindowHamming),
+    m_opening(new OperatorParameterSlider("opening", tr("Opening"), tr("Window Function - Opening"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, .5, 0, 1, Slider::FilterPercent, this))
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));
     addOutput(new OperatorOutput(tr("Correlation"), this));
+
+    m_window->addOption(DF_TR_AND_C("None"), DiscreteFourierTransform::WindowNone, false);
+    m_window->addOption(DF_TR_AND_C("Hamming"), DiscreteFourierTransform::WindowHamming, true);
+    m_window->addOption(DF_TR_AND_C("Hann"), DiscreteFourierTransform::WindowHann, false);
+    m_window->addOption(DF_TR_AND_C("Nuttal"), DiscreteFourierTransform::WindowNuttal, false);
+    m_window->addOption(DF_TR_AND_C("Blackman-Nuttal"), DiscreteFourierTransform::WindowBlackmanNuttal, false);
+    m_window->addOption(DF_TR_AND_C("Blackman-Harris"), DiscreteFourierTransform::WindowBlackmanHarris, false);
+    addParameter(m_window);
+    addParameter(m_opening);
 }
 
 OpPhaseCorrelationReg *OpPhaseCorrelationReg::newInstance()
@@ -153,5 +176,15 @@ OpPhaseCorrelationReg *OpPhaseCorrelationReg::newInstance()
 
 OperatorWorker *OpPhaseCorrelationReg::newWorker()
 {
-    return new WorkerPhaseCorrelation(m_thread, this);
+    return new WorkerPhaseCorrelation(DiscreteFourierTransform::WindowFunction(m_windowValue),
+                                      m_opening->value(),
+                                      m_thread, this);
+}
+
+void OpPhaseCorrelationReg::selectWindow(int v)
+{
+    if (m_windowValue != v) {
+        m_windowValue = v;
+        setOutOfDate();
+    }
 }

@@ -419,7 +419,7 @@ BlackmanHarris(int n, int N)
 }
 
 static double
-windowFunction(DiscreteFourierTransform::WindowFunction function, int n, int N)
+windowFunction(DiscreteFourierTransform::WindowFunction function, int n, int N, double opening)
 {
     double (*func)(int, int) = None;
     switch(function) {
@@ -431,16 +431,30 @@ windowFunction(DiscreteFourierTransform::WindowFunction function, int n, int N)
     case DiscreteFourierTransform::WindowBlackmanNuttal: func = BlackmanNuttal; break;
     case DiscreteFourierTransform::WindowBlackmanHarris: func = BlackmanHarris; break;
     }
-    int m = N/4;
+
+    int m = (1-opening) * N;
+
+    if ( n < m/2)
+        return func(n, m);
+    else if ( n >= m/2 && n < N-(m/2) )
+        return 1;
+    else
+        return func(N-n, m);
+    /*
+    int m = opening * N/2;
     if ( n >= m && n < (N-m))
         return 1;
     if ( n < m )
         return func(n, 2*m);
     n = N/2 - N-n;
     return func(n, 2*m);
+    */
 }
 
-Magick::Image DiscreteFourierTransform::window(Magick::Image& image, DiscreteFourierTransform::WindowFunction function)
+Magick::Image DiscreteFourierTransform::window(Magick::Image& image,
+                                               Photo::Gamma scale,
+                                               DiscreteFourierTransform::WindowFunction function,
+                                               double opening)
 {
     int w = image.columns();
     int h = image.rows();
@@ -451,10 +465,30 @@ Magick::Image DiscreteFourierTransform::window(Magick::Image& image, DiscreteFou
                          const Magick::PixelPacket *srcPixels = srcCache->getConst(0, y, w, 1);
                          Magick::PixelPacket *dstPixels = dstCache->get(0, y, w, 1);
                          for (int x = 0 ; x < w ; ++x) {
-                             double coef = windowFunction(function, x, w) * windowFunction(function, y, h);
-                             dstPixels[x].red = coef * srcPixels[x].red;
-                             dstPixels[x].green = coef * srcPixels[x].green;
-                             dstPixels[x].blue = coef * srcPixels[x].blue;
+                             double coef = windowFunction(function, x, w, opening) *
+                                           windowFunction(function, y, h, opening);
+                             Triplet<double> rgb;
+                             if ( scale == Photo::HDR ) {
+                                 rgb.red = fromHDR(srcPixels[x].red);
+                                 rgb.green = fromHDR(srcPixels[x].green);
+                                 rgb.blue = fromHDR(srcPixels[x].blue);
+                             }
+                             else {
+                                 rgb.red = srcPixels[x].red;
+                                 rgb.green = srcPixels[x].green;
+                                 rgb.blue = srcPixels[x].blue;
+                             }
+                             rgb *=  coef;
+                             if ( scale == Photo::HDR ) {
+                                 dstPixels[x].red = toHDR(rgb.red);
+                                 dstPixels[x].green = toHDR(rgb.green);
+                                 dstPixels[x].blue = toHDR(rgb.blue);
+                             }
+                             else {
+                                 dstPixels[x].red = clamp<quantum_t>(DF_ROUND(rgb.red));
+                                 dstPixels[x].green = clamp<quantum_t>(DF_ROUND(rgb.green));
+                                 dstPixels[x].blue = clamp<quantum_t>(DF_ROUND(rgb.blue));
+                             }
                          }
                          dstCache->sync();
                      });

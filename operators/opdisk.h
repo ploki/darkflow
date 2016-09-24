@@ -47,12 +47,15 @@ public:
 
 private slots:
     void selectColor(int v);
+    void selectKeepBackground(int v);
 
 private:
     OperatorParameterDropDown *m_color;
     quantum_t m_colorValue;
     OperatorParameterSlider *m_diameter;
     OperatorParameterSlider *m_centerHole;
+    OperatorParameterDropDown *m_keepBackground;
+    bool m_keepBackgroundValue;
 };
 
 #endif // OPDISK_H

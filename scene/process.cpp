@@ -185,9 +185,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpEqualize(this));
     m_availableOperators.push_back(new OpGradientEvaluation(this));
 
-    m_availableOperators.push_back(new OpDisk(this));
     m_availableOperators.push_back(new OpAiryDisk(this));
-    m_availableOperators.push_back(new OpWindowFunction(this));
     m_availableOperators.push_back(new OpDeconvolution(this));
     m_availableOperators.push_back(new OpWienerDeconvolution(this));
     m_availableOperators.push_back(new OpConvolution(this));
@@ -233,7 +231,10 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpPhaseCorrelationReg(this));
     m_availableOperators.push_back(new OpSsdReg(this));
 
+    m_availableOperators.push_back(new OpDisk(this));
+    m_availableOperators.push_back(new OpWindowFunction(this));
     m_availableOperators.push_back(new OpTurnBlack(this));
+
     m_availableOperators.push_back(new OpDemultiplexer(2, this));
     m_availableOperators.push_back(new OpDemultiplexer(3, this));
     m_availableOperators.push_back(new OpDemultiplexer(4, this));

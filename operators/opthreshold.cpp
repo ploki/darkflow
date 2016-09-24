@@ -35,36 +35,52 @@
 #include "operatoroutput.h"
 #include "operatorparameterslider.h"
 #include "operatorparameterdropdown.h"
+#include "channelmixer.h"
+#include "cielab.h"
 #include <Magick++.h>
 
 using Magick::Quantum;
 
 class WorkerThreshold : public OperatorWorker {
 public:
-    WorkerThreshold(qreal high, qreal low, QThread *thread, Operator *op) :
+    WorkerThreshold(qreal high, qreal low, OpThreshold::Component component,
+                    QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
-        m_threshold(high, low)
+        m_threshold(high, low),
+        m_channelMixer(LUMINANCE_RED, LUMINANCE_GREEN, LUMINANCE_BLUE),
+        m_component(component)
     {
     }
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
+        if (m_component == OpThreshold::ComponentLuminosity)
+            m_channelMixer.applyOn(newPhoto);
         m_threshold.applyOn(newPhoto);
         return newPhoto;
     }
 
 private:
     Threshold m_threshold;
+    ChannelMixer m_channelMixer;
+    OpThreshold::Component m_component;
 };
 
 OpThreshold::OpThreshold(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Threshold"), Operator::NonHDR, parent),
     m_high(new OperatorParameterSlider("high", tr("High"), tr("Threshold High"),Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this)),
-    m_low(new OperatorParameterSlider("low", tr("Low"), tr("Threshold Low"),Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
+    m_low(new OperatorParameterSlider("low", tr("Low"), tr("Threshold Low"),Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./QuantumRange, 1, 1, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this)),
+    m_component(new OperatorParameterDropDown("component", tr("Component"), this, SLOT(selectComponent(int)))),
+    m_componentValue(ComponentLuminosity)
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));
+
+    m_component->addOption(DF_TR_AND_C("Luminosity"), ComponentLuminosity, true);
+    m_component->addOption(DF_TR_AND_C("RGB"), ComponentRGB);
+
     addParameter(m_high);
     addParameter(m_low);
+    addParameter(m_component);
 }
 
 OpThreshold *OpThreshold::newInstance()
@@ -76,5 +92,14 @@ OperatorWorker *OpThreshold::newWorker()
 {
     return new WorkerThreshold(m_high->value(),
                                m_low->value(),
+                               m_componentValue,
                                m_thread, this);
+}
+
+void OpThreshold::selectComponent(int v)
+{
+    if ( m_componentValue != Component(v) ) {
+        m_componentValue = Component(v);
+        setOutOfDate();
+    }
 }

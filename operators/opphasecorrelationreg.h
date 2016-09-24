@@ -34,6 +34,9 @@
 #include "operator.h"
 #include <QObject>
 
+class OperatorParameterDropDown;
+class OperatorParameterSlider;
+
 class OpPhaseCorrelationReg : public Operator
 {
     Q_OBJECT
@@ -41,6 +44,14 @@ public:
     OpPhaseCorrelationReg(Process *parent);
     OpPhaseCorrelationReg *newInstance();
     OperatorWorker *newWorker();
+
+private slots:
+    void selectWindow(int v);
+
+private:
+    OperatorParameterDropDown *m_window;
+    int m_windowValue;
+    OperatorParameterSlider *m_opening;
 };
 
 #endif // OPPHASECORRELATIONREG_H

@@ -78,13 +78,15 @@ public:
                 Photo planePhoto = m_inputs[j][i%m_inputs[j].count()];
                 Magick::Image& planeImage = planePhoto.image();
                 std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(planeImage));
+                int c_w = planeImage.columns(),
+                    c_h = planeImage.rows();
                 if ( !img ) {
-                    w = planeImage.columns();
-                    h = planeImage.rows();
+                    w = c_w;
+                    h = c_h;
                     img = new Triplet<double>[w*h];
                 }
-                else if ( w != int(planeImage.columns()) ||
-                          h != int(planeImage.rows()) ) {
+                else if ( ( w != c_w || h != c_h ) &&
+                          ( c_w != 1 && c_h != 1 ) ) {
                     dflError(tr("Size mismatch"));
                     continue;
                 }
@@ -93,18 +95,18 @@ public:
                 if (signCache)
                     signPixels = signCache->getConst(0, 0, w, h);
                 dfl_parallel_for(y, 0, h, 4, (planeImage), {
-                                     const Magick::PixelPacket *pixels = cache->getConst(0, y, w, 1);
+                                     const Magick::PixelPacket *pixels = cache->getConst(0, y%c_h, c_w, 1);
                                      for (int x = 0 ; x < w ; ++x) {
                                          Triplet<double> pixel;
                                          if (hdr) {
-                                             pixel.red = fromHDR(pixels[x].red);
-                                             pixel.green = fromHDR(pixels[x].green);
-                                             pixel.blue = fromHDR(pixels[x].blue);
+                                             pixel.red = fromHDR(pixels[x%c_w].red);
+                                             pixel.green = fromHDR(pixels[x%c_w].green);
+                                             pixel.blue = fromHDR(pixels[x%c_w].blue);
                                          }
                                          else {
-                                             pixel.red = pixels[x].red;
-                                             pixel.green = pixels[x].green;
-                                             pixel.blue = pixels[x].blue;
+                                             pixel.red = pixels[x%c_w].red;
+                                             pixel.green = pixels[x%c_w].green;
+                                             pixel.blue = pixels[x%c_w].blue;
                                          }
                                          if (signPixels) {
                                              if (signPixels[y*w+x].red)

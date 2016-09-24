@@ -35,6 +35,7 @@
 #include <QObject>
 
 class OperatorParameterDropDown;
+class OperatorParameterSlider;
 
 class OpWindowFunction : public Operator
 {
@@ -45,11 +46,15 @@ public:
     OperatorWorker *newWorker();
 
 private slots:
-    void selectFunction(int v);
+    void selectWindow(int v);
+    void selectKeepBackground(int v);
 
 private:
-    OperatorParameterDropDown *m_function;
-    int m_functionValue;
+    OperatorParameterDropDown *m_window;
+    int m_windowValue;
+    OperatorParameterSlider *m_opening;
+    OperatorParameterDropDown *m_keepBackground;
+    bool m_keepBackgroundValue;
 };
 
 #endif // OPWINDOWFUNCTION_H

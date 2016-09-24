@@ -81,7 +81,7 @@ public:
 
     static Magick::Image normalize(Magick::Image& image, int w, bool center);
     static Magick::Image roll(Magick::Image& image, int o_x, int o_y);
-    static Magick::Image window(Magick::Image& image, WindowFunction function);
+    static Magick::Image window(Magick::Image& image, Photo::Gamma scale, WindowFunction function, double opening);
 };
 
 #endif // DISCRETEFOURIERTRANSFORM_H

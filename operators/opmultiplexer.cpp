@@ -74,7 +74,7 @@ private:
 };
 
 OpMultiplexer::OpMultiplexer(int ways, Process *parent) :
-    Operator(OP_SECTION_TOOLS, QT_TRANSLATE_NOOP("Operator", "%0-way Multiplexer"), Operator::All, parent),
+    Operator(OP_SECTION_WORKFLOW, QT_TRANSLATE_NOOP("Operator", "%0-way Multiplexer"), Operator::All, parent),
     m_ways(ways)
 {
     m_classIdentifier = m_classIdentifier.arg(ways);

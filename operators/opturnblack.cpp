@@ -58,7 +58,7 @@ public:
 };
 
 OpTurnBlack::OpTurnBlack(Process *parent) :
-    Operator(OP_SECTION_TOOLS, QT_TRANSLATE_NOOP("Operator", "Turn black"), Operator::All, parent)
+    Operator(OP_SECTION_MASK, QT_TRANSLATE_NOOP("Operator", "Turn black"), Operator::All, parent)
 {
     addInput(new OperatorInput(tr("Images"),OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Black frame"), this));

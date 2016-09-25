@@ -117,7 +117,7 @@ void ProjectProperties::accept()
         m_process->setBaseDirectory(baseDir);
         if (m_andSave) {
             if ( m_process->projectFile().isEmpty())
-                QMessageBox::warning( this, this->objectName(),
+                QMessageBox::warning( this, tr("DarkFlow - Warning"),
                                       tr("Project filename not defined"));
             m_process->save();
         }

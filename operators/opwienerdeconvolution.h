@@ -28,36 +28,25 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPTHRESHOLD_H
-#define OPTHRESHOLD_H
+#ifndef OPWIENERDECONVOLUTION_H
+#define OPWIENERDECONVOLUTION_H
 
+#include "operator.h"
 #include <QObject>
-#include <operator.h>
 
 class OperatorParameterSlider;
-class OperatorParameterDropDown;
 
-class OpThreshold : public Operator
+class OpWienerDeconvolution : public Operator
 {
     Q_OBJECT
 public:
-    typedef enum {
-        ComponentLuminosity,
-        ComponentRGB
-    } Component;
-
-    OpThreshold(Process *parent);
-    OpThreshold *newInstance();
+    OpWienerDeconvolution(Process *parent);
+    OpWienerDeconvolution *newInstance();
     OperatorWorker *newWorker();
-
-public slots:
-    void selectComponent(int v);
-
 private:
-    OperatorParameterSlider *m_high;
-    OperatorParameterSlider *m_low;
-    OperatorParameterDropDown *m_component;
-    Component m_componentValue;
+    OperatorParameterSlider *m_luminosity;
+    OperatorParameterSlider *m_snr;
+    OperatorParameterSlider *m_iterations;
 };
 
-#endif // OPTHRESHOLD_H
+#endif // OPWIENERDECONVOLUTION_H

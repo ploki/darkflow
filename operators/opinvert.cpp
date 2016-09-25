@@ -50,7 +50,7 @@ private:
 };
 
 OpInvert::OpInvert(Process *parent) :
-    Operator(OP_SECTION_EFFECTS, QT_TRANSLATE_NOOP("Operator", "Invert"), Operator::All, parent)
+    Operator(OP_SECTION_CURVE, QT_TRANSLATE_NOOP("Operator", "Invert"), Operator::All, parent)
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Negative images"), this));

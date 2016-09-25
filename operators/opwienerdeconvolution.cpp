@@ -28,56 +28,33 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#include "opgaussianblur.h"
-#include "operatorworker.h"
+#include "opwienerdeconvolution.h"
+#include "workerwienerdeconvolution.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "operatorparameterslider.h"
-#include <Magick++.h>
 
-using Magick::Quantum;
 
-class WorkerGaussianBlur : public OperatorWorker {
-public:
-    WorkerGaussianBlur(qreal radius,
-                       qreal sigma,
-                       QThread *thread, Operator *op) :
-        OperatorWorker(thread, op),
-        m_radius(radius),
-        m_sigma(sigma)
-    {}
-    Photo process(const Photo &photo, int, int) {
-        Photo newPhoto(photo);
-        newPhoto.image().gaussianBlur(m_radius, m_sigma);
-        return newPhoto;
-    }
-
-private:
-    qreal m_radius;
-    qreal m_sigma;
-};
-
-OpGaussianBlur::OpGaussianBlur(Process *parent) :
-    Operator(OP_SECTION_FREQUENCY_DOMAIN, QT_TRANSLATE_NOOP("Operator", "Gaussian Blur"), Operator::NonHDR, parent),
-    m_radius(new OperatorParameterSlider("radius", tr("Radius"), tr("Gaussian Blur Radius"), Slider::Value, Slider::Logarithmic, Slider::Real, .1, 100, 1, .1, 1000, Slider::FilterPixels, this)),
-    m_sigma(new OperatorParameterSlider("sigma", tr("Sigma"), tr("Gaussian Blur Sigma"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 1, 0, 1, Slider::FilterPercent, this))
-
+OpWienerDeconvolution::OpWienerDeconvolution(Process *parent) :
+    Operator(OP_SECTION_FREQUENCY_DOMAIN, QT_TRANSLATE_NOOP("Operator", "Wiener Deconvolution"), Operator::NonHDR, parent),
+    m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Wiener Deconvolution Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
+    m_snr(new OperatorParameterSlider("snr", tr("SNR"), tr("Wiener Deconvolution SNR"), Slider::Value, Slider::Logarithmic, Slider::Real, 1, 10000, 1000, 1, 100000, Slider::FilterPixels, this)),
+    m_iterations(new OperatorParameterSlider("iterations", tr("Iterations"), tr("Wiener Deconvolution Iterations"), Slider::Value, Slider::Linear, Slider::Integer, 1, 100, 1, 1, 100000, Slider::FilterPixels, this))
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
+    addInput(new OperatorInput(tr("Kernel"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));
-    addParameter(m_radius);
-    addParameter(m_sigma);
-
+    addParameter(m_luminosity);
+    addParameter(m_snr);
+    addParameter(m_iterations);
 }
 
-OpGaussianBlur *OpGaussianBlur::newInstance()
+OpWienerDeconvolution *OpWienerDeconvolution::newInstance()
 {
-    return new OpGaussianBlur(m_process);
+    return new OpWienerDeconvolution(m_process);
 }
 
-OperatorWorker *OpGaussianBlur::newWorker()
+OperatorWorker *OpWienerDeconvolution::newWorker()
 {
-    return new WorkerGaussianBlur(m_radius->value(),
-                                 m_radius->value()*m_sigma->value(),
-                                 m_thread, this);
+    return new WorkerWienerDeconvolution(m_luminosity->value(), m_snr->value(), m_iterations->value(), m_thread, this);
 }

@@ -205,10 +205,29 @@ public:
         blue=t.blue;
         return *this;
     }
+    Triplet& operator+=(const Triplet& t) {
+        red+=t.red;
+        green+=t.green;
+        blue+=t.blue;
+        return *this;
+    }
+    Triplet& operator-=(const Triplet& t) {
+        red-=t.red;
+        green-=t.green;
+        blue-=t.blue;
+        return *this;
+    }
+    Triplet& operator*=(const T& c) {
+        red*=c;
+        green*=c;
+        blue*=c;
+        return *this;
+    }
     T red;
     T green;
     T blue;
 };
+
 
 class QRectF;
 
@@ -341,4 +360,7 @@ private:
 #define TAG_SCALE_LINEAR "Linear"
 #define TAG_SCALE_NONLINEAR "Non-linear"
 #define TAG_SCALE_HDR "HDR"
+#define TAG_DFT_NORMALIZATION "DFT Normalization"
+#define TAG_DFT_WIDTH "DFT Original Width"
+#define TAG_DFT_HEIGHT "DFT Original Height"
 #endif // IMAGE_H

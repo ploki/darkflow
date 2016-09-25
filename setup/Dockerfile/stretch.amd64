@@ -6,7 +6,7 @@ WORKDIR /root
 
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install -y dpkg-dev debhelper qtbase5-dev qtbase5-dev-tools libmagick++-dev libavcodec-dev libavformat-dev
+RUN apt-get install -y dpkg-dev debhelper qtbase5-dev qtbase5-dev-tools libmagick++-dev libavcodec-dev libavformat-dev libfftw3-dev
 
 RUN apt-get install -y wget
 ENV imver 6.9.2.10

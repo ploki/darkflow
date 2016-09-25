@@ -28,36 +28,27 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPTHRESHOLD_H
-#define OPTHRESHOLD_H
+#ifndef ATROUSWAVELETTRANSFORM_H
+#define ATROUSWAVELETTRANSFORM_H
 
-#include <QObject>
-#include <operator.h>
+#include "photo.h"
 
-class OperatorParameterSlider;
-class OperatorParameterDropDown;
-
-class OpThreshold : public Operator
+class ATrousWaveletTransform
 {
-    Q_OBJECT
+    int m_w;
+    int m_h;
+    Triplet<double> *m_image;
+    Triplet<double> *m_tmp;
+    int m_kOrder;
+    double *m_kernel;
+    QString m_identity;
+    QString m_name;
 public:
-    typedef enum {
-        ComponentLuminosity,
-        ComponentRGB
-    } Component;
-
-    OpThreshold(Process *parent);
-    OpThreshold *newInstance();
-    OperatorWorker *newWorker();
-
-public slots:
-    void selectComponent(int v);
-
-private:
-    OperatorParameterSlider *m_high;
-    OperatorParameterSlider *m_low;
-    OperatorParameterDropDown *m_component;
-    Component m_componentValue;
+    ATrousWaveletTransform(Photo &photo, const double *kernel, int kSize);
+    ~ATrousWaveletTransform();
+    Photo transform(int n, int nPlanes, Photo::Gamma scale, Photo &sign);
+    void construct(Photo &plane, int n);
+    Photo getConstruction();
 };
 
-#endif // OPTHRESHOLD_H
+#endif // ATROUSWAVELETTRANSFORM_H

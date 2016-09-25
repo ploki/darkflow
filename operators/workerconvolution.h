@@ -32,6 +32,7 @@
 #define WORKERCONVOLUTION_H
 
 #include <operatorworker.h>
+#include "photo.h"
 
 class OpConvolution;
 
@@ -43,7 +44,9 @@ public:
     void play();
 private:
     qreal m_luminosity;
-    void conv(Magick::Image &image, Magick::Image &kernel, qreal luminosity);
+    void conv(Magick::Image& image, Photo::Gamma imageScale,
+              Magick::Image& kernel, Photo::Gamma kernelScale,
+              qreal luminosity);
 };
 
 #endif // WORKERCONVOLUTION_H

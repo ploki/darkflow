@@ -117,6 +117,16 @@
 #include "ophdr.h"
 #include "opselectivelabfilter.h"
 #include "opsave.h"
+#include "opairydisk.h"
+#include "opwienerdeconvolution.h"
+#include "opdftforward.h"
+#include "opdftbackward.h"
+#include "opdwtforward.h"
+#include "opdwtbackward.h"
+#include "opturnblack.h"
+#include "opdisk.h"
+#include "opphasecorrelationreg.h"
+#include "opwindowfunction.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -157,6 +167,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpHDR(this));
     m_availableOperators.push_back(new OpLevel(this));
     m_availableOperators.push_back(new OpLevelPercentile(this));
+    m_availableOperators.push_back(new OpInvert(this));
 
     m_availableOperators.push_back(new OpWhiteBalance(this));
     m_availableOperators.push_back(new OpBlackBody(this));
@@ -174,6 +185,27 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpEqualize(this));
     m_availableOperators.push_back(new OpGradientEvaluation(this));
 
+    m_availableOperators.push_back(new OpAiryDisk(this));
+    m_availableOperators.push_back(new OpDeconvolution(this));
+    m_availableOperators.push_back(new OpWienerDeconvolution(this));
+    m_availableOperators.push_back(new OpConvolution(this));
+    m_availableOperators.push_back(new OpBlur(this));
+    m_availableOperators.push_back(new OpGaussianBlur(this));
+    m_availableOperators.push_back(new OpDFTForward(this));
+    m_availableOperators.push_back(new OpDFTBackward(this));
+    m_availableOperators.push_back(new OpDWTForward(2, this));
+    m_availableOperators.push_back(new OpDWTForward(3, this));
+    m_availableOperators.push_back(new OpDWTForward(5, this));
+    m_availableOperators.push_back(new OpDWTForward(8, this));
+    m_availableOperators.push_back(new OpDWTForward(13, this));
+    m_availableOperators.push_back(new OpDWTForward(21, this));
+    m_availableOperators.push_back(new OpDWTBackward(2, this));
+    m_availableOperators.push_back(new OpDWTBackward(3, this));
+    m_availableOperators.push_back(new OpDWTBackward(5, this));
+    m_availableOperators.push_back(new OpDWTBackward(8, this));
+    m_availableOperators.push_back(new OpDWTBackward(13, this));
+    m_availableOperators.push_back(new OpDWTBackward(21, this));
+
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
     m_availableOperators.push_back(new OpSelectiveLabFilter(this));
@@ -183,12 +215,6 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpDespeckle(this));
     m_availableOperators.push_back(new OpReduceNoise(this));
     m_availableOperators.push_back(new OpHotPixels(this));
-    m_availableOperators.push_back(new OpDeconvolution(this));
-
-    m_availableOperators.push_back(new OpInvert(this));
-    m_availableOperators.push_back(new OpBlur(this));
-    m_availableOperators.push_back(new OpGaussianBlur(this));
-    m_availableOperators.push_back(new OpConvolution(this));
 
     m_availableOperators.push_back(new OpBlend(this));
     m_availableOperators.push_back(new OpIntegration(this));
@@ -202,19 +228,27 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpScale(this));
     m_availableOperators.push_back(new OpRoll(this));
 
+    m_availableOperators.push_back(new OpPhaseCorrelationReg(this));
     m_availableOperators.push_back(new OpSsdReg(this));
+
+    m_availableOperators.push_back(new OpDisk(this));
+    m_availableOperators.push_back(new OpWindowFunction(this));
+    m_availableOperators.push_back(new OpTurnBlack(this));
 
     m_availableOperators.push_back(new OpDemultiplexer(2, this));
     m_availableOperators.push_back(new OpDemultiplexer(3, this));
     m_availableOperators.push_back(new OpDemultiplexer(4, this));
     m_availableOperators.push_back(new OpDemultiplexer(5, this));
-    m_availableOperators.push_back(new OpDemultiplexer(6, this));
+    m_availableOperators.push_back(new OpDemultiplexer(8, this));
+    m_availableOperators.push_back(new OpDemultiplexer(13, this));
+    m_availableOperators.push_back(new OpDemultiplexer(21, this));
     m_availableOperators.push_back(new OpMultiplexer(2, this));
     m_availableOperators.push_back(new OpMultiplexer(3, this));
     m_availableOperators.push_back(new OpMultiplexer(4, this));
     m_availableOperators.push_back(new OpMultiplexer(5, this));
-    m_availableOperators.push_back(new OpMultiplexer(6, this));
-
+    m_availableOperators.push_back(new OpMultiplexer(8, this));
+    m_availableOperators.push_back(new OpMultiplexer(13, this));
+    m_availableOperators.push_back(new OpMultiplexer(21, this));
 
 
     m_availableOperators.push_back(new OpSubtract(this));

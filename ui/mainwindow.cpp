@@ -66,8 +66,9 @@ void MainWindow::actionNewProject()
     QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 
     if ( process->dirty() )
-        resBtn = QMessageBox::question( this, this->objectName(),
-                                        tr("Are you sure?\n"),
+        resBtn = QMessageBox::question( this, tr("DarkFlow - Warning"),
+                                        tr("Unsaved work will be lost.\n"
+                                           "Are you sure?\n"),
                                         QMessageBox::No |
                                         QMessageBox::Yes,
                                         QMessageBox::Yes);
@@ -92,7 +93,7 @@ void MainWindow::actionPreferences()
 void MainWindow::actionSave()
 {
     if ( process->projectFile().isEmpty())
-        QMessageBox::warning( this, this->objectName(),
+        QMessageBox::warning( this, tr("DarkFlow - Warning"),
                               tr("Project filename not defined\n"));
 
     else
@@ -103,8 +104,9 @@ void MainWindow::actionLoad()
 {
     QMessageBox::StandardButton resBtn = QMessageBox::Yes;
     if ( process->dirty() )
-        resBtn = QMessageBox::question( this, this->objectName(),
-                                        tr("Are you sure?\n"),
+        resBtn = QMessageBox::question( this, tr("DarkFlow - Warning"),
+                                        tr("Unsaved work will be lost.\n"
+                                           "Are you sure?\n"),
                                         QMessageBox::No |
                                         QMessageBox::Yes,
                                         QMessageBox::Yes);
@@ -127,8 +129,9 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         QFileOpenEvent *openEvent = static_cast<QFileOpenEvent*>(event);
         QMessageBox::StandardButton resBtn = QMessageBox::Yes;
         if ( process->dirty() )
-            resBtn = QMessageBox::question( this, this->objectName(),
-                                            tr("Are you sure?\n"),
+            resBtn = QMessageBox::question( this, tr("DarkFlow - Warning"),
+                                            tr("Unsaved work will be lost.\n"
+                                               "Are you sure?\n"),
                                             QMessageBox::No |
                                             QMessageBox::Yes,
                                             QMessageBox::Yes);
@@ -236,8 +239,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 
     if ( process->dirty() )
-        resBtn = QMessageBox::question( this, this->objectName(),
-                                        tr("Are you sure?\n"),
+        resBtn = QMessageBox::question( this, tr("DarkFlow - Warning"),
+                                        tr("Unsaved work will be lost.\n"
+                                           "Are you sure?\n"),
                                         QMessageBox::No |
                                         QMessageBox::Yes,
                                         QMessageBox::Yes);

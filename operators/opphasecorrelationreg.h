@@ -28,36 +28,30 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPTHRESHOLD_H
-#define OPTHRESHOLD_H
+#ifndef OPPHASECORRELATIONREG_H
+#define OPPHASECORRELATIONREG_H
 
+#include "operator.h"
 #include <QObject>
-#include <operator.h>
 
-class OperatorParameterSlider;
 class OperatorParameterDropDown;
+class OperatorParameterSlider;
 
-class OpThreshold : public Operator
+class OpPhaseCorrelationReg : public Operator
 {
     Q_OBJECT
 public:
-    typedef enum {
-        ComponentLuminosity,
-        ComponentRGB
-    } Component;
-
-    OpThreshold(Process *parent);
-    OpThreshold *newInstance();
+    OpPhaseCorrelationReg(Process *parent);
+    OpPhaseCorrelationReg *newInstance();
     OperatorWorker *newWorker();
 
-public slots:
-    void selectComponent(int v);
+private slots:
+    void selectWindow(int v);
 
 private:
-    OperatorParameterSlider *m_high;
-    OperatorParameterSlider *m_low;
-    OperatorParameterDropDown *m_component;
-    Component m_componentValue;
+    OperatorParameterDropDown *m_window;
+    int m_windowValue;
+    OperatorParameterSlider *m_opening;
 };
 
-#endif // OPTHRESHOLD_H
+#endif // OPPHASECORRELATIONREG_H

@@ -1,4 +1,10 @@
-darkflow (2016.08.20-1) unstable; urgency=medium
+darkflow (2016.09.25-1) unstable; urgency=medium
+
+  * Fourier, wavelets and more.
+
+ -- Guillaume Gimenez <guillaume@blackmilk.fr>  Wed, 25 Sep 2016 02:47:45 +0100
+
+ddarkflow (2016.08.20-1) unstable; urgency=medium
 
   * UI and fixes
 

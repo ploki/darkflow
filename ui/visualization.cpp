@@ -285,9 +285,9 @@ void Visualization::fullScreenViewClicked()
 void Visualization::saveViewClicked()
 {
     QString filters[][3] = {
-        tr("JPEG Images (*.jpg *.jpeg)"), "JPG", ".jpg:.jpeg",
-        tr("TIFF Images (*.tif *.tiff)"), "TIFF", ".tif:.tiff",
-        tr("FITS Images (*.fits)"), "FITS", ".fits"
+        { tr("JPEG Images (*.jpg *.jpeg)"), "JPG", ".jpg:.jpeg" },
+        { tr("TIFF Images (*.tif *.tiff)"), "TIFF", ".tif:.tiff" },
+        { tr("FITS Images (*.fits)"), "FITS", ".fits" }
     };
     QString filter;
     for (int i = 0, s = sizeof(filters)/sizeof(*filters) ; i < s ; ++i ) {

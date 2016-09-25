@@ -28,36 +28,37 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPTHRESHOLD_H
-#define OPTHRESHOLD_H
+#ifndef OPAIRYDISK_H
+#define OPAIRYDISK_H
 
+#include "operator.h"
 #include <QObject>
-#include <operator.h>
 
+class Process;
 class OperatorParameterSlider;
 class OperatorParameterDropDown;
 
-class OpThreshold : public Operator
+class OpAiryDisk : public Operator
 {
     Q_OBJECT
 public:
-    typedef enum {
-        ComponentLuminosity,
-        ComponentRGB
-    } Component;
-
-    OpThreshold(Process *parent);
-    OpThreshold *newInstance();
-    OperatorWorker *newWorker();
+    OpAiryDisk(Process *parent);
+    ~OpAiryDisk();
 
 public slots:
-    void selectComponent(int v);
+    OpAiryDisk *newInstance();
+    OperatorWorker* newWorker();
+    void setOutputHDR(int);
 
 private:
-    OperatorParameterSlider *m_high;
-    OperatorParameterSlider *m_low;
-    OperatorParameterDropDown *m_component;
-    Component m_componentValue;
+    OperatorParameterSlider *m_diameter;
+    OperatorParameterSlider *m_focal;
+    OperatorParameterSlider *m_pixel_sz;
+    OperatorParameterSlider *m_offset;
+    OperatorParameterSlider *m_width;
+    OperatorParameterSlider *m_precision;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
-#endif // OPTHRESHOLD_H
+#endif // OPAIRYDISK_H

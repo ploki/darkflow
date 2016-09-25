@@ -126,20 +126,10 @@ blend(WorkerBlend *self, PIXEL *rgb, const PIXEL *p, OpBlend::BlendMode mode)
         rgb[2] = rgb[2]+p[2];
         break;
     case OpBlend::Subtract:
+    case OpBlend::Difference: {
         rgb[0] = rgb[0]-p[0];
         rgb[1] = rgb[1]-p[1];
         rgb[2] = rgb[2]-p[2];
-        break;
-    case OpBlend::Difference: {
-        PIXEL r = rgb[0]-p[0];
-        PIXEL g = rgb[1]-p[1];
-        PIXEL b = rgb[2]-p[2];
-        if ( r < 0 ) r=-r;
-        if ( g < 0 ) g=-g;
-        if ( b < 0 ) b=-b;
-        rgb[0] = r;
-        rgb[1] = g;
-        rgb[2] = b;
         break;
     }
     case OpBlend::DarkenOnly:
@@ -187,10 +177,29 @@ blend(WorkerBlend *self,
         else { p[0] = fromHDR(c->red); p[1] = fromHDR(c->green); p[2] = fromHDR(c->blue); }
         blend<PIXEL>(self, rgb, p, mode2);
     }
-    if (u) {
+
+    bool anyDifference = (mode1 == OpBlend::Difference || mode2 == OpBlend::Difference);
+    if (u && !anyDifference) {
         if ( rgb[0] < 0 ) u->red = -rgb[0]; else u->red = 0;
         if ( rgb[1] < 0 ) u->green = -rgb[1]; else u->green = 0;
         if ( rgb[2] < 0 ) u->blue = -rgb[2]; else u->blue = 0;
+    }
+    if (u && anyDifference) {
+        if ( rgb[0] < 0 ) {
+            u->red = QuantumRange;
+            rgb[0] = - rgb[0];
+        }
+        else u->red = 0;
+        if ( rgb[1] < 0 ) {
+            u->green = QuantumRange;
+            rgb[1] = -rgb[1];
+        }
+        else u->green = 0;
+        if ( rgb[2] < 0 ) {
+            u->blue = QuantumRange;
+            rgb[2] = -rgb[2];
+        }
+        else u->blue = 0;
     }
     if (o) {
         if ( rgb[0] > QuantumRange ) o->red = clamp(rgb[0]-QuantumRange); else o->red = 0;

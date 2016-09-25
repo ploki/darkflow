@@ -28,36 +28,42 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPTHRESHOLD_H
-#define OPTHRESHOLD_H
+#ifndef OPDWTFORWARD_H
+#define OPDWTFORWARD_H
 
+#include "operator.h"
 #include <QObject>
-#include <operator.h>
 
-class OperatorParameterSlider;
 class OperatorParameterDropDown;
 
-class OpThreshold : public Operator
+class OpDWTForward : public Operator
 {
     Q_OBJECT
 public:
     typedef enum {
-        ComponentLuminosity,
-        ComponentRGB
-    } Component;
-
-    OpThreshold(Process *parent);
-    OpThreshold *newInstance();
+        AlgorithmATrous
+    } Algorithm;
+    typedef enum {
+        WaveletLinear,
+        WaveletB3Spline,
+    } Wavelet;
+    OpDWTForward(int nPlanes, Process *parent);
+    OpDWTForward *newInstance();
     OperatorWorker *newWorker();
 
-public slots:
-    void selectComponent(int v);
+private slots:
+    void selectAlgorithm(int v);
+    void selectWavelet(int v);
+    void selectOutputHDR(int v);
 
 private:
-    OperatorParameterSlider *m_high;
-    OperatorParameterSlider *m_low;
-    OperatorParameterDropDown *m_component;
-    Component m_componentValue;
+    int m_planes;
+    OperatorParameterDropDown *m_algorithm;
+    Algorithm m_algorithmValue;
+    OperatorParameterDropDown *m_wavelet;
+    Wavelet m_waveletValue;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
-#endif // OPTHRESHOLD_H
+#endif // OPDWTFORWARD_H

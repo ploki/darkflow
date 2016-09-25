@@ -28,28 +28,30 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#include "opdeconvolution.h"
-#include "workerdeconvolution.h"
+#include "opwienerdeconvolution.h"
+#include "workerwienerdeconvolution.h"
 #include <list>
 #include "algorithm.h"
 #include "discretefouriertransform.h"
 
 using Magick::Quantum;
 
-WorkerDeconvolution::WorkerDeconvolution(qreal luminosity, QThread *thread, OpDeconvolution *op) :
+WorkerWienerDeconvolution::WorkerWienerDeconvolution(qreal luminosity, qreal snr, int iterations, QThread *thread, OpWienerDeconvolution *op) :
     OperatorWorker(thread, op),
-    m_luminosity(luminosity)
+    m_luminosity(luminosity),
+    m_snr(snr),
+    m_iterations(iterations)
 {
 }
 
-Photo WorkerDeconvolution::process(const Photo &photo, int, int)
+Photo WorkerWienerDeconvolution::process(const Photo &photo, int, int)
 {
     return photo;
 }
 
-void WorkerDeconvolution::deconv(Magick::Image& image, Photo::Gamma imageScale,
-                                 Magick::Image& kernel, Photo::Gamma kernelScale,
-                                 qreal luminosity)
+void WorkerWienerDeconvolution::deconv(Magick::Image& image, Photo::Gamma imageScale,
+                                       Magick::Image& kernel, Photo::Gamma kernelScale,
+                                       qreal luminosity)
 {
     Magick::Image nk = DiscreteFourierTransform::normalize(kernel, qMax(image.columns(),image.rows()), true);
     Magick::Image ni = DiscreteFourierTransform::normalize(image, qMax(image.columns(),image.rows()), false);
@@ -59,11 +61,13 @@ void WorkerDeconvolution::deconv(Magick::Image& image, Photo::Gamma imageScale,
     DiscreteFourierTransform fft_image(ni, imageScale);
     DiscreteFourierTransform fft_kernel(nnk, kernelScale);
 
-    fft_image /= fft_kernel;
+    fft_kernel.wienerFilter(1./m_snr);
+    for (int i = 0 ; i < m_iterations ; ++i)
+        fft_image *= fft_kernel;
     image = fft_image.reverse(luminosity);
 }
 
-void WorkerDeconvolution::play()
+void WorkerWienerDeconvolution::play()
 {
     Q_ASSERT( m_inputs.count() == 2 );
 

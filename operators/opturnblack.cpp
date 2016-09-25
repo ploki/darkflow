@@ -28,56 +28,48 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#include "opgaussianblur.h"
+#include "opturnblack.h"
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
-#include "operatorparameterslider.h"
 #include <Magick++.h>
 
-using Magick::Quantum;
-
-class WorkerGaussianBlur : public OperatorWorker {
+class WorkerTurnBlack : public OperatorWorker {
 public:
-    WorkerGaussianBlur(qreal radius,
-                       qreal sigma,
-                       QThread *thread, Operator *op) :
-        OperatorWorker(thread, op),
-        m_radius(radius),
-        m_sigma(sigma)
+    WorkerTurnBlack(QThread *thread, Operator *op) :
+        OperatorWorker(thread, op)
     {}
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
-        newPhoto.image().gaussianBlur(m_radius, m_sigma);
+        Magick::Image &image = newPhoto.image();
+        ResetImage(image);
+        int w = image.columns(),
+            h = image.rows();
+        std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(image));
+        dfl_parallel_for(y, 0, h, 4, (image), {
+                             Magick::PixelPacket *pixels = cache->get(0, y, w, 1);
+                             for (int x = 0 ; x < w ; ++x) {
+                                 pixels[x].red = pixels[x].green = pixels[x].blue = 0;
+                             }
+                             cache->sync();
+                         });
         return newPhoto;
     }
-
-private:
-    qreal m_radius;
-    qreal m_sigma;
 };
 
-OpGaussianBlur::OpGaussianBlur(Process *parent) :
-    Operator(OP_SECTION_FREQUENCY_DOMAIN, QT_TRANSLATE_NOOP("Operator", "Gaussian Blur"), Operator::NonHDR, parent),
-    m_radius(new OperatorParameterSlider("radius", tr("Radius"), tr("Gaussian Blur Radius"), Slider::Value, Slider::Logarithmic, Slider::Real, .1, 100, 1, .1, 1000, Slider::FilterPixels, this)),
-    m_sigma(new OperatorParameterSlider("sigma", tr("Sigma"), tr("Gaussian Blur Sigma"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 1, 0, 1, Slider::FilterPercent, this))
-
+OpTurnBlack::OpTurnBlack(Process *parent) :
+    Operator(OP_SECTION_MASK, QT_TRANSLATE_NOOP("Operator", "Turn black"), Operator::All, parent)
 {
-    addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
-    addOutput(new OperatorOutput(tr("Images"), this));
-    addParameter(m_radius);
-    addParameter(m_sigma);
-
+    addInput(new OperatorInput(tr("Images"),OperatorInput::Set, this));
+    addOutput(new OperatorOutput(tr("Black frame"), this));
 }
 
-OpGaussianBlur *OpGaussianBlur::newInstance()
+OpTurnBlack *OpTurnBlack::newInstance()
 {
-    return new OpGaussianBlur(m_process);
+    return new OpTurnBlack(m_process);
 }
 
-OperatorWorker *OpGaussianBlur::newWorker()
+OperatorWorker *OpTurnBlack::newWorker()
 {
-    return new WorkerGaussianBlur(m_radius->value(),
-                                 m_radius->value()*m_sigma->value(),
-                                 m_thread, this);
+    return new WorkerTurnBlack(m_thread, this);
 }

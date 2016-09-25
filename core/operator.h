@@ -49,7 +49,8 @@ class QThread;
 class OperatorWorker;
 
 #define OP_SECTION_ASSETS Operator::tr("Assets")
-#define OP_SECTION_TOOLS Operator::tr("Tools")
+#define OP_SECTION_WORKFLOW Operator::tr("Workflow")
+#define OP_SECTION_MASK Operator::tr("Mask")
 #define OP_SECTION_GEOMETRY Operator::tr("Geometry")
 #define OP_SECTION_REGISTRATION Operator::tr("Registration")
 #define OP_SECTION_COLOR Operator::tr("Color")
@@ -58,6 +59,7 @@ class OperatorWorker;
 #define OP_SECTION_COSMETIC Operator::tr("Cosmetic")
 #define OP_SECTION_EFFECTS Operator::tr("Effects")
 #define OP_SECTION_DEPRECATED Operator::tr("Deprecated")
+#define OP_SECTION_FREQUENCY_DOMAIN Operator::tr("Frequency Domain")
 
 class Algorithm;
 

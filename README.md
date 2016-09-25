@@ -26,6 +26,32 @@ By the way, it includes in some places code from other projects which may taint 
 
 ## Installation
 
+### Run in a docker container on any GNU/Linux
+
+Make sure docker is installed and your user is a sudoer or type the following commands, then logout and login in your graphical environment.
+
+``` bash
+# apt-get install docker.io
+# adduser $(id -un) sudo
+```
+
+When logged in again, checkout and build once.
+
+
+``` bash
+$ git clone https://github.com/ploki/darkflow.git
+$ cd darkflow
+$ setup/build.sh
+```
+
+And run it (many times) from a terminal within your graphical environment.
+DarkFlow expects your photos to be in the directory ```DARKFLOW``` in your home directory.
+
+``` bash
+$ setup/run.sh
+```
+
+
 ### Build from source
 
 

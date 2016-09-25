@@ -80,7 +80,7 @@ public:
             int w = img.columns();
             int h = img.rows();
             double max = 0;
-            double mx, my;
+            double mx = 0, my = 0;
             Ordinary::Pixels cache(img);
             for (int y = 0 ; y < h ; ++y) {
                 const Magick::PixelPacket *pixels = cache.getConst(0, y, w, 1);

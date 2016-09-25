@@ -60,7 +60,7 @@ public:
     }
     void play() {
         Triplet<double> *img = nullptr;
-        int w, h;
+        int w = 0, h = 0;
         int count = 0;
         int signCount=m_inputs[m_planes].count();
         for (int i = 0 ; i < m_planes ; ++i)

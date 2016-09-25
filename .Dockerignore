@@ -2,3 +2,5 @@
 setup/Dockerfile*
 .git
 debian/darkflow
+pkg/
+apt/

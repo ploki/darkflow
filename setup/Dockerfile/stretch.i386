@@ -8,7 +8,7 @@ RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y dpkg-dev debhelper qtbase5-dev:i386 qtbase5-dev-tools libstdc++-5-dev:i386 libavcodec-dev:i386 libavformat-dev:i386 libmagick++-6.q16-dev:i386
-RUN apt-get install -y libmagickcore-6-arch-config:i386
+RUN apt-get install -y libmagickcore-6-arch-config:i386 libfftw3-dev:i386
 RUN apt-get install -y gcc-multilib g++-multilib libstdc++-6-dev:i386
 
 RUN ln -s /usr/lib/x86_64-linux-gnu/qt5/bin/moc /usr/lib/i386-linux-gnu/qt5/bin

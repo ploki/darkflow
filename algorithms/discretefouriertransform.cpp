@@ -41,12 +41,11 @@ using Magick::Quantum;
 
 Q_STATIC_ASSERT( sizeof(fftw_complex) == sizeof(std::complex<double>));
 
-__attribute__((constructor))
-static void
-init()
-{
-    fftw_init_threads();
-}
+static struct RunThisOnce {
+    RunThisOnce() {
+        fftw_init_threads();
+    }
+} once;
 
 DiscreteFourierTransform::DiscreteFourierTransform(Magick::Image &image, Photo::Gamma scale)
     : m_w(image.columns()),

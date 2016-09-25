@@ -10,6 +10,7 @@
 #define public BuildDir HomeDir + "\Desktop\build-darkflow-Desktop_Qt_5_5_1_MSVC2013_"+ BuildArch + "-Release\release"
 #define public SourceDir HomeDir + "\Desktop\darkflow"
 #define public FFmpegBinDir "C:\ffmpeg-" + Arch + "\bin"
+#define public FFTW3BinDir "C:\fftw-3.3.5-" + Arch
 #define public MSVCCRTRedistDir "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\" + Arch + "\Microsoft.VC120.CRT"
 #define public MSVCOMPRedistDir "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\" + Arch + "\Microsoft.VC120.OPENMP"
 
@@ -61,6 +62,9 @@ Source: "{#FFmpegBinDir}\avcodec-57.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#FFmpegBinDir}\avformat-57.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#FFmpegBinDir}\avutil-55.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#FFmpegBinDir}\swresample-2.dll"; DestDir: "{app}"; Flags: ignoreversion
+
+;fftw3
+Source: "{#FFTW3BinDir}\libfftw3-3.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ;Qt
 Source: "{#QtBinDir}\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion

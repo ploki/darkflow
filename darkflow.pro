@@ -104,6 +104,9 @@ win32 {
         QMAKE_CXXFLAGS += -IC:\ffmpeg-x64\include
         QMAKE_CFLAGS += -IC:\ffmpeg-x64\include
         LIBS += -LC:\ffmpeg-x64\lib
+        QMAKE_CXXFLAGS += -IC:\fftw-3.3.5-x64
+        QMAKE_CFLAGS += -IC:\fftw-3.3.5-x64
+        LIBS += -LC:\fftw-3.3.5-x64
     } else {
         message("x86 build")
         QMAKE_CXXFLAGS += -IC:\ImageMagick\6.9.3-Q16-x86\include
@@ -112,9 +115,13 @@ win32 {
         QMAKE_CXXFLAGS += -IC:\ffmpeg-x86\include
         QMAKE_CFLAGS += -IC:\ffmpeg-x86\include
         LIBS += -LC:\ffmpeg-x86\lib
+        QMAKE_CXXFLAGS += -IC:\fftw-3.3.5-x86
+        QMAKE_CFLAGS += -IC:\fftw-3.3.5-x86
+        LIBS += -LC:\fftw-3.3.5-x86
     }
     LIBS += -lCORE_RL_magick_ -lCORE_RL_wand_ -lCORE_RL_Magick++_
     LIBS += -lavformat -lavcodec -lavutil
+    LIBS += -lfftw3-3
     RC_ICONS = icons/darkflow-256x256.ico \
         icons/darkflow-128x128.ico \
         icons/darkflow-96x96.ico \

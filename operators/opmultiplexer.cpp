@@ -79,6 +79,7 @@ OpMultiplexer::OpMultiplexer(int ways, Process *parent) :
 {
     m_classIdentifier = m_classIdentifier.arg(ways);
     m_name = m_name.arg(ways);
+    m_localizedClassIdentifier= m_localizedClassIdentifier.arg(ways);
     for (int i = 1 ; i <= m_ways ; ++i ) {
         QString name = tr("Image set %0").arg(i);
          addInput(new OperatorInput(name, OperatorInput::Set, this));

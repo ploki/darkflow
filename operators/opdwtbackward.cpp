@@ -187,6 +187,7 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
 {
     m_classIdentifier = m_classIdentifier.arg(m_planes);
     m_name = m_name.arg(m_planes);
+    m_localizedClassIdentifier= m_localizedClassIdentifier.arg(m_planes);
 
     for (int i = 1 ; i <= m_planes ; ++i) {
         QString name = tr("Plane %0").arg(i);
@@ -195,7 +196,7 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
         name = QString("multiplier:%0").arg(i);
         m_coefs[i-1] = new OperatorParameterSlider(name.toLocal8Bit().data(),
                                                  tr("Plane %0").arg(i),
-                                                 tr("Discrete Wavelet Reconstruction - PLane %0 multiplier").arg(i),
+                                                 tr("Discrete Wavelet Reconstruction - Plane %0 multiplier").arg(i),
                                                  Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
                                                  .5, 2., 1, 1./QuantumRange, QuantumRange,
                                                  Slider::FilterExposureFromOne, this);

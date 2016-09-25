@@ -115,6 +115,8 @@ OpDWTForward::OpDWTForward(int nPlanes, Process *parent) :
 {
     m_classIdentifier = m_classIdentifier.arg(m_planes);
     m_name = m_name.arg(m_planes);
+    m_localizedClassIdentifier= m_localizedClassIdentifier.arg(m_planes);
+
     addInput(new OperatorInput(tr("Image"), OperatorInput::Set, this));
     for (int i = 1 ; i <= m_planes ; ++i ) {
         QString name = tr("Plane %0").arg(i);

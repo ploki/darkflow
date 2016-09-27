@@ -28,20 +28,23 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPISOMETRICPROJECTION_H
-#define OPISOMETRICPROJECTION_H
+#ifndef OPSTARFINDER_H
+#define OPSTARFINDER_H
 
 #include "operator.h"
 #include <QObject>
 
-class OpIsometricProjection : public Operator
+class OperatorParameterSlider;
+
+class OpStarFinder : public Operator
 {
     Q_OBJECT
 public:
-    OpIsometricProjection(Process *parent);
-
-    OpIsometricProjection *newInstance();
+    OpStarFinder(Process *parent);
+    OpStarFinder *newInstance();
     OperatorWorker *newWorker();
+private:
+    OperatorParameterSlider *m_threshold;
 };
 
-#endif // OPISOMETRICPROJECTION_H
+#endif // OPSTARFINDER_H

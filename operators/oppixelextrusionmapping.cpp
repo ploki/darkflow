@@ -28,7 +28,7 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#include "opisometricprojection.h"
+#include "oppixelextrusionmapping.h"
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
@@ -36,9 +36,9 @@
 #include "hdr.h"
 using Magick::Quantum;
 
-class WorkerIsometricProjection : public OperatorWorker {
+class WorkerPixelExtrusionMapping : public OperatorWorker {
 public:
-    WorkerIsometricProjection(QThread *thread, Operator *op) :
+    WorkerPixelExtrusionMapping(QThread *thread, Operator *op) :
         OperatorWorker(thread, op)
     {}
     Photo process(const Photo &photo, int, int) {
@@ -82,19 +82,19 @@ public:
     }
 };
 
-OpIsometricProjection::OpIsometricProjection(Process *parent) :
-    Operator(OP_SECTION_ANALYSIS, QT_TRANSLATE_NOOP("Operator", "Isometric Projection"), Operator::All, parent)
+OpPixelExtrusionMapping::OpPixelExtrusionMapping(Process *parent) :
+    Operator(OP_SECTION_ANALYSIS, QT_TRANSLATE_NOOP("Operator", "Pixel Extrusion Mapping"), Operator::All, parent)
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
-    addOutput(new OperatorOutput(tr("Projection"), this));
+    addOutput(new OperatorOutput(tr("Extrusion"), this));
 }
 
-OpIsometricProjection *OpIsometricProjection::newInstance()
+OpPixelExtrusionMapping *OpPixelExtrusionMapping::newInstance()
 {
-    return new OpIsometricProjection(m_process);
+    return new OpPixelExtrusionMapping(m_process);
 }
 
-OperatorWorker *OpIsometricProjection::newWorker()
+OperatorWorker *OpPixelExtrusionMapping::newWorker()
 {
-    return new WorkerIsometricProjection(m_thread, this);
+    return new WorkerPixelExtrusionMapping(m_thread, this);
 }

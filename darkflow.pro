@@ -277,7 +277,8 @@ SOURCES +=\
     operators/opphasecorrelationreg.cpp \
     operators/opwindowfunction.cpp \
     operators/opcolormap.cpp \
-    operators/opisometricprojection.cpp
+    operators/opstarfinder.cpp \
+    operators/oppixelextrusionmapping.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -420,7 +421,8 @@ HEADERS  += \
     operators/opphasecorrelationreg.h \
     operators/opwindowfunction.h \
     operators/opcolormap.h \
-    operators/opisometricprojection.h
+    operators/opstarfinder.h \
+    operators/oppixelextrusionmapping.h
 
 
 FORMS    += \

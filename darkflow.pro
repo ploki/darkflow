@@ -275,7 +275,9 @@ SOURCES +=\
     operators/opturnblack.cpp \
     operators/opdisk.cpp \
     operators/opphasecorrelationreg.cpp \
-    operators/opwindowfunction.cpp
+    operators/opwindowfunction.cpp \
+    operators/opcolormap.cpp \
+    operators/opisometricprojection.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -416,7 +418,10 @@ HEADERS  += \
     operators/opturnblack.h \
     operators/opdisk.h \
     operators/opphasecorrelationreg.h \
-    operators/opwindowfunction.h
+    operators/opwindowfunction.h \
+    operators/opcolormap.h \
+    operators/opisometricprojection.h
+
 
 FORMS    += \
     ui/aboutdialog.ui \

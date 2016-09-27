@@ -127,6 +127,8 @@
 #include "opdisk.h"
 #include "opphasecorrelationreg.h"
 #include "opwindowfunction.h"
+#include "opisometricprojection.h"
+#include "opcolormap.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -250,6 +252,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpMultiplexer(13, this));
     m_availableOperators.push_back(new OpMultiplexer(21, this));
 
+    m_availableOperators.push_back(new OpIsometricProjection(this));
+    m_availableOperators.push_back(new OpColorMap(this));
 
     m_availableOperators.push_back(new OpSubtract(this));
     m_availableOperators.push_back(new OpExNihilo(this));

@@ -60,6 +60,8 @@ class OperatorWorker;
 #define OP_SECTION_EFFECTS Operator::tr("Effects")
 #define OP_SECTION_DEPRECATED Operator::tr("Deprecated")
 #define OP_SECTION_FREQUENCY_DOMAIN Operator::tr("Frequency Domain")
+#define OP_SECTION_ANALYSIS Operator::tr("Analysis")
+
 
 class Algorithm;
 

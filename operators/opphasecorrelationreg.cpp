@@ -105,7 +105,7 @@ public:
                 if ( x1 < 0 || x2 >= w )
                     break;
                 double l1 = LUMINANCE_PIXEL(pixels[x1]);
-                double l2 = LUMINANCE_PIXEL(pixels[x1]);
+                double l2 = LUMINANCE_PIXEL(pixels[x2]);
                 if ( l1 < THRESHOLD * max && l2 < THRESHOLD * max ) {
                     extinctionFound = true;
                     radius = SPREAD * (x2 - x1) / 2;
@@ -116,11 +116,11 @@ public:
                 double totalLum = 0;
                 double totalX = 0;
                 double totalY = 0;
-                for (int y = my-radius ; y < my+radius ; ++y) {
+                for (int y = my-radius ; y <= my+radius ; ++y) {
                     if ( y < 0 || y >= h )
                         continue;
                     const Magick::PixelPacket *pixels = cache.getConst(0, y, w, 1);
-                    for (int x = mx-radius ; x < mx+radius ; ++x) {
+                    for (int x = mx-radius ; x <= mx+radius ; ++x) {
                         if ( x < 0 || x >= w )
                             continue;
                         double l = LUMINANCE_PIXEL(pixels[x]);

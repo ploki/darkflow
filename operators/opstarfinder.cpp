@@ -41,17 +41,16 @@
 
 using Magick::Quantum;
 
-static bool
-anyFound(std::shared_ptr<std::vector<bool> > &m, int w, int x, int y) {
-    return     (*m)[y*w+x]
-            || (*m)[y*w+x-1]
-            || (*m)[y*w+x+1]
-            || (*m)[(y-1)*w+x]
-            || (*m)[(y+1)*w+x]
-            || (*m)[(y-1)*w+x-1]
-            || (*m)[(y-1)*w+x+1]
-            || (*m)[(y+1)*w+x-1]
-            || (*m)[(y+1)*w+x+1];
+static inline double
+luminance(bool hdr, const Magick::PixelPacket &pixel)
+{
+    if (hdr)
+        return LUMINANCE(
+                    fromHDR(pixel.red),
+                    fromHDR(pixel.green),
+                    fromHDR(pixel.blue));
+    else
+        return LUMINANCE_PIXEL(pixel);
 }
 
 class WorkerStarFinder : public OperatorWorker {
@@ -67,46 +66,112 @@ public:
         int w = srcImage.columns(),
             h = srcImage.rows();
         bool hdr = srcPhoto.getScale() == Photo::HDR;
-        std::shared_ptr<Ordinary::Pixels> srcCache(new Ordinary::Pixels(srcImage));
-        std::shared_ptr<std::vector<bool> > map(new std::vector<bool>(w*h));
-        QVector<QPointF> bingo;
+        Ordinary::Pixels srcCache(srcImage);
+        const Magick::PixelPacket *srcPixels = srcCache.getConst(0, 0, w, h);
+        std::shared_ptr<QVector<QPointF> > bingo(new QVector<QPointF>);
         dfl_block int count = 0;
         static const int maxCount = 5000;
         double thresholdValue = m_threshold * QuantumRange;
-        dfl_parallel_for(y, 1, (h-1), 4, (srcImage), {
+        dfl_parallel_for(y, 1, (h-1), 4, (), {
                              if (count >= maxCount) {
                                  continue;
                              }
-                             const Magick::PixelPacket *srcPixels = srcCache->getConst(0, y, w, 1);
                              for (int x = 1 ; x < w-1 ; ++x ) {
-                                 double lum;
-                                 if (hdr) {
-                                     lum = LUMINANCE(
-                                                 fromHDR(srcPixels[x].red),
-                                                 fromHDR(srcPixels[x].green),
-                                                 fromHDR(srcPixels[x].blue));
-                                 }
-                                 else {
-                                     lum = LUMINANCE_PIXEL(srcPixels[x]);
-                                 }
-                                 if ( lum > thresholdValue ) {
-                                     if ( !anyFound(map, w, x, y) ) {
+                                 double lum = luminance(hdr, srcPixels[y*w+x]);
+                                 if ( lum >= thresholdValue ) {
+                                     bool matched = true;
+                                     for (int yy = y-1 ; yy <= y+1 && matched ; ++yy) {
+                                         for (int xx = x-1 ; xx <= x+1 && matched ; ++xx) {
+                                             if ( xx == x && yy == y )
+                                                continue;
+                                             double oLum = luminance(hdr, srcPixels[yy*w+xx]);
+                                             if ( oLum > lum )
+                                                matched = false;
+                                         }
+                                     }
+                                     if ( matched ) {
                                          if (count >= maxCount)
-                                             break;
+                                            break;
                                          dfl_critical_section(
-                                         bingo.push_back(QPointF(x,y));
-                                         atomic_incr(&count);
+                                            bingo->push_back(QPointF(x,y));
+                                            atomic_incr(&count);
                                          );
                                      }
-                                     (*map)[y*w+x] = true;
                                  }
                              }
                          });
+        QVector<QPointF> centroided;
+        foreach(QPointF point, *bingo) {
+            int px = point.x();
+            int py = point.y();
+            double totalLum = 0;
+            double totalX = 0;
+            double totalY = 0;
+            double lastMean = 0;
+            double ringLum = 0;
+            int ringSize = 0;
+
+            //first pass, diagonal
+            for (int r = 1 ; true ; ++r) {
+                   double lum = luminance(hdr, srcPixels[(py+r)*w+px+r]);
+                   if (lum < thresholdValue ) {
+                       px = DF_ROUND((2*px+r-1)/2.);
+                       py = DF_ROUND((2*py+r-1)/2.);
+                       break;
+                   }
+            }
+
+            lastMean = ringLum = ringSize = 0;
+            //second pass, square ring
+            for (int r = 0 ; true ; ++r) {
+                //if (r>10) break;
+                bool anyAdded = false;
+                for (int y = py-r ; y <= py-r ; ++y) {
+                    if ( y < 0 || y >= h )
+                        continue;
+                    int xIncr;
+                    if ( r > 0 && ( y == py-r || y == py+r ) )
+                        xIncr = 2*r;
+                    else
+                        xIncr = 1;
+                    for (int x = px-r ; x <= px+r ; x+=xIncr) {
+                        if ( x < 0 || x >= w )
+                            continue;
+                        double lum = luminance(hdr, srcPixels[y*w+x]);
+                        ++ringSize;
+                        ringLum+=lum;
+                        if ( lum >= thresholdValue ||
+                             log2(lastMean)-log2(lum) < -.33 ) {
+                            //slope must decrease and should be greater than 1/3 EV per pixel
+                            anyAdded = true;
+                            totalLum += lum;
+                            totalX += (lum * x);
+                            totalY += (lum * y);
+                        }
+
+                    }
+                }
+                lastMean = ringLum/ringSize;
+                ringLum = 0;
+                ringSize = 0;
+                if (!anyAdded) {
+                    centroided.push_back(QPointF(totalX/totalLum, totalY/totalLum));
+                    dflInfo(tr("(%0, %1) => (%2, %3) | r=%4")
+                            .arg(px)
+                            .arg(py)
+                            .arg(totalX/totalLum)
+                            .arg(totalY/totalLum)
+                            .arg(r));
+                    break;
+                }
+            }
+        }
+
         if (count >= maxCount) {
             dflWarning(tr("Too many stars found, consider lowering threshold"));
         }
         dflInfo(tr("Star Finder found %0 star(s)").arg(count));
-        srcPhoto.setPoints(bingo);
+        srcPhoto.setPoints(centroided);
         return srcPhoto;
     }
 };

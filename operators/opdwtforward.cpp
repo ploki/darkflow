@@ -55,10 +55,6 @@ public:
         throw 0;
     }
     void play() {
-        static const double b3SplineWavelet[] =
-        {1./16. , 1./4. , 3./8. , 1./4., 1./16. };
-        static const double linearWavelet[] =
-        {1./4., 1./2., 1./4.};
         const double *wavelet = NULL;
         int order = 0;
         switch (m_wavelet) {

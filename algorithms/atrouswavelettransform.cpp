@@ -35,6 +35,11 @@
 
 using Magick::Quantum;
 
+const double b3SplineWavelet[5] =
+{1./16. , 1./4. , 3./8. , 1./4., 1./16. };
+const double linearWavelet[3] =
+{1./4., 1./2., 1./4.};
+
 static void
 kernel_1D_to_2D(const double *in, double *out, int kOrder)
 {

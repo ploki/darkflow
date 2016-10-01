@@ -52,12 +52,18 @@ public:
 
 public slots:
     void selectComponent(int v);
+    void selectInvert(int v);
+    void selectMask(int v);
 
 private:
     OperatorParameterSlider *m_high;
     OperatorParameterSlider *m_low;
     OperatorParameterDropDown *m_component;
     Component m_componentValue;
+    OperatorParameterDropDown *m_invert;
+    bool m_invertValue;
+    OperatorParameterDropDown *m_mask;
+    bool m_maskValue;
 };
 
 #endif // OPTHRESHOLD_H

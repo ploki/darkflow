@@ -64,6 +64,7 @@
 #include "darkflow.h"
 #include "cielab.h"
 #include "process.h"
+#include "igamma.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -500,6 +501,8 @@ void Visualization::inputTypeChanged(int idx)
 
 void Visualization::updateColorLabels(const QPointF& pos)
 {
+    static iGamma& reverse_sRGB = iGamma::reverse_sRGB();
+
     using Magick::Quantum;
     QVector<qreal> rgb(3);
     bool clearStatus = true;
@@ -521,9 +524,17 @@ void Visualization::updateColorLabels(const QPointF& pos)
         gStr = tr("G: %0").arg(int(rgb[1]), 5, 10, QChar(' '));
         bStr = tr("B: %0").arg(int(rgb[2]), 5, 10, QChar(' '));
     }
+
     ui->value_ADU_R->setText(rStr);
     ui->value_ADU_G->setText(gStr);
     ui->value_ADU_B->setText(bStr);
+
+    if ( m_photo && m_photo->getScale() == Photo::NonLinear ) {
+        rgb[0] = reverse_sRGB.applyOnQuantum(DF_ROUND(rgb[0]), false);
+        rgb[1] = reverse_sRGB.applyOnQuantum(DF_ROUND(rgb[1]), false);
+        rgb[2] = reverse_sRGB.applyOnQuantum(DF_ROUND(rgb[2]), false);
+    }
+
     qreal
             r = rgb[0]!=0?log2(rgb[0]/QuantumRange):-16,
             g = rgb[1]!=0?log2(rgb[1]/QuantumRange):-16,

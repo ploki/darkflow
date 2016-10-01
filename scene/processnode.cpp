@@ -92,7 +92,7 @@ ProcessNode::ProcessNode(QPointF pos,
     QVector<OperatorOutput*> outputs = op->getOutputs();
     QVector<OperatorParameter*> parameters = op->getParameters();
 
-    int portRowsCount = inputs.count() + outputs.count();
+    int portRowsCount = qMax(inputs.count(), outputs.count());
     int parameterRowsCount = parameters.count();
 
     m_caption = new QGraphicsTextItem(this);
@@ -203,7 +203,7 @@ void ProcessNode::addPorts(QVector<OperatorOutput*>& outputs, QVector<OperatorIn
     }
     for (int i=0 ; i < inputs.count(); ++i) {
         ProcessPort *port =
-                new ProcessPort(QRectF(x,y+size*(i+1+outputs.count()),w,size),
+                new ProcessPort(QRectF(x,y+size*(i+1),w,size),
                                 inputs[i]->name(),
                                 i,
                                 ProcessPort::InputPort, m_process, this);

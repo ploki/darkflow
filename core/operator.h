@@ -116,6 +116,13 @@ public:
 
     virtual Operator* newInstance() = 0;
 
+    virtual bool isParametric() const;
+    virtual QString getGenericName() const;
+    virtual int minNumbersOfWays() const;
+    virtual int maxNumbersOfWays() const;
+    int askForNumberOfWays(const QString& title, const QString& label) const;
+    virtual Operator* newParameterizedInstance(int i);
+
     QString getLocalizedClassIdentifier() const;
     QString getClassIdentifier() const;
     QString getClassSection() const;

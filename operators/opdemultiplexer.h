@@ -41,6 +41,11 @@ public:
     OpDemultiplexer(int ways, Process *parent);
     OpDemultiplexer *newInstance();
     OperatorWorker *newWorker();
+
+    bool isParametric() const;
+    QString getGenericName() const;
+    int maxNumbersOfWays() const;
+    OpDemultiplexer *newParameterizedInstance(int i);
 private:
     int m_ways;
 };

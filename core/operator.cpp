@@ -32,6 +32,7 @@
 #include <QJsonArray>
 #include <QStringList>
 #include <QApplication>
+#include <QInputDialog>
 
 #include <cstdio>
 
@@ -102,7 +103,10 @@ void Operator::stop()
 void Operator::clone()
 {
     Operator *op = newInstance();
-    m_process->addOperator(op);
+    if ( NULL == op)
+        dflDebug("Operator Instance cancelled");
+    else
+        m_process->addOperator(op);
 }
 
 void Operator::refreshInputs()
@@ -203,6 +207,47 @@ QString Operator::uuid() const
 void Operator::setUuid(const QString &uuid)
 {
     m_uuid = uuid;
+}
+
+bool Operator::isParametric() const
+{
+    return false;
+}
+
+QString Operator::getGenericName() const
+{
+    return getName();
+}
+
+int Operator::minNumbersOfWays() const
+{
+    return 1;
+}
+
+int Operator::maxNumbersOfWays() const
+{
+    return 1;
+}
+
+int Operator::askForNumberOfWays(const QString &title, const QString &label) const
+{
+    bool ok;
+    int i = QInputDialog::getInt(NULL, title,
+                                 label,
+                                 1,
+                                 minNumbersOfWays(),
+                                 maxNumbersOfWays(),
+                                 1,
+                                 &ok);
+    if (ok)
+        return i;
+    return -1;
+}
+
+Operator *Operator::newParameterizedInstance(int)
+{
+    dflCritical("Operator::newParameterizedInstance(int) not overrided");
+    return newInstance();
 }
 
 QString Operator::getLocalizedClassIdentifier() const

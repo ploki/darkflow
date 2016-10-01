@@ -41,6 +41,11 @@ public:
     OpMultiplexer(int ways, Process *parent);
     OpMultiplexer *newInstance();
     OperatorWorker *newWorker();
+
+    bool isParametric() const;
+    QString getGenericName() const;
+    int maxNumbersOfWays() const;
+    OpMultiplexer *newParameterizedInstance(int i);
 private:
     int m_ways;
 };

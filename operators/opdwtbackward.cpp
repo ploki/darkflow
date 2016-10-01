@@ -215,7 +215,13 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
 
 OpDWTBackward *OpDWTBackward::newInstance()
 {
-    return new OpDWTBackward(m_planes, m_process);
+    int planes = m_planes;
+    if ( 0 == planes) {
+        planes = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        if ( planes < 0 )
+            return NULL;
+    }
+    return new OpDWTBackward(planes, m_process);
 }
 
 OperatorWorker *OpDWTBackward::newWorker()
@@ -225,6 +231,31 @@ OperatorWorker *OpDWTBackward::newWorker()
         coefs.push_back(m_coefs[i]->value());
     }
     return new WorkerDWTBackward(m_planes, coefs, m_luminosity->value(), m_outputHDRValue, m_thread, this);
+}
+
+bool OpDWTBackward::isParametric() const
+{
+    return true;
+}
+
+QString OpDWTBackward::getGenericName() const
+{
+    return tr("Discrete Wavelet Reconstruction");
+}
+
+int OpDWTBackward::minNumbersOfWays() const
+{
+    return 2;
+}
+
+int OpDWTBackward::maxNumbersOfWays() const
+{
+    return 50;
+}
+
+OpDWTBackward *OpDWTBackward::newParameterizedInstance(int i)
+{
+    return new OpDWTBackward(i, m_process);
 }
 
 void OpDWTBackward::selectOutputHDR(int v)

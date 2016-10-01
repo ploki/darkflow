@@ -81,12 +81,38 @@ OpDemultiplexer::OpDemultiplexer(int ways, Process *parent) :
     }
 }
 
+int OpDemultiplexer::maxNumbersOfWays() const
+{
+    return 50;
+}
+
+OpDemultiplexer *OpDemultiplexer::newParameterizedInstance(int i)
+{
+    return new OpDemultiplexer(i, m_process);
+}
+
 OpDemultiplexer *OpDemultiplexer::newInstance()
 {
-    return new OpDemultiplexer(m_ways, m_process);
+    int ways = m_ways;
+    if ( 0 == ways) {
+        ways = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        if ( ways < 0 )
+            return NULL;
+    }
+    return new OpDemultiplexer(ways, m_process);
 }
 
 OperatorWorker *OpDemultiplexer::newWorker()
 {
     return new WorkerDemultiplexer(m_ways, m_thread, this);
+}
+
+bool OpDemultiplexer::isParametric() const
+{
+    return true;
+}
+
+QString OpDemultiplexer::getGenericName() const
+{
+    return tr("Demultiplexer");
 }

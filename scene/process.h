@@ -117,6 +117,7 @@ private:
     QGraphicsItem* findItem(const QPointF &pos, int type);
     void resetAllButtonsBut(QGraphicsItem*item=0);
     bool eventFilter(QObject *obj, QEvent *event);
+    void addParameterizedOperators();
     void addOperatorsToContextMenu();
 };
 

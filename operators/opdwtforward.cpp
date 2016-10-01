@@ -134,13 +134,44 @@ OpDWTForward::OpDWTForward(int nPlanes, Process *parent) :
 
 OpDWTForward *OpDWTForward::newInstance()
 {
-    return new OpDWTForward(m_planes, m_process);
+    int planes = m_planes;
+    if ( 0 == planes) {
+        planes = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        if ( planes < 0 )
+            return NULL;
+    }
+    return new OpDWTForward(planes, m_process);
 }
 
 OperatorWorker *OpDWTForward::newWorker()
 {
     return new WorkerDWTForward(m_algorithmValue, m_waveletValue, m_planes,
                                 m_outputHDRValue, m_thread, this);
+}
+
+bool OpDWTForward::isParametric() const
+{
+    return true;
+}
+
+QString OpDWTForward::getGenericName() const
+{
+    return tr("Discrete Wavelet Transform");
+}
+
+int OpDWTForward::minNumbersOfWays() const
+{
+    return 2;
+}
+
+int OpDWTForward::maxNumbersOfWays() const
+{
+    return 50;
+}
+
+OpDWTForward *OpDWTForward::newParameterizedInstance(int i)
+{
+    return new OpDWTForward(i, m_process);
 }
 
 void OpDWTForward::selectAlgorithm(int v)

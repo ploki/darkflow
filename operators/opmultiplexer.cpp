@@ -89,10 +89,36 @@ OpMultiplexer::OpMultiplexer(int ways, Process *parent) :
 
 OpMultiplexer *OpMultiplexer::newInstance()
 {
-    return new OpMultiplexer(m_ways, m_process);
+    int ways = m_ways;
+    if ( 0 == ways) {
+        ways = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        if ( ways < 0 )
+            return NULL;
+    }
+    return new OpMultiplexer(ways, m_process);
 }
 
 OperatorWorker *OpMultiplexer::newWorker()
 {
     return new WorkerMultiplexer(m_ways, m_thread, this);
+}
+
+bool OpMultiplexer::isParametric() const
+{
+    return true;
+}
+
+QString OpMultiplexer::getGenericName() const
+{
+    return tr("Multiplexer");
+}
+
+int OpMultiplexer::maxNumbersOfWays() const
+{
+    return 50;
+}
+
+OpMultiplexer *OpMultiplexer::newParameterizedInstance(int i)
+{
+    return new OpMultiplexer(i, m_process);
 }

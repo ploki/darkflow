@@ -51,6 +51,11 @@ public:
     OpDWTForward *newInstance();
     OperatorWorker *newWorker();
 
+    bool isParametric() const;
+    QString getGenericName() const;
+    int minNumbersOfWays() const;
+    int maxNumbersOfWays() const;
+    OpDWTForward *newParameterizedInstance(int i);
 private slots:
     void selectAlgorithm(int v);
     void selectWavelet(int v);

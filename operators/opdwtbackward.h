@@ -46,6 +46,11 @@ public:
     OpDWTBackward *newInstance();
     OperatorWorker *newWorker();
 
+    bool isParametric() const;
+    QString getGenericName() const;
+    int minNumbersOfWays() const;
+    int maxNumbersOfWays() const;
+    OpDWTBackward *newParameterizedInstance(int i);
 private slots:
     void selectOutputHDR(int v);
 private:

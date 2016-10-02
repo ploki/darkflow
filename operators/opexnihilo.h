@@ -46,6 +46,8 @@ public:
 
     OperatorWorker* newWorker();
 
+    bool isDeprecated() const;
+
 };
 
 #endif // OPERATOREXNIHILO_H

@@ -209,6 +209,11 @@ void Operator::setUuid(const QString &uuid)
     m_uuid = uuid;
 }
 
+bool Operator::isDeprecated() const
+{
+    return false;
+}
+
 bool Operator::isParametric() const
 {
     return false;

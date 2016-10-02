@@ -43,6 +43,7 @@ public:
     OpSubtract *newInstance();
     OperatorWorker *newWorker();
 
+    bool isDeprecated() const;
 signals:
 
 public slots:

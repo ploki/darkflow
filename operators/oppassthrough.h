@@ -44,6 +44,9 @@ public:
     OpPassThrough *newInstance();
 
     OperatorWorker *newWorker();
+
+    bool isDeprecated() const;
+
 private:
     OperatorParameterSlider *m_slider;
 };

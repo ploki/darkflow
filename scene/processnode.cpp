@@ -103,7 +103,10 @@ ProcessNode::ProcessNode(QPointF pos,
     h = barHeight*(2+portRowsCount+parameterRowsCount);
 
     setPen(QPen(preferences->color(QPalette::Window),PEN_WIDTH));
-    setBrush(QBrush(preferences->color(QPalette::Button)));
+    if ( op->isDeprecated())
+        setBrush(QBrush(preferences->color(QPalette::BrightText)));
+    else
+        setBrush(QBrush(preferences->color(QPalette::Button)));
     pp.addRoundedRect(x, y, w, h, xradius, yradius);
 
     setFlag(QGraphicsItem::ItemIsMovable);

@@ -176,3 +176,8 @@ OperatorWorker *OpSubtract::newWorker()
 {
     return new WorkerSubtract(m_thread, this);
 }
+
+bool OpSubtract::isDeprecated() const
+{
+    return true;
+}

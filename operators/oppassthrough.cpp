@@ -75,3 +75,8 @@ OperatorWorker *OpPassThrough::newWorker()
 {
     return new PassThrough(m_thread, this);
 }
+
+bool OpPassThrough::isDeprecated() const
+{
+    return true;
+}

@@ -113,3 +113,8 @@ OperatorWorker *OpExNihilo::newWorker()
     return new ExNihilo(m_thread, this);
 }
 
+bool OpExNihilo::isDeprecated() const
+{
+    return true;
+}
+

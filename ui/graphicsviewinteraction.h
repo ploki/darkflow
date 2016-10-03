@@ -56,7 +56,6 @@ private:
     QGraphicsView *m_graphicsView;
     qreal totalScaleFactor;
     qreal lastGestureFactor;
-    bool zoomKeyPressed;
 };
 
 #endif // GRAPHICSVIEWINTERACTION_H

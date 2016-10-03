@@ -34,13 +34,13 @@
 #include <QGraphicsView>
 #include <QGestureEvent>
 #include <QGraphicsItem>
+#include <QApplication>
 
 GraphicsViewInteraction::GraphicsViewInteraction(QGraphicsView *graphicsView, QObject *parent)
     : QObject(parent),
       m_graphicsView(graphicsView),
       totalScaleFactor(1),
-      lastGestureFactor(1),
-      zoomKeyPressed(false)
+      lastGestureFactor(1)
 {
     parent->installEventFilter(this);
     graphicsView->installEventFilter(this);
@@ -60,11 +60,6 @@ bool GraphicsViewInteraction::eventFilter(QObject *obj, QEvent *event)
     {
         int key = dynamic_cast<QKeyEvent*>(event)->key();
         switch (key) {
-        case Qt::Key_Control: {
-            zoomKeyPressed = event->type() == QEvent::KeyPress;
-            event->accept();
-            return true;
-        }
         case Qt::Key_1: {
             totalScaleFactor = lastGestureFactor = 1;
             zoomUpdate(1);
@@ -82,7 +77,7 @@ bool GraphicsViewInteraction::eventFilter(QObject *obj, QEvent *event)
     }
     case QEvent::Wheel:
     {
-        if (!zoomKeyPressed)
+        if ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) )
             break;
         int delta = dynamic_cast<QWheelEvent*>(event)->delta();
         if(delta > 0)

@@ -50,7 +50,6 @@ GraphicsViewInteraction::GraphicsViewInteraction(QGraphicsView *graphicsView, QO
     /* multitouch related stuffs */
     m_graphicsView->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     m_graphicsView->grabGesture(Qt::PinchGesture);
-    m_graphicsView->grabGesture(Qt::PanGesture);
 }
 
 bool GraphicsViewInteraction::eventFilter(QObject *obj, QEvent *event)
@@ -113,17 +112,6 @@ bool GraphicsViewInteraction::eventFilter(QObject *obj, QEvent *event)
                     totalScaleFactor *= currentScaleFactor;
                     lastGestureFactor = 1;
                 }
-            }
-            event->accept();
-            return true;
-        }
-        if (QGesture *pan = gestureEvent->gesture(Qt::PanGesture)) {
-            QPanGesture *panGesture = static_cast<QPanGesture *>(pan);
-            QPointF delta = panGesture->delta();
-            if (!delta.isNull()){
-                QPointF center = m_graphicsView->mapToScene(m_graphicsView->viewport()->rect().center());
-                center -= delta;
-                m_graphicsView->centerOn(center);
             }
             event->accept();
             return true;

@@ -55,7 +55,6 @@ private slots:
     void selectOutputHDR(int v);
 private:
     int m_planes;
-    QVector<OperatorParameterSlider*> m_coefs;
     OperatorParameterSlider *m_luminosity;
     OperatorParameterDropDown *m_outputHDR;
     bool m_outputHDRValue;

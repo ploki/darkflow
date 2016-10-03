@@ -40,18 +40,15 @@ using Magick::Quantum;
 
 class WorkerDWTBackward : public OperatorWorker {
     int m_planes;
-    QVector<double> m_coefs;
     double m_luminosity;
     bool m_outputHDR;
 public:
     WorkerDWTBackward(int planes,
-                      QVector<double> coefs,
                       double luminosity,
                       bool outputHDR,
                       QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
         m_planes(planes),
-        m_coefs(coefs),
         m_luminosity(luminosity),
         m_outputHDR(outputHDR)
     {}
@@ -116,7 +113,6 @@ public:
                                              if (signPixels[y*w+x].blue)
                                                  pixel.blue *= -1;
                                          }
-                                         pixel *= m_coefs[j];
                                          img[y*w+x] += pixel;
                                      }
                                  });
@@ -180,7 +176,6 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
              QT_TRANSLATE_NOOP("Operator", "%0-way Backward DWT"),
              Operator::All, parent),
     m_planes(nPlanes),
-    m_coefs(nPlanes),
     m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Deconvolution Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(selectOutputHDR(int)))),
     m_outputHDRValue(false)
@@ -194,13 +189,6 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
         addInput(new OperatorInput(name, OperatorInput::Set, this));
 
         name = QString("multiplier:%0").arg(i);
-        m_coefs[i-1] = new OperatorParameterSlider(name.toLocal8Bit().data(),
-                                                 tr("Plane %0").arg(i),
-                                                 tr("Discrete Wavelet Reconstruction - Plane %0 multiplier").arg(i),
-                                                 Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
-                                                 .5, 2., 1, 1./QuantumRange, QuantumRange,
-                                                 Slider::FilterExposureFromOne, this);
-        addParameter(m_coefs[i-1]);
     }
     addParameter(m_luminosity);
     m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
@@ -226,11 +214,7 @@ OpDWTBackward *OpDWTBackward::newInstance()
 
 OperatorWorker *OpDWTBackward::newWorker()
 {
-    QVector<double> coefs;
-    for (int i = 0 ; i < m_planes ; ++i ) {
-        coefs.push_back(m_coefs[i]->value());
-    }
-    return new WorkerDWTBackward(m_planes, coefs, m_luminosity->value(), m_outputHDRValue, m_thread, this);
+    return new WorkerDWTBackward(m_planes, m_luminosity->value(), m_outputHDRValue, m_thread, this);
 }
 
 bool OpDWTBackward::isParametric() const

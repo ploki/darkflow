@@ -67,6 +67,10 @@ public:
     bool m_outputHDR;
     integration_plane_t *m_integrationPlane;
     int *m_countPlane;
+    integration_plane_t *m_minPlane;
+    integration_plane_t *m_maxPlane;
+    integration_plane_t *m_averagePlane;
+    integration_plane_t *m_stdDevPlane;
     int m_w;
     int m_h;
     qreal m_offX;

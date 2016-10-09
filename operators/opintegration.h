@@ -43,9 +43,9 @@ class OpIntegration : public Operator
 public:
     typedef enum {
         NoRejection,
+        MinMax,
+        AverageDeviation,
         SigmaClipping,
-        Winsorized,
-        MedianPercentil,
     } RejectionType;
 
     typedef enum {

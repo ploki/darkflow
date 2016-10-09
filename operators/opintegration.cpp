@@ -39,9 +39,9 @@
 
 static const char *RejectionTypeStr[] = {
     QT_TRANSLATE_NOOP("OpIntegration", "None"),
-    QT_TRANSLATE_NOOP("OpIntegration", "Sigma clipping"),
-    QT_TRANSLATE_NOOP("OpIntegration", "Winsorized"),
-    QT_TRANSLATE_NOOP("OpIntegration", "Median Percentil")
+    QT_TRANSLATE_NOOP("OpIntegration", "Min/Max"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Average Deviation"),
+    QT_TRANSLATE_NOOP("OpIntegration", "Sigma clipping")
 };
 static const char *NormalizationTypeStr[] = {
     QT_TRANSLATE_NOOP("OpIntegration", "None"),
@@ -55,8 +55,8 @@ OpIntegration::OpIntegration(Process *parent) :
     Operator(OP_SECTION_BLEND, QT_TRANSLATE_NOOP("Operator", "Integration"), Operator::All, parent),
     m_rejectionType(NoRejection),
     m_rejectionTypeDropDown(new OperatorParameterDropDown("rejectionType", tr("Rejection"), this, SLOT(setRejectionType(int)))),
-    m_upper(new OperatorParameterSlider("upper", tr("Upper mul."), tr("Integration Upper Limit"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
-    m_lower(new OperatorParameterSlider("lower", tr("Lower div."), tr("Integration Lower Limit"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
+    m_upper(new OperatorParameterSlider("upper", tr("Upper mul."), tr("Integration Upper Limit"), Slider::Value, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 3, 1./QuantumRange, QuantumRange, Slider::FilterAll, this)),
+    m_lower(new OperatorParameterSlider("lower", tr("Lower div."), tr("Integration Lower Limit"), Slider::Value, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 3, 1./QuantumRange, QuantumRange, Slider::FilterAll, this)),
     m_normalizationType(NoNormalization),
     m_normalizationTypeDropDown(new OperatorParameterDropDown("normalizationType", tr("Normalization"), this, SLOT(setNormalizationType(int)))),
     m_customNormalization(new OperatorParameterSlider("normalizationValue", tr("Custom Norm."), tr("Integration Custom Normalization"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1, 1<<4, 1, 1./QuantumRange, QuantumRange, Slider::FilterExposureFromOne, this)),
@@ -66,11 +66,12 @@ OpIntegration::OpIntegration(Process *parent) :
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Integrated Image"), this));
+    addOutput(new OperatorOutput(tr("Rejection map"), this));
 
     m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[NoRejection]), NoRejection, true);
+    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[MinMax]), MinMax);
+    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[AverageDeviation]), AverageDeviation);
     m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[SigmaClipping]), SigmaClipping);
-    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[Winsorized]), Winsorized);
-    m_rejectionTypeDropDown->addOption(DF_TR_AND_C(RejectionTypeStr[MedianPercentil]), MedianPercentil);
 
     m_normalizationTypeDropDown->addOption(DF_TR_AND_C(NormalizationTypeStr[NoNormalization]), NoNormalization, true);
     m_normalizationTypeDropDown->addOption(DF_TR_AND_C(NormalizationTypeStr[HighestValue]), HighestValue);

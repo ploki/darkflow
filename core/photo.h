@@ -356,6 +356,7 @@ private:
 #define TAG_HDR_COMP "HDR compensation"
 #define TAG_HDR_HIGH "HDR high threshold"
 #define TAG_HDR_LOW "HDR low threshold"
+#define TAG_HDR_AUTO "HDR Automatic"
 #define TAG_SCALE "Scale"
 #define TAG_SCALE_LINEAR "Linear"
 #define TAG_SCALE_NONLINEAR "Non-linear"

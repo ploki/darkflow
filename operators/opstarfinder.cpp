@@ -35,6 +35,7 @@
 #include "operatorworker.h"
 #include "cielab.h"
 #include "hdr.h"
+#include "atrouswavelettransform.h"
 #include <Magick++.h>
 
 #include <vector>
@@ -65,9 +66,16 @@ public:
         Magick::Image &srcImage = srcPhoto.image();
         int w = srcImage.columns(),
             h = srcImage.rows();
+
+        ATrousWaveletTransform dwt(srcPhoto, b3SplineWavelet, sizeof(b3SplineWavelet)/sizeof(*b3SplineWavelet));
+        Photo sign(srcPhoto);
+        Photo highFreqs = dwt.transform(0, 2, srcPhoto.getScale(), sign);
+
         bool hdr = srcPhoto.getScale() == Photo::HDR;
-        Ordinary::Pixels srcCache(srcImage);
+        Ordinary::Pixels srcCache(highFreqs.image());
+        Ordinary::Pixels signCache(sign.image());
         const Magick::PixelPacket *srcPixels = srcCache.getConst(0, 0, w, h);
+        const Magick::PixelPacket *signPixels = signCache.getConst(0, 0, w, h);
         std::shared_ptr<QVector<QPointF> > bingo(new QVector<QPointF>);
         dfl_block int count = 0;
         static const int maxCount = 5000;
@@ -78,6 +86,9 @@ public:
                              }
                              for (int x = 1 ; x < w-1 ; ++x ) {
                                  double lum = luminance(hdr, srcPixels[y*w+x]);
+                                 double sp = luminance(false, signPixels[y*w+x]);
+                                 if (0 != sp)
+                                    lum = 0;
                                  if ( lum >= thresholdValue ) {
                                      bool matched = true;
                                      for (int yy = y-1 ; yy <= y+1 && matched ; ++yy) {
@@ -100,78 +111,11 @@ public:
                                  }
                              }
                          });
-        QVector<QPointF> centroided;
-        foreach(QPointF point, *bingo) {
-            int px = point.x();
-            int py = point.y();
-            double totalLum = 0;
-            double totalX = 0;
-            double totalY = 0;
-            double lastMean = 0;
-            double ringLum = 0;
-            int ringSize = 0;
-
-            //first pass, diagonal
-            for (int r = 1 ; true ; ++r) {
-                   double lum = luminance(hdr, srcPixels[(py+r)*w+px+r]);
-                   if (lum < thresholdValue ) {
-                       px = DF_ROUND((2*px+r-1)/2.);
-                       py = DF_ROUND((2*py+r-1)/2.);
-                       break;
-                   }
-            }
-
-            lastMean = ringLum = ringSize = 0;
-            //second pass, square ring
-            for (int r = 0 ; true ; ++r) {
-                //if (r>10) break;
-                bool anyAdded = false;
-                for (int y = py-r ; y <= py-r ; ++y) {
-                    if ( y < 0 || y >= h )
-                        continue;
-                    int xIncr;
-                    if ( r > 0 && ( y == py-r || y == py+r ) )
-                        xIncr = 2*r;
-                    else
-                        xIncr = 1;
-                    for (int x = px-r ; x <= px+r ; x+=xIncr) {
-                        if ( x < 0 || x >= w )
-                            continue;
-                        double lum = luminance(hdr, srcPixels[y*w+x]);
-                        ++ringSize;
-                        ringLum+=lum;
-                        if ( lum >= thresholdValue ||
-                             log2(lastMean)-log2(lum) < -.33 ) {
-                            //slope must decrease and should be greater than 1/3 EV per pixel
-                            anyAdded = true;
-                            totalLum += lum;
-                            totalX += (lum * x);
-                            totalY += (lum * y);
-                        }
-
-                    }
-                }
-                lastMean = ringLum/ringSize;
-                ringLum = 0;
-                ringSize = 0;
-                if (!anyAdded) {
-                    centroided.push_back(QPointF(totalX/totalLum, totalY/totalLum));
-                    dflInfo(tr("(%0, %1) => (%2, %3) | r=%4")
-                            .arg(px)
-                            .arg(py)
-                            .arg(totalX/totalLum)
-                            .arg(totalY/totalLum)
-                            .arg(r));
-                    break;
-                }
-            }
-        }
-
         if (count >= maxCount) {
             dflWarning(tr("Too many stars found, consider lowering threshold"));
         }
         dflInfo(tr("Star Finder found %0 star(s)").arg(count));
-        srcPhoto.setPoints(centroided);
+        srcPhoto.setPoints(*bingo);
         return srcPhoto;
     }
 };

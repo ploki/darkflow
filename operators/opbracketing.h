@@ -35,6 +35,7 @@
 #include <QObject>
 
 class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
 class OpBracketing : public Operator
 {
@@ -44,10 +45,15 @@ public:
 
     OpBracketing *newInstance();
     OperatorWorker *newWorker();
+private slots:
+    void selectAutomatic(int v);
+
 private:
     OperatorParameterSlider *m_compensation;
     OperatorParameterSlider *m_high;
     OperatorParameterSlider *m_low;
+    OperatorParameterDropDown *m_automatic;
+    bool m_automaticValue;
 };
 
 #endif // OPBRACKETING_H

@@ -1,0 +1,54 @@
+{% if page.lang == "en" %}
+{%  assign all_news = "All News" %}
+{%  assign darkflow_releases = "DarkFlow Releases" %}
+{%  assign recent_releases = "Recent Releases" %}
+{%  assign other_news = "Other News" %}
+{% elsif page.lang == "fr" %}
+{%  assign all_news = "Toutes les nouvelles" %}
+{%  assign darkflow_releases = "Versions de DarkFlow" %}
+{%  assign recent_releases = "Versions récentes" %}
+{%  assign other_news = "Autres nouvelles" %}
+{% endif %}    
+
+<div class="unit one-fifth hide-on-mobiles">
+  <aside>
+    <ul>
+      <li class="{% if page.url contains "/news/all." %}current{% endif %}">
+        <a href="/news/all.{{ page.lang }}/">{{ all_news }}</a>
+      </li>
+      <li class="{% if page.url contains "/news/releases." %}current{% endif %}">
+        <a href="/news/releases.{{ page.lang }}/">{{ darkflow_releases }}</a>
+      </li>
+    </ul>
+    <h4>{{ recent_releases }}</h4>
+    <ul>
+      {% assign counter = 0 %}
+      {% for post in site.categories.release %}
+      {%   if counter == 5 %}
+      {%     break %}
+      {%   endif %}
+      {%   if post.lang == page.lang %}
+      <li class="{% if page.title == post.title %}current{% endif %}">
+        <a href="{{ post.url }}">Version {{ post.version }}</a>
+      </li>
+      {%   endif %}
+      {%   assign counter = counter + 1 %}
+      {% endfor %}
+      <li>
+        <a href="/docs/history.{{ page.lang }}/">History »</a>
+      </li>
+    </ul>
+    <h4>{{ other_news }}</h4>
+    <ul>
+        {% for post in site.posts %}
+        {%   if post.lang == page.lang %}
+        {%     unless post.categories contains 'release' %}
+        <li class="{% if page.title == post.title %}current{% endif %}">
+          <a href="{{ post.url }}">{{ post.title }}</a>
+        </li>
+        {%     endunless %}
+        {%   endif %}
+        {% endfor %}
+    </ul>
+  </aside>
+</div>

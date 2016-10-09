@@ -1,0 +1,33 @@
+{% assign subtrahend = page.lang | prepend:"." | append:"/" %}
+{% assign base_url = page.url | replace: subtrahend, "" %}
+<ul>
+  <li class="{% if page.lang contains 'en' %}current{% endif %}">
+    <a hreflang="en-US" href="{{base_url | append:".en/" }}">English</a>
+  </li>
+  <li class="{% if page.lang contains 'fr' %}current{% endif %}">
+    <a hreflang="fr" href="{{base_url | append:".fr/" }}">Français</a>
+  </li>
+</ul>
+<hr/>
+<ul>
+  <li class="{% if page.overview %}current{% endif %}">
+    <a href="/index.{{ page.lang }}">{{ site.data.nav["home"][page.lang] }}</a>
+  </li>
+  <li class="{% if page.url contains '/docs/' %}current{% endif %}">
+    <a href="/docs/home.{{ page.lang }}/">{{ site.data.nav["docs"][page.lang] }}</a>
+  </li>
+  <li class="{% if page.author %}current{% endif %}">
+    <a href="/news/all.{{ page.lang }}/">{{ site.data.nav["news"][page.lang] }}</a>
+  </li>
+{% comment %}
+  <li class="{% if page.url contains '/community.{{ page.lang }}/' %}current{% endif %}">
+    <a href="/community.{{ page.lang }}/">{{ site.data.nav["community"][page.lang] }}</a>
+  </li>
+{% endcomment %}
+  <li class="{% if page.url contains '/help.' %}current{% endif %}">
+    <a href="/help.{{ page.lang }}/">{{ site.data.nav["help"][page.lang] }}</a>
+  </li>
+  <li>
+    <a href="{{ site.repository }}"><span class="hide-on-mobiles">{{ site.data.nav["view-on"][page.lang] }} </span>GitHub</a>
+  </li>
+</ul>

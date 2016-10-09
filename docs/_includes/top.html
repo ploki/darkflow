@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+{% if page.lang == "en" %}
+<html lang="en-US">
+{% endif %}
+{% if page.lang == "fr" %}
+<html lang="fr">
+{% endif %}
+<Head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="generator" content="Jekyll v{{ jekyll.version }}">
+  {% feed_meta %}
+  <link rel="alternate" type="application/atom+xml" title="Recent commits to DarkFlow’s master branch" href="{{ site.repository }}/commits/master.atom">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic,900">
+  <link rel="stylesheet" href="/css/screen.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+{% assign subtrahend = page.lang | prepend:"." | append:"/" %}
+{% assign base_url = page.url | replace: subtrahend, "" %}
+{% if page.lang != "en" %}
+  <link rel="alternate" hreflang="en-US" href="{{ base_url | append:".en" }}" />
+{% endif %}
+{% if page.lang != "fr" %}
+  <link rel="alternate" hreflang="fr" href="{{ base_url | append:".fr" }}" />
+{% endif %}
+  {% seo %}
+  <!--[if lt IE 9]>
+  <script src="/js/html5shiv.min.js"></script>
+  <script src="/js/respond.min.js"></script>
+  <![endif]-->
+</head>

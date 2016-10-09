@@ -1,0 +1,65 @@
+- title:
+    en: Getting Started
+    fr: Démarrage
+  docs:
+  - home
+  - philosophy
+  - operator-anatomy
+  - download
+  - installation
+  - configuration
+  - build
+
+- title:
+    en: Interacting
+    fr: Interactions
+  docs:
+  - workspace
+  - visualization
+  - project-properties
+  - about-dialog
+  - console
+
+- title:
+    en: Operators
+    fr: Opérateurs
+  docs:
+  - assets
+  - curve
+  - color
+  - frequency-domain
+  - cosmetic
+  - blend
+  - geometry
+  - registration
+  - mask
+  - workflow
+  - analysis
+  - deprecated
+
+- title:
+    en: Recipes
+    fr: Recettes
+  docs:
+  - preprocessing-recipes
+  - contrast-recipes
+  - cosmetic-recipes
+  - color-recipes
+  - noise-recipes
+  - sharpness-recipes
+
+- title:
+    en: Miscellaneous
+    fr: Divers
+  docs:
+  - troubleshooting
+  - resources
+
+- title:
+    en: Meta
+    fr: Méta
+  docs:
+  - history
+  - contributing
+  - conduct
+  - LICENSE

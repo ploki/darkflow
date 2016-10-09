@@ -1,0 +1,13 @@
+---
+lang: fr
+layout: news
+title: News
+permalink: /news/all.fr/
+author: all
+---
+
+{% for post in site.posts %}
+  {% if post.lang == page.lang %}
+    {% include news_item.html %}
+  {% endif %}
+{% endfor %}

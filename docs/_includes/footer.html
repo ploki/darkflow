@@ -1,0 +1,28 @@
+<footer>
+  <div class="grid">
+    <div class="unit one-third center-on-mobiles">
+{% if page.lang == "fr" %}
+      <p>Les contenus de ce site web sont <br />&copy;&nbsp;{{ site.time | date:
+      '%Y' }} sous les termes de la <a href="/docs/LICENSE.{{ page.lang }}/">licence&nbsp;MIT</a>.</p>
+{% endif %}
+{% if page.lang == "en" %}
+      <p>The contents of this website are <br />&copy;&nbsp;{{ site.time | date:
+      '%Y' }} under the terms of
+	the <a href="/docs/LICENSE.{{ page.lang }}/">MIT&nbsp;License</a>.</p>
+{% endif %}
+    </div>
+    <div class="unit two-thirds align-right center-on-mobiles">
+      <p>
+{% if page.lang == "fr" %}
+        Fièrement hébergé par
+{% endif %}
+{% if page.lang == "en" %}
+        Proudly hosted by
+{% endif %}
+        <a href="https://github.com">
+          <img src="/img/footer-logo.png" width="100" height="30" alt="GitHub • Social coding">
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

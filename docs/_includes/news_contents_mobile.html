@@ -1,11 +1,17 @@
+{% case page.lang %}
+{%  when 'en' %}
+{%   assign navigate_the_news = "Navigate the news…" %}
+{%  when 'fr' %}
+{%   assign navigate_the_news = "Naviguer dans les news…" %}
+{% endcase %}
 <div class="docs-nav-mobile unit whole show-on-mobiles">
   <select onchange="if (this.value) window.location.href=this.value">
-    <option value="">Navigate the blog…</option>
-    <option value="/news/">Home</option>
-    <optgroup label="v1.x">
-      {% for post in site.posts %}
-      <option value="{{ post.url }}">{{ post.title }}</option>
-      {% endfor %}
-    </optgroup>
+    <option value="">{{ navigate_the_news }}</option>
+    <option value="/news/all.{{ page.lang }}/">News</option>
+    {% for post in site.posts %}
+      {%   if post.lang == page.lang %}
+    <option value="{{ post.url }}">{{ post.title }}</option>
+      {%   endif %}
+    {% endfor %}
   </select>
 </div>

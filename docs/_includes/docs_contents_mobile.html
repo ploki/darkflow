@@ -1,6 +1,12 @@
+{% case page.lang %}
+{%  when 'en' %}
+{%   assign navigate_the_docs = "Navigate the docs…" %}
+{%  when 'fr' %}
+{%   assign navigate_the_docs = "Naviguer dans les docs…" %}
+{% endcase %}
 <div class="docs-nav-mobile unit whole show-on-mobiles">
   <select onchange="if (this.value) window.location.href=this.value">
-    <option value="">Navigate the docs…</option>
+    <option value="">{{ navigate_the_docs }}</option>
     {% for section in site.data.docs %}
     <optgroup label="{{ section.title[page.lang] }}">
       {% include docs_option.html items=section.docs %}

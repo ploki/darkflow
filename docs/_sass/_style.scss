@@ -644,6 +644,7 @@ code {
 }
 
 .highlight,
+.codehilite,
 p > pre,
 p > code,
 p > nobr > code,
@@ -670,14 +671,15 @@ h5 > code,
   font-size: 0.8em;
 }
 
-.highlight {
+.highlight, .codehilite {
   margin: 1em 0;
   padding: 10px 0;
   width: 100%;
   overflow: auto;
 }
 
-.highlighter-rouge .highlight {
+.highlighter-rouge .highlight,
+.highlighter-rouge .codehilite {
   @extend .highlight;
   margin: 0;
   padding: 10px 0.5em;

@@ -1,7 +1,12 @@
 ---
 layout: default
 ---
-
+{% case page.lang %}
+{%  when 'en' %}
+{%   assign improve_this_page = "Improve this page" %}
+{%  when 'fr' %}
+{%   assign improve_this_page = "Améliorer cette page" %}
+{% endcase %}
   <section class="docs">
     <div class="grid">
 
@@ -10,7 +15,7 @@ layout: default
       <div class="unit four-fifths">
         <article>
           <div class="improve right hide-on-mobiles">
-            <a href="{{ site.repository }}/edit/master/docs/{{ page.path }}"><i class="fa fa-pencil"></i> &nbsp;Improve this page</a>
+            <a href="{{ site.repository }}/edit/master/docs/{{ page.path }}"><i class="fa fa-pencil"></i> &nbsp;{{ improve_this_page }}</a>
           </div>
           <h1>{{ page.title }}</h1>
           {{ content }}

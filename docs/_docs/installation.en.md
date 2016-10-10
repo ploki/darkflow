@@ -5,9 +5,48 @@ title: Installation
 permalink: /docs/installation.en/
 ---
 
+
+Follow the installation instructions for your paltform:
+
+* [Installation on MS Windows](#darkflow-on-ms-windows)
+* [Installation on OS X / macOS](#darkflow-on-os-xmacos)
+* [Installation on GNU/Linux](#darkflow-on-gnulinux)
+
+Then proceed to the [configuration](/docs/configuration.{{ page.lang }})
+
 ## DarkFlow on MS Windows
 
+Follow this simple procedure:
+* Double click the ```setup-darkflow-YYYY.MM.DD-x64.exe``` to execute it.
+* authorize the setup program to modify the system by clicking the ```Yes``` button
+* Choose the path where to install DarkFlow (default should be fine), then click ```Next```
+* check the box if you want a desktop shortcut, then click ```Next```
+* Review the installation parameters and click ```Install```
+
+Things get weird at this point, but don't worry. The DarkFlow installer contains the ImageMagick installer which is launched on this step. So another Installation program is launched over the first one and asks for another set of questions:
+* Accept the license Agreement (which tells you that it is free software) and click ```Next```
+* You may read the ```Welcome to ImageMagick!``` message and click ```Next```
+* Choose the path where to install ImageMagick (default should be fine). then click ```Next```
+* Choose a Start Menu Folder (default should be fine). then click ```Next```
+* Make sure the ```Add Application directory to your system path``` **is checked** and 
+click ```Next```
+* Proceed by clicking ```Install```
+* You just installed ImageMagick, so ckick ```Next```
+* Choose to read the ImageMagick's index.html or not and click ```Finish```
+
+At this point, the ImageMagic installer exits and give back the hand to the DarkFlow installer.
+* Click ```Finish``` and you're done!
+
+
+Execute the setup program and answer to the asked questions regarding the path
+
 ## DarkFlow on OS X/macOS
+
+Open the DMG disk image file and drag-n-drop the DarkFlow App into your
+Applications Folder. Since the App is not signed, you will need to answer some
+cryptic question in order to be able to launch DarkFlow.
+[This support page](https://support.apple.com/kb/PH21769) may help you in case
+of difficulties to launch the program.
 
 ## DarkFlow on GNU/Linux
 

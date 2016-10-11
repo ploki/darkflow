@@ -7,16 +7,16 @@ permalink: /docs/philosophy.en/
 
 ## What DarkFlow is not
 
- - DarkFlow is not a program that requires you to manage intermediate renderings or files.
- - DarkFlow doesn't modify your images.
- - DarkFlow is not Raster Graphics Editor with brushes nor a freehand drawing tool.
+ - DarkFlow is not a program that requires you to manage intermediate renderings or temporary files.
+ - DarkFlow is not an image editor that modifies your images.
+ - DarkFlow is not a Raster Graphics Editor with brushes nor a freehand drawing tool.
 
 
 ## What DarkFlow aims to be
 
- - DarkFlow is all about image processing description.
+ - DarkFlow is about creating pipelines of image processing operators.
  - DarkFlow creates new images from your original photos by applying operators during the process.
- - DarkFlow is a workflow of global operations on images.
+ - DarkFlow applies global and reproducible operations on images.
 
 ## Project oriented
 
@@ -27,6 +27,7 @@ permalink: /docs/philosophy.en/
 ## Efficient
 
 ### parallelism
+
 with OpenMP or Grand Central Dispatch
 
 ### 16-bit Pixels formats
@@ -34,5 +35,7 @@ with OpenMP or Grand Central Dispatch
 16-bit except for operators involving multiples images
 
 #### Linear
+
 #### Non-Linear
+
 #### HDR

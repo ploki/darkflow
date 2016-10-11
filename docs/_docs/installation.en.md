@@ -17,6 +17,7 @@ Then proceed to the [configuration](/docs/configuration.{{ page.lang }})
 ## DarkFlow on MS Windows
 
 Follow this simple procedure:
+
 * Double click the ```setup-darkflow-YYYY.MM.DD-x64.exe``` to execute it.
 * authorize the setup program to modify the system by clicking the ```Yes``` button
 * Choose the path where to install DarkFlow (default should be fine), then click ```Next```
@@ -40,7 +41,7 @@ At this point, the ImageMagic installer exits and give back the hand to the Dark
 
 Execute the setup program and answer to the asked questions regarding the path
 
-## DarkFlow on OS X/macOS
+## DarkFlow on macOS
 
 Open the DMG disk image file and drag-n-drop the DarkFlow App into your
 Applications Folder. Since the App is not signed, you will need to answer some
@@ -61,9 +62,10 @@ And then, logout and login again, not only from your terminal but also from your
 ### Ubuntu and Debian
 
 Currently supported distributions
- - Debian stretch amd64 and i386
- - Ubuntu xenial amd64 and i386
- - Ubuntu wily amd64
+
+* Debian stretch amd64 and i386
+* Ubuntu xenial amd64 and i386
+* Ubuntu wily amd64
 
 ```bash
 $ sudo apt-get install lsb-release

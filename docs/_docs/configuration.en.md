@@ -6,6 +6,7 @@ permalink: /docs/configuration.en/
 ---
 
 ## Resources preferences
+
 ![Resources preferences](/img/preferences-resources.{{ page.lang }}.jpg)
 
 ### Memory managment
@@ -15,24 +16,28 @@ DarkFlow uses ImageMagick as a backing store for pixels. Here are the parameters
 *Highly recommanded values are indicated in the corresponding tables.*
 
 #### Area
+
 Maximum area in bytes of any one image that can reside in the pixel cache memory. If this limit is exceeded, the image is automagically cached to disk and optionally memory-mapped.
 
 | **32-bit** | **64-bit** | **unit** |
 |          1 |          1 |     GiB  |
 
 #### Memory
+
 Maximum amount of memory in bytes to allocate for the pixel cache from the heap.
 
 | **32-bit** | **64-bit** | **unit** |
 |          0 |          0 |     GiB  |
 
 #### Map
+
 Maximum amount of memory map in bytes to allocate for the pixel cache.
 
 | **32-bit** | **64-bit**                | **unit** |
 |          0 | 2 times your RAM, or more |     GiB  |
 
 #### Disk
+
 Maximum amount of disk space in bytes permitted for use by the pixel cache. If this limit is exceeded, the pixel cache is not created and a fatal exception is thrown.
 
 | **32-bit** and **64-bit**                | **unit** |
@@ -70,6 +75,7 @@ The difference between both parameter is the data access method:
 
 
 ### Multi-threading
+
 #### Workers
 
 This is the number of operators allowed to run in parallel will playing the whole process. Operators are connected to each others and form some sort of dependency graph.
@@ -77,6 +83,7 @@ This is the number of operators allowed to run in parallel will playing the whol
 A safe default is ```1```. If your system has plenty of bandwidth you may increase this parameter to ```2```. A greater value may not give better performances.
 
 #### ImageMagick Threads
+
 This is the maximum number of threads that are permitted to run in parallel within the ImageMagick builtin operations.
 
 *Should be set to the number of cores of your system, or the double if hyperthreading is enabled*
@@ -88,6 +95,7 @@ This is the maximum number of threads that are permitted to run in parallel with
 </div>
 
 #### DarkFlow Threads
+
 This is the maximum number of threads that are permitted to run in parallel within the DarkFlow builtin operations.
 
 *Should be set to the number of cores of your system, or the double if hyperthreading is enabled*
@@ -99,10 +107,17 @@ This is the maximum number of threads that are permitted to run in parallel with
 
 
 ## Pixels preferences
+
 ![Pixels preferences](/img/preferences-pixels.{{ page.lang }}.jpg)
+
 ## Path preferences
+
 ![Path preferences](/img/preferences-path.{{ page.lang }}.jpg)
+
 ## Logging preferences
+
 ![Logging preferences](/img/preferences-logging.{{ page.lang }}.jpg)
+
 ## Style preferences
+
 ![Style preferences](/img/preferences-style.{{ page.lang }}.jpg)

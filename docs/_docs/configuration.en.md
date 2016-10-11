@@ -46,6 +46,7 @@ Maximum amount of disk space in bytes permitted for use by the pixel cache. If t
 *The ```Disk``` parameters includes the quantity set with the ```Map``` parameter, hence should be the greater of both.*
 
 The difference between both parameter is the data access method:
+
 * ```Map``` uses virtual memory and let the operating system manage data freshness on the behalf of the application. This access method ***permits parallelism*** in the image processing.
 * ```Disk``` uses conventionnal file access to read and write image data to disk and will benefit of the buffer cache of your operating system. This access method ***does not permit parallelism*** in the image processing.
 

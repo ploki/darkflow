@@ -37,7 +37,7 @@ DarkFlow is free software and Cross-platform. It may be [built from source](/doc
 
 <div class="note">
   <h5>GNU/Linux: use the package manager</h5>
-  <p>You may safely skip this chapter and proceed directly to the <a href="/docs/installation.en/">installation instructions</a></p>
+  <p>You may safely skip this chapter and proceed directly to the <a href="/docs/installation.en/#darkflow-on-gnulinux">installation instructions</a></p>
 </div>
 
 ## [Proceed to installation](/docs/installation.{{ page.lang}}/)

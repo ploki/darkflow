@@ -25,6 +25,7 @@ Follow this simple procedure:
 * Review the installation parameters and click ```Install```
 
 Things get weird at this point, but don't worry. The DarkFlow installer contains the ImageMagick installer which is launched on this step. So another Installation program is launched over the first one and asks for another set of questions:
+
 * Accept the license Agreement (which tells you that it is free software) and click ```Next```
 * You may read the ```Welcome to ImageMagick!``` message and click ```Next```
 * Choose the path where to install ImageMagick (default should be fine). then click ```Next```
@@ -36,6 +37,7 @@ click ```Next```
 * Choose to read the ImageMagick's index.html or not and click ```Finish```
 
 At this point, the ImageMagic installer exits and give back the hand to the DarkFlow installer.
+
 * Click ```Finish``` and you're done!
 
 

@@ -5,7 +5,11 @@ title: Configuration
 permalink: /docs/configuration.en/
 ---
 
+You'll find in this page information about how to configure DarkFlow to get the most of it. Make sure to check at least the [resources](#resources-preferences) and [path](#path-preferences) preferences in order to prevent from falling into nasty traps.
+
 ## Resources preferences
+
+This settings tab tells Darkflow how and how much of your computer resources it will be allowed to use.
 
 ![Resources preferences](/img/preferences-resources.{{ page.lang }}.jpg)
 
@@ -109,11 +113,51 @@ This is the maximum number of threads that are permitted to run in parallel with
 
 ## Pixels preferences
 
+This settings tab is related to various pixels settings. *Default values are OK in most cases*.
+
 ![Pixels preferences](/img/preferences-pixels.{{ page.lang }}.jpg)
+
+### Display target
+
+This parameter sets the default rendering transfer function of the colors of linear space images.
+This is used by the [Visualization window](/docs/visualization.{{ page.lang }}/) to set the initial value when and is used for all but non-linear pixel formats. It only affects on screen display and it does not affect how images are processed. The default ```sRGB``` value is probably what you what here and will render images in concordance with your perception of light.
+
+### Incompatible scale
+
+Some operators do not support (HDR color scaling)[/docs/philosophy.{{ page.lang}}/#hdr) and this parameter define the behavior of operator when facing an incompatible color scale.
+
+* ```Ignore and convert``` the operator will convert silently the color scale of the image to something that it can handle.
+* ```Warning and convert``` the operator will convert the color scale of the image to something that it can handle and it will issue a warning message in the [console](/docs/console.{{ page.lang }}/).
+* ```Error``` the operator will refuse to process the image and it will issue an error message in the [console](/docs/console.{{ page.lang }}/). It will also mark the Image as being in error.
+
+### Lab selection size
+
+This parameter is used by the CIE LAB color selector. It defines the width and the height of the color gamut view. The greater, the slower to interact with.
+
+*The CIE LAB color selector is used by the [Selective Lab Filter](/docs/cosmetic.{{ page.lang }}/#selective-lab-filter)*
 
 ## Path preferences
 
 ![Path preferences](/img/preferences-path.{{ page.lang }}.jpg)
+
+### Base Directory
+
+This directory defines the default place in your computer from where DarkFlow starts when the project does not define a base directory.
+
+<div class="note info">
+  <h5>Keep things all together</h5>
+  <p>Give DarkFlow a default base folder, then create sub directories in this base folder for each project.
+  And finally create sub directories within the project for your <em>lights</em>, <em>darks</em>, <em>flats</em> and <em>artifacts</em> photos. This will permit you to move your projects from a computer to another without pain</p>
+</div>
+
+### Temporary Directory
+
+DarkFlow will use this directory to store transcient files. These files are actual pixels stored to vacate the memory of your computer. The amount per instance of DarkFlow will not exceed the [Disk](#disk) parameter.
+
+<div class="note">
+  <h5>Keep an eye on the temporary directory</h5>
+  <p>You may want to put this directory within the base folder to check from time to time if leaks occured. In this case you can remove all the <code>magick-*</code> (<em>only if DarkFlow is not running</em>).</p>
+</div>
 
 ## Logging preferences
 

@@ -85,7 +85,7 @@ The following command will pull the required image from [docker hub](https://hub
 All you need is to expose your photos to the docker container running DarkFlow, this is done by copying your assets in the ```~/DARKFLOW/``` directory.
 
 ```bash
-$ curl -s [http://darkflow.org/live.sh](http://darkflow.org/live.sh) | bash
+$ curl -s http://darkflow.org/live.sh | bash
 ```
 
 <div class="note">

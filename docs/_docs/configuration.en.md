@@ -7,6 +7,12 @@ permalink: /docs/configuration.en/
 
 You'll find in this page information about how to configure DarkFlow to get the most of it. Make sure to check at least the [resources](#resources-preferences) and [path](#path-preferences) preferences in order to prevent from falling into nasty traps.
 
+* [Resources preferences](#resources-preferences)
+* [Pixels preferences](#pixels-preferences)
+* [Path preferences](#path-preferences)
+* [Logging preferences](#logging-preferences)
+* [Style preferences](#style-preferences)
+
 ## Resources preferences
 
 This settings tab tells Darkflow how and how much of your computer resources it will be allowed to use.
@@ -161,8 +167,33 @@ DarkFlow will use this directory to store transcient files. These files are actu
 
 ## Logging preferences
 
+This settings tab defines how DarkFlow logs messages and when the messages console is raised.
+
 ![Logging preferences](/img/preferences-logging.{{ page.lang }}.jpg)
+
+### Log Level
+
+This parameter permit to select the type of messages which are logged into the console. ```Debug``` being the more verbose option.
+
+### Raise console on
+
+This parameter tells DarkFlow to raise the console in the event of a message with a priority higher or equal to the value defined with this option.
+
+### Trap on (debug)
+
+**For developers only**. This permit to set break points in the code when a message of a certain class is issued. DarkFlow must run within a debugger, otherwise it will die abruptly.
 
 ## Style preferences
 
+Want to change the appearence of DarkFlow? Here you can tune the colors of the interface and the workspace.
+
 ![Style preferences](/img/preferences-style.{{ page.lang }}.jpg)
+
+
+### Workspace only
+
+If this option is checked, the color theme will only be applied on the workspace. All other components of the program will inherit there style from the system.
+
+### Colors
+
+Color theme is defined with [Hex triplets](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet), the same as used through the web and defined with the #RRGGBB syntax. Three-digit shorthand triplets like #RGB may be used.

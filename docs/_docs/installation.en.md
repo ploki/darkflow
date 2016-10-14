@@ -6,11 +6,11 @@ permalink: /docs/installation.en/
 ---
 
 
-Follow the installation instructions for your paltform:
+Getting DarkFlow installed and ready-to-go should only take a few minutes. If it ever becomes a pain, please [file an issue]({{ site.repository}}/issues) (or submit a pull request) describing the issue you encountered and how we might make the process easier.
 
-* [Installation on MS Windows](#darkflow-on-ms-windows)
-* [Installation on OS X / macOS](#darkflow-on-os-xmacos)
-* [Installation on GNU/Linux](#darkflow-on-gnulinux)
+* [Install DarkFlow on MS Windows](#darkflow-on-ms-windows)
+* [Install DarkFlow on macOS](#darkflow-on-macos)
+* [Install DarkFlow on GNU/Linux](#darkflow-on-gnulinux)
 
 Then proceed to the [configuration](/docs/configuration.{{ page.lang }})
 

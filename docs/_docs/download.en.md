@@ -35,7 +35,7 @@ DarkFlow is free software and Cross-platform. It may be [built from source](/doc
   <p>Download the latest <a href="http://darkflow.org/download/osx/darkflow-{{ latest_version }}.dmg">DarkFlow App</a>, version {{ latest_version }}</p>
 </div>
 
-[Proceed to installation on your mac](/docs/installation.{{ page.lang}}/#darkflow-on-os-xmacos)
+[Proceed to installation on your mac](/docs/installation.{{ page.lang}}/#darkflow-on-macos)
 
 ## GNU/Linux
 

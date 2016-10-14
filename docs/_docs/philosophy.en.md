@@ -20,7 +20,9 @@ permalink: /docs/philosophy.en/
 
 ## What DarkFlow looks like?
 
-Processing with DarkFlow of Messier 8 region from very good LRGB source images. [Image Acquisition by Jim Misti](http://www.mistisoftware.com/astronomy/index_fits.htm)
+DarkFlow looks like an interactive diagram editor until you open a visualization window. Here is the processing with DarkFlow of the Messier 8 region from very good LRGB source images. [Image Acquisition by Jim Misti](http://www.mistisoftware.com/astronomy/index_fits.htm).
+
+*Don't pay attention to the jerks and jolts as they are caused by the screencast program and the small resolution used for acquisition purpose.*
 <div class="videoWrapper">
     <iframe width="420" height="315" src="https://www.youtube.com/embed/N8G3rAnTi_g" frameborder="0" allowfullscreen></iframe>
 </div>

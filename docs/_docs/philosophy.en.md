@@ -33,26 +33,34 @@ DarkFlow looks like an interactive diagram editor until you open a visualization
 
 ## DarkFlow is Project oriented
 
-You are encouraged to work iteratively on the processing of your images. Save the project, and return to it once your eyes are rested. Things are better built gradually.
+You are encouraged to work iteratively on the processing of your images. Save the project, and go back to it once your eyes are rested. Things are better built gradually.
 
 You can even use [git](https://en.wikipedia.org/wiki/Git) (in association with [git-lfs](https://git-lfs.github.com/) to store your raw photos) to track all the versions of your image processing project and host it for free on [GitHUB](https://github.com). Take a look at the [NGC7023](https://github.com/ploki/NGC7023) repository.
 
 ### Non destructive approach
 
+DarkFlow doesn't modify your source material. It's left untouched while your projects evolve with your skills.
+
 ### Project artifacts
+
+As you wish, you can generate output images from your projects. It depends on whether you added or not one or many ```Save``` operators in your workflow.
 
 ## Efficient
 
-### parallelism
+By its design, DarkFlow will leverage every single bit of potency from your computer.
 
-with OpenMP or Grand Central Dispatch
+### Parallelism
 
-### 16-bit Pixels formats
+Algorithms implementation behind each operator have been developped to deliver maximum parallelism. Thanks to *[Grand Central Dispatch](https://en.wikipedia.org/wiki/Grand_Central_Dispatch)* on macOS and to *[OpenMP](https://en.wikipedia.org/wiki/OpenMP)* on MS Windows and GNU/Linux.
 
-16-bit except for operators involving multiples images
+### Pixels streaming
 
-#### Linear
+If DarkFlow is [configured as suggested](/docs/configuration.{{ page.lang }}/#resources-preferences), the operating system will stream the images from the hard drive to the operators using access patterns friendly to both SSD and spinning hard drives.
 
-#### Non-Linear
+### 48-bit Pixel format
 
-#### HDR
+16-bit per channel RGB permits an acceptable memory footprint in addition to providing good performance algorithms. And even better performances when the usage of a [LUT](https://en.wikipedia.org/wiki/Lookup_table) is possible.
+
+For many operators, floating point numbers are internaly used in order to keep a good precision in computation.
+
+The precision of 16-bit per channel images, especialy in the dark parts, may be enhanced using a logarithmic scale that guaranties 4096 steps per [EV](https://en.wikipedia.org/wiki/Exposure_value) on a 16EV dynamic range. This logarithmic scale is named *HDR* within DarkFlow.

@@ -34,6 +34,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include "process.h"
+#include <QApplication>
 
 OperatorParameterDirectory::OperatorParameterDirectory(const QString &name,
                                                        const QString &caption,
@@ -53,7 +54,8 @@ OperatorParameterDirectory::~OperatorParameterDirectory()
 
 void OperatorParameterDirectory::askForDirectory()
 {
-    QString newValue = QFileDialog::getExistingDirectory(NULL,
+    QWidget *activeWindow = qApp->activeWindow();
+    QString newValue = QFileDialog::getExistingDirectory(activeWindow,
                                                          m_caption,
                                                          m_currentValue, 0);
     if ( !newValue.isEmpty() && m_currentValue != newValue ) {

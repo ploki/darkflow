@@ -48,19 +48,18 @@ class Process;
 class QThread;
 class OperatorWorker;
 
-#define OP_SECTION_ASSETS Operator::tr("Assets")
-#define OP_SECTION_WORKFLOW Operator::tr("Workflow")
-#define OP_SECTION_MASK Operator::tr("Mask")
-#define OP_SECTION_GEOMETRY Operator::tr("Geometry")
-#define OP_SECTION_REGISTRATION Operator::tr("Registration")
-#define OP_SECTION_COLOR Operator::tr("Color")
-#define OP_SECTION_CURVE Operator::tr("Curve")
-#define OP_SECTION_BLEND Operator::tr("Blend")
-#define OP_SECTION_COSMETIC Operator::tr("Cosmetic")
-#define OP_SECTION_EFFECTS Operator::tr("Effects")
-#define OP_SECTION_DEPRECATED Operator::tr("Deprecated")
-#define OP_SECTION_FREQUENCY_DOMAIN Operator::tr("Frequency Domain")
-#define OP_SECTION_ANALYSIS Operator::tr("Analysis")
+#define OP_SECTION_ASSETS           Operator::tr("Assets"), "/docs/assets.%0/#%1"
+#define OP_SECTION_WORKFLOW         Operator::tr("Workflow"), "/docs/workflow.%0/#%1"
+#define OP_SECTION_MASK             Operator::tr("Mask"), "/docs/mask.%0/#%1"
+#define OP_SECTION_GEOMETRY         Operator::tr("Geometry"), "/docs/geometry.%0/#%1"
+#define OP_SECTION_REGISTRATION     Operator::tr("Registration"), "/docs/registration.%0/#%1"
+#define OP_SECTION_COLOR            Operator::tr("Color"), "/docs/color.%0/#%1"
+#define OP_SECTION_CURVE            Operator::tr("Curve"), "/docs/curve.%0/#%1"
+#define OP_SECTION_BLEND            Operator::tr("Blend"), "/docs/blend.%0/#%1"
+#define OP_SECTION_COSMETIC         Operator::tr("Cosmetic"), "/docs/cosmetic.%0/#%1"
+#define OP_SECTION_DEPRECATED       Operator::tr("Deprecated"), "/docs/deprecated.%0/#%1"
+#define OP_SECTION_FREQUENCY_DOMAIN Operator::tr("Frequency Domain"), "/docs/frequency-domain.%0/#%1"
+#define OP_SECTION_ANALYSIS         Operator::tr("Analysis"), "/docs/analysis.%0/#%1"
 
 
 class Algorithm;
@@ -87,6 +86,7 @@ public:
         All       = (NonHDR|HDR),
     } ScaleCompatibility;
     explicit Operator(const QString& classSection,
+                      const char *docLink,
                       const char* classIdentifier,
                       int compatibility,
                       Process *parent);
@@ -127,6 +127,7 @@ public:
     QString getLocalizedClassIdentifier() const;
     QString getClassIdentifier() const;
     QString getClassSection() const;
+    QString getDocLink() const;
 
     static void operator_connect(Operator *outputOperator, int outputIdx,
                                  Operator *inputOperator, int inputIdx);
@@ -218,6 +219,7 @@ private:
 protected:
     WaitForParentReason m_waitingParentFor;
     QString m_uuid;
+    QString m_docLink;
     QString m_classSection;
     QString m_classIdentifier;
     QString m_localizedClassIdentifier;

@@ -46,6 +46,7 @@
 #include "operatorworker.h"
 
 Operator::Operator(const QString& classSection,
+                   const char* docLink,
                    const char* classIdentifier,
                    int scaleCompatibility,
                    Process *parent) :
@@ -61,6 +62,7 @@ Operator::Operator(const QString& classSection,
     m_scaleCompatibility(ScaleCompatibility(scaleCompatibility)),
     m_waitingParentFor(NotWaiting),
     m_uuid(Process::uuid()),
+    m_docLink(QString(docLink).arg(QLocale::system().name().section('_', 0, 0)).arg(classIdentifier)),
     m_classSection(classSection),
     m_classIdentifier(classIdentifier),
     m_localizedClassIdentifier(tr(classIdentifier)),
@@ -480,6 +482,11 @@ void Operator::overrideTags(Photo &photo)
 QString Operator::getClassSection() const
 {
     return m_classSection;
+}
+
+QString Operator::getDocLink() const
+{
+    return m_docLink;
 }
 
 bool Operator::isEnabled() const

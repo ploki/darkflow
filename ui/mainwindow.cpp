@@ -159,7 +159,8 @@ void MainWindow::actionConsole()
 
 void MainWindow::actionOnlineDocumentation()
 {
-    QDesktopServices::openUrl(QUrl("http://darkflow.org/redirect/"));
+    QDesktopServices::openUrl(QUrl(QString("http://www.darkflow.org/docs/home.%0/")
+                                   .arg(QLocale::system().name().section('_', 0, 0))));
 }
 
 void MainWindow::load(const QString &filename)

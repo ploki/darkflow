@@ -284,7 +284,7 @@ void ProcessNode::closeButtonClicked(QPoint)
 
 void ProcessNode::helpClicked(QPoint)
 {
-    QDesktopServices::openUrl(QUrl("http://darkflow.org/redirect/?operator="+m_operator->getClassIdentifier()));
+    QDesktopServices::openUrl(QUrl(QString("http://www.darkflow.org%0").arg(m_operator->getDocLink())));
 }
 
 void ProcessNode::visualizationClicked(QPoint screenPos)

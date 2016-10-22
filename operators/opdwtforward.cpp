@@ -136,7 +136,7 @@ OpDWTForward *OpDWTForward::newInstance()
 {
     int planes = m_planes;
     if ( 0 == planes) {
-        planes = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        planes = askForNumberOfWays(tr("Forward DWT"), tr("How many ways?"));
         if ( planes < 0 )
             return NULL;
     }

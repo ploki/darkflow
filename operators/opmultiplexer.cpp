@@ -91,7 +91,7 @@ OpMultiplexer *OpMultiplexer::newInstance()
 {
     int ways = m_ways;
     if ( 0 == ways) {
-        ways = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        ways = askForNumberOfWays(tr("Multiplexer"), tr("How many ways?"));
         if ( ways < 0 )
             return NULL;
     }

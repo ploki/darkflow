@@ -176,7 +176,7 @@ OpDWTBackward::OpDWTBackward(int nPlanes, Process *parent) :
              QT_TRANSLATE_NOOP("Operator", "%0-way Backward DWT"),
              Operator::All, parent),
     m_planes(nPlanes),
-    m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Deconvolution Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
+    m_luminosity(new OperatorParameterSlider("luminosity", tr("Luminosity"), tr("Backward DWT Luminosity"), Slider::ExposureValue, Slider::Logarithmic, Slider::Real, 1./(1<<4), 4, 1, 1./(1<<16), 1<<16, Slider::FilterExposure, this)),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(selectOutputHDR(int)))),
     m_outputHDRValue(false)
 {
@@ -205,7 +205,7 @@ OpDWTBackward *OpDWTBackward::newInstance()
 {
     int planes = m_planes;
     if ( 0 == planes) {
-        planes = askForNumberOfWays(tr("Demultiplexer"), tr("How many ways?"));
+        planes = askForNumberOfWays(tr("Backward DWT"), tr("How many ways?"));
         if ( planes < 0 )
             return NULL;
     }

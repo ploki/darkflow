@@ -1,16 +1,22 @@
+darkflow (2016.10.23-1) unstable; urgency=medium
+
+  * UI, Analysis and Rejection
+
+ -- Guillaume Gimenez <guillaume@blackmilk.fr>  Wed, 22 Oct 2016 22:21:45 +0100
+
 darkflow (2016.09.25-1) unstable; urgency=medium
 
   * Fourier, wavelets and more.
 
  -- Guillaume Gimenez <guillaume@blackmilk.fr>  Wed, 25 Sep 2016 02:47:45 +0100
 
-ddarkflow (2016.08.20-1) unstable; urgency=medium
+darkflow (2016.08.20-1) unstable; urgency=medium
 
   * UI and fixes
 
  -- Guillaume Gimenez <guillaume@blackmilk.fr>  Wed, 19 Aug 2016 18:36:45 +0100
 
-ddarkflow (2016.02.03-1) unstable; urgency=medium
+darkflow (2016.02.03-1) unstable; urgency=medium
 
   * visualization window size reduced to fit in small screens
 

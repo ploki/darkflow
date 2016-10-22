@@ -43,6 +43,9 @@ public:
     OpStarFinder(Process *parent);
     OpStarFinder *newInstance();
     OperatorWorker *newWorker();
+
+    bool isBeta() const { return true; }
+
 private:
     OperatorParameterSlider *m_threshold;
 };

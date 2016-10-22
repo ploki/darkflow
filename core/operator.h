@@ -116,6 +116,7 @@ public:
 
     virtual Operator* newInstance() = 0;
 
+    virtual bool isBeta() const;
     virtual bool isDeprecated() const;
     virtual bool isParametric() const;
     virtual QString getGenericName() const;

@@ -211,6 +211,11 @@ void Operator::setUuid(const QString &uuid)
     m_uuid = uuid;
 }
 
+bool Operator::isBeta() const
+{
+    return false;
+}
+
 bool Operator::isDeprecated() const
 {
     return false;

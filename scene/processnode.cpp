@@ -103,7 +103,7 @@ ProcessNode::ProcessNode(QPointF pos,
     h = barHeight*(2+portRowsCount+parameterRowsCount);
 
     setPen(QPen(preferences->color(QPalette::Window),PEN_WIDTH));
-    if ( op->isDeprecated())
+    if ( op->isDeprecated() || op->isBeta() )
         setBrush(QBrush(preferences->color(QPalette::BrightText)));
     else
         setBrush(QBrush(preferences->color(QPalette::Button)));

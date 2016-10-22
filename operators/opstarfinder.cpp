@@ -77,7 +77,7 @@ public:
         const Magick::PixelPacket *srcPixels = srcCache.getConst(0, 0, w, h);
         const Magick::PixelPacket *signPixels = signCache.getConst(0, 0, w, h);
         std::shared_ptr<QVector<QPointF> > bingo(new QVector<QPointF>);
-        dfl_block int count = 0;
+        dfl_block unsigned int count = 0;
         static const int maxCount = 5000;
         double thresholdValue = m_threshold * QuantumRange;
         dfl_parallel_for(y, 1, (h-1), 4, (), {

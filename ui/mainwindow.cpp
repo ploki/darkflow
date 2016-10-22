@@ -47,6 +47,7 @@
 #include "processscene.h"
 #include "preferences.h"
 #include "graphicsviewinteraction.h"
+#include "operator.h"
 
 MainWindow *dflMainWindow = NULL;
 
@@ -160,7 +161,7 @@ void MainWindow::actionConsole()
 void MainWindow::actionOnlineDocumentation()
 {
     QDesktopServices::openUrl(QUrl(QString("http://www.darkflow.org/docs/home.%0/")
-                                   .arg(QLocale::system().name().section('_', 0, 0))));
+                                   .arg(Operator::tr("en"))));
 }
 
 void MainWindow::load(const QString &filename)

@@ -5,7 +5,6 @@ set -e
 cd "$(dirname $0)/.."
 
 find setup/Dockerfile -name '*~' -delete
-rm -rf pkg/
 
 for TARGETP in setup/Dockerfile/* ; do
     TARGET="$(basename "$TARGETP")"

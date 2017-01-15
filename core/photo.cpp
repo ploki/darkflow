@@ -247,8 +247,7 @@ QString Photo::getTag(const QString &name) const
 
 Magick::Image Photo::newCurve(Photo::Gamma gamma)
 {
-    Magick::Image curve;
-    curve.size("65536x1");
+    Magick::Image curve(Magick::Geometry(65536, 1), Magick::Color(0, 0, 0));
     Ordinary::Pixels curve_cache(curve);
     Magick::PixelPacket *pixels = curve_cache.get(0,0,65536,1);
     for ( int i = 0 ; i < 65536 ; ++i )

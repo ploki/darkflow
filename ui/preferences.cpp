@@ -582,7 +582,7 @@ int Preferences::getLabSelectionSize() const
     return m_labSelectionSize;
 }
 
-QString Preferences::getAppConfigLocation() const
+QString Preferences::getAppConfigLocation()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
     return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);

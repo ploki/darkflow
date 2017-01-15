@@ -72,7 +72,7 @@ public:
     int getNumThreads() const;
     int getMagickNumThreads() const;
     int getLabSelectionSize() const;
-    QString getAppConfigLocation() const;
+    static QString getAppConfigLocation();
     QColor color(QPalette::ColorRole role);
     void incrAtWork();
     void decrAtWork();

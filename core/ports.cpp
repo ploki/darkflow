@@ -28,7 +28,11 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
+#include <QFile>
+#include <QStandardPaths>
 #include "ports.h"
+#include "console.h"
+#include "preferences.h"
 #include <cstdlib>
 
 #ifdef DF_WINDOWS
@@ -105,9 +109,24 @@ init_osx()
 
 #endif
 
+static void
+install_imagemagick_policy()
+{
+    QString configurationDirectory = Preferences::getAppConfigLocation();
+    QString destFilename = configurationDirectory + "/policy.xml";
+    QFile destFile(destFilename);
+    if (!destFile.exists()) {
+        if (!QFile::copy(":/setup/policy.xml", destFilename)) {
+            dflError("Could not create ImageMagick policy.xml file");
+            return;
+        }
+    }
+    setenv("MAGICK_CONFIGURE_PATH", configurationDirectory.toLocal8Bit().data(), 1);
+}
 
 void init_platform()
 {
+    install_imagemagick_policy();
 #if defined(Q_OS_OSX)
     init_osx();
 #endif

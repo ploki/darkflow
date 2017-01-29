@@ -96,6 +96,7 @@ ProcessNode::ProcessNode(QPointF pos,
     int parameterRowsCount = parameters.count();
 
     m_caption = new QGraphicsTextItem(this);
+    m_caption->setFont(preferences->getWorkspaceFontFamily());
     m_caption->setPlainText(op->getName());
     m_caption->setPos(x, y);
     m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));

@@ -66,10 +66,12 @@ ProcessFilesCollection::ProcessFilesCollection(QRectF rect,
     setPath(pp);
 
     m_caption = new QGraphicsTextItem(filesCollection->caption(),this);
+    m_caption->setFont(preferences->getWorkspaceFont());
     m_caption->setPos(captionRect.center()-m_caption->boundingRect().center());
     m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));
 
     m_currentValue= new QGraphicsTextItem(filesCollection->currentValue(),this);
+    m_currentValue->setFont(preferences->getWorkspaceFont());
     m_currentValue->setPos(pathRect.center()-m_currentValue->boundingRect().center());
     m_currentValue->setDefaultTextColor(preferences->color(QPalette::ButtonText));
     //connect(dropdown, SIGNAL(valueChanged(QString)), this, SLOT(valueChanged(QString)));

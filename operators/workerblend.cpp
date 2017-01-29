@@ -160,6 +160,7 @@ blend(WorkerBlend *self,
       OpBlend::BlendMode mode2,
       bool outputHDR)
 {
+    Q_ASSERT(a != NULL);
     PIXEL rgb[3] = {0, 0, 0};
     if ( a ) {
         if (!aHdr) { rgb[0] = a->red; rgb[1] = a->green; rgb[2] = a->blue; }
@@ -285,7 +286,7 @@ void WorkerBlend::play()
             dfl_parallel_for(y, 0, h, 4, (srcImage, imageA?*imageA:Magick::Image(), imageB?*imageB:Magick::Image(), imageC?*imageC:Magick::Image(), overflow.image(), underflow.image()), {
                 if ( m_error || aborted() )
                     continue;
-                const Magick::PixelPacket *src = src_cache->get(0, y, w, 1);
+                const Magick::PixelPacket *src = src_cache->getConst(0, y, w, 1);
                 Magick::PixelPacket *pxl_u = underflow_cache->get(0, y, w, 1);
                 Magick::PixelPacket *pxl_o = overflow_cache->get(0, y, w, 1);
                 Magick::PixelPacket *pxl_A = imageA_cache->get(0, y, w, 1);

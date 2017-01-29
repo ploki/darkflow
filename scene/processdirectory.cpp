@@ -62,6 +62,7 @@ ProcessDirectory::ProcessDirectory(QRectF rect,
     setPath(pp);
 
     m_caption = new QGraphicsTextItem(directory->caption(),this);
+    m_caption->setFont(preferences->getWorkspaceFont());
     m_caption->setPos(captionRect.center()-m_caption->boundingRect().center());
     m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));
 

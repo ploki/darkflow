@@ -60,7 +60,7 @@ typedef long long int64_t;
 #  define DF_ARCH "64-bit"
 # else
 #  define DF_ARCH "32-bit"
-#endif
+# endif
 # define DF_PRINTF_FORMAT(x,y) __attribute__((format(printf,x,y)))
 # define DF_TRAP() do { __asm__("int3"); } while(0)
 # define atomic_incr(ptr) do { __sync_fetch_and_add ((ptr), 1); } while(0)

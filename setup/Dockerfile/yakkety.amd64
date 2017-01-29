@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM ubuntu:yakkety
 
 MAINTAINER Guillaume Gimenez <guillaume@blackmilk.fr>
 
@@ -14,5 +14,5 @@ COPY . $src/
 VOLUME /artifacts
 CMD ( cd $src && dpkg-buildpackage ) && cp *.deb /artifacts
 
-# docker build -f setup/Dockerfile/stretch.amd64 -t darkflow/stretch.amd64 .
-# docker run -v $PWD/pkg/stretch.amd64:/artifacts  darkflow/stretch.amd64
+# docker build -f setup/Dockerfile/yakkety.amd64 -t darkflow/yakkety.amd64 .
+# docker run -v $PWD/pkg/yakkety.amd64:/artifacts  darkflow/yakkety.amd64

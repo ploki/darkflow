@@ -31,7 +31,7 @@
 #include <QMutexLocker>
 #include "ordinary.h"
 
-#if !defined(_OPENMP)
+#if !defined(_OPENMP) || defined(DF_WINDOWS)
 
 Ordinary::Pixels::Pixels(Magick::Image &image) :
     m_image(&image),

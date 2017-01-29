@@ -66,10 +66,12 @@ ProcessSlider::ProcessSlider(QRectF rect,
     setPath(pp);
 
     m_caption = new QGraphicsTextItem(m_slider->caption(),this);
+    m_caption->setFont(preferences->getWorkspaceFont());
     m_caption->setPos(captionRect.center()-m_caption->boundingRect().center());
     m_caption->setDefaultTextColor(preferences->color(QPalette::WindowText));
 
     m_currentValue= new QGraphicsTextItem(m_slider->currentValue(),this);
+    m_currentValue->setFont(preferences->getWorkspaceFont());
     m_currentValue->setPos(pathRect.center()-m_currentValue->boundingRect().center());
     m_currentValue->setDefaultTextColor(preferences->color(QPalette::ButtonText));
 

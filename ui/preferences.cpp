@@ -97,7 +97,7 @@ Preferences::Preferences(QWidget *parent) :
   m_sem(new QSemaphore(N_WORKERS)),
   m_mutex(new QMutex),
   m_currentMaxWorkers(N_WORKERS),
-  m_scheduledMaxWorkers(N_WORKERS),
+  m_scheduledMaxWorkers(1),
   m_OpenMPThreads(dfl_max_threads()),
   m_currentTarget(sRGB),
   m_incompatibleAction(Error),
@@ -118,7 +118,13 @@ Preferences::Preferences(QWidget *parent) :
 
     if ( !loaded ) {
         getMagickResources();
-
+        //tune ImageMagick architecture limits for first time launch
+        ui->valueMemory->setText("0");
+        ui->valueArea->setText("1");
+        ui->valueDisk->setText(ui->valueMap->text());
+#if !defined(__LP64__) && !defined(WIN64)
+        ui->valueMap->setText("0");
+#endif
         ui->valueDflThreads->setText(QString::number(m_OpenMPThreads));
         ui->valueDflWorkers->setText(QString::number(m_scheduledMaxWorkers));
 
@@ -420,6 +426,8 @@ QJsonObject Preferences::saveStyle()
     QString link = ui->lineLink->text();
     QString brightText = ui->lineBrightText->text();
     bool onlyWorkspace = ui->checkBoxOnlyWorkspace->isChecked();
+    QString fontFamily = ui->valueFontFamily->currentText();
+    int fontSize = ui->valueFontSize->value();
 
     obj["alternateBase"] = alternateBase;
     obj["base"] = base;
@@ -435,6 +443,8 @@ QJsonObject Preferences::saveStyle()
     obj["link"] = link;
     obj["brightText"] = brightText;
     obj["onlyWorkspace"] = onlyWorkspace;
+    obj["workspaceFontFamily"] = fontFamily;
+    obj["workspaceFontSize"] = fontSize;
     return obj;
 }
 
@@ -457,6 +467,10 @@ void Preferences::loadStyle(QJsonObject &obj)
     QString link = obj["link"].toString();
     QString brightText = obj["brightText"].toString();
     bool onlyWorkspace = obj["onlyWorkspace"].toBool();
+    QString fontFamily = obj["workspaceFontFamily"].toString();
+    int fontSize = obj["workspaceFontSize"].toInt();
+    if (fontSize < 1)
+        fontSize = 12;
 
     ui->lineAlternateBase->setText(alternateBase);
     ui->lineBase->setText(base);
@@ -472,6 +486,8 @@ void Preferences::loadStyle(QJsonObject &obj)
     ui->lineLink->setText(link);
     ui->lineBrightText->setText(brightText);
     ui->checkBoxOnlyWorkspace->setChecked(onlyWorkspace);
+    ui->valueFontFamily->setCurrentFont(QFont(fontFamily));
+    ui->valueFontSize->setValue(fontSize);
 
     QPalette palette;
     palette.setColor(QPalette::AlternateBase, alternateBase);
@@ -611,4 +627,18 @@ void Preferences::decrAtWork()
 unsigned long Preferences::getAtWork()
 {
     return m_atWork;
+}
+
+QFont Preferences::getWorkspaceFont() const
+{
+    QFont font = ui->valueFontFamily->currentFont();
+    int size = ui->valueFontSize->value();
+    if (size > 0)
+        font.setPointSize(size);
+    return font;
+}
+
+QFont Preferences::getWorkspaceFontFamily() const
+{
+    return ui->valueFontFamily->currentFont();
 }

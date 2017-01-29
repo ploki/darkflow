@@ -214,6 +214,7 @@ void PosixSpawn::start(const QString &program,
         if ( rc < 0 ) {
             dflError("posix_spawn_file_actions_addopen(stdin) failed, errno=%s", strerror(errno));
             impl->error=true;
+            free(file);
             return;
         }
     }

@@ -161,8 +161,11 @@ public:
                                          pixel[x].blue = clamp<quantum_t>(img[y*w+x].blue);
                                      }
                                  }
+                                 cache->sync();
+                                 uCache->sync();
+                                 oCache->sync();
                              });
-            delete img; img = 0;
+            delete[] img; img = nullptr;
             outputPush(0, output);
             outputPush(1, overflow);
             outputPush(2, underflow);

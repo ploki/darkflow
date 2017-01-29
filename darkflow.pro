@@ -47,7 +47,7 @@ unix {
 #    QMAKE_CXXFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
     QMAKE_CXXFLAGS += -std=c++11 -Wall -D_REENTRANT
     QMAKE_CXXFLAGS_RELEASE += -O2
-    QMAKE_CXXFLAGS_DEBUG += -ggdb3
+    QMAKE_CXXFLAGS_DEBUG += -ggdb3 -ftrapv
     QMAKE_CFLAGS += -Wall -D_REENTRANT
     QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations
     QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations

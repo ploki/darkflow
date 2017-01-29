@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
-    <height>421</height>
+    <width>363</width>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,6 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
-     </property>
-     <property name="tabBarAutoHide">
-      <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab_resources">
       <attribute name="title">
@@ -598,17 +595,10 @@
           <string>Color theme</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="7" column="2">
-           <widget class="QLineEdit" name="lineToolTipText">
+          <item row="7" column="1">
+           <widget class="QLineEdit" name="lineToolTipBase">
             <property name="text">
-             <string>#FFFFFF</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Workspace:</string>
+             <string>#2A92DA</string>
             </property>
            </widget>
           </item>
@@ -626,18 +616,26 @@
             </property>
            </widget>
           </item>
-          <item row="10" column="0">
-           <spacer name="verticalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Link:</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineWindowText">
+            <property name="text">
+             <string>#FFFFFF</string>
             </property>
-           </spacer>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Workspace:</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="1">
            <widget class="QLabel" name="label_2">
@@ -646,24 +644,73 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lineAlternateBase">
+          <item row="9" column="0">
+           <widget class="QLabel" name="label_10">
             <property name="text">
-             <string>#191919</string>
+             <string>Dangling:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_5">
+          <item row="9" column="2">
+           <widget class="QLineEdit" name="lineBrightText">
             <property name="text">
-             <string>Base:</string>
+             <string>#700000</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
-           <widget class="QLineEdit" name="lineToolTipBase">
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Foreground</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLineEdit" name="lineHighlightedText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Window:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="QLineEdit" name="lineLink">
             <property name="text">
              <string>#2A92DA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineBase">
+            <property name="text">
+             <string>#202020</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QLineEdit" name="lineToolTipText">
+            <property name="text">
+             <string>#FFFFFF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Tooltip:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineText">
+            <property name="text">
+             <string>#FFFFFF</string>
             </property>
            </widget>
           </item>
@@ -678,6 +725,20 @@
            <widget class="QCheckBox" name="checkBoxOnlyWorkspace">
             <property name="text">
              <string>Workspace only</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineAlternateBase">
+            <property name="text">
+             <string>#191919</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Base:</string>
             </property>
            </widget>
           </item>
@@ -702,85 +763,63 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="label_9">
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="WorkspaceFont">
+         <property name="title">
+          <string>Workspace font</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelFontSize">
             <property name="text">
-             <string>Link:</string>
+             <string>Size:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lineWindowText">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelFontFamily">
             <property name="text">
-             <string>#FFFFFF</string>
+             <string>Family:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Foreground</string>
-            </property>
-           </widget>
+          <item row="0" column="1">
+           <widget class="QFontComboBox" name="valueFontFamily"/>
           </item>
-          <item row="6" column="2">
-           <widget class="QLineEdit" name="lineHighlightedText">
-            <property name="text">
-             <string>#FFFFFF</string>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="valueFontSize">
+            <property name="minimum">
+             <number>1</number>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lineBase">
-            <property name="text">
-             <string>#202020</string>
+            <property name="maximum">
+             <number>172</number>
             </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Tooltip:</string>
+            <property name="singleStep">
+             <number>1</number>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="lineText">
-            <property name="text">
-             <string>#FFFFFF</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Window:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="2">
-           <widget class="QLineEdit" name="lineLink">
-            <property name="text">
-             <string>#2A92DA</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Dangling:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="2">
-           <widget class="QLineEdit" name="lineBrightText">
-            <property name="text">
-             <string>#700000</string>
+            <property name="value">
+             <number>12</number>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>107</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

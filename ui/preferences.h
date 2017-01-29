@@ -41,6 +41,7 @@ class QAbstractButton;
 class QSemaphore;
 class QMutex;
 class OperatorWorker;
+class QFont;
 
 class Preferences : public QDialog
 {
@@ -77,6 +78,8 @@ public:
     void incrAtWork();
     void decrAtWork();
     unsigned long getAtWork();
+    QFont getWorkspaceFont() const;
+    QFont getWorkspaceFontFamily() const;
 
 private:
     void getDefaultMagickResources();

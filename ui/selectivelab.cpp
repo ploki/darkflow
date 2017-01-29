@@ -357,7 +357,7 @@ void SelectiveLab::drawGuide(Photo &photo, int hue, int coverage, bool strict)
     ResetImage(image);
     int w = srcImage.columns();
     int h = srcImage.rows();
-    int s = w*h;
+    int s;
     Ordinary::Pixels src_cache(srcImage);
     Ordinary::Pixels dst_cache(image);
     const Magick::PixelPacket *src = src_cache.getConst(0, 0, w, h);

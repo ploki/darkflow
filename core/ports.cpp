@@ -121,7 +121,11 @@ install_imagemagick_policy()
             return;
         }
     }
+#ifdef DF_WINDOWS
+    _putenv_s("MAGICK_CONFIGURE_PATH", configurationDirectory.toLocal8Bit().data());
+#else
     setenv("MAGICK_CONFIGURE_PATH", configurationDirectory.toLocal8Bit().data(), 1);
+#endif
 }
 
 void init_platform()

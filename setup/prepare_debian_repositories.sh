@@ -10,12 +10,12 @@ rm -rf $REPO
 
 function Debian()
 {
-    echo stretch
+    echo stretch jessie
 }
 
 function Ubuntu()
 {
-    echo xenial wily
+    echo yakkety xenial wily
 }
 
 DISTS="Debian Ubuntu"

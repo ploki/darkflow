@@ -7,12 +7,12 @@
 #define public ImageMagickInstaller PackageContent + "\" + ImageMagickInstallerExec
 #define public DcrawExec PackageContent + "\dcraw.exe"
 #define public HomeDir "C:\Users\Guillaume Gimenez"
-#define public BuildDir HomeDir + "\Desktop\build-darkflow-Desktop_Qt_5_5_1_MSVC2013_"+ BuildArch + "-Release\release"
+#define public BuildDir HomeDir + "\Desktop\build-darkflow-Desktop_Qt_5_8_0_MSVC2015_"+ BuildArch + "-Release\release"
 #define public SourceDir HomeDir + "\Desktop\darkflow"
 #define public FFmpegBinDir "C:\ffmpeg-" + Arch + "\bin"
 #define public FFTW3BinDir "C:\fftw-3.3.5-" + Arch
-#define public MSVCCRTRedistDir "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\" + Arch + "\Microsoft.VC120.CRT"
-#define public MSVCOMPRedistDir "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\" + Arch + "\Microsoft.VC120.OPENMP"
+#define public MSVCCRTRedistDir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\" + Arch + "\Microsoft.VC140.CRT"
+#define public MSVCOMPRedistDir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\" + Arch + "\Microsoft.VC140.OPENMP"
 
 
 
@@ -24,10 +24,10 @@ AppId={{#AppUUID}
 AppName=Dark Flow ({#Arch})
 AppVersion={#Version}.{#BuildArch}
 ;AppVerName={AppName} {AppVersion}
-AppPublisher=http://darkflow.org/
-AppPublisherURL=http://darkflow.org/
-AppSupportURL=http://darkflow.org/
-AppUpdatesURL=http://darkflow.org/
+AppPublisher=http://www.darkflow.org/
+AppPublisherURL=http://www.darkflow.org/
+AppSupportURL=http://www.darkflow.org/help.en/
+AppUpdatesURL=http://www.darkflow.org/docs/download.en/
 DefaultDirName={pf}\Dark Flow
 DefaultGroupName=Dark Flow ({#BuildArch})
 DisableProgramGroupPage=yes
@@ -73,9 +73,9 @@ Source: "{#QtBinDir}\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#QtBinDir}\..\plugins\platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
 
 ;msvc redist
-Source: "{#MSVCCRTRedistDir}\msvcp120.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MSVCCRTRedistDir}\msvcr120.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MSVCOMPRedistDir}\vcomp120.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MSVCCRTRedistDir}\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MSVCCRTRedistDir}\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MSVCOMPRedistDir}\vcomp140.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

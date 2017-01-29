@@ -143,6 +143,8 @@ void Console::recvMessage(Console::Level level, QString message)
 static void message(Console::Level level, const char *fmt, va_list ap)
 {
     Console::trap(level);
+    if (level < Console::getLevel())
+        return;
     char *msg;
     int ret;
     ret = vasprintf(&msg, fmt, ap);
@@ -199,7 +201,8 @@ void dflCritical(const char* fmt, ...)
 
 void dflMessage(Console::Level level, const QString& msg) {
     Console::trap(level);
-    emit console->message(level, msg);
+    if (level >= Console::getLevel())
+        emit console->message(level, msg);
 }
 
 void dflDebug(const QString &msg)

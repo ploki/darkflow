@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:jessie
 
 MAINTAINER Guillaume Gimenez <guillaume@blackmilk.fr>
 
@@ -14,5 +14,5 @@ COPY . $src/
 VOLUME /artifacts
 CMD ( cd $src && dpkg-buildpackage ) && cp *.deb /artifacts
 
-# docker build -f setup/Dockerfile/stretch.amd64 -t darkflow/stretch.amd64 .
-# docker run -v $PWD/pkg/stretch.amd64:/artifacts  darkflow/stretch.amd64
+# docker build -f setup/Dockerfile/jessie.amd64 -t darkflow/jessie.amd64 .
+# docker run -v $PWD/pkg/jessie.amd64:/artifacts  darkflow/jessie.amd64

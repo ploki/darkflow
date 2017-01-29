@@ -40,6 +40,8 @@
 #include "ports.h"
 #include "preferences.h"
 
+//#define DEBUG_DISABLE_OPENMP
+
 #if defined(DFL_USE_GCD)
 #include <QMutex>
 #include <QMutexLocker>
@@ -177,16 +179,26 @@ do \
 #else
 #define DF_PRAGMA(pragma_string) _Pragma(#pragma_string)
 #endif
-#define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, ...) \
+#ifdef DEBUG_DISABLE_OPENMP
+# define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, ...) \
+do {\
+    for(int __var__ = __start__ ; __var__ < __end__ ; ++__var__ ) \
+        { AtWork atWork; { __VA_ARGS__ } }\
+} while (0)
+
+# define dfl_critical_section(...) do { __VA_ARGS__ } while (0)
+
+#else
+# define dfl_parallel_for(__var__, __start__, __end__, __stride__, __image_list__, ...) \
 do {\
     DF_PRAGMA(omp parallel for schedule(static, __stride__) num_threads((OnDiskCache __image_list__ )?1:DfThreadLimit())) \
     for(int __var__ = __start__ ; __var__ < __end__ ; ++__var__ ) \
         { AtWork atWork; { __VA_ARGS__ } }\
 } while (0)
 
-#define dfl_critical_section(...) DF_PRAGMA(omp critical) { __VA_ARGS__ }
+# define dfl_critical_section(...) DF_PRAGMA(omp critical) { __VA_ARGS__ }
 
-
+#endif
 #endif
 
 

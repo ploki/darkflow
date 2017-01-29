@@ -69,6 +69,8 @@ $ ./darkflow
 
 Currently supported distributions
  - Debian stretch amd64 and i386
+ - Debian jessie amd64 and i386
+ - Ubuntu yakkety amd64 and i386
  - Ubuntu xenial amd64 and i386
  - Ubuntu wily amd64
 

@@ -99,7 +99,8 @@ OpSave::OpSave(Process *parent) :
     m_directory(new OperatorParameterDirectory("directory", tr("Target directory"), m_process->baseDirectory(), "", this)),
     m_fileType(new OperatorParameterDropDown("fileType", tr("File type"), this, SLOT(selectType(int)))),
     m_fileTypeValue(SaveFITS),
-    m_backup(new OperatorParameterDropDown("backup", tr("Backup"), this, SLOT(selectBackup(int))))
+    m_backup(new OperatorParameterDropDown("backup", tr("Backup"), this, SLOT(selectBackup(int)))),
+    m_backupValue(false)
 {
     m_fileType->addOption(DF_TR_AND_C(SaveTypeStr[SaveFITS]), SaveFITS, true);
     m_fileType->addOption(DF_TR_AND_C(SaveTypeStr[SaveTIFF]), SaveTIFF);

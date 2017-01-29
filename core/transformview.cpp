@@ -191,7 +191,9 @@ void TransformView::invMap(qreal x, qreal y, qreal *tx, qreal *ty)
 
 Magick::PixelPacket TransformView::getPixel(int px, int py, bool *definedp)
 {
-    Magick::PixelPacket pixel = {};
+    Magick::PixelPacket pixel;
+    //g++-4.9 complains about {} initializer
+    memset(&pixel, 0, sizeof(pixel));
     if ( m_transform.isIdentity() ) {
         if(definedp)
             *definedp=true;

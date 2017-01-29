@@ -3730,37 +3730,37 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="260"/>
+        <location filename="../core/photo.cpp" line="259"/>
         <source>Not expected to create a Non-linear curve</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="308"/>
+        <location filename="../core/photo.cpp" line="307"/>
         <source>Pixmap conversion failed</source>
         <translation>Échec de la conversion en Pixmap</translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="691"/>
+        <location filename="../core/photo.cpp" line="690"/>
         <source>Could not open file %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="696"/>
+        <location filename="../core/photo.cpp" line="695"/>
         <source>Could not save file %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="771"/>
+        <location filename="../core/photo.cpp" line="770"/>
         <source>Photo: Invalid numbers in %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="851"/>
+        <location filename="../core/photo.cpp" line="850"/>
         <source>Unknown photo scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/photo.cpp" line="940"/>
+        <location filename="../core/photo.cpp" line="939"/>
         <source>Image cache is on disk, threading disabled</source>
         <translation>Le cache d&apos;image est sur disque, parallèlisme désactivé</translation>
     </message>
@@ -3801,337 +3801,352 @@ Are you sure?
         <translation>DarkFlow - Préférences</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="27"/>
+        <location filename="../ui/preferences.ui" line="24"/>
         <source>Resources</source>
         <translation>Ressources</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="33"/>
+        <location filename="../ui/preferences.ui" line="30"/>
         <source>ImageMagick Architecture Settings</source>
         <translation>Paramètres de l&apos;architecture ImageMagick</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="66"/>
+        <location filename="../ui/preferences.ui" line="63"/>
         <source>Maximum amount of disk space in bytes permitted for use by the pixel cache. If this limit is exceeded, the pixel cache is not created and a fatal exception is thrown.</source>
         <translation>Quantité maximale d&apos;espace disque en GiB utilisable par le cache de pixels. Si cette valeur est dépassée, le programme ne pourra plus créer d&apos;images intermédiaires.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="69"/>
+        <location filename="../ui/preferences.ui" line="66"/>
         <source>Disk:</source>
         <translation>Disque :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="76"/>
+        <location filename="../ui/preferences.ui" line="73"/>
         <source>Maximum area in bytes of any one image that can reside in the pixel cache memory. If this limit is exceeded, the image is automagically cached to disk and optionally memory-mapped.</source>
         <translation>Surface maximale en octet d&apos;une au delà de laquelle l&apos;image est automatiquement allouée sur disque plutôt qu&apos;en mémoire.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="79"/>
+        <location filename="../ui/preferences.ui" line="76"/>
         <source>Area:</source>
         <translation>Surface :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="100"/>
-        <location filename="../ui/preferences.ui" line="264"/>
+        <location filename="../ui/preferences.ui" line="97"/>
+        <location filename="../ui/preferences.ui" line="261"/>
         <source>Your settings</source>
         <translation>Configuré à</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="127"/>
+        <location filename="../ui/preferences.ui" line="124"/>
         <source>Maximum amount of memory map in bytes to allocate for the pixel cache.</source>
         <translation>Quantité maximale d&apos;espace virtuel en GiB utilisable par le cache de pixels pour accéder aux données sur le disque. Au delà, des lectures/écritures classiques sont utilisées.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="130"/>
+        <location filename="../ui/preferences.ui" line="127"/>
         <source>Map:</source>
         <translation>Virtuel :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="170"/>
+        <location filename="../ui/preferences.ui" line="167"/>
         <source>Maximum amount of memory in bytes to allocate for the pixel cache from the anonymous mapped memory or the heap.</source>
         <translation>Quantité maximale de mémoire utilisée par le cache de pixels.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="173"/>
+        <location filename="../ui/preferences.ui" line="170"/>
         <source>Memory:</source>
         <translation>Mémoire :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="193"/>
+        <location filename="../ui/preferences.ui" line="190"/>
         <source>Maximum number of threads that are permitted to run in parallel within ImageMagick functions.</source>
         <translation>Nombre maximum de threads lors de l&apos;exécution en parallèle des opérations de ImageMagick.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="196"/>
-        <location filename="../ui/preferences.ui" line="233"/>
+        <location filename="../ui/preferences.ui" line="193"/>
+        <location filename="../ui/preferences.ui" line="230"/>
         <source>Threads:</source>
         <translation>Threads :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="203"/>
+        <location filename="../ui/preferences.ui" line="200"/>
         <source>Defaults (GBytes)</source>
         <translation>Défaut (GO)</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="213"/>
+        <location filename="../ui/preferences.ui" line="210"/>
         <source>DarkFlow Architecture Settings</source>
         <translation>Paramètres de l&apos;architecture DarkFlow</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="247"/>
+        <location filename="../ui/preferences.ui" line="244"/>
         <source>Workers:</source>
         <translation>Flot :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="271"/>
+        <location filename="../ui/preferences.ui" line="268"/>
         <source>Defaults</source>
         <translation>Défaut</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="295"/>
+        <location filename="../ui/preferences.ui" line="292"/>
         <source>Pixels</source>
         <translation>Pixels</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="301"/>
+        <location filename="../ui/preferences.ui" line="298"/>
         <source>Display target:</source>
         <translation>Cible d&apos;affichage :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="309"/>
+        <location filename="../ui/preferences.ui" line="306"/>
         <source>None</source>
         <translation>Aucune</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="314"/>
+        <location filename="../ui/preferences.ui" line="311"/>
         <source>sRGB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="319"/>
+        <location filename="../ui/preferences.ui" line="316"/>
         <source>IUT BT.709</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="324"/>
+        <location filename="../ui/preferences.ui" line="321"/>
         <source>Square Root</source>
         <translation>Racine carrée</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="345"/>
+        <location filename="../ui/preferences.ui" line="342"/>
         <source>Incompatible scale:</source>
         <translation>Échelle incompatible :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="353"/>
+        <location filename="../ui/preferences.ui" line="350"/>
         <source>Ignore and convert</source>
         <translation>Ignorer et convertir</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="358"/>
+        <location filename="../ui/preferences.ui" line="355"/>
         <source>Warning and convert</source>
         <translation>Avertissement et convertir</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="363"/>
-        <location filename="../ui/preferences.ui" line="476"/>
-        <location filename="../ui/preferences.ui" line="530"/>
-        <location filename="../ui/preferences.ui" line="573"/>
+        <location filename="../ui/preferences.ui" line="360"/>
+        <location filename="../ui/preferences.ui" line="473"/>
+        <location filename="../ui/preferences.ui" line="527"/>
+        <location filename="../ui/preferences.ui" line="570"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="371"/>
+        <location filename="../ui/preferences.ui" line="368"/>
         <source>Lab selection size:</source>
         <translation>Taille de la sélection Lab :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="378"/>
+        <location filename="../ui/preferences.ui" line="375"/>
         <source> pixels</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="392"/>
+        <location filename="../ui/preferences.ui" line="389"/>
         <source>Path</source>
         <translation>Chemins</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="398"/>
+        <location filename="../ui/preferences.ui" line="395"/>
         <source>Base Directory:</source>
         <translation>Répertoire de base :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="410"/>
-        <location filename="../ui/preferences.ui" line="431"/>
+        <location filename="../ui/preferences.ui" line="407"/>
+        <location filename="../ui/preferences.ui" line="428"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="419"/>
+        <location filename="../ui/preferences.ui" line="416"/>
         <source>Temporary Directory:</source>
         <translation>Répertoire temporaire :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="454"/>
+        <location filename="../ui/preferences.ui" line="451"/>
         <source>Logging</source>
         <translation>Messages</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="461"/>
-        <location filename="../ui/preferences.ui" line="515"/>
-        <location filename="../ui/preferences.ui" line="558"/>
+        <location filename="../ui/preferences.ui" line="458"/>
+        <location filename="../ui/preferences.ui" line="512"/>
+        <location filename="../ui/preferences.ui" line="555"/>
         <source>Debug</source>
         <translation>Débogage</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="466"/>
-        <location filename="../ui/preferences.ui" line="520"/>
-        <location filename="../ui/preferences.ui" line="563"/>
+        <location filename="../ui/preferences.ui" line="463"/>
+        <location filename="../ui/preferences.ui" line="517"/>
+        <location filename="../ui/preferences.ui" line="560"/>
         <source>Info</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="471"/>
-        <location filename="../ui/preferences.ui" line="525"/>
-        <location filename="../ui/preferences.ui" line="568"/>
+        <location filename="../ui/preferences.ui" line="468"/>
+        <location filename="../ui/preferences.ui" line="522"/>
+        <location filename="../ui/preferences.ui" line="565"/>
         <source>Warning</source>
         <translation>Avertissement</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="481"/>
-        <location filename="../ui/preferences.ui" line="535"/>
-        <location filename="../ui/preferences.ui" line="578"/>
+        <location filename="../ui/preferences.ui" line="478"/>
+        <location filename="../ui/preferences.ui" line="532"/>
+        <location filename="../ui/preferences.ui" line="575"/>
         <source>Critical</source>
         <translation>Critique</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="486"/>
+        <location filename="../ui/preferences.ui" line="483"/>
         <source>Never raise</source>
         <translation>Jamais</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="507"/>
+        <location filename="../ui/preferences.ui" line="504"/>
         <source>Raise console on:</source>
         <translation>Afficher la console :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="543"/>
+        <location filename="../ui/preferences.ui" line="540"/>
         <source>Log Level:</source>
         <translation>Niveau minimum :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="550"/>
+        <location filename="../ui/preferences.ui" line="547"/>
         <source>Trap on (debug):</source>
         <translation>Trappe de débogage :</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="583"/>
+        <location filename="../ui/preferences.ui" line="580"/>
         <source>Never Trap</source>
         <translation>Jamais</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="592"/>
+        <location filename="../ui/preferences.ui" line="589"/>
         <source>Style</source>
         <translation>Style</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="598"/>
+        <location filename="../ui/preferences.ui" line="595"/>
         <source>Color theme</source>
         <translation>Thème de couleurs</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="604"/>
-        <location filename="../ui/preferences.ui" line="694"/>
-        <location filename="../ui/preferences.ui" line="715"/>
-        <location filename="../ui/preferences.ui" line="729"/>
-        <location filename="../ui/preferences.ui" line="750"/>
+        <location filename="../ui/preferences.ui" line="629"/>
+        <location filename="../ui/preferences.ui" line="671"/>
+        <location filename="../ui/preferences.ui" line="699"/>
+        <location filename="../ui/preferences.ui" line="713"/>
+        <location filename="../ui/preferences.ui" line="755"/>
         <source>#FFFFFF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="611"/>
+        <location filename="../ui/preferences.ui" line="636"/>
         <source>Workspace:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.ui" line="618"/>
-        <source>#353535</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="625"/>
-        <location filename="../ui/preferences.ui" line="666"/>
-        <location filename="../ui/preferences.ui" line="764"/>
-        <source>#2A92DA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="645"/>
-        <source>Background</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="652"/>
-        <source>#191919</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="659"/>
-        <source>Base:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="673"/>
-        <source>Button:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="680"/>
-        <source>Workspace only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="687"/>
-        <source>Highlight:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="701"/>
-        <source>#2D2D2D</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="708"/>
-        <source>Link:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="722"/>
-        <source>Foreground</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="736"/>
-        <source>#202020</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="743"/>
-        <source>Tooltip:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="757"/>
-        <source>Window:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/preferences.ui" line="771"/>
-        <source>Dangling:</source>
+        <location filename="../ui/preferences.ui" line="772"/>
+        <source>Workspace font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/preferences.ui" line="778"/>
+        <source>Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="785"/>
+        <source>Family:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="608"/>
+        <source>#353535</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="601"/>
+        <location filename="../ui/preferences.ui" line="615"/>
+        <location filename="../ui/preferences.ui" line="685"/>
+        <source>#2A92DA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="643"/>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="734"/>
+        <source>#191919</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="741"/>
+        <source>Base:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="720"/>
+        <source>Button:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="727"/>
+        <source>Workspace only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="748"/>
+        <source>Highlight:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="762"/>
+        <source>#2D2D2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="622"/>
+        <source>Link:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="664"/>
+        <source>Foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="692"/>
+        <source>#202020</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="706"/>
+        <source>Tooltip:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="678"/>
+        <source>Window:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="650"/>
+        <source>Dangling:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/preferences.ui" line="657"/>
         <source>#700000</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4162,12 +4177,12 @@ Are you sure?
         <translation>Ne peut pas enregistrer le fichier de configuration %0</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="544"/>
+        <location filename="../ui/preferences.cpp" line="554"/>
         <source>Temporary Directory</source>
         <translation>Répertoire temporaire</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="553"/>
+        <location filename="../ui/preferences.cpp" line="563"/>
         <source>Base Directory</source>
         <translation>Répertoire de base</translation>
     </message>
@@ -4272,7 +4287,7 @@ Are you sure?
 <context>
     <name>ProcessDirectory</name>
     <message>
-        <location filename="../scene/processdirectory.cpp" line="68"/>
+        <location filename="../scene/processdirectory.cpp" line="69"/>
         <source>...</source>
         <translation></translation>
     </message>
@@ -5299,18 +5314,18 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerloadvideo.cpp" line="172"/>
+        <location filename="../operators/workerloadvideo.cpp" line="180"/>
         <source>Error while decoding frame in %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerloadvideo.cpp" line="255"/>
+        <location filename="../operators/workerloadvideo.cpp" line="263"/>
         <source>LoadVideo(Worker): Unsupported pixel format in file %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerloadvideo.cpp" line="327"/>
-        <location filename="../operators/workerloadvideo.cpp" line="332"/>
+        <location filename="../operators/workerloadvideo.cpp" line="335"/>
+        <location filename="../operators/workerloadvideo.cpp" line="340"/>
         <source>FFMPEG not compiled in</source>
         <translation type="unfinished"></translation>
     </message>

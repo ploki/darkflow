@@ -143,8 +143,16 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
         return handle_error(tr("Could not open codec for file %0").arg(filename));
 
     AVFrame *picture;
-    int fps_num = pCodecCtx->framerate.num;
-    int fps_den = pCodecCtx->framerate.den;
+
+    AVRational fps =
+#if LIBAVCODEC_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(56, 13, 100) // ffmpeg 2.5
+    av_mul_q(pCodecCtx->framerate, av_make_q(pCodecCtx->ticks_per_frame, 1));
+#else
+    av_inv_q(pCodecCtx->time_base);
+#endif
+
+    int fps_num = fps.num;
+    int fps_den = fps.den;
     if ( !fps_num || !fps_den ) {
         fps_num=1; fps_den=30;
     }
@@ -190,7 +198,7 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
          } while(avpkt.stream_index != videoStream );
      }
 loop_exit:
-     len = avcodec_decode_video2(pCodecCtx, picture, &got_picture, &avpkt);
+     avcodec_decode_video2(pCodecCtx, picture, &got_picture, &avpkt);
      if (got_picture) {
          fflush(stdout);
 

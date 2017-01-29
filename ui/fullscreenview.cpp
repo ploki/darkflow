@@ -49,9 +49,15 @@ FullScreenView::FullScreenView(QGraphicsScene *scene, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
-#ifdef Q_OS_OSX
+#if defined(Q_OS_OSX)
     /* Expected to be fullscreen on other platforms */
     setWindowFlags(Qt::Tool);
+#elif !defined(DF_WINDOWS)
+    /* windows with parent set no longer stay on front
+     * of there parent. It seems that window handling is fragile
+     * over time...
+     */
+    setWindowFlags(Qt::Window|Qt::WindowStaysOnTopHint);
 #endif
     ui->graphicsView->setScene(m_scene);
     graphicsViewInteraction = new GraphicsViewInteraction(ui->graphicsView, this);

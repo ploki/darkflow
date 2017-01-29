@@ -57,6 +57,7 @@ ProcessPort::ProcessPort(QRectF rect,
 {
     const qreal flange=2.;
     QGraphicsTextItem *textItem = new QGraphicsTextItem(this);
+    textItem->setFont(preferences->getWorkspaceFont());
     textItem->setDefaultTextColor(preferences->color(QPalette::WindowText));
     textItem->setPlainText(m_portName);
     qreal textW = textItem->boundingRect().width();

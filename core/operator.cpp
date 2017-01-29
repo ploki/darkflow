@@ -271,12 +271,16 @@ QString Operator::getLocalizedClassIdentifier() const
 bool Operator::play_parentDirty(WaitForParentReason reason)
 {
     bool dirty = false;
+    QMap<Operator*,int> signaled;
     foreach(OperatorInput *input, m_inputs)
         foreach(OperatorOutput *parentOutput, input->sources()) {
-            if ( !parentOutput->m_operator->isUpToDate() ) {
-                dirty = true;
-                parentOutput->m_operator->play();
-                m_waitingParentFor = reason;
+            ++signaled[parentOutput->m_operator];
+            if ( signaled[parentOutput->m_operator] == 1 ) {
+                if ( !parentOutput->m_operator->isUpToDate() ) {
+                    dirty = true;
+                    parentOutput->m_operator->play();
+                    m_waitingParentFor = reason;
+                }
             }
         }
     if (dirty && reason == WaitingForPlay ) {
@@ -410,10 +414,14 @@ void Operator::setOutOfDate()
         return;
     }
     m_upToDate = false;
+    QMap<Operator*,int> signaled;
     foreach(OperatorOutput *output, m_outputs) {
         output->m_result.clear();
-        foreach(OperatorInput *remoteInput, output->sinks())
-            remoteInput->m_operator->setOutOfDate();
+        foreach(OperatorInput *remoteInput, output->sinks()) {
+            ++signaled[remoteInput->m_operator];
+            if ( signaled[remoteInput->m_operator] == 1)
+                remoteInput->m_operator->setOutOfDate();
+        }
     }
     if ( !m_workerAboutToStart )
         emit outOfDate();

@@ -111,12 +111,6 @@ This is the maximum number of threads that are permitted to run in parallel with
 
 *Should be set to the number of cores of your system, or the double if hyperthreading is enabled*
 
-<div class="note unreleased">
-  <h5>Better default resources settings are coming soon!</h5>
-  <p>DarkFlow will compute better values for these critical settings.</p>
-</div>
-
-
 ## Pixels preferences
 
 This settings tab is related to various pixels settings. *Default values are OK in most cases*.
@@ -130,7 +124,7 @@ This is used by the [Visualization window](/docs/visualization.{{ page.lang }}/)
 
 ### Incompatible scale
 
-Some operators do not support (HDR color scaling)[/docs/philosophy.{{ page.lang}}/#hdr) and this parameter define the behavior of operator when facing an incompatible color scale.
+Some operators do not support (HDR color scaling)[/docs/philosophy.{{ page.lang }}/#hdr] and this parameter define the behavior of operator when facing an incompatible color scale.
 
 * ```Ignore and convert``` the operator will convert silently the color scale of the image to something that it can handle.
 * ```Warning and convert``` the operator will convert the color scale of the image to something that it can handle and it will issue a warning message in the [console](/docs/console.{{ page.lang }}/).

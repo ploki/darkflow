@@ -33,6 +33,7 @@
 #include <QTreeWidgetItemIterator>
 #include <QPixmap>
 #include <QEvent>
+#include <QKeyEvent>
 #include <QScrollBar>
 
 #include <QGraphicsScene>
@@ -90,17 +91,17 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(DF_ICON));
-#ifdef Q_OS_OSX
+#if defined(Q_OS_OSX)
     /* Don't let osx permit this window to be fullscreen.
      * I can't figure out why multiple fullscreen views
      * behave baddly
      */
     setWindowFlags(Qt::Tool);
-#else
+#elif !defined(DF_WINDOWS)
     /* Don't know why it is now required to permit fullscreen
-     * at least on linux
+     * and to force StayOnTopHint. At least on linux
      */
-    setWindowFlags(Qt::Window);
+    setWindowFlags(Qt::Window|Qt::WindowStaysOnTopHint);
 #endif
     ui->operatorName->setText(m_operator->getName());
     ui->operatorNameReset->setText(m_operator->getLocalizedClassIdentifier());
@@ -883,6 +884,17 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
     switch(event->type()) {
     case QEvent::Leave: {
         updateColorLabels(QPointF(-1,-1));
+        break;
+    }
+    case QEvent::KeyPress: {
+        QKeyEvent *ke =
+                dynamic_cast<QKeyEvent*>(event);
+        int key = ke->key();
+        if ( key == Qt::Key_Escape && isActiveWindow() ) {
+            hide();
+            event->accept();
+            return true;
+        }
         break;
     }
     case QEvent::GraphicsSceneMouseMove: {

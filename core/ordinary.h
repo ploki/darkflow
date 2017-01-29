@@ -30,20 +30,29 @@
  */
 #ifndef PIXELS_H
 #define PIXELS_H
+#include "ports.h"
 
-#if defined(_OPENMP)
+#if defined(_OPENMP) && !defined(DF_WINDOWS)
 # define Ordinary Magick
 #else
 # include <Magick++.h>
 # include <QMap>
 # include <QMutex>
-# include <pthread.h>
 # include <memory>
+#if defined(DF_WINDOWS)
+#define pthread_t DWORD
+#define pthread_self GetCurrentThreadId
+#else
+# include <pthread.h>
+#endif
+
 
 /*
  * I'm sorry to inform you that image magick doesn't support access
  * from multiple threads outside OpenMP. by the way, contexts are
  * indexed by openmp threads ids. don't exceed this limit
+ *
+ * It seems, on Windows, image magick doesn't like concurrent acces as well...
  */
 namespace Ordinary {
 

@@ -5,18 +5,11 @@ MAINTAINER Guillaume Gimenez <guillaume@blackmilk.fr>
 WORKDIR /home/darkflow
 
 RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y dpkg-dev debhelper qtbase5-dev qtbase5-dev-tools libmagick++-dev libavcodec-dev libavformat-dev libfftw3-dev
-RUN apt-get install dcraw
-
-ENV src darkflow
-COPY . $src/
-
-RUN ( cd $src && dpkg-buildpackage )
-RUN dpkg -i *.deb
+RUN apt-get install -y lsb-release
+RUN echo deb http://darkflow.org/$(lsb_release -si).$(dpkg --print-architecture)/ $(lsb_release -sc) main > /etc/apt/sources.list.d/darkflow.list
+RUN apt-get update
+RUN apt-get install -y --allow-unauthenticated darkflow
 
 WORKDIR /home/darkflow/DARKFLOW
 
 CMD darkflow
-
-# docker run -v $PWD/pkg/stretch.amd64:/artifacts  darkflow/stretch.amd64

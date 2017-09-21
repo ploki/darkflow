@@ -39,7 +39,7 @@
 
 class WorkerSelectiveLabFilter : public OperatorWorker {
 public:
-    WorkerSelectiveLabFilter(int hue, int coverage, int saturation, bool strict,
+    WorkerSelectiveLabFilter(int hue, int coverage, qreal saturation, bool strict,
                              qreal exposure, bool insideSelection, QThread *thread, Operator *op)
         : OperatorWorker(thread, op),
           m_filter(new SelectiveLabFilter(hue, coverage, saturation, strict, exposure, insideSelection, false))

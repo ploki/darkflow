@@ -29,7 +29,7 @@
  *
  */
 #include "ports.h"
-#ifdef DF_WINDOWS
+#if defined(DF_WINDOWS) || defined(ANDROID)
 # include <QProcess>
 # define PROCESSCLASS QProcess
 #else

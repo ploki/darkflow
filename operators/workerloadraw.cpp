@@ -30,7 +30,7 @@
  */
 #include <QStringList>
 #include "ports.h"
-#ifdef DF_WINDOWS
+#if defined(DF_WINDOWS) || defined(ANDROID)
 # include <QProcess>
 # define PROCESSCLASS QProcess
 #else
@@ -161,7 +161,7 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
         break;
     case OpLoadRaw::sRGB:
         arguments << "-g" << "2.4" << "12.92";
-        //passthrough
+        // Falls through
     case OpLoadRaw::IUT_BT_709:
         arguments << "-6";
         break;

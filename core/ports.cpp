@@ -113,14 +113,24 @@ static void
 install_imagemagick_policy()
 {
     QString configurationDirectory = Preferences::getAppConfigLocation();
-    QString destFilename = configurationDirectory + "/policy.xml";
-    QFile destFile(destFilename);
-    if (!destFile.exists()) {
-        if (!QFile::copy(":/setup/policy.xml", destFilename)) {
-            dflError("Could not create ImageMagick policy.xml file");
-            return;
-        }
-    }
+    QString destFilename;
+
+#define COPY(X) \
+    do { \
+        destFilename = configurationDirectory + X; \
+        if (!QFile(destFilename).exists()) { \
+            if (!QFile::copy(":/setup/" X, destFilename)) { \
+                dflError("Could not create ImageMagick " X " file"); \
+                return; \
+            } \
+        } \
+    } while (0)
+
+    COPY("policy.xml");
+    COPY("magic.xml");
+    COPY("delegates.xml");
+#undef COPY
+
 #ifdef DF_WINDOWS
     _putenv_s("MAGICK_CONFIGURE_PATH", configurationDirectory.toLocal8Bit().data());
 #else

@@ -31,7 +31,7 @@
 #ifndef POSIXSPAWN_H
 #define POSIXSPAWN_H
 #include "ports.h"
-#ifndef DF_WINDOWS
+#if !defined(DF_WINDOWS) && !defined(ANDROID)
 #include <QIODevice>
 
 class PosixSpawnImpl;

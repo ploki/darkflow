@@ -41,11 +41,13 @@ using Magick::Quantum;
 
 Q_STATIC_ASSERT( sizeof(fftw_complex) == sizeof(std::complex<double>));
 
+#ifndef ANDROID
 static struct RunThisOnce {
     RunThisOnce() {
         fftw_init_threads();
     }
 } once;
+#endif
 
 DiscreteFourierTransform::DiscreteFourierTransform(Magick::Image &image, Photo::Gamma scale)
     : m_w(image.columns()),
@@ -54,7 +56,9 @@ DiscreteFourierTransform::DiscreteFourierTransform(Magick::Image &image, Photo::
       green(reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w))),
       blue(reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w)))
 {
+#ifndef ANDROID
     fftw_plan_with_nthreads(preferences->getNumThreads());
+#endif
     std::complex<double> *input = reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w));
     //std::complex<double> *output = reinterpret_cast<std::complex<double>*>(fftw_alloc_complex(m_h*m_w));
     Ordinary::Pixels cache(image);

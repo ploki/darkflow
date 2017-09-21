@@ -3,5 +3,7 @@
         <file>../icons/darkflow.png</file>
         <file>../l10n/darkflow_fr.qm</file>
         <file>../setup/policy.xml</file>
+        <file>../setup/magic.xml</file>
+        <file>../setup/delegates.xml</file>
     </qresource>
 </RCC>

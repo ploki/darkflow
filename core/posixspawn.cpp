@@ -29,7 +29,7 @@
  *
  */
 #include "ports.h"
-#ifndef DF_WINDOWS
+#if !defined(DF_WINDOWS) && !defined(ANDROID)
 #include "posixspawn.h"
 #include "console.h"
 #include <unistd.h>

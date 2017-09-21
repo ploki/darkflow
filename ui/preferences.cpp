@@ -92,7 +92,13 @@ Preferences::Preferences(QWidget *parent) :
   m_defaultArea(0),
   m_defaultMemory(0),
   m_defaultMap(0),
-  m_defaultDisk(0),
+  m_defaultDisk(
+      #if defined(ANDROID)
+        10
+      #else
+        0
+      #endif
+      ),
   m_defaultThreads(0),
   m_sem(new QSemaphore(N_WORKERS)),
   m_mutex(new QMutex),
@@ -144,6 +150,17 @@ Preferences::Preferences(QWidget *parent) :
         ui->spinLabSelectionSize->setValue(m_labSelectionSize);
     }
     load();
+
+    try {
+        //try to create an image!
+        Magick::Image image(Magick::Geometry(1000, 1000), Magick::Color(0, 0, 0));
+    } catch (std::exception &e) {
+       QString msg = e.what();
+       msg += "\n";
+       msg += getenv("MAGICK_CONFIGURE_PATH");
+       QMessageBox::warning(this, "Preliminary ImageMagick Check failed",
+                            msg);
+    }
 }
 
 Preferences::~Preferences()
@@ -204,6 +221,11 @@ void Preferences::getDefaultMagickResources()
     m_defaultMap     = Magick::ResourceLimits::map();
     m_defaultDisk    = Magick::ResourceLimits::disk();
     m_defaultThreads = Magick::ResourceLimits::thread();
+#if defined(ANDROID)
+    if ( m_defaultDisk == 0 ) {
+        m_defaultDisk = 10LL * 1LL<<30;
+    }
+#endif
     ui->defaultArea->setText(QString::number(qreal(m_defaultArea)/div));
     ui->defaultMemory->setText(QString::number(qreal(m_defaultMemory)/div));
     ui->defaultMap->setText(QString::number(qreal(m_defaultMap)/div));
@@ -235,6 +257,10 @@ void Preferences::setMagickResources()
     u_int64_t currentDisk    = ui->valueDisk->text().toDouble()*div;
     u_int64_t currentThreads = ui->valueThreads->text().toDouble();
 
+#if defined(ANDROID)
+    if (currentDisk == 0)
+        currentDisk = 10LL * 1LL<<30;
+#endif
     Magick::ResourceLimits::area(currentArea);
     Magick::ResourceLimits::memory(currentMemory);
     Magick::ResourceLimits::map(currentMap);
@@ -320,6 +346,8 @@ bool Preferences::load(bool create)
 
     ui->valueTmpDir->setText(path["tmp"].toString());
     ui->valueBaseDir->setText(path["base"].toString());
+    QDir().mkpath(path["tmp"].toString());
+    QDir().mkpath(path["base"].toString());
 
     MagickCore::ExceptionInfo *exception = MagickCore::AcquireExceptionInfo();
     MagickCore::SetImageRegistry(MagickCore::StringRegistryType, "temporary-path", (const void*)ui->valueTmpDir->text().toLocal8Bit(), exception);
@@ -469,8 +497,13 @@ void Preferences::loadStyle(QJsonObject &obj)
     bool onlyWorkspace = obj["onlyWorkspace"].toBool();
     QString fontFamily = obj["workspaceFontFamily"].toString();
     int fontSize = obj["workspaceFontSize"].toInt();
-    if (fontSize < 1)
+    if (fontSize < 1) {
+#if defined(ANDROID)
+        fontSize = 7;
+#else
         fontSize = 12;
+#endif
+    }
 
     ui->lineAlternateBase->setText(alternateBase);
     ui->lineBase->setText(base);
@@ -600,13 +633,15 @@ int Preferences::getLabSelectionSize() const
 
 QString Preferences::getAppConfigLocation()
 {
+    QString writableDirectory;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
-    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    writableDirectory = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
 #else
-    return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+    writableDirectory = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
             + "/" + DF_APPNAME;
 #endif
-
+   QDir().mkpath(writableDirectory);
+   return writableDirectory;
 }
 
 QColor Preferences::color(QPalette::ColorRole role)

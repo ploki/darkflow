@@ -56,13 +56,14 @@ typedef long long int64_t;
 #endif
 
 #ifdef __GNUC__
+# include <signal.h>
 # if defined(__LP64__)
 #  define DF_ARCH "64-bit"
 # else
 #  define DF_ARCH "32-bit"
 # endif
 # define DF_PRINTF_FORMAT(x,y) __attribute__((format(printf,x,y)))
-# define DF_TRAP() do { __asm__("int3"); } while(0)
+# define DF_TRAP() do { ::raise(SIGTRAP); } while(0)
 # define atomic_incr(ptr) do { __sync_fetch_and_add ((ptr), 1); } while(0)
 # define atomic_decr(ptr) do { __sync_fetch_and_add ((ptr), -1); } while(0)
 
@@ -89,6 +90,10 @@ typedef long long int64_t;
 # ifndef M_LN2
 #  define M_LN2 0.69314718L
 # endif
+
+#if defined(ANDROID)
+# define log2(x) (log(x)*(1.L/M_LN2))
+#endif
 
 #ifdef DF_WINDOWS
 extern "C" {

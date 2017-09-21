@@ -38,6 +38,7 @@
 #include <QSemaphore>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QMessageBox>
 
 #include "preferences.h"
 #include "ui_preferences.h"

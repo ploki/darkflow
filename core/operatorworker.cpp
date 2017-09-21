@@ -227,6 +227,7 @@ bool OperatorWorker::play_onInput(int idx)
                 switch ( preferences->getIncompatibleAction()) {
                 case Preferences::Warning:
                     dflWarning(tr("Incompatible pixel scale: %0").arg(photo.getIdentity()));
+                    //Falls through
                 case Preferences::Ignore:
                     if ( photo.getScale() == Photo::HDR )
                         HDR(true).applyOn(photo);
@@ -282,6 +283,7 @@ bool OperatorWorker::play_onInputParallel(int idx)
             switch ( preferences->getIncompatibleAction()) {
             case Preferences::Warning:
                 dflWarning(tr("Incompatible pixel scale, converted").arg(photo.getIdentity()));
+                // Falls through
             case Preferences::Ignore:
                 if ( photo.getScale() == Photo::HDR )
                     HDR(true).applyOn(photo);

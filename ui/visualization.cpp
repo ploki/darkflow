@@ -205,6 +205,7 @@ void Visualization::getViewGamma(qreal &gamma, qreal &x0) const
     switch(ui->combo_gamma->currentIndex()) {
     default:
         dflWarning(tr("Visualization: Unknown combo_gamma selection"));
+        // Falls through
     case 0: //As Input
         gamma = 1.; x0 = 0; break;
     case 1: //sRGB
@@ -339,6 +340,7 @@ void Visualization::histogramParamsChanged()
         switch ( ui->combo_log->currentIndex()) {
         default:
             dflWarning(tr("Visualization: Unknown combo_log histogram selection"));
+            // Falls through
         case 0:
             scale = Photo::HistogramLinear; break;
         case 1:
@@ -347,6 +349,7 @@ void Visualization::histogramParamsChanged()
         switch ( ui->combo_surface->currentIndex()) {
         default:
             dflWarning(tr("Visualization: Unknown combo_surface selection"));
+            // Falls through
         case 0:
             geometry = Photo::HistogramLines; break;
         case 1:
@@ -426,6 +429,7 @@ void Visualization::toolChanged(int idx)
     switch(idx) {
     default:
         dflWarning(tr("Visualization: Unknown tool combo index"));
+        // Falls through
     case 0: m_tool = ToolNone; break;
     case 1: m_tool = ToolROI; break;
     case 2: m_tool = Tool1Point; break;
@@ -493,6 +497,7 @@ void Visualization::inputTypeChanged(int idx)
     switch(idx) {
     default:
         dflWarning(tr("Visualization: Unknown pixel scale idx"));
+        // Falls through
     case 0: value = TAG_SCALE_LINEAR; break;
     case 1: value = TAG_SCALE_NONLINEAR; break;
     case 2: value = TAG_SCALE_HDR; break;

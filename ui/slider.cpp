@@ -411,6 +411,7 @@ void Slider::clickUnit(Slider::Unit u)
 {
     switch(u) {
     default:            dflWarning("Slider: Unknown unit");
+    // Falls through
     case Value:         ui->radio_value->click(); break;
     case Percent:       ui->radio_percent->click(); break;
     case ExposureValue: ui->radio_ev->click(); break;
@@ -422,6 +423,7 @@ void Slider::clickScale(Slider::Scale s)
 {
     switch(s) {
     default:            dflWarning("Slider: Unknown scale");
+    // Falls through
     case Linear:        ui->radio_linear->click(); break;
     case Logarithmic:   ui->radio_logarithmic->click(); break;
     }
@@ -432,6 +434,7 @@ const char *Slider::unitToString(Slider::Unit unit)
     switch(unit) {
     default:
         dflWarning(tr("Slider: Unknown unit"));
+        // Falls through
     case Value: return QT_TR_NOOP("");
     case Percent: return QT_TR_NOOP("%");
     case ExposureValue: return QT_TR_NOOP("EV");
@@ -463,6 +466,7 @@ QString Slider::scaleToString(Slider::Scale scale)
     switch(scale) {
     default:
         dflWarning(tr("Slider: Unknown scale"));
+        // Falls through
     case Linear:
         return QT_TR_NOOP("Linear");
     case Logarithmic:

@@ -165,6 +165,7 @@ void Operator::parentUpToDate()
         break;
     default:
         dflWarning(tr("Unknown waiting reason"));
+        //falls through
     case NotWaiting:
         // emit permit to notif following operator of new inputs even if not waiting
         emit stateChanged();

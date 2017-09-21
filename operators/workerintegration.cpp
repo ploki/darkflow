@@ -155,15 +155,18 @@ bool WorkerIntegration::play_onInput(int idx)
     case OpIntegration::AverageDeviation:
         skip[PhaseStdDev] = true;
         --nPhases;
+        // Falls through
     case OpIntegration::SigmaClipping:
         skip[PhaseMinMax] = true;
         --nPhases;
         break;
     default:
         dflError(tr("Unknown rejection algorithm"));
+        // Falls through
     case OpIntegration::NoRejection:
         skip[PhaseMinMax] = true;
         --nPhases;
+        // Falls through
     case OpIntegration::MinMax:
         skip[PhaseMean] = true;
         --nPhases;
@@ -479,6 +482,7 @@ void WorkerIntegration::createPlanes(Magick::Image &image)
         break;
     case OpIntegration::SigmaClipping:
         m_stdDevPlane = new integration_plane_t[m_w*m_h*3]();
+        // Falls through
     case OpIntegration::AverageDeviation:
         m_averagePlane = new integration_plane_t[m_w*m_h*3]();
     default:break;

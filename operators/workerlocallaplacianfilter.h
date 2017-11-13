@@ -28,12 +28,27 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef WORKERLOCALLAPLACIANFILTER_H
+#define WORKERLOCALLAPLACIANFILTER_H
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+#include "operatorworker.h"
 
-#endif // DARKFLOW_H
+class WorkerLocalLaplacianFilter : public OperatorWorker {
+public:
+    WorkerLocalLaplacianFilter(qreal alpha,
+                               qreal beta,
+                               qreal sigma,
+                               int startLevel,
+                               int levelsCount,
+                               QThread *thread, Operator *op);
+    Photo process(const Photo &photo, int, int);
+private:
+    qreal m_alpha;
+    qreal m_beta;
+    qreal m_sigma;
+    int m_startLevel;
+    int m_levelsCount;
+};
 
+
+#endif // WORKERLOCALLAPLACIANFILTER_H

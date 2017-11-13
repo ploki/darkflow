@@ -28,12 +28,18 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef GAUSSIANPYRAMID_H
+#define GAUSSIANPYRAMID_H
+#include "pyramid.h"
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+namespace Magick {
+class Image;
+}
+class GaussianPyramid : public Pyramid
+{
 
-#endif // DARKFLOW_H
+public:
+    GaussianPyramid(Pyramid::pFloat *image, int columns, int rows);
+};
 
+#endif // GAUSSIANPYRAMID_H

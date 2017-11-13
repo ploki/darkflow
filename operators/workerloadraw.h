@@ -48,7 +48,8 @@ private slots:
     void play();
 
 private:
-    QByteArray convert(const QString& filename);
+    QByteArray convert(const QString& filename,
+                       const QString& badPixelsMapFile);
     void setTags(const QString& filename, Photo& photo);
 
 signals:

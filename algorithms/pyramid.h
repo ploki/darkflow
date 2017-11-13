@@ -28,12 +28,34 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef PYRAMID_H
+#define PYRAMID_H
+#include "photo.h"
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+class Pyramid
+{
+public:
+    typedef float pFloat;
+protected:
+    int m_base;
+    int m_originRows;
+    int m_originColumns;
+    int m_levels;
+    pFloat *m_pyramid;
+public:
+    Pyramid(int columns, int rows);
+    virtual ~Pyramid();
+    int levels() const;
+    int base() const;
+    int originColumns() const;
+    int originRows() const;
+    int planeBase(int level) const;
+    pFloat *getPlane(int level);
+    const pFloat *getPlane(int level) const;
+    void downsample(int level, pFloat *dstPlane) const;
+    void upsample(int level, pFloat *dstPlane) const;
+    static int baseForLevels(int levels);
 
-#endif // DARKFLOW_H
+};
 
+#endif // PYRAMID_H

@@ -130,6 +130,11 @@
 #include "oppixelextrusionmapping.h"
 #include "opcolormap.h"
 #include "opstarfinder.h"
+#include "oplocallaplacianfilter.h"
+#include "opbayerdecompose.h"
+#include "opbayercompose.h"
+#include "oprepair.h"
+#include "opline.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -180,6 +185,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpRGBCompose(this));
     m_availableOperators.push_back(new OpCMYDecompose(this));
     m_availableOperators.push_back(new OpCMYCompose(this));
+    m_availableOperators.push_back(new OpBayerDecompose(this));
+    m_availableOperators.push_back(new OpBayerCompose(this));
     m_availableOperators.push_back(new OpColorFilter(this));
     m_availableOperators.push_back(new OpChannelMixer(this));
     m_availableOperators.push_back(new OpThreshold(this));
@@ -202,11 +209,13 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpModulate(this));
     m_availableOperators.push_back(new OpDesaturateShadows(this));
     m_availableOperators.push_back(new OpSelectiveLabFilter(this));
+    m_availableOperators.push_back(new OpLocalLaplacianFilter(this));
     m_availableOperators.push_back(new OpMicroContrasts(this));
     m_availableOperators.push_back(new OpUnsharpMask(this));
     m_availableOperators.push_back(new OpEnhance(this));
     m_availableOperators.push_back(new OpDespeckle(this));
     m_availableOperators.push_back(new OpReduceNoise(this));
+    m_availableOperators.push_back(new OpRepair(this));
     m_availableOperators.push_back(new OpHotPixels(this));
 
     m_availableOperators.push_back(new OpBlend(this));
@@ -225,6 +234,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpSsdReg(this));
 
     m_availableOperators.push_back(new OpDisk(this));
+    m_availableOperators.push_back(new OpLine(this));
     m_availableOperators.push_back(new OpWindowFunction(this));
     m_availableOperators.push_back(new OpTurnBlack(this));
 

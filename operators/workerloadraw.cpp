@@ -41,6 +41,7 @@
 #include <QThread>
 #include <QFileInfo>
 #include <QDir>
+#include <QTemporaryFile>
 #include "process.h"
 
 #include <Magick++.h>
@@ -63,12 +64,37 @@ void WorkerLoadRaw::play()
     dfl_block int p = 0;
     dfl_block bool failure = false;
 
+    QString badPixelsFileTemplate = preferences->tmpDir()
+            + "/bad-pixels-map-XXXXXXXX.txt";
+    QTemporaryFile badPixelsFile(badPixelsFileTemplate);
+    if (!badPixelsFile.open()) {
+        dflError(tr("Failed to create temporary file %0").arg(badPixelsFileTemplate));
+        emitFailure();
+        return;
+    }
+    foreach(Photo photo, m_inputs[0]) {
+        Ordinary::Pixels src_cache(photo.image());
+        int h = photo.image().columns();
+        int w = photo.image().rows();
+        for (int y = 0 ; y < h ; ++y) {
+            for (int x = 0 ; x < w ; ++x) {
+                const Magick::PixelPacket *pixels = src_cache.getConst(0, y, w, 1);
+                if (!pixels) continue;
+                if (pixels[x].red ||
+                    pixels[x].green ||
+                    pixels[x].blue) {
+                    badPixelsFile.write(QString("%0 %1 0\n").arg(x).arg(y).toLocal8Bit());
+                }
+            }
+        }
+    }
+    QString badPixelsFileName = badPixelsFile.fileName();
  dfl_parallel_for(i, 0, s, 1, (), {
         if ( failure || aborted() ) {
             failure = true;
             continue;
         }
-        QByteArray data = convert(collection[i]);
+        QByteArray data = convert(collection[i], badPixelsFileName);
         try {
             Magick::Blob blob(data.data(),data.length());
             if ( blob.data() == 0 || data.length() == 0 ) {
@@ -116,7 +142,8 @@ void WorkerLoadRaw::play()
 
 
 
-QByteArray WorkerLoadRaw::convert(const QString &filename)
+QByteArray WorkerLoadRaw::convert(const QString &filename,
+                                  const QString &badPixelsMapFile)
 {
     QString dcraw_executable("dcraw");
     QStringList arguments;
@@ -194,6 +221,8 @@ QByteArray WorkerLoadRaw::convert(const QString &filename)
     arguments << "-c";
     /* write a TIFF with MD */
     //arguments << "-T";
+    /* bad pixels map */
+    arguments << "-P" << badPixelsMapFile;
     /* the RAW photo */
     arguments << filename;
 

@@ -84,7 +84,7 @@ void ProjectProperties::selectProjectFile()
                                                     tr("Select a project file"),
                                                     base,
                                                     tr("Darkflow Project (*.dflow)"),
-                                                    0, 0);
+                                                    0, DF_FILEDIALOGOPT);
     if ( filename.isEmpty())
         return;
     if ( !filename.endsWith(".dflow",Qt::CaseInsensitive) )
@@ -96,7 +96,7 @@ void ProjectProperties::selectBaseDirectory()
 {
     QString baseDir = QFileDialog::getExistingDirectory(this, tr("Select Base Directory"),
                                                           ui->valueBaseDir->text(),
-                                                          QFileDialog::ShowDirsOnly);
+                                                          QFileDialog::ShowDirsOnly|DF_FILEDIALOGOPT);
     if ( !baseDir.isEmpty())
         ui->valueBaseDir->setText(baseDir);
 

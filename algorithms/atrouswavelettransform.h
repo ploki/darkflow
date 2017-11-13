@@ -33,9 +33,6 @@
 
 #include "photo.h"
 
-extern const double b3SplineWavelet[5];
-extern const double linearWavelet[3];
-
 class ATrousWaveletTransform
 {
     int m_w;

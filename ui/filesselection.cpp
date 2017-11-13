@@ -94,7 +94,7 @@ void FilesSelection::addClicked()
                                                      m_windowCaption,
                                                      m_dir,
                                                      m_filter,
-                                                     0, 0);
+                                                     0, DF_FILEDIALOGOPT);
     setSelection(list);
 }
 

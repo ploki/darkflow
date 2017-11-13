@@ -28,12 +28,41 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef OPLINE_H
+#define OPLINE_H
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+#include "operator.h"
+#include <QObject>
 
-#endif // DARKFLOW_H
+class OperatorParameterDropDown;
+class OperatorParameterSlider;
 
+class OpLine : public Operator
+{
+    Q_OBJECT
+public:
+    OpLine(Process *parent);
+    OpLine *newInstance();
+    OperatorWorker *newWorker();
+    bool isBeta() const { return true; }
+
+    typedef enum {
+        Horizontal,
+        Vertical
+    } DirectionType;
+private slots:
+    void selectColor(int v);
+    void selectKeepBackground(int v);
+    void selectDirection(int v);
+
+private:
+    OperatorParameterDropDown *m_color;
+    quantum_t m_colorValue;
+    OperatorParameterSlider *m_diameter;
+    OperatorParameterDropDown *m_keepBackground;
+    bool m_keepBackgroundValue;
+    OperatorParameterDropDown *m_direction;
+    DirectionType m_directionValue;
+};
+
+#endif // OPLINE_H

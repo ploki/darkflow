@@ -35,27 +35,6 @@
 
 using Magick::Quantum;
 
-const double b3SplineWavelet[5] =
-{1./16. , 1./4. , 3./8. , 1./4., 1./16. };
-const double linearWavelet[3] =
-{1./4., 1./2., 1./4.};
-
-static void
-kernel_1D_to_2D(const double *in, double *out, int kOrder)
-{
-    double sum = 0;
-    for (int i = 0 ; i < kOrder ; ++i) {
-        for (int j = 0 ; j < kOrder ; ++j) {
-            //Kronecker product
-            sum += out[i*kOrder+j] = in[i]*in[j];
-        }
-    }
-    for (int i = 0, s = kOrder * kOrder ; i < s ; ++i) {
-        out[i]/=sum;
-    }
-}
-
-
 ATrousWaveletTransform::ATrousWaveletTransform(Photo &photo,
                                                const double *kernel,
                                                int kOrder) :

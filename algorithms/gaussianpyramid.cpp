@@ -28,12 +28,26 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#include "gaussianpyramid.h"
+#include <Magick++.h>
+#include "photo.h"
+#include "hdr.h"
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+using Magick::Quantum;
 
-#endif // DARKFLOW_H
-
+GaussianPyramid::GaussianPyramid(Pyramid::pFloat *image, int columns, int rows) :
+    Pyramid(columns, rows)
+{
+    pFloat *plane = getPlane(0);
+    for (int y = 0 ; y < m_base ; ++y) {
+        for (int x = 0 ; x < m_base ; ++x) {
+            plane[y * m_base + x] =
+                    image[clamp(y, 0, rows-1) *
+                    columns + clamp(x, 0, columns-1)];
+        }
+    }
+        for (int l = 0 ; l < levels() - 1 ; ++l) {
+        pFloat *plane = getPlane(l+1);
+        downsample(l, plane);
+    }
+}

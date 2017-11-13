@@ -70,7 +70,7 @@
 <context>
     <name>Algorithm</name>
     <message>
-        <location filename="../algorithms/algorithm.cpp" line="46"/>
+        <location filename="../algorithms/algorithm.cpp" line="55"/>
         <source>Algorithm::applyOnImage Not Implemented</source>
         <translation>Algorithm::applyOnImage Non-implémenté</translation>
     </message>
@@ -275,13 +275,15 @@
 Are you sure?
 </source>
         <translation>Toute modification non enregistrée sera perdue.
-Êtes-vous sûr ?</translation>
+Êtes-vous sûr ?
+</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="98"/>
         <source>Project filename not defined
 </source>
-        <translation>Fichier de projet non défini</translation>
+        <translation>Fichier de projet non défini
+</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="116"/>
@@ -414,6 +416,62 @@ Are you sure?
         <location filename="../operators/opairydisk.cpp" line="178"/>
         <source>Yes</source>
         <translation>Oui</translation>
+    </message>
+</context>
+<context>
+    <name>OpBayerCompose</name>
+    <message>
+        <location filename="../operators/opbayercompose.cpp" line="111"/>
+        <source>⬉</source>
+        <translation>⬉</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayercompose.cpp" line="112"/>
+        <source>⬈</source>
+        <translation>⬈</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayercompose.cpp" line="113"/>
+        <source>⬋</source>
+        <translation>⬋</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayercompose.cpp" line="114"/>
+        <source>⬊</source>
+        <translation>⬊</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayercompose.cpp" line="115"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+</context>
+<context>
+    <name>OpBayerDecompose</name>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="99"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="100"/>
+        <source>⬉</source>
+        <translation>⬉</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="101"/>
+        <source>⬈</source>
+        <translation>⬈</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="102"/>
+        <source>⬋</source>
+        <translation>⬋</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="103"/>
+        <source>⬊</source>
+        <translation>⬊</translation>
     </message>
 </context>
 <context>
@@ -971,7 +1029,7 @@ Are you sure?
 <context>
     <name>OpDWTBackward</name>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="179"/>
+        <location filename="../operators/opdwtbackward.cpp" line="182"/>
         <source>Luminosity</source>
         <translation>Luminosité</translation>
     </message>
@@ -980,12 +1038,12 @@ Are you sure?
         <translation type="vanished">Déconvolution - Luminosité</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="180"/>
+        <location filename="../operators/opdwtbackward.cpp" line="183"/>
         <source>Output HDR</source>
         <translation>Sortie HDR</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="188"/>
+        <location filename="../operators/opdwtbackward.cpp" line="191"/>
         <source>Plane %0</source>
         <translation>Plan %0</translation>
     </message>
@@ -998,52 +1056,52 @@ Are you sure?
         <translation type="vanished">Reconstruction ondelettes - coefficient du Plan %0</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="179"/>
+        <location filename="../operators/opdwtbackward.cpp" line="182"/>
         <source>Backward DWT Luminosity</source>
         <translation>Reconstruction ondelettes - Luminosité</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="194"/>
+        <location filename="../operators/opdwtbackward.cpp" line="197"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="195"/>
+        <location filename="../operators/opdwtbackward.cpp" line="198"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="198"/>
+        <location filename="../operators/opdwtbackward.cpp" line="201"/>
         <source>Sign</source>
         <translation>Signe</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="199"/>
+        <location filename="../operators/opdwtbackward.cpp" line="202"/>
         <source>Images</source>
         <translation>Images</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="200"/>
+        <location filename="../operators/opdwtbackward.cpp" line="203"/>
         <source>Overflow</source>
         <translation>Débordement</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="201"/>
+        <location filename="../operators/opdwtbackward.cpp" line="204"/>
         <source>Underflow</source>
         <translation>Négatif</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="208"/>
+        <location filename="../operators/opdwtbackward.cpp" line="211"/>
         <source>How many ways?</source>
         <translation>Combien de voies ?</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="208"/>
+        <location filename="../operators/opdwtbackward.cpp" line="211"/>
         <source>Backward DWT</source>
         <translation>Reconstruction ondelettes</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="227"/>
+        <location filename="../operators/opdwtbackward.cpp" line="230"/>
         <source>Discrete Wavelet Reconstruction</source>
         <translation>Reconstruction ondelettes</translation>
     </message>
@@ -1051,72 +1109,72 @@ Are you sure?
 <context>
     <name>OpDWTForward</name>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="92"/>
+        <location filename="../operators/opdwtforward.cpp" line="93"/>
         <source>À trous</source>
         <translation>À trous</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="96"/>
+        <location filename="../operators/opdwtforward.cpp" line="97"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="97"/>
+        <location filename="../operators/opdwtforward.cpp" line="98"/>
         <source>B3-spline</source>
         <translation>B3-spline</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="105"/>
+        <location filename="../operators/opdwtforward.cpp" line="106"/>
         <source>Algorithm</source>
         <translation>Algorithme</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="107"/>
+        <location filename="../operators/opdwtforward.cpp" line="108"/>
         <source>Wavelet</source>
         <translation>Ondelette</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="109"/>
+        <location filename="../operators/opdwtforward.cpp" line="110"/>
         <source>Output HDR</source>
         <translation>Sortie HDR</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="116"/>
+        <location filename="../operators/opdwtforward.cpp" line="117"/>
         <source>Image</source>
         <translation>Image</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="118"/>
+        <location filename="../operators/opdwtforward.cpp" line="119"/>
         <source>Plane %0</source>
         <translation>Plan %0</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="121"/>
+        <location filename="../operators/opdwtforward.cpp" line="122"/>
         <source>Sign</source>
         <translation>Signe</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="127"/>
+        <location filename="../operators/opdwtforward.cpp" line="128"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="128"/>
+        <location filename="../operators/opdwtforward.cpp" line="129"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="139"/>
+        <location filename="../operators/opdwtforward.cpp" line="140"/>
         <source>How many ways?</source>
         <translation>Combien de voies ?</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="139"/>
+        <location filename="../operators/opdwtforward.cpp" line="140"/>
         <source>Forward DWT</source>
         <translation>Décomposition en ondelettes</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="159"/>
+        <location filename="../operators/opdwtforward.cpp" line="160"/>
         <source>Discrete Wavelet Transform</source>
         <translation>Décomposition en ondelettes</translation>
     </message>
@@ -1818,6 +1876,70 @@ Are you sure?
     </message>
 </context>
 <context>
+    <name>OpLine</name>
+    <message>
+        <location filename="../operators/opline.cpp" line="114"/>
+        <source>Color</source>
+        <translation>Couleur</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="116"/>
+        <source>Diameter</source>
+        <translation>Diamètre</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="116"/>
+        <source>Line - Diameter in pixels</source>
+        <translation>Ligne - Diamètre en pixels</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="117"/>
+        <source>Keep Background</source>
+        <translation>Conserver</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="119"/>
+        <source>Direction</source>
+        <translation>Direction</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="122"/>
+        <location filename="../operators/opline.cpp" line="123"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="125"/>
+        <source>White</source>
+        <translation>Blanc</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="126"/>
+        <source>Black</source>
+        <translation>Noir</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="128"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="129"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="131"/>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="132"/>
+        <source>Horizontal</source>
+        <translation>Horizontal</translation>
+    </message>
+</context>
+<context>
     <name>OpLoadImage</name>
     <message>
         <location filename="../operators/oploadimage.cpp" line="40"/>
@@ -1864,133 +1986,138 @@ Are you sure?
 <context>
     <name>OpLoadRaw</name>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="39"/>
+        <location filename="../operators/oploadraw.cpp" line="40"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="40"/>
+        <location filename="../operators/oploadraw.cpp" line="41"/>
         <source>sRGB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="41"/>
+        <location filename="../operators/oploadraw.cpp" line="42"/>
         <source>IUT BT.709</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="44"/>
-        <location filename="../operators/oploadraw.cpp" line="52"/>
+        <location filename="../operators/oploadraw.cpp" line="45"/>
+        <location filename="../operators/oploadraw.cpp" line="53"/>
         <source>None</source>
         <translation>Aucun</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="45"/>
+        <location filename="../operators/oploadraw.cpp" line="46"/>
         <source>Half Size</source>
         <translation>Demi-taille</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="46"/>
+        <location filename="../operators/oploadraw.cpp" line="47"/>
         <source>Low</source>
         <translation>Basse qualité</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="47"/>
+        <location filename="../operators/oploadraw.cpp" line="48"/>
         <source>VNG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="48"/>
+        <location filename="../operators/oploadraw.cpp" line="49"/>
         <source>PPG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="49"/>
+        <location filename="../operators/oploadraw.cpp" line="50"/>
         <source>AHD</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="53"/>
+        <location filename="../operators/oploadraw.cpp" line="54"/>
         <source>Raw colors</source>
         <translation>Couleurs brutes</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="54"/>
+        <location filename="../operators/oploadraw.cpp" line="55"/>
         <source>Camera</source>
         <translation>Appareil</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="55"/>
+        <location filename="../operators/oploadraw.cpp" line="56"/>
         <source>Daylight</source>
         <translation>Lumière du jour</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="58"/>
+        <location filename="../operators/oploadraw.cpp" line="59"/>
         <source>Auto</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="59"/>
+        <location filename="../operators/oploadraw.cpp" line="60"/>
         <source>16-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="60"/>
+        <location filename="../operators/oploadraw.cpp" line="61"/>
         <source>15-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="61"/>
+        <location filename="../operators/oploadraw.cpp" line="62"/>
         <source>14-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="62"/>
+        <location filename="../operators/oploadraw.cpp" line="63"/>
         <source>13-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="63"/>
+        <location filename="../operators/oploadraw.cpp" line="64"/>
         <source>12-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="70"/>
+        <location filename="../operators/oploadraw.cpp" line="71"/>
         <source>RAW photos</source>
         <translation>Photos brutes</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="71"/>
+        <location filename="../operators/oploadraw.cpp" line="72"/>
         <source>Select RAW photos to add to the collection</source>
         <translation>Sélectionnez les photos brutes à ajouter à la collection</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="73"/>
+        <location filename="../operators/oploadraw.cpp" line="74"/>
         <source>RAW photos (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;All Files (*.*)</source>
         <translation>Photos brutes (*.nef *.cr2 *.dng *.mef *.3fr *.raf *.x3f *.pef *.arw *.nrw);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="75"/>
+        <location filename="../operators/oploadraw.cpp" line="76"/>
         <source>Color Space</source>
         <translation>Espace</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="76"/>
+        <location filename="../operators/oploadraw.cpp" line="77"/>
         <source>Debayer</source>
         <translation>Dématriçage</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="77"/>
+        <location filename="../operators/oploadraw.cpp" line="78"/>
         <source>White Balance</source>
         <translation>Blancs</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="78"/>
+        <location filename="../operators/oploadraw.cpp" line="79"/>
         <source>Clip Highlight</source>
         <translation>écrêtage</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="113"/>
+        <location filename="../operators/oploadraw.cpp" line="114"/>
+        <source>Bad pixels map</source>
+        <translation type="unfinished">Pixels défect.</translation>
+    </message>
+    <message>
+        <location filename="../operators/oploadraw.cpp" line="115"/>
         <source>RAWs</source>
         <translation>Photos brutes</translation>
     </message>
@@ -2036,6 +2163,65 @@ Are you sure?
         <location filename="../operators/oploadvideo.cpp" line="53"/>
         <source>Video frames</source>
         <translation>Images vidéos</translation>
+    </message>
+</context>
+<context>
+    <name>OpLocalLaplacianFilter</name>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="43"/>
+        <source>Alpha</source>
+        <translation>Alpha</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="43"/>
+        <source>Local Laplacian Filter alpha</source>
+        <translation>Filtre Laplacien local - alpha</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="44"/>
+        <source>Beta</source>
+        <translation>Beta</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="44"/>
+        <source>Local Laplacian Filter beta</source>
+        <translation>Filtre Laplacien local - beta</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="45"/>
+        <source>Sigma</source>
+        <translation>Sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="45"/>
+        <source>Local Laplacian Filter sigma</source>
+        <translation>Filtre Laplacien local - sigma</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="46"/>
+        <source>Start level</source>
+        <translation>Niveau de départ</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="46"/>
+        <source>Local Laplacian Filter start level</source>
+        <translation>Filtre Laplacien local - niveau de départ</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="47"/>
+        <source>Levels count</source>
+        <translation>Niveaux</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="47"/>
+        <source>Local Laplacian Filter levels count</source>
+        <translation>Filtre Laplacien local - niveaux</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="49"/>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="50"/>
+        <source>Images</source>
+        <translation>Images</translation>
     </message>
 </context>
 <context>
@@ -2315,6 +2501,30 @@ Are you sure?
     </message>
 </context>
 <context>
+    <name>OpRepair</name>
+    <message>
+        <location filename="../operators/oprepair.cpp" line="96"/>
+        <source>Radius</source>
+        <translation>Rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprepair.cpp" line="96"/>
+        <source>Repair radius</source>
+        <translation>Réparation - rayon</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprepair.cpp" line="98"/>
+        <location filename="../operators/oprepair.cpp" line="100"/>
+        <source>Images</source>
+        <translation>Images</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprepair.cpp" line="99"/>
+        <source>Bad pixels map</source>
+        <translation>Pixels défect.</translation>
+    </message>
+</context>
+<context>
     <name>OpRoll</name>
     <message>
         <location filename="../operators/oproll.cpp" line="60"/>
@@ -2418,17 +2628,17 @@ Are you sure?
         <translation>Sauvegarde</translation>
     </message>
     <message>
-        <location filename="../operators/opsave.cpp" line="108"/>
+        <location filename="../operators/opsave.cpp" line="109"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../operators/opsave.cpp" line="109"/>
+        <location filename="../operators/opsave.cpp" line="110"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../operators/opsave.cpp" line="114"/>
+        <location filename="../operators/opsave.cpp" line="115"/>
         <source>Images</source>
         <translation>Images</translation>
     </message>
@@ -3336,7 +3546,7 @@ Are you sure?
         <translation>Images</translation>
     </message>
     <message>
-        <location filename="../operators/oploadraw.cpp" line="67"/>
+        <location filename="../operators/oploadraw.cpp" line="68"/>
         <source>Raw photos</source>
         <translation>Photos brutes</translation>
     </message>
@@ -3447,32 +3657,32 @@ Are you sure?
         <translation>Raison d&apos;attente inconnue</translation>
     </message>
     <message>
-        <location filename="../core/operator.cpp" line="362"/>
+        <location filename="../core/operator.cpp" line="367"/>
         <source>Photo: %0 discarded because of error</source>
         <translation>Photo: %0 évincée pour cause d&apos;erreur</translation>
     </message>
     <message>
-        <location filename="../core/operator.cpp" line="374"/>
+        <location filename="../core/operator.cpp" line="379"/>
         <source>Already playing</source>
         <translation>Déjà en train de travailler</translation>
     </message>
     <message>
-        <location filename="../core/operator.cpp" line="387"/>
+        <location filename="../core/operator.cpp" line="392"/>
         <source>Worker started for %0</source>
         <translation>Worker démarré pour %0</translation>
     </message>
     <message>
-        <location filename="../core/operator.cpp" line="392"/>
+        <location filename="../core/operator.cpp" line="397"/>
         <source>%0 is up to date: %1</source>
         <translation>%0 est à jour: %1</translation>
     </message>
     <message>
-        <location filename="../core/operator.cpp" line="408"/>
+        <location filename="../core/operator.cpp" line="413"/>
         <source>Sending &apos;stop&apos; to worker</source>
         <translation>&apos;Stop&apos; envoyé au worker</translation>
     </message>
     <message>
-        <location filename="../core/operator.cpp" line="539"/>
+        <location filename="../core/operator.cpp" line="548"/>
         <source>Saving a parameter</source>
         <translation>Sauvegarde d&apos;un paramètre</translation>
     </message>
@@ -3502,12 +3712,12 @@ Are you sure?
         <translation>Disque</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtbackward.cpp" line="176"/>
+        <location filename="../operators/opdwtbackward.cpp" line="179"/>
         <source>%0-way Backward DWT</source>
         <translation>Ondelettes inverse %0 plans</translation>
     </message>
     <message>
-        <location filename="../operators/opdwtforward.cpp" line="102"/>
+        <location filename="../operators/opdwtforward.cpp" line="103"/>
         <source>%0-way Forward DWT</source>
         <translation>Ondelettes discrète %0 plans</translation>
     </message>
@@ -3551,16 +3761,41 @@ Are you sure?
         <source>Star Finder</source>
         <translation>Chercheur d&apos;étoiles</translation>
     </message>
+    <message>
+        <location filename="../operators/opbayercompose.cpp" line="109"/>
+        <source>Bayer compose</source>
+        <translation>Bayer: Composition</translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="97"/>
+        <source>Bayer decompose</source>
+        <translation>Bayer: Décomposition</translation>
+    </message>
+    <message>
+        <location filename="../operators/opline.cpp" line="113"/>
+        <source>Line</source>
+        <translation>Ligne</translation>
+    </message>
+    <message>
+        <location filename="../operators/oplocallaplacianfilter.cpp" line="42"/>
+        <source>Local Laplacian Filter</source>
+        <translation>Filtre Laplacien local</translation>
+    </message>
+    <message>
+        <location filename="../operators/oprepair.cpp" line="95"/>
+        <source>Repair</source>
+        <translation>Réparation</translation>
+    </message>
 </context>
 <context>
     <name>OperatorParameterDirectory</name>
     <message>
-        <location filename="../core/operatorparameterdirectory.cpp" line="85"/>
+        <location filename="../core/operatorparameterdirectory.cpp" line="86"/>
         <source>Directory: invalid parameter type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorparameterdirectory.cpp" line="89"/>
+        <location filename="../core/operatorparameterdirectory.cpp" line="90"/>
         <source>Directory: invalid parameter name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3684,13 +3919,13 @@ Are you sure?
     </message>
     <message>
         <location filename="../core/operatorworker.cpp" line="214"/>
-        <location filename="../core/operatorworker.cpp" line="318"/>
+        <location filename="../core/operatorworker.cpp" line="320"/>
         <source>In error, sending failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../core/operatorworker.cpp" line="219"/>
-        <location filename="../core/operatorworker.cpp" line="322"/>
+        <location filename="../core/operatorworker.cpp" line="324"/>
         <source>Aborted, sending failure</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3700,24 +3935,24 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorworker.cpp" line="236"/>
-        <location filename="../core/operatorworker.cpp" line="291"/>
+        <location filename="../core/operatorworker.cpp" line="237"/>
+        <location filename="../core/operatorworker.cpp" line="293"/>
         <source>Incompatible pixel scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorworker.cpp" line="243"/>
-        <location filename="../core/operatorworker.cpp" line="304"/>
+        <location filename="../core/operatorworker.cpp" line="244"/>
+        <location filename="../core/operatorworker.cpp" line="306"/>
         <source>Photo is not complete, sending failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorworker.cpp" line="284"/>
+        <location filename="../core/operatorworker.cpp" line="285"/>
         <source>Incompatible pixel scale, converted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/operatorworker.cpp" line="429"/>
+        <location filename="../core/operatorworker.cpp" line="431"/>
         <source>Photo: %0, Error: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3783,12 +4018,12 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/posixspawn.cpp" line="262"/>
+        <location filename="../core/posixspawn.cpp" line="263"/>
         <source>PosixSpawn Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/posixspawn.cpp" line="269"/>
+        <location filename="../core/posixspawn.cpp" line="270"/>
         <source>Read on closed file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4151,38 +4386,38 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="204"/>
-        <location filename="../ui/preferences.cpp" line="219"/>
-        <location filename="../ui/preferences.cpp" line="284"/>
-        <location filename="../ui/preferences.cpp" line="288"/>
-        <location filename="../ui/preferences.cpp" line="292"/>
-        <location filename="../ui/preferences.cpp" line="296"/>
-        <location filename="../ui/preferences.cpp" line="300"/>
-        <location filename="../ui/preferences.cpp" line="352"/>
-        <location filename="../ui/preferences.cpp" line="353"/>
-        <location filename="../ui/preferences.cpp" line="354"/>
-        <location filename="../ui/preferences.cpp" line="355"/>
-        <location filename="../ui/preferences.cpp" line="356"/>
+        <location filename="../ui/preferences.cpp" line="238"/>
+        <location filename="../ui/preferences.cpp" line="253"/>
+        <location filename="../ui/preferences.cpp" line="322"/>
+        <location filename="../ui/preferences.cpp" line="326"/>
+        <location filename="../ui/preferences.cpp" line="330"/>
+        <location filename="../ui/preferences.cpp" line="334"/>
+        <location filename="../ui/preferences.cpp" line="338"/>
+        <location filename="../ui/preferences.cpp" line="392"/>
+        <location filename="../ui/preferences.cpp" line="393"/>
+        <location filename="../ui/preferences.cpp" line="394"/>
+        <location filename="../ui/preferences.cpp" line="395"/>
+        <location filename="../ui/preferences.cpp" line="396"/>
         <source>unlimited</source>
         <translation>illimité</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="247"/>
+        <location filename="../ui/preferences.cpp" line="285"/>
         <source>Configuration file doesn&apos;t exist, creating one</source>
         <translation>Le fichier de configuration n&apos;existe pas, création.</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="400"/>
+        <location filename="../ui/preferences.cpp" line="440"/>
         <source>Could not save configuration file %0</source>
         <translation>Ne peut pas enregistrer le fichier de configuration %0</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="554"/>
+        <location filename="../ui/preferences.cpp" line="599"/>
         <source>Temporary Directory</source>
         <translation>Répertoire temporaire</translation>
     </message>
     <message>
-        <location filename="../ui/preferences.cpp" line="563"/>
+        <location filename="../ui/preferences.cpp" line="608"/>
         <source>Base Directory</source>
         <translation>Répertoire de base</translation>
     </message>
@@ -4190,32 +4425,32 @@ Are you sure?
 <context>
     <name>Process</name>
     <message>
-        <location filename="../scene/process.cpp" line="378"/>
+        <location filename="../scene/process.cpp" line="388"/>
         <source>Process: saving a node</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scene/process.cpp" line="392"/>
+        <location filename="../scene/process.cpp" line="402"/>
         <source>Process: Couldn&apos;t open save file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scene/process.cpp" line="407"/>
+        <location filename="../scene/process.cpp" line="417"/>
         <source>Process::load: Couldn&apos;t open file %0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scene/process.cpp" line="436"/>
+        <location filename="../scene/process.cpp" line="446"/>
         <source>Process: Unknown operator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scene/process.cpp" line="443"/>
+        <location filename="../scene/process.cpp" line="453"/>
         <source>Process: unknown output node</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../scene/process.cpp" line="449"/>
+        <location filename="../scene/process.cpp" line="459"/>
         <source>Process: unknown input node</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4374,7 +4609,7 @@ Are you sure?
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../core/photo.h" line="102"/>
+        <location filename="../core/photo.h" line="104"/>
         <source>Failed to create dispatch queue, going mono thread</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4494,8 +4729,8 @@ Are you sure?
     </message>
     <message>
         <location filename="../ui/slider.ui" line="98"/>
-        <location filename="../ui/slider.cpp" line="469"/>
-        <location filename="../ui/slider.cpp" line="477"/>
+        <location filename="../ui/slider.cpp" line="473"/>
+        <location filename="../ui/slider.cpp" line="481"/>
         <source>Logarithmic</source>
         <translation>Logarithmique</translation>
     </message>
@@ -4525,38 +4760,38 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/slider.cpp" line="434"/>
-        <location filename="../ui/slider.cpp" line="456"/>
+        <location filename="../ui/slider.cpp" line="436"/>
+        <location filename="../ui/slider.cpp" line="459"/>
         <source>Slider: Unknown unit</source>
         <translation>Slider: Unité inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/slider.cpp" line="436"/>
-        <location filename="../ui/slider.cpp" line="449"/>
+        <location filename="../ui/slider.cpp" line="439"/>
+        <location filename="../ui/slider.cpp" line="452"/>
         <source>%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/slider.cpp" line="437"/>
-        <location filename="../ui/slider.cpp" line="451"/>
+        <location filename="../ui/slider.cpp" line="440"/>
+        <location filename="../ui/slider.cpp" line="454"/>
         <source>EV</source>
         <translation>IL</translation>
     </message>
     <message>
-        <location filename="../ui/slider.cpp" line="438"/>
-        <location filename="../ui/slider.cpp" line="453"/>
+        <location filename="../ui/slider.cpp" line="441"/>
+        <location filename="../ui/slider.cpp" line="456"/>
         <source>M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/slider.cpp" line="465"/>
-        <location filename="../ui/slider.cpp" line="480"/>
+        <location filename="../ui/slider.cpp" line="468"/>
+        <location filename="../ui/slider.cpp" line="484"/>
         <source>Slider: Unknown scale</source>
         <translation>Slider: Échelle inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/slider.cpp" line="467"/>
-        <location filename="../ui/slider.cpp" line="475"/>
+        <location filename="../ui/slider.cpp" line="471"/>
+        <location filename="../ui/slider.cpp" line="479"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
@@ -4964,169 +5199,182 @@ Are you sure?
         <translation>Perceptuel Log2</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="123"/>
+        <location filename="../ui/visualization.cpp" line="124"/>
         <source>Key</source>
         <translation>Clé</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="124"/>
+        <location filename="../ui/visualization.cpp" line="125"/>
         <source>Value</source>
         <translation>Valeur</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="228"/>
+        <location filename="../ui/visualization.cpp" line="230"/>
         <source>%0 EV</source>
         <translation>%0 IL</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="206"/>
+        <location filename="../ui/visualization.cpp" line="207"/>
         <source>Visualization: Unknown combo_gamma selection</source>
         <translation>Visualisation: selection de valeur de gamma inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="252"/>
+        <location filename="../ui/visualization.cpp" line="254"/>
         <source>%0 Visualization requests play</source>
         <translation>La visualisation de %0 démarre son opérateur</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="289"/>
+        <location filename="../ui/visualization.cpp" line="291"/>
         <source>JPEG Images (*.jpg *.jpeg)</source>
         <translation>Images JPEG (*.jpg *.jpeg)</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="290"/>
+        <location filename="../ui/visualization.cpp" line="292"/>
         <source>TIFF Images (*.tif *.tiff)</source>
         <translation>Images TIFF (*.tif *.tiff)</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="291"/>
+        <location filename="../ui/visualization.cpp" line="293"/>
         <source>FITS Images (*.fits)</source>
         <translation>Images FITS (*.fits)</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="301"/>
+        <location filename="../ui/visualization.cpp" line="303"/>
         <source>Save view image</source>
         <translation>Enregistrer vue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="330"/>
+        <location filename="../ui/visualization.cpp" line="332"/>
         <source>Unspecified file type for &apos;%0&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="340"/>
+        <location filename="../ui/visualization.cpp" line="342"/>
         <source>Visualization: Unknown combo_log histogram selection</source>
         <translation>Visualisation: selection de valeur d&apos;échelle d&apos;histogramme inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="348"/>
+        <location filename="../ui/visualization.cpp" line="351"/>
         <source>Visualization: Unknown combo_surface selection</source>
         <translation>Visualisation: selection de valeur de surface d&apos;histogramme inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="388"/>
+        <location filename="../ui/visualization.cpp" line="392"/>
         <source>New key</source>
         <translation>Nouvelle clé</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="388"/>
+        <location filename="../ui/visualization.cpp" line="392"/>
         <source>value</source>
         <translation>valeur</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="405"/>
+        <location filename="../ui/visualization.cpp" line="409"/>
         <source>Visualization: row not found in m_tags</source>
         <translation>Visualisation: ligne introuvable dans les étiquettes</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="427"/>
+        <location filename="../ui/visualization.cpp" line="431"/>
         <source>Visualization: Unknown tool combo index</source>
         <translation>Visualisation: selection de valeur d&apos;outil inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="468"/>
+        <location filename="../ui/visualization.cpp" line="473"/>
         <source>Visualization: Unknown type</source>
         <translation>Visualisation: selection de valeur de traitement inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="494"/>
+        <location filename="../ui/visualization.cpp" line="499"/>
         <source>Visualization: Unknown pixel scale idx</source>
         <translation>Visualisation: selection de valeur d&apos;échelle de pixels inconnue</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="514"/>
-        <location filename="../ui/visualization.cpp" line="523"/>
+        <location filename="../ui/visualization.cpp" line="520"/>
+        <location filename="../ui/visualization.cpp" line="529"/>
         <source>R: %0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="515"/>
-        <location filename="../ui/visualization.cpp" line="524"/>
+        <location filename="../ui/visualization.cpp" line="521"/>
+        <location filename="../ui/visualization.cpp" line="530"/>
         <source>G: %0</source>
         <translation>V: %0</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="516"/>
-        <location filename="../ui/visualization.cpp" line="525"/>
+        <location filename="../ui/visualization.cpp" line="522"/>
+        <location filename="../ui/visualization.cpp" line="531"/>
         <source>B: %0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="518"/>
+        <location filename="../ui/visualization.cpp" line="524"/>
         <source>r %0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="519"/>
+        <location filename="../ui/visualization.cpp" line="525"/>
         <source>g %0</source>
         <translation>v %0</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="520"/>
+        <location filename="../ui/visualization.cpp" line="526"/>
         <source>b %0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="542"/>
-        <location filename="../ui/visualization.cpp" line="543"/>
-        <location filename="../ui/visualization.cpp" line="544"/>
+        <location filename="../ui/visualization.cpp" line="548"/>
+        <location filename="../ui/visualization.cpp" line="549"/>
+        <location filename="../ui/visualization.cpp" line="550"/>
         <source> EV</source>
         <translation> IL</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="549"/>
+        <location filename="../ui/visualization.cpp" line="555"/>
         <source>x:%0, y:%1, R:%2%, G:%3%, B:%4%</source>
         <translation>x:%0, y:%1, R:%2%, V:%3%, B:%4%</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="628"/>
+        <location filename="../ui/visualization.cpp" line="634"/>
         <source>Inputs:</source>
         <translation>Entrées :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="641"/>
+        <location filename="../ui/visualization.cpp" line="647"/>
         <source>Visualization: source photo is not complete</source>
         <translation>Visualisation: la photo obtenue de la source n&apos;est pas complète</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="670"/>
+        <location filename="../ui/visualization.cpp" line="676"/>
         <source>Outputs:</source>
         <translation>Sorties :</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="684"/>
+        <location filename="../ui/visualization.cpp" line="690"/>
         <source>Visualization: output photo is not complete</source>
         <translation>Visualisation: la photo générée par l&apos;opérateur n&apos;est pas complète</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="702"/>
+        <location filename="../ui/visualization.cpp" line="708"/>
         <source>Invalid photo selection in visualization tree view: sel count %0</source>
         <translation>Sélection de photo invalide dans l&apos;arborescence de la visualisation. %0 sélections</translation>
     </message>
     <message>
-        <location filename="../ui/visualization.cpp" line="871"/>
+        <location filename="../ui/visualization.cpp" line="877"/>
         <source>Selection: x1:%0, y1:%1, x2:%2, y2:%3</source>
         <translation>Sélection: x1:%0, y1:%1, x2:%2, y2:%3</translation>
+    </message>
+</context>
+<context>
+    <name>WorkerBayerDecompose</name>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="47"/>
+        <source>Image witdth is odd</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../operators/opbayerdecompose.cpp" line="51"/>
+        <source>Image height is odd</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5233,37 +5481,37 @@ Are you sure?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="163"/>
+        <location filename="../operators/workerintegration.cpp" line="164"/>
         <source>Unknown rejection algorithm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="187"/>
+        <location filename="../operators/workerintegration.cpp" line="190"/>
         <source>%0 is non-linear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="219"/>
+        <location filename="../operators/workerintegration.cpp" line="222"/>
         <source>view in error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="223"/>
+        <location filename="../operators/workerintegration.cpp" line="226"/>
         <source>unable to load pixels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="412"/>
+        <location filename="../operators/workerintegration.cpp" line="415"/>
         <source>Integration</source>
         <translation type="unfinished">Intégration</translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="457"/>
+        <location filename="../operators/workerintegration.cpp" line="460"/>
         <source>Integrated %0 pixels. rejected: %1 (%2%)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../operators/workerintegration.cpp" line="494"/>
+        <location filename="../operators/workerintegration.cpp" line="498"/>
         <source>Plane dim: w:%0, h:%1, sz:%2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5273,6 +5521,14 @@ Are you sure?
     <message>
         <location filename="../operators/workerloadimage.cpp" line="110"/>
         <source>Unknown image exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerLoadRaw</name>
+    <message>
+        <location filename="../operators/workerloadraw.cpp" line="71"/>
+        <source>Failed to create temporary file %0</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5343,6 +5599,14 @@ Are you sure?
     <message>
         <location filename="../operators/oprgbcompose.cpp" line="130"/>
         <source>LRGB Composition</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkerRepair</name>
+    <message>
+        <location filename="../operators/oprepair.cpp" line="65"/>
+        <source>Input image and pixels map differ in size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

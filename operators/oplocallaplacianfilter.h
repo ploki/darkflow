@@ -28,12 +28,28 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef OPLOCALLAPLACIANFILTER_H
+#define OPLOCALLAPLACIANFILTER_H
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+#include <QObject>
+#include <operator.h>
 
-#endif // DARKFLOW_H
+class OperatorParameterSlider;
 
+class OpLocalLaplacianFilter : public Operator
+{
+    Q_OBJECT
+public:
+    OpLocalLaplacianFilter(Process *parent);
+    OpLocalLaplacianFilter *newInstance();
+    OperatorWorker *newWorker();
+    bool isBeta() const { return true; }
+private:
+    OperatorParameterSlider *m_alpha;
+    OperatorParameterSlider *m_beta;
+    OperatorParameterSlider *m_sigma;
+    OperatorParameterSlider *m_startLevel;
+    OperatorParameterSlider *m_levelsCount;
+};
+
+#endif // OPLOCALLAPLACIANFILTER_H

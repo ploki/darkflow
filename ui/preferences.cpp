@@ -176,6 +176,11 @@ QString Preferences::baseDir()
     return ui->valueBaseDir->text();
 }
 
+QString Preferences::tmpDir()
+{
+    return ui->valueTmpDir->text();
+}
+
 bool Preferences::acquireWorker(OperatorWorker *worker)
 {
     bool success;
@@ -593,7 +598,7 @@ void Preferences::tmpDirClicked()
 {
     QString tmpDir = QFileDialog::getExistingDirectory(this, tr("Temporary Directory"),
                                                           ui->valueTmpDir->text(),
-                                                          QFileDialog::ShowDirsOnly);
+                                                          QFileDialog::ShowDirsOnly|DF_FILEDIALOGOPT);
     if ( !tmpDir.isEmpty())
         ui->valueTmpDir->setText(tmpDir);
 }
@@ -602,7 +607,7 @@ void Preferences::baseDirClicked()
 {
     QString baseDir = QFileDialog::getExistingDirectory(this, tr("Base Directory"),
                                                           ui->valueBaseDir->text(),
-                                                          QFileDialog::ShowDirsOnly);
+                                                          QFileDialog::ShowDirsOnly|DF_FILEDIALOGOPT);
     if ( !baseDir.isEmpty())
         ui->valueBaseDir->setText(baseDir);
 }

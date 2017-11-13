@@ -116,7 +116,7 @@ void MainWindow::actionLoad()
                                                         tr("Select a project file"),
                                                         preferences->baseDir(),
                                                         "Darkflow Project (*.dflow)",
-                                                        0, 0);
+                                                        0, DF_FILEDIALOGOPT);
         if ( !filename.isEmpty()) {
             load(filename);
         }

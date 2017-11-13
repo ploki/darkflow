@@ -34,6 +34,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include "process.h"
+#include "darkflow.h"
 #include <QApplication>
 
 OperatorParameterDirectory::OperatorParameterDirectory(const QString &name,
@@ -57,7 +58,7 @@ void OperatorParameterDirectory::askForDirectory()
     QWidget *activeWindow = qApp->activeWindow();
     QString newValue = QFileDialog::getExistingDirectory(activeWindow,
                                                          m_caption,
-                                                         m_currentValue, 0);
+                                                         m_currentValue, DF_FILEDIALOGOPT);
     if ( !newValue.isEmpty() && m_currentValue != newValue ) {
         m_currentValue = newValue;
         emit updated();

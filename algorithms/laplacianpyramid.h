@@ -28,12 +28,17 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef LAPLACIANPYRAMID_H
+#define LAPLACIANPYRAMID_H
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+#include "gaussianpyramid.h"
 
-#endif // DARKFLOW_H
+class LaplacianPyramid : public Pyramid
+{
+public:
+    LaplacianPyramid(const GaussianPyramid &gaussianPyramid);
+    LaplacianPyramid(int columns, int rows);
+    void collapse(GaussianPyramid &gp);
+};
 
+#endif // LAPLACIANPYRAMID_H

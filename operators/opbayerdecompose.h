@@ -28,12 +28,18 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef OPBAYERDECOMPOSE_H
+#define OPBAYERDECOMPOSE_H
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+#include "operator.h"
 
-#endif // DARKFLOW_H
+class OpBayerDecompose : public Operator
+{
+    Q_OBJECT
+public:
+    OpBayerDecompose(Process *parent);
+    OpBayerDecompose *newInstance();
+    OperatorWorker *newWorker();
+};
 
+#endif // OPBAYERDECOMPOSE_H

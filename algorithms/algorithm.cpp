@@ -34,6 +34,15 @@
 
 #include <Magick++.h>
 
+const double b3SplineWavelet[5] =
+{1./16. , 1./4. , 3./8. , 1./4., 1./16. };
+const double linearWavelet[3] =
+{1./4., 1./2., 1./4.};
+const double downsampleKernel[4] =
+{1./8, 3./8, 3./8, 1./8};
+const double upsampleKernel[2] =
+{0.25, 0.75 };
+
 Algorithm::Algorithm(bool alterCurve, QObject *parent) :
     QObject(parent),
     m_alterCurve(alterCurve)

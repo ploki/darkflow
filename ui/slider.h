@@ -65,7 +65,9 @@ public:
         FilterExposureFromOne = Logarithmic|ExposureValue|Magnitude|Percent,
         FilterExposure = Logarithmic|ExposureValue|Magnitude,
         FilterPixels = Linear|Value,
-        FilterPercent = Linear|Percent
+        FilterPercent = Linear|Percent,
+        FilterLogarithmic = -1&(~Linear),
+        FilterLinear = -1&(~(Logarithmic|ExposureValue|Magnitude))
     };
     explicit Slider(const QString& windowCaption,
                     Unit unit,

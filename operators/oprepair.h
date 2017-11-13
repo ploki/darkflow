@@ -28,12 +28,23 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#ifndef OPREPAIR_H
+#define OPREPAIR_H
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+#include "operator.h"
+#include <QObject>
 
-#endif // DARKFLOW_H
+class OperatorParameterSlider;
 
+class OpRepair : public Operator
+{
+public:
+    OpRepair(Process *parent);
+    OpRepair *newInstance();
+    OperatorWorker *newWorker();
+    bool isBeta() const { return true; }
+private:
+    OperatorParameterSlider *m_radius;
+};
+
+#endif // OPREPAIR_H

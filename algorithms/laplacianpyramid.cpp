@@ -28,12 +28,65 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef DARKFLOW_H
-#define DARKFLOW_H
+#include "laplacianpyramid.h"
 
-#define DF_ICON ":/icons/darkflow.png"
-#define DF_APPNAME "darkflow"
-#define DF_FILEDIALOGOPT QFileDialog::DontUseNativeDialog
+LaplacianPyramid::LaplacianPyramid(const GaussianPyramid &gaussianPyramid) :
+    Pyramid(gaussianPyramid.base(), gaussianPyramid.base())
+{
+    int J = levels();
+    const pFloat *src;
+    pFloat *dst;
+    int b;
 
-#endif // DARKFLOW_H
+    // initialize plan J-1
+    src = gaussianPyramid.getPlane(J-1);
+    dst = getPlane(J-1);
+    b = planeBase(J-1);
+    for (int i = 0 ; i < b * b ; ++i) {
+        dst[i] = src[i];
+    }
 
+    for (int j = J - 2 ; j >= 0 ; --j) {
+        b = planeBase(j);
+        src = gaussianPyramid.getPlane(j);
+        dst = getPlane(j);
+        gaussianPyramid.upsample(j+1, dst);
+        for (int y = 0 ; y < b ; ++y) {
+            for (int x = 0 ; x < b ; ++x) {
+                pFloat tmp = src[y*b+x];
+                tmp -= dst[y*b+x];
+                dst[y*b+x] = tmp;
+            }
+        }
+    }
+}
+
+LaplacianPyramid::LaplacianPyramid(int columns, int rows) :
+    Pyramid(columns, rows)
+{
+}
+
+void LaplacianPyramid::collapse(GaussianPyramid &gp)
+{
+    Q_ASSERT(gp.levels() == levels());
+    Q_ASSERT(gp.base() == base());
+    Pyramid::pFloat *tmp(new Pyramid::pFloat[base()*base()]);
+    int J = levels();
+    Pyramid::pFloat *gn = gp.getPlane(J-1);
+    Pyramid::pFloat *ln = getPlane(J-1);
+    for (int i = 0 ; i < planeBase(J-1)*planeBase(J-1) ; ++i) {
+        ln[i] = gn[i];
+    }
+
+    for (int l = J-2 ; l >= 0 ; --l) {
+        upsample(l+1, tmp);
+        ln = getPlane(l);
+        int b = planeBase(l);
+        for (int y = 0 ; y < b ; ++y) {
+            for (int x = 0 ; x < b ; ++x) {
+                ln[y*b+x] += tmp[y*b+x];
+            }
+        }
+    }
+    delete[] tmp;
+}

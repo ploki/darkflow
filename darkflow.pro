@@ -278,7 +278,16 @@ SOURCES +=\
     operators/opwindowfunction.cpp \
     operators/opcolormap.cpp \
     operators/opstarfinder.cpp \
-    operators/oppixelextrusionmapping.cpp
+    operators/oppixelextrusionmapping.cpp \
+    operators/oplocallaplacianfilter.cpp \
+    algorithms/gaussianpyramid.cpp \
+    algorithms/pyramid.cpp \
+    algorithms/laplacianpyramid.cpp \
+    operators/workerlocallaplacianfilter.cpp \
+    operators/opbayerdecompose.cpp \
+    operators/opbayercompose.cpp \
+    operators/oprepair.cpp \
+    operators/opline.cpp
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -422,7 +431,16 @@ HEADERS  += \
     operators/opwindowfunction.h \
     operators/opcolormap.h \
     operators/opstarfinder.h \
-    operators/oppixelextrusionmapping.h
+    operators/oppixelextrusionmapping.h \
+    operators/oplocallaplacianfilter.h \
+    algorithms/gaussianpyramid.h \
+    algorithms/pyramid.h \
+    algorithms/laplacianpyramid.h \
+    operators/workerlocallaplacianfilter.h \
+    operators/opbayerdecompose.h \
+    operators/opbayercompose.h \
+    operators/oprepair.h \
+    operators/opline.h
 
 
 FORMS    += \

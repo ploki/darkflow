@@ -104,8 +104,10 @@ ProcessNode::ProcessNode(QPointF pos,
     h = barHeight*(2+portRowsCount+parameterRowsCount);
 
     setPen(QPen(preferences->color(QPalette::Window),PEN_WIDTH));
-    if ( op->isDeprecated() || op->isBeta() )
+    if ( op->isDeprecated() )
         setBrush(QBrush(preferences->color(QPalette::BrightText)));
+    else if ( op->isBeta() )
+        setBrush(QBrush(preferences->color(QPalette::Highlight)));
     else
         setBrush(QBrush(preferences->color(QPalette::Button)));
     pp.addRoundedRect(x, y, w, h, xradius, yradius);

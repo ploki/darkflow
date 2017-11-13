@@ -34,6 +34,7 @@
 #include "operatoroutput.h"
 #include "operatorparameterdropdown.h"
 #include "atrouswavelettransform.h"
+#include "algorithm.h"
 
 class WorkerDWTForward : public OperatorWorker {
     OpDWTForward::Algorithm m_algorithm;

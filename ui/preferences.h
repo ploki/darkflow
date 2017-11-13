@@ -64,6 +64,7 @@ public:
     ~Preferences();
 
     QString baseDir();
+    QString tmpDir();
 
     bool acquireWorker(OperatorWorker *worker);
     void releaseWorker();

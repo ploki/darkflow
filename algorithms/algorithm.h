@@ -43,6 +43,25 @@ template<typename t> t clamp(t v,t min = 0, t max = 65535 /* ARgg! */ ) {
     return v;
 }
 
+template<typename t> void
+kernel_1D_to_2D(const t *in, t *out, int kOrder)
+{
+   t sum = 0;
+   for (int i = 0 ; i < kOrder ; ++i) {
+       for (int j = 0 ; j < kOrder ; ++j) {
+           //Kronecker product
+           sum += out[i*kOrder+j] = in[i]*in[j];
+       }
+   }
+   for (int i = 0, s = kOrder * kOrder ; i < s ; ++i) {
+       out[i]/=sum;
+   }
+}
+
+extern const double b3SplineWavelet[5];
+extern const double linearWavelet[3];
+extern const double downsampleKernel[4];
+extern const double upsampleKernel[2];
 class Photo;
 namespace Magick {
 class Image;

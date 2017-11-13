@@ -303,7 +303,7 @@ void Visualization::saveViewClicked()
                                                     tr("Save view image"),
                                                     this->m_operator->m_process->baseDirectory(),
                                                     filter,
-                                                    &selectedFilter, 0);
+                                                    &selectedFilter, DF_FILEDIALOGOPT);
     if ( filename.isEmpty() )
         return;
     qreal exposure = getViewExposure();

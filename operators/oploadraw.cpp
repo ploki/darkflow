@@ -32,6 +32,7 @@
 #include "operatorparameterfilescollection.h"
 #include "operatorparameterdropdown.h"
 #include "oploadraw.h"
+#include "operatorinput.h"
 #include "operatoroutput.h"
 #include "workerloadraw.h"
 
@@ -110,6 +111,7 @@ OpLoadRaw::OpLoadRaw(Process *parent) :
     addParameter(m_whiteBalance);
     addParameter(m_clipping);
 
+    addInput(new OperatorInput(tr("Bad pixels map"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("RAWs"), this));
 }
 

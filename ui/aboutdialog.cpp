@@ -34,6 +34,7 @@
 #include "ports.h"
 #include "darkflow-version.iss"
 #include "preferences.h"
+#include <QIcon>
 
 #include <Magick++.h>
 

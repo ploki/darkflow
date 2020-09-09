@@ -82,9 +82,9 @@ public:
                                  pix3[x] = src1[x*2+1];
                              }
                              i0Cache->sync();
-                             i0Cache->sync();
-                             i0Cache->sync();
-                             i0Cache->sync();
+                             i1Cache->sync();
+                             i2Cache->sync();
+                             i3Cache->sync();
                          });
         outputPush(3, p3);
         outputPush(2, p2);

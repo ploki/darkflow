@@ -117,7 +117,7 @@ install_imagemagick_policy()
 
 #define COPY(X) \
     do { \
-        destFilename = configurationDirectory + X; \
+        destFilename = configurationDirectory + "/" + X; \
         if (!QFile(destFilename).exists()) { \
             if (!QFile::copy(":/setup/" X, destFilename)) { \
                 dflError("Could not create ImageMagick " X " file"); \

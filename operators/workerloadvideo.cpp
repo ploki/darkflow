@@ -131,8 +131,8 @@ bool WorkerLoadVideo::decodeVideo(const QString &filename, int progress, int com
 
     // Inform the codec that we can handle truncated bitstreams -- i.e.,
     // bitstreams where frame boundaries can fall in the middle of packets
-    if(pCodec->capabilities & CODEC_CAP_TRUNCATED)
-        pCodecCtx->flags|=CODEC_FLAG_TRUNCATED;
+    if(pCodec->capabilities & AV_CODEC_CAP_TRUNCATED)
+        pCodecCtx->flags|=AV_CODEC_FLAG_TRUNCATED;
 
     if ( pCodecCtx->pix_fmt != AV_PIX_FMT_YUV420P &&
          pCodecCtx->pix_fmt != AV_PIX_FMT_YUV410P &&

@@ -274,7 +274,7 @@ bool WorkerIntegration::play_onInput(int idx)
                             blue = pixel.blue;
                         }
                         if ( hdrExposureAltered ) {
-                            qreal lum = LUMINANCE(red, green, blue);
+                            qreal lum = clamp<qreal>(LUMINANCE(red, green, blue));
                             if ( hdrAutomatic || (lum >= hdrLow && lum <= hdrHigh) ) {
                                 red/=hdrComp;
                                 green/=hdrComp;

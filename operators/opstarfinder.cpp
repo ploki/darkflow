@@ -67,7 +67,7 @@ public:
         int w = srcImage.columns(),
             h = srcImage.rows();
 
-        ATrousWaveletTransform dwt(srcPhoto, b3SplineWavelet, sizeof(b3SplineWavelet)/sizeof(*b3SplineWavelet));
+        ATrousWaveletTransform dwt(srcPhoto, b3SplineWavelet, sizeof(b3SplineWavelet)/sizeof(*b3SplineWavelet), 0);
         Photo sign(srcPhoto);
         Photo highFreqs = dwt.transform(0, 2, srcPhoto.getScale(), sign);
 

@@ -44,7 +44,7 @@ class ATrousWaveletTransform
     QString m_identity;
     QString m_name;
 public:
-    ATrousWaveletTransform(Photo &photo, const double *kernel, int kSize);
+    ATrousWaveletTransform(Photo &photo, const double *kernel, int kSize, int orientation);
     ~ATrousWaveletTransform();
     Photo transform(int n, int nPlanes, Photo::Gamma scale, Photo &sign);
     void construct(Photo &plane, int n);

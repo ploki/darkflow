@@ -40,16 +40,20 @@ class WorkerDWTForward : public OperatorWorker {
     OpDWTForward::Algorithm m_algorithm;
     OpDWTForward::Wavelet m_wavelet;
     int m_planes;
+    OpDWTForward::Orientation m_orientation;
     bool m_outputHDR;
 public:
     WorkerDWTForward(OpDWTForward::Algorithm algorithm,
                      OpDWTForward::Wavelet wavelet,
-                     int planes, bool outputHDR,
+                     int planes,
+                     OpDWTForward::Orientation orientation,
+                     bool outputHDR,
                      QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
         m_algorithm(algorithm),
         m_wavelet(wavelet),
         m_planes(planes),
+        m_orientation(orientation),
         m_outputHDR(outputHDR)
     {}
     Photo process(const Photo &, int , int ) {
@@ -73,7 +77,9 @@ public:
         for (int i = 0, s = m_inputs[0].count() ; i < s ; ++i ) {
             Photo photo(m_inputs[0][i]);
             Photo sign(photo);
-            ATrousWaveletTransform dwt(photo, wavelet, order);
+            ATrousWaveletTransform dwt(photo, wavelet, order,
+                                       m_orientation == OpDWTForward::Isotropic
+                                       ? 0 : m_orientation == OpDWTForward::Horizontal ? 1 : -1);
             for (int n = 0 ; n < m_planes ; ++n) {
                 outputPush(n, dwt.transform(n, m_planes,
                                             m_outputHDR
@@ -107,6 +113,8 @@ OpDWTForward::OpDWTForward(int nPlanes, Process *parent) :
     m_algorithmValue(AlgorithmATrous),
     m_wavelet(new OperatorParameterDropDown("wavelet", tr("Wavelet"), this, SLOT(selectWavelet(int)))),
     m_waveletValue(WaveletB3Spline),
+    m_orientation(new OperatorParameterDropDown("orientation", tr("Orientation"), this, SLOT(selectOrientation(int)))),
+    m_orientationValue(Isotropic),
     m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(selectOutputHDR(int)))),
     m_outputHDRValue(true)
 {
@@ -125,11 +133,16 @@ OpDWTForward::OpDWTForward(int nPlanes, Process *parent) :
     m_wavelet->addOption(DF_TR_AND_C(WaveletStr[WaveletLinear]), WaveletLinear);
     m_wavelet->addOption(DF_TR_AND_C(WaveletStr[WaveletB3Spline]), WaveletB3Spline, true);
 
+    m_orientation->addOption(DF_TR_AND_C("Isotropic"), Isotropic, true);
+    m_orientation->addOption(DF_TR_AND_C("Horizontal"), Horizontal);
+    m_orientation->addOption(DF_TR_AND_C("Vertical"), Vertical);
+
     m_outputHDR->addOption(DF_TR_AND_C("No"), false);
     m_outputHDR->addOption(DF_TR_AND_C("Yes"), true, true);
 
     addParameter(m_algorithm);
     addParameter(m_wavelet);
+    addParameter(m_orientation);
     addParameter(m_outputHDR);
 }
 
@@ -147,7 +160,7 @@ OpDWTForward *OpDWTForward::newInstance()
 OperatorWorker *OpDWTForward::newWorker()
 {
     return new WorkerDWTForward(m_algorithmValue, m_waveletValue, m_planes,
-                                m_outputHDRValue, m_thread, this);
+                                m_orientationValue, m_outputHDRValue, m_thread, this);
 }
 
 bool OpDWTForward::isParametric() const
@@ -195,6 +208,14 @@ void OpDWTForward::selectOutputHDR(int v)
 {
     if ( m_outputHDRValue != !!v ) {
         m_outputHDRValue = !!v;
+        setOutOfDate();
+    }
+}
+
+void OpDWTForward::selectOrientation(int v)
+{
+    if (m_orientationValue != Orientation(v)) {
+        m_orientationValue = Orientation(v);
         setOutOfDate();
     }
 }

@@ -47,6 +47,11 @@ public:
         WaveletLinear,
         WaveletB3Spline,
     } Wavelet;
+    typedef enum {
+        Horizontal,
+        Vertical,
+        Isotropic,
+    } Orientation;
     OpDWTForward(int nPlanes, Process *parent);
     OpDWTForward *newInstance();
     OperatorWorker *newWorker();
@@ -60,6 +65,7 @@ private slots:
     void selectAlgorithm(int v);
     void selectWavelet(int v);
     void selectOutputHDR(int v);
+    void selectOrientation(int v);
 
 private:
     int m_planes;
@@ -67,6 +73,8 @@ private:
     Algorithm m_algorithmValue;
     OperatorParameterDropDown *m_wavelet;
     Wavelet m_waveletValue;
+    OperatorParameterDropDown *m_orientation;
+    Orientation m_orientationValue;
     OperatorParameterDropDown *m_outputHDR;
     bool m_outputHDRValue;
 };

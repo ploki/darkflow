@@ -37,7 +37,8 @@ using Magick::Quantum;
 
 ATrousWaveletTransform::ATrousWaveletTransform(Photo &photo,
                                                const double *kernel,
-                                               int kOrder) :
+                                               int kOrder,
+                                               int orientation) :
     m_w(photo.image().columns()),
     m_h(photo.image().rows()),
     m_image(new Triplet<double>[m_w*m_h]),
@@ -48,6 +49,21 @@ ATrousWaveletTransform::ATrousWaveletTransform(Photo &photo,
     m_name(photo.getTag(TAG_NAME))
 {
     kernel_1D_to_2D(kernel, m_kernel, m_kOrder);
+    for (int x = 0; x < m_kOrder; ++x) {
+        for (int y = 0; y < m_kOrder; ++y) {
+            if (0) {
+                int i = (orientation == 1 ? x : y) - m_kOrder/2;
+                int j = (orientation == 1 ? y : x) - m_kOrder/2;
+                if (orientation != 0 && (abs(j) > abs(i)))
+                    m_kernel[y*m_kOrder+x] = 0;
+            }
+            if ((orientation == -1 && x != 1)
+                    || (orientation == 1 && y != 1)) {
+                //m_kernel[y*m_kOrder+x] = 0;
+                m_kernel[y*m_kOrder+x] = m_kernel[(orientation == 1 ? 1 : y)*m_kOrder+(orientation == -1 ? 1 : x)];
+            }
+        }
+    }
     Magick::Image& image = photo.image();
     bool hdr = photo.getScale() == Photo::HDR;
     std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(image));

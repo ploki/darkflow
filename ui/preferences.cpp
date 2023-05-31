@@ -39,6 +39,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMessageBox>
+#include <QString>
 
 #include "preferences.h"
 #include "ui_preferences.h"
@@ -106,7 +107,10 @@ Preferences::Preferences(QWidget *parent) :
   m_currentMaxWorkers(N_WORKERS),
   m_scheduledMaxWorkers(1),
   m_OpenMPThreads(dfl_max_threads()),
-  m_currentTarget(sRGB),
+  m_currentRenderTarget(sRGB),
+  m_currentDisplayTarget(sRGB),
+  m_currentCustomGamma(2.4),
+  m_currentCustomRange(8.36),
   m_incompatibleAction(Error),
   m_labSelectionSize(LAB_SEL_SIZE),
   m_palette(),
@@ -147,7 +151,11 @@ Preferences::Preferences(QWidget *parent) :
         MagickCore::ExceptionInfo *exception = MagickCore::AcquireExceptionInfo();
         MagickCore::SetImageRegistry(MagickCore::StringRegistryType, "temporary-path", (const void*)ui->valueTmpDir->text().toLocal8Bit(), exception);
 
-        ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
+        ui->comboRenderTarget->setCurrentIndex(m_currentRenderTarget);
+        ui->comboDisplayTarget->setCurrentIndex(m_currentDisplayTarget);
+        ui->lineEditCustomGamma->setText(QString::number(m_currentCustomGamma));
+        ui->lineEditCustomRange->setText(QString::number(m_currentCustomRange));
+
         ui->spinLabSelectionSize->setValue(m_labSelectionSize);
     }
     load();
@@ -341,8 +349,15 @@ bool Preferences::load(bool create)
 
     setMagickResources();
 
-    m_currentTarget = TransformTarget(pixels["transformTarget"].toInt());
-    ui->comboTransformTarget->setCurrentIndex(m_currentTarget);
+    m_currentRenderTarget = TransformTarget(pixels["renderTarget"].toInt());
+    ui->comboRenderTarget->setCurrentIndex(m_currentRenderTarget);
+    m_currentDisplayTarget = TransformTarget(pixels["displayTarget"].toInt());
+    ui->comboDisplayTarget->setCurrentIndex(m_currentDisplayTarget);
+    m_currentCustomGamma = pixels["displayGamma"].toDouble();
+    ui->lineEditCustomGamma->setText(QString::number(m_currentCustomGamma));
+    m_currentCustomRange = pixels["displayRange"].toDouble();
+    ui->lineEditCustomRange->setText(QString::number(m_currentCustomRange));
+
     m_incompatibleAction = IncompatibleAction(pixels["incompatibleAction"].toInt());
     ui->comboIncompatibleScale->setCurrentIndex(m_incompatibleAction);
     m_labSelectionSize = pixels["labSelectionSize"].toInt();
@@ -404,8 +419,15 @@ void Preferences::save()
     resources["darkflowWorkers"] = dflWorkers;
     resources["darkflowThreads"] = dflThreads;
 
-    m_currentTarget = TransformTarget(ui->comboTransformTarget->currentIndex());
-    pixels["transformTarget"] = m_currentTarget;
+    m_currentRenderTarget = TransformTarget(ui->comboRenderTarget->currentIndex());
+    pixels["renderTarget"] = m_currentRenderTarget;
+    m_currentDisplayTarget = TransformTarget(ui->comboDisplayTarget->currentIndex());
+    pixels["displayTarget"] = m_currentDisplayTarget;
+    m_currentCustomGamma = ui->lineEditCustomGamma->text().toDouble();
+    pixels["displayGamma"] = m_currentCustomGamma;
+    m_currentCustomRange = ui->lineEditCustomRange->text().toDouble();
+    pixels["displayRange"] = m_currentCustomRange;
+
     m_incompatibleAction = IncompatibleAction(ui->comboIncompatibleScale->currentIndex());
     pixels["incompatibleAction"] = m_incompatibleAction;
     m_labSelectionSize = ui->spinLabSelectionSize->value();
@@ -612,9 +634,24 @@ void Preferences::baseDirClicked()
         ui->valueBaseDir->setText(baseDir);
 }
 
-Preferences::TransformTarget Preferences::getCurrentTarget() const
+Preferences::TransformTarget Preferences::getCurrentRenderTarget() const
 {
-    return m_currentTarget;
+    return m_currentRenderTarget;
+}
+
+Preferences::TransformTarget Preferences::getCurrentDisplayTarget() const
+{
+    return m_currentDisplayTarget;
+}
+
+qreal Preferences::getCurrentCustomGamma() const
+{
+    return m_currentCustomGamma;
+}
+
+qreal Preferences::getCurrentCustomRange() const
+{
+    return m_currentCustomRange;
 }
 
 Preferences::IncompatibleAction Preferences::getIncompatibleAction() const

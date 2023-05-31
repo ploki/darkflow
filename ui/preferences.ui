@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
-    <height>567</height>
+    <width>505</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -287,63 +287,26 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_pixels">
       <attribute name="title">
        <string>Pixels</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelTransformTarget">
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelLabSelectionSize">
          <property name="text">
-          <string>Display target:</string>
+          <string>Lab selection size:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="comboTransformTarget">
-         <item>
-          <property name="text">
-           <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>sRGB</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>IUT BT.709</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Square Root</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <spacer name="verticalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>298</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="labelIncompatibleScale">
+       <item row="5" column="2">
+        <widget class="QLineEdit" name="lineEditCustomGamma">
          <property name="text">
-          <string>Incompatible scale:</string>
+          <string/>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="1" column="2">
         <widget class="QComboBox" name="comboIncompatibleScale">
          <item>
           <property name="text">
@@ -362,14 +325,41 @@
          </item>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="labelLabSelectionSize">
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelCustomGamma">
          <property name="text">
-          <string>Lab selection size:</string>
+          <string>STF γ:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="4" column="0">
+        <widget class="QLabel" name="labelDisplayTarget">
+         <property name="text">
+          <string>Display target:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="labelCustomRange">
+         <property name="text">
+          <string>STF range:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>298</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="2">
         <widget class="QSpinBox" name="spinLabSelectionSize">
          <property name="suffix">
           <string> pixels</string>
@@ -379,6 +369,80 @@
          </property>
          <property name="maximum">
           <number>2000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="labelRenderTarget">
+         <property name="text">
+          <string>Render target:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QComboBox" name="comboDisplayTarget">
+         <item>
+          <property name="text">
+           <string>Identity</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>sRGB</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>IUT BT.709</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>√2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Custom STF</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelIncompatibleScale">
+         <property name="text">
+          <string>Incompatible scale:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QComboBox" name="comboRenderTarget">
+         <item>
+          <property name="text">
+           <string>Identity</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>sRGB</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>IUT BT.709</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>√2</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QLineEdit" name="lineEditCustomRange">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -584,7 +648,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tab_style">
       <attribute name="title">
        <string>Style</string>
       </attribute>
@@ -853,7 +917,6 @@
   <tabstop>defaultDflWorkers</tabstop>
   <tabstop>valueDflThreads</tabstop>
   <tabstop>defaultDflThreads</tabstop>
-  <tabstop>comboTransformTarget</tabstop>
   <tabstop>comboIncompatibleScale</tabstop>
   <tabstop>spinLabSelectionSize</tabstop>
   <tabstop>valueBaseDir</tabstop>

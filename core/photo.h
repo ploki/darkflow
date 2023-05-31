@@ -241,6 +241,18 @@ public:
 };
 
 
+class STFLut {
+public:
+    STFLut(bool isHDR,
+           double encGamma, double encX0,
+           double displayGamma, double displayX0,
+           double exposureBoost);
+    unsigned char operator[](int i);
+private:
+    unsigned char m_lut[65536]; //GRR
+};
+
+
 class QRectF;
 
 class Photo : public QObject
@@ -300,7 +312,7 @@ public:
     void removeTag(const QString& name);
     QString getTag(const QString& name) const;
 
-    QPixmap imageToPixmap(double gamma, double x0, double exposureBoost);
+    QPixmap imageToPixmap(STFLut& stf);
     QPixmap curveToPixmap(CurveView cv);
     QPixmap histogramToPixmap(HistogramScale scale, HistogramGeometry geometry);
     void writeJPG(const QString& filename);
@@ -337,7 +349,7 @@ private:
     int m_sequenceNumber;
 
 
-    static Magick::Image newCurve(Gamma gamma);
+    static Magick::Image newCurve();
 };
 
 #define TAG_NAME "Name"

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>774</width>
-    <height>674</height>
+    <width>810</width>
+    <height>724</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -458,13 +458,13 @@
                  </sizepolicy>
                 </property>
                 <property name="title">
-                 <string>Display assist</string>
+                 <string>View</string>
                 </property>
                 <layout class="QFormLayout" name="formLayout">
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_gamma">
                    <property name="text">
-                    <string>Display:</string>
+                    <string>γ:</string>
                    </property>
                   </widget>
                  </item>
@@ -472,7 +472,7 @@
                   <widget class="QComboBox" name="combo_gamma">
                    <item>
                     <property name="text">
-                     <string>As Input</string>
+                     <string>Identity</string>
                     </property>
                    </item>
                    <item>
@@ -487,7 +487,12 @@
                    </item>
                    <item>
                     <property name="text">
-                     <string>Square Root</string>
+                     <string>√2</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>STF</string>
                     </property>
                    </item>
                   </widget>
@@ -558,7 +563,7 @@
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_input">
                    <property name="text">
-                    <string>Pixels:</string>
+                    <string>Enc:</string>
                    </property>
                   </widget>
                  </item>
@@ -572,17 +577,17 @@
                    </property>
                    <item>
                     <property name="text">
-                     <string>Linear</string>
+                     <string>∝</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>Non-Linear</string>
+                     <string>γ</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>HDR</string>
+                     <string>Log</string>
                     </property>
                    </item>
                   </widget>
@@ -697,7 +702,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>597</width>
+                 <width>596</width>
                  <height>512</height>
                 </rect>
                </property>
@@ -777,6 +782,13 @@
               </item>
              </widget>
             </item>
+            <item>
+             <widget class="QPushButton" name="button_computeHistogram">
+              <property name="text">
+               <string>Compute Histogram</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="tab_curve">
@@ -806,8 +818,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>597</width>
-                 <height>512</height>
+                 <width>596</width>
+                 <height>545</height>
                 </rect>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1308,6 +1320,22 @@
     <hint type="destinationlabel">
      <x>397</x>
      <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_computeHistogram</sender>
+   <signal>clicked()</signal>
+   <receiver>Visualization</receiver>
+   <slot>histogramParamsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>465</x>
+     <y>657</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>361</y>
     </hint>
    </hints>
   </connection>

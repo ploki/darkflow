@@ -130,7 +130,7 @@ Visualization::Visualization(Operator *op, QWidget *parent) :
     ui->table_tags->horizontalHeader()->setStretchLastSection(true);
     ui->graphicsView->setScene(m_scene);
     ui->graphicsView->adjustSize();
-    ui->combo_gamma->setCurrentIndex(preferences->getCurrentTarget());
+    ui->combo_gamma->setCurrentIndex(preferences->getCurrentDisplayTarget());
     m_scene->addItem(m_pixmapItem);
     m_scene->installEventFilter(this);
     graphicsViewInteraction = new GraphicsViewInteraction(ui->graphicsView, this);
@@ -207,7 +207,7 @@ void Visualization::getViewGamma(qreal &gamma, qreal &x0) const
     default:
         dflWarning(tr("Visualization: Unknown combo_gamma selection"));
         // Falls through
-    case 0: //As Input
+    case 0: //Identity
         gamma = 1.; x0 = 0; break;
     case 1: //sRGB
         gamma = 2.4L; x0 = 0.00304L; break;
@@ -215,6 +215,9 @@ void Visualization::getViewGamma(qreal &gamma, qreal &x0) const
         gamma = 2.222L; x0 = 0.018L; break;
     case 3: //POW-2;
         gamma = 2.L; x0 = 0.; break;
+    case 4: //STF
+        gamma = preferences->getCurrentCustomGamma();
+        x0 = pow(2, -preferences->getCurrentCustomRange());
     }
 }
 qreal Visualization::getViewExposure() const
@@ -226,10 +229,40 @@ void Visualization::expChanged()
 {
     if ( m_photo && m_photo->isComplete() ) {
         qreal exposure = getViewExposure();
-        qreal gamma, x0;
-        getViewGamma(gamma, x0);
+        qreal displayGamma, displayX0;
+        getViewGamma(displayGamma, displayX0);
         ui->value_exp->setText(tr("%0 EV").arg(exposure));
-        m_pixmapItem->setPixmap(m_photo->imageToPixmap(gamma, x0, pow(2.,exposure)));
+
+        bool hdr = false;
+        qreal encGamma = 1;
+        qreal encX0 = 0;
+        switch (m_photo->getScale()) {
+        case Photo::HDR:
+            hdr = 1;
+            break;
+        case Photo::NonLinear:
+            if (displayGamma != 1.) {
+                switch (preferences->getCurrentRenderTarget()) {
+                case Preferences::TargetCustom: // impossible, passthru
+                case Preferences::Linear:
+                    encGamma = 1.; encX0 = 0; break;
+                case Preferences::sRGB:
+                    encGamma = 2.4L; encX0 = 0.00304L; break;
+                case Preferences::IUT_BT_709:
+                    encGamma = 2.222L; encX0 = 0.018L; break;
+                case Preferences::SquareRoot:
+                    encGamma = 2.L; encX0 = 0.; break;
+                }
+            } else {
+
+            }
+            break;
+        default:
+        case Photo::Linear:
+            break;
+        }
+        STFLut stf(hdr, encGamma, encX0, displayGamma, displayX0, pow(2., exposure));
+        m_pixmapItem->setPixmap(m_photo->imageToPixmap(stf));
         m_scene->setSceneRect(0,0,m_photo->image().columns(),m_photo->image().rows());
     }
 }
@@ -357,7 +390,8 @@ void Visualization::histogramParamsChanged()
             geometry = Photo::HistogramSurfaces; break;
         }
 
-        ui->widget_histogram->setPixmap(m_photo->histogramToPixmap(scale, geometry));
+        if (ui->widget_histogram->isVisible())
+          ui->widget_histogram->setPixmap(m_photo->histogramToPixmap(scale, geometry));
     }
 }
 
@@ -777,7 +811,6 @@ void Visualization::updateTabs()
 
 void Visualization::updateTabsWithPhoto()
 {
-    bool asInput = false;
     QString typeTag = m_photo->getTag(TAG_SCALE);
     if ( m_photoIsInput && m_operator->isTagOverrided(m_photo->getIdentity(), TAG_SCALE)) {
         typeTag = m_operator->getTagOverrided(m_photo->getIdentity(), TAG_SCALE);
@@ -791,17 +824,11 @@ void Visualization::updateTabsWithPhoto()
         bool state = ui->combo_input->blockSignals(true);
         ui->combo_input->setCurrentIndex(1);
         ui->combo_input->blockSignals(state);
-        asInput = true;
     }
     else if ( typeTag == TAG_SCALE_HDR && ui->combo_input->currentIndex() != 2 ) {
         bool state = ui->combo_input->blockSignals(true);
         ui->combo_input->setCurrentIndex(2);
         ui->combo_input->blockSignals(state);
-    }
-    if ( asInput ) {
-        bool state = ui->combo_gamma->blockSignals(true);
-        ui->combo_gamma->setCurrentIndex(0);
-        ui->combo_gamma->blockSignals(state);
     }
 
     expChanged();
@@ -917,6 +944,16 @@ bool Visualization::eventFilter(QObject *obj, QEvent *event)
         int key = ke->key();
         if ( key == Qt::Key_Escape && isActiveWindow() ) {
             hide();
+            event->accept();
+            return true;
+        } else if (key == Qt::Key_D) {
+            ui->combo_gamma->setCurrentIndex(preferences->getCurrentDisplayTarget());
+            updateTabs();
+            event->accept();
+            return true;
+        } else if (key == Qt::Key_R) {
+            ui->combo_gamma->setCurrentIndex(preferences->getCurrentRenderTarget());
+            updateTabs();
             event->accept();
             return true;
         }

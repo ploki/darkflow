@@ -53,7 +53,7 @@ public:
         sRGB,
         IUT_BT_709,
         SquareRoot,
-        TargetNone
+        TargetCustom,
     } TransformTarget;
     typedef enum {
         Ignore,
@@ -69,7 +69,10 @@ public:
     bool acquireWorker(OperatorWorker *worker);
     void releaseWorker();
 
-    TransformTarget getCurrentTarget() const;
+    TransformTarget getCurrentRenderTarget() const;
+    TransformTarget getCurrentDisplayTarget() const;
+    qreal getCurrentCustomGamma() const;
+    qreal getCurrentCustomRange() const;
     IncompatibleAction getIncompatibleAction() const;
     int getNumThreads() const;
     int getMagickNumThreads() const;
@@ -110,7 +113,10 @@ private:
     u_int64_t m_currentMaxWorkers;
     u_int64_t m_scheduledMaxWorkers;
     u_int64_t m_OpenMPThreads;
-    TransformTarget m_currentTarget;
+    TransformTarget m_currentRenderTarget;
+    TransformTarget m_currentDisplayTarget;
+    qreal m_currentCustomGamma;
+    qreal m_currentCustomRange;
     IncompatibleAction m_incompatibleAction;
     int m_labSelectionSize;
     QPalette m_palette;

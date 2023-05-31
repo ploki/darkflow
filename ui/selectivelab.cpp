@@ -237,7 +237,9 @@ void SelectiveLab::run()
 
     if (guide)
         drawGuide(photo, hue, coverage, strict);
-    QPixmap pixmap =  photo.imageToPixmap(SRGB_G, SRGB_N, 1.);
+    bool hdr = photo.getScale() == Photo::HDR;
+    STFLut stf(hdr, 1, 0, SRGB_G, SRGB_N, 1.);
+    QPixmap pixmap =  photo.imageToPixmap(stf);
     do {
         QMutexLocker lock(&m_mutex);
         m_pixmap = pixmap;

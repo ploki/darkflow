@@ -46,11 +46,20 @@ static const char *DebayerStr[] = {
     QT_TRANSLATE_NOOP("OpDebayer", "AHD")
 };
 
+static const char *FilterPatternStr[] = {
+    QT_TRANSLATE_NOOP("OpLoadImage", "Default"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "BG/GR"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "RG/GB"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "GB/RG"),
+    QT_TRANSLATE_NOOP("OpLoadImage", "GR/BG"),
+};
 
 OpDebayer::OpDebayer(Process *parent) :
     Operator(OP_SECTION_COLOR, QT_TRANSLATE_NOOP("Operator", "Debayer"), Operator::All, parent),
     m_debayer(new OperatorParameterDropDown("quality", tr("Quality"), this, SLOT(setDebayer(int)))),
-    m_debayerValue(Bilinear)
+    m_debayerValue(Bilinear),
+    m_filterPattern(new OperatorParameterDropDown("filterPattern", tr("Filter Pattern"), this, SLOT(setFilterPattern(int)))),
+    m_filterPatternValue(Default)
 {
     m_debayer->addOption(DF_TR_AND_C(DebayerStr[NoDebayer]), NoDebayer);
     m_debayer->addOption(DF_TR_AND_C(DebayerStr[Mask]), Mask);
@@ -61,7 +70,13 @@ OpDebayer::OpDebayer(Process *parent) :
     //m_debayer->addOption(DF_TR_AND_C(DebayerStr[DownSample]), DownSample);
     m_debayer->addOption(DF_TR_AND_C(DebayerStr[VNG]), VNG);
     m_debayer->addOption(DF_TR_AND_C(DebayerStr[AHD]), AHD);
+    m_filterPattern->addOption(DF_TR_AND_C(FilterPatternStr[Default]), Default, true);
+    m_filterPattern->addOption(DF_TR_AND_C(FilterPatternStr[BGGR]), BGGR);
+    m_filterPattern->addOption(DF_TR_AND_C(FilterPatternStr[RGGB]), RGGB);
+    m_filterPattern->addOption(DF_TR_AND_C(FilterPatternStr[GBRG]), GBRG);
+    m_filterPattern->addOption(DF_TR_AND_C(FilterPatternStr[GRBG]), GRBG);
     addParameter(m_debayer);
+    addParameter(m_filterPattern);
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));
 
@@ -82,5 +97,13 @@ OpDebayer *OpDebayer::newInstance()
 
 OperatorWorker *OpDebayer::newWorker()
 {
-    return new WorkerDebayer(m_debayerValue, m_thread, this);
+    return new WorkerDebayer(m_debayerValue, m_thread, m_filterPatternValue, this);
+}
+
+void OpDebayer::setFilterPattern(int v)
+{
+    if ( m_filterPatternValue != v) {
+        m_filterPatternValue = FilterPattern(v);
+        setOutOfDate();
+    }
 }

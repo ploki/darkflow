@@ -38,12 +38,14 @@ class WorkerDebayer : public OperatorWorker
 {
     Q_OBJECT
 public:
-    WorkerDebayer(OpDebayer::Debayer quality, QThread *thread, Operator *op);
+    WorkerDebayer(OpDebayer::Debayer quality, QThread *thread,
+                  OpDebayer::FilterPattern filterPattern, Operator *op);
     Photo process(const Photo &photo, int p, int c);
     bool play_onInput(int idx);
 
 private:
     OpDebayer::Debayer m_quality;
+    OpDebayer::FilterPattern m_filterPattern;
 };
 
 #endif // WORKERDEBAYER_H

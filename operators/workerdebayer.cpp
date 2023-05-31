@@ -32,9 +32,11 @@
 #include "bayer.h"
 #include "console.h"
 
-WorkerDebayer::WorkerDebayer(OpDebayer::Debayer quality, QThread *thread, Operator *op) :
+WorkerDebayer::WorkerDebayer(OpDebayer::Debayer quality, QThread *thread,
+                             OpDebayer::FilterPattern filterPattern, Operator *op) :
     OperatorWorker(thread, op),
-    m_quality(quality)
+    m_quality(quality),
+    m_filterPattern(filterPattern)
 {
 }
 
@@ -178,16 +180,15 @@ static Photo debayerHalfSize(const Photo &photo, u_int32_t filters)
 // inspiration dc1394
 
 static dc1394color_filter_t
-get_color_filter(const Photo& photo)
+get_color_filter(const QString& tag)
 {
-    QString str = photo.getTag(TAG_FILTER_PATTERN);
-    if ( str == "RGGBRGGBRGGBRGGB" || str == "RG/GB" )
+    if ( tag == "RGGBRGGBRGGBRGGB" || tag == "RG/GB" )
         return DC1394_COLOR_FILTER_RGGB;
-    else if ( str == "GBRGGBRGGBRGGBRG" || str == "GB/RG" )
+    else if ( tag == "GBRGGBRGGBRGGBRG" || tag == "GB/RG" )
         return DC1394_COLOR_FILTER_GBRG;
-    else if ( str == "GRBGGRBGGRBGGRBG" || str == "GR/BG" )
+    else if ( tag == "GRBGGRBGGRBGGRBG" || tag == "GR/BG" )
         return DC1394_COLOR_FILTER_GRBG;
-    else if ( str == "BGGRBGGRBGGRBGGR" || str == "BG/GR")
+    else if ( tag == "BGGRBGGRBGGRBGGR" || tag == "BG/GR")
         return DC1394_COLOR_FILTER_BGGR;
     else {
         return DARKFLOW_COLOR_FILTER_UNKNOWN;
@@ -255,9 +256,21 @@ bufferToImage(uint16_t *buffer, int w, int h) {
 Photo WorkerDebayer::process(const Photo &photo, int /*p*/, int /*c*/)
 {
     u_int32_t filters = getFilterPattern(photo);
-    dc1394color_filter_t dc_filters = get_color_filter(photo);
+    QString tag;
+    dc1394color_filter_t dc_filters;
     dc1394bayer_method_t method = DC1394_BAYER_METHOD_SIMPLE;
     bool use_dc = true;
+
+    switch(m_filterPattern) {
+        default:
+        case OpDebayer::Default: tag = photo.getTag(TAG_FILTER_PATTERN); break;
+        case OpDebayer::BGGR: tag = "BG/GR"; break;
+        case OpDebayer::RGGB: tag = "RG/GB"; break;
+        case OpDebayer::GBRG: tag = "GB/RG"; break;
+        case OpDebayer::GRBG: tag = "GR/BG"; break;
+    }
+    dc_filters = get_color_filter(tag);
+
 
     if ( dc_filters == DARKFLOW_COLOR_FILTER_UNKNOWN) {
         setError(photo, tr("Unknown color filter pattern"));

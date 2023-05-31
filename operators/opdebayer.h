@@ -52,16 +52,25 @@ public:
         VNG,
         AHD
     } Debayer;
+    typedef enum {
+        Default,
+        BGGR,
+        RGGB,
+        GBRG,
+        GRBG,
+    } FilterPattern;
     OpDebayer(Process *parent);
     OpDebayer *newInstance();
     OperatorWorker *newWorker();
 
 public slots:
     void setDebayer(int v);
-
+    void setFilterPattern(int v);
 private:
     OperatorParameterDropDown *m_debayer;
     Debayer m_debayerValue;
+    OperatorParameterDropDown *m_filterPattern;
+    FilterPattern m_filterPatternValue;
 };
 
 #endif // OPDEBAYER_H

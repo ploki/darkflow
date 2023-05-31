@@ -272,7 +272,6 @@ bool WorkerLoadVideo::push_frame(AVFrame *picture,
             photo.setIdentity(m_operator->uuid() + "/" + name);
             photo.setTag(TAG_NAME,name);
             photo.setSequenceNumber(n);
-            photo.setTag(TAG_SCALE, TAG_SCALE_NONLINEAR);
             Magick::Image& image=photo.image();
             std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
             dfl_block bool error = false;

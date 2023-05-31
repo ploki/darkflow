@@ -33,6 +33,7 @@
 #include "console.h"
 #include <Magick++.h>
 #include <cmath>
+#include "hdr.h"
 
 WhiteBalance::WhiteBalance(qreal temperature,
                            qreal tint,

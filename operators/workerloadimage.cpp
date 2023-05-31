@@ -90,12 +90,6 @@ void WorkerLoadImage::play()
                 photo.setIdentity(m_operator->uuid()+"/"+identity);
                 photo.setTag(TAG_NAME, identity);
                 photo.setSequenceNumber(i);
-                photo.setTag(TAG_SCALE, gamma == Photo::Linear
-                             ? TAG_SCALE_LINEAR
-                             : gamma == Photo::HDR
-                                 ? TAG_SCALE_HDR
-                                 : TAG_SCALE_NONLINEAR);
-
                 dfl_critical_section({
                     outputPush(0, photo);
                 });

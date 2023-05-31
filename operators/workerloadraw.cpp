@@ -263,9 +263,6 @@ void WorkerLoadRaw::setTags(const QString &filename, Photo &photo)
     photo.setTag(TAG_TIMESTAMP, info.timestamp());
     photo.setTag(TAG_FILTER_PATTERN, info.filterPattern());
     photo.setTag(TAG_COLOR_SPACE, m_loadraw->getColorSpace());
-    photo.setTag(TAG_SCALE, m_loadraw->m_colorSpaceValue == OpLoadRaw::Linear
-                 ? TAG_SCALE_LINEAR
-                 : TAG_SCALE_NONLINEAR);
     photo.setTag(TAG_DEBAYER, m_loadraw->getDebayer());
     photo.setTag(TAG_WHITE_BALANCE, m_loadraw->getWhiteBalance());
     if ( m_loadraw->m_debayerValue == OpLoadRaw::NoDebayer ) {

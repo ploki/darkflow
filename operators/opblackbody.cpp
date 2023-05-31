@@ -32,19 +32,23 @@
 #include "operatorworker.h"
 #include "operatoroutput.h"
 #include "operatorparameterslider.h"
+#include "operatorparameterdropdown.h"
 #include "whitebalance.h"
 #include "photo.h"
+#include "hdr.h"
 #include  <Magick++.h>
 
 using Magick::Quantum;
 
 class WorkerBlackBody : public OperatorWorker {
 public:
-    WorkerBlackBody(qreal temperature, qreal tint, qreal value, QThread *thread, Operator *op) :
+    WorkerBlackBody(qreal temperature, qreal tint, qreal value, bool outputHDR,
+                    QThread *thread, Operator *op) :
         OperatorWorker(thread, op),
         m_temperature(temperature),
         m_tint(tint),
-        m_value(value)
+        m_value(value),
+        m_outputHDR(outputHDR)
     {}
 private slots:
     Photo process(const Photo &, int, int) { throw 0; }
@@ -65,11 +69,20 @@ private slots:
             rgb[0]*=m_value;
             rgb[1]*=m_value;
             rgb[2]*=m_value;
-            photo.image().pixelColor(0, 0,
-                     Magick::Color(
-                        clamp<quantum_t>(rgb[0]*QuantumRange, 0, QuantumRange),
-                        clamp<quantum_t>(rgb[1]*QuantumRange, 0, QuantumRange),
-                        clamp<quantum_t>(rgb[2]*QuantumRange, 0, QuantumRange)));
+            if (m_outputHDR) {
+                photo.image().pixelColor(0, 0,
+                         Magick::Color(
+                            toHDR(rgb[0]*QuantumRange),
+                            toHDR(rgb[1]*QuantumRange),
+                            toHDR(rgb[2]*QuantumRange)));
+                photo.setScale(Photo::HDR);
+            } else {
+                photo.image().pixelColor(0, 0,
+                         Magick::Color(
+                            clamp<quantum_t>(rgb[0]*QuantumRange, 0, QuantumRange),
+                            clamp<quantum_t>(rgb[1]*QuantumRange, 0, QuantumRange),
+                            clamp<quantum_t>(rgb[2]*QuantumRange, 0, QuantumRange)));
+            }
             //dflDebug(QString("r: %0, g: %1, b: %2").arg(rgb[0]).arg(rgb[1]).arg(rgb[2]).toLatin1());
             photo.setTag(TAG_NAME, QString("Black Body %0 K").arg(m_temperature));
             outputPush(0, photo);
@@ -83,6 +96,7 @@ private:
     qreal m_temperature;
     qreal m_tint;
     qreal m_value;
+    bool m_outputHDR;
 };
 
 OpBlackBody::OpBlackBody(Process *parent) :
@@ -95,13 +109,19 @@ OpBlackBody::OpBlackBody(Process *parent) :
                                        0.5, 2, 1, 0.01, 100, Slider::FilterNothing, this)),
     m_value(new OperatorParameterSlider("intensity", tr("Intensity"), tr("Black Body Value"),
                                         Slider::ExposureValue, Slider::Logarithmic, Slider::Real,
-                                        1./(1<<8), 1, .125, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this))
-
+                                        1./(1<<8), 1, .125, 1./QuantumRange, 1, Slider::FilterExposureFromOne, this)),
+    m_outputHDR(new OperatorParameterDropDown("outputHDR", tr("Output HDR"), this, SLOT(setOutputHDR(int)))),
+    m_outputHDRValue(false)
 {
     addOutput(new OperatorOutput(tr("Black body"), this));
+
+    m_outputHDR->addOption(DF_TR_AND_C("No"), false, true);
+    m_outputHDR->addOption(DF_TR_AND_C("Yes"), true);
+
     addParameter(m_temperature);
     addParameter(m_tint);
     addParameter(m_value);
+    addParameter(m_outputHDR);
 
 }
 
@@ -115,5 +135,14 @@ OperatorWorker *OpBlackBody::newWorker()
     return new WorkerBlackBody(m_temperature->value(),
                                m_tint->value(),
                                m_value->value(),
+                               m_outputHDRValue,
                                m_thread, this);
+}
+
+void OpBlackBody::setOutputHDR(int v)
+{
+    if (m_outputHDRValue != !!v) {
+        m_outputHDRValue = !!v;
+        setOutOfDate();
+    }
 }

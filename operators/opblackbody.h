@@ -35,6 +35,7 @@
 #include <QObject>
 
 class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
 class OpBlackBody : public Operator
 {
@@ -44,11 +45,14 @@ public:
 
     OpBlackBody *newInstance();
     OperatorWorker *newWorker();
-
+public slots:
+    void setOutputHDR(int v);
 private:
     OperatorParameterSlider *m_temperature;
     OperatorParameterSlider *m_tint;
     OperatorParameterSlider *m_value;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
 #endif // OPBLACKBODY_H

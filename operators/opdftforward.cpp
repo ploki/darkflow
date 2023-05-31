@@ -34,7 +34,7 @@
 #include "operatoroutput.h"
 #include "operatorworker.h"
 #include "discretefouriertransform.h"
-
+#include <QtMath>
 #include <Magick++.h>
 
 class WorkerDFTForward : public OperatorWorker {
@@ -48,7 +48,7 @@ public:
         Magick::Image source(photo.image());
         int w = source.columns(),
             h = source.rows(),
-            m = qMax(w, h);
+            m = qNextPowerOfTwo(qMax(w, h));
         source = DiscreteFourierTransform::normalize(source, m, true);
         source = DiscreteFourierTransform::roll(source, m/2, m/2);
         DiscreteFourierTransform dft(source, photo.getScale());

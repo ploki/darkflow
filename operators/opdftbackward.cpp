@@ -34,7 +34,7 @@
 #include "operatoroutput.h"
 #include "operatorworker.h"
 #include "discretefouriertransform.h"
-
+#include <QtMath>
 #include <Magick++.h>
 
 class WorkerDFTBackward : public OperatorWorker {
@@ -65,7 +65,7 @@ public:
             double normalization = pMagnitude.getTag(TAG_DFT_NORMALIZATION).toDouble();
             int o_w = pMagnitude.getTag(TAG_DFT_WIDTH).toInt();
             int o_h = pMagnitude.getTag(TAG_DFT_HEIGHT).toInt();
-            int o_m = qMax(o_w, o_h);
+            int o_m = qNextPowerOfTwo(qMax(o_w, o_h));
             if (0 == normalization) {
                 dflWarning(tr("Invalid DFT Normalization value"));
                 normalization = 1;

@@ -29,6 +29,7 @@
  *
  */
 #include "oppixelextrusionmapping.h"
+#include "operatorparameterdropdown.h"
 #include "operatorworker.h"
 #include "operatorinput.h"
 #include "operatoroutput.h"
@@ -38,8 +39,9 @@ using Magick::Quantum;
 
 class WorkerPixelExtrusionMapping : public OperatorWorker {
 public:
-    WorkerPixelExtrusionMapping(QThread *thread, Operator *op) :
-        OperatorWorker(thread, op)
+    WorkerPixelExtrusionMapping(OpPixelExtrusionMapping::Scale scale, QThread *thread, Operator *op) :
+        OperatorWorker(thread, op),
+        m_scale(scale)
     {}
     Photo process(const Photo &photo, int, int) {
         static const int fullHeight = 256;
@@ -65,7 +67,24 @@ public:
                 else {
                     lum = LUMINANCE_PIXEL(srcPixels[x]);
                 }
-                int height = fullHeight * lum/QuantumRange;
+                qreal k;
+                switch (m_scale) {
+                default:
+                case OpPixelExtrusionMapping::Linear:
+                    k= lum/QuantumRange;
+                    break;
+                case OpPixelExtrusionMapping::Gamma:
+                    k = pow(lum/QuantumRange, 1./2.2);
+                    break;
+                case OpPixelExtrusionMapping::Log:
+                    if (lum == 0)
+                        k = 0;
+                    else
+                        k = log2(lum)/16;
+                    break;
+                }
+
+                int height = fullHeight * k;
                 if (height == 0 ) height = 1;
                 for ( int yy = y + (fullHeight-height) ; yy < y+fullHeight; ++yy ) {
                     int xx = x+y/2 ;
@@ -80,13 +99,22 @@ public:
         newPhoto.image() = dstImage;
         return newPhoto;
     }
+private:
+    OpPixelExtrusionMapping::Scale m_scale;
 };
 
 OpPixelExtrusionMapping::OpPixelExtrusionMapping(Process *parent) :
-    Operator(OP_SECTION_ANALYSIS, QT_TRANSLATE_NOOP("Operator", "Pixel Extrusion Mapping"), Operator::All, parent)
+    Operator(OP_SECTION_ANALYSIS, QT_TRANSLATE_NOOP("Operator", "Pixel Extrusion Mapping"), Operator::All, parent),
+    m_scale(new OperatorParameterDropDown("vScale", tr("Vertical Scale"),this, SLOT(setScale(int)))),
+    m_scaleValue(Linear)
 {
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Extrusion"), this));
+
+    m_scale->addOption(DF_TR_AND_C("Linear"), Linear, true);
+    m_scale->addOption(DF_TR_AND_C("Gamma"), Gamma);
+    m_scale->addOption(DF_TR_AND_C("Log"), Log);
+    addParameter(m_scale);
 }
 
 OpPixelExtrusionMapping *OpPixelExtrusionMapping::newInstance()
@@ -96,5 +124,13 @@ OpPixelExtrusionMapping *OpPixelExtrusionMapping::newInstance()
 
 OperatorWorker *OpPixelExtrusionMapping::newWorker()
 {
-    return new WorkerPixelExtrusionMapping(m_thread, this);
+    return new WorkerPixelExtrusionMapping(m_scaleValue, m_thread, this);
+}
+
+void OpPixelExtrusionMapping::setScale(int v)
+{
+    if (m_scaleValue != Scale(v)) {
+        m_scaleValue = Scale(v);
+        setOutOfDate();
+    }
 }

@@ -34,6 +34,9 @@
 #include "operator.h"
 #include <QObject>
 
+class OperatorParameterDropDown;
+class WorkerPixelExtrusionMapping;
+
 class OpPixelExtrusionMapping : public Operator
 {
     Q_OBJECT
@@ -42,6 +45,17 @@ public:
 
     OpPixelExtrusionMapping *newInstance();
     OperatorWorker *newWorker();
+public slots:
+    void setScale(int v);
+private:
+    friend WorkerPixelExtrusionMapping;
+    typedef enum {
+        Linear,
+        Gamma,
+        Log,
+    } Scale;
+    OperatorParameterDropDown *m_scale;
+    Scale m_scaleValue;
 };
 
 #endif // OPISOMETRICPROJECTION_H

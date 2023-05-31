@@ -55,23 +55,35 @@ GraphicsViewInteraction::GraphicsViewInteraction(QGraphicsView *graphicsView, QO
 bool GraphicsViewInteraction::eventFilter(QObject *obj, QEvent *event)
 {
     switch (event->type()) {
+
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
     {
+        bool doScale = false;
+        qreal scaleFactor = 1;
         int key = dynamic_cast<QKeyEvent*>(event)->key();
         switch (key) {
-        case Qt::Key_1: {
-            totalScaleFactor = lastGestureFactor = 1;
-            zoomUpdate(1);
-            event->accept();
-            return true;
-        }
+        case Qt::Key_1:
+            scaleFactor = 1; doScale = true;
+            break;
+        case Qt::Key_2:
+            scaleFactor = 2; doScale = true;
+            break;
+        case Qt::Key_3:
+            scaleFactor = .5; doScale = true;
+            break;
         case Qt::Key_F: {
             fitVisible();
             emit zoomChanged(-1);
             event->accept();
             return true;
         }
+        }
+        if (doScale) {
+            totalScaleFactor = lastGestureFactor = 1;
+            zoomUpdate(scaleFactor);
+            event->accept();
+            return true;
         }
         break;
     }

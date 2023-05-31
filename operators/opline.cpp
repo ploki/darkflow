@@ -42,17 +42,63 @@ class WorkerLine : public OperatorWorker {
     qreal m_diameter;
     bool m_keepBackground;
     OpLine::DirectionType m_direction;
+    qreal m_period;
+    qreal m_gap;
+    qreal m_decay;
+    int m_skip;
 public:
     WorkerLine(quantum_t color, qreal diameter,
                bool keepBackground, OpLine::DirectionType direction,
+               qreal period, qreal gap, qreal decay, int skip,
                QThread *thread, Operator *op) :
     OperatorWorker(thread, op),
       m_color(color),
       m_diameter(diameter),
       m_keepBackground(keepBackground),
-      m_direction(direction)
+      m_direction(direction),
+      m_period(period),
+      m_gap(gap),
+      m_decay(decay),
+      m_skip(skip)
     {
     }
+
+    void straightLine(Magick::PixelPacket *dstPixels, int w, int h, const QPointF& p,
+                      qreal gap, qreal decay, int i) {
+        int ymin = p.y()-m_diameter/2,
+            ymax = p.y()+m_diameter/2,
+            xmin = p.x()-m_diameter/2,
+            xmax = p.x()+m_diameter/2;
+        //qreal pixelDecay = i==0 ? 1 : pow(decay, i);
+        qreal pixelDecay = pow(decay, i);
+        qDebug("pixelDecay=%f, i=%d", pixelDecay, i);
+        switch(m_direction) {
+        case OpLine::Vertical:
+            /* pd
+             *  .9^0 = 1
+             *  .9^1 = .9
+             *  .9^2 = .81
+             *  height = pd * h
+             *  height/2 = pd * h/2
+             *  margin = h - pd * h
+             *  margin/2 = h * (1-pd)/2
+             */
+            ymin = 0+(1.-pixelDecay)*h/2.; ymax = h-(1.-pixelDecay)*h/2.;
+            xmin = qMax(0, xmin); xmax = qMin(w, xmax);
+            break;
+        case OpLine::Horizontal:
+            xmin = 0+(1.-pixelDecay)*w/2.; xmax = w-(1.-pixelDecay)*w/2.;
+            ymin = qMax(0, ymin); ymax = qMin(h, ymax);
+        }
+        qDebug("xmin=%d, xmax=%d, ymin=%d, ymax=%d",xmin,xmax,ymin,ymax);
+        for (int x = xmin ; x < xmax ; ++x ) {
+            for (int y = ymin ; y < ymax ; ++y) {
+                if ( pow(x-(w/2), 2) + pow(y-(h/2),2) > pow(gap, 2) )
+                    dstPixels[y*w+x].red = dstPixels[y*w+x].green = dstPixels[y*w+x].blue  = m_color;
+            }
+        }
+    }
+
     Photo process(const Photo &photo, int , int ) {
         Photo srcPhoto(photo);
         Photo dstPhoto(photo);
@@ -76,30 +122,26 @@ public:
                              }
                          });
         QVector<QPointF> points = srcPhoto.getPoints();
-        if (points.empty())
-            points.push_back(QPointF(w/2., h/2.));
-        else {
+        if (m_period >= 1) {
+            qreal m = m_direction == OpLine::Vertical ? w/2. : h/2.;
+            if (m_period == 0)
+                m_period = 1;
+            qDebug("m_skip=%d", m_skip);
+            for (int i = m_skip ; m+(m_period * i) < m * 2. ; i++) {
+                straightLine(dstPixels, w, h,
+                            QPoint((m+m_period*i) * m_direction,
+                                   (m+m_period*i) * (1-m_direction)),
+                             m_gap, m_decay, i);
+                if (i != 0 ) //not doing this line twice
+                    straightLine(dstPixels, w, h,
+                                QPoint((m-m_period*i) * m_direction,
+                                       (m-m_period*i) * (1-m_direction)),
+                                 m_gap, m_decay, i);
+            }
+        }
+        if (!points.empty()) {
             for (int i = 0, s = points.count() ; i < s ; ++i ) {
-                QPointF &p = points[i];
-                int ymin = p.y()-m_diameter/2,
-                    ymax = p.y()+m_diameter/2,
-                    xmin = p.x()-m_diameter/2,
-                    xmax = p.x()+m_diameter/2;
-                switch(m_direction) {
-                case OpLine::Vertical:
-                    ymin = 0; ymax = h;
-                    xmin = qMax(0, xmin); xmax = qMin(w, xmax);
-                    break;
-                case OpLine::Horizontal:
-                    xmin = 0; xmax = w;
-                    ymin = qMax(0, ymin); ymax = qMin(h, ymax);
-                }
-
-                for (int y = ymin ; y < ymax ; ++y) {
-                    for (int x = xmin ; x < xmax ; ++x ) {
-                        dstPixels[y*w+x].red = dstPixels[y*w+x].green = dstPixels[y*w+x].blue  = m_color;
-                    }
-                }
+                straightLine(dstPixels, w, h, points[i], m_gap, m_decay, 0);
             }
         }
         dstCache.sync();
@@ -113,11 +155,15 @@ OpLine::OpLine(Process *parent) :
     Operator(OP_SECTION_MASK, QT_TRANSLATE_NOOP("Operator", "Line"), Operator::All, parent),
     m_color(new OperatorParameterDropDown("color", tr("Color"), this, SLOT(selectColor(int)))),
     m_colorValue(QuantumRange),
-    m_diameter(new OperatorParameterSlider("diameter", tr("Diameter"), tr("Line - Diameter in pixels"), Slider::Value, Slider::Linear, Slider::Real, 0, 1000, 200, 0, 16384, Slider::FilterPixels, this)),
+    m_diameter(new OperatorParameterSlider("diameter", tr("Thickness"), tr("Line - Thickness in pixels"), Slider::Value, Slider::Linear, Slider::Real, 0, 1000, 200, 0, 16384, Slider::FilterPixels, this)),
     m_keepBackground(new OperatorParameterDropDown("keepBackground", tr("Keep Background"),this, SLOT(selectKeepBackground(int)))),
     m_keepBackgroundValue(true),
     m_direction(new OperatorParameterDropDown("direction", tr("Direction"),this, SLOT(selectDirection(int)))),
-    m_directionValue(Vertical)
+    m_directionValue(Vertical),
+    m_period(new OperatorParameterSlider("period", tr("Period"), tr("Line - Period in pixels"), Slider::Value, Slider::Linear, Slider::Real, 0, 2000, 0, 0, 16384, Slider::FilterPixels, this)),
+    m_gap(new OperatorParameterSlider("gap", tr("Center gap"), tr("Line - Center gap for DC"), Slider::Value, Slider::Linear, Slider::Real, 0, 1000, 200, 0, 16384, Slider::FilterPixels, this)),
+    m_decay(new OperatorParameterSlider("decay", tr("Decay"), tr("Line - Decay"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0, 0, 1, Slider::FilterPercent, this)),
+    m_skip(new OperatorParameterSlider("skip", tr("Skip period"), tr("Line - Skip #th first periods"), Slider::Value, Slider::Linear, Slider::Real, 0, 5, 0, 0, 16384, Slider::FilterPixels, this))
 {
         addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
         addOutput(new OperatorOutput(tr("Images"), this));
@@ -135,7 +181,10 @@ OpLine::OpLine(Process *parent) :
         addParameter(m_diameter);
         addParameter(m_keepBackground);
         addParameter(m_direction);
-
+        addParameter(m_period);
+        addParameter(m_gap);
+        addParameter(m_decay);
+        addParameter(m_skip);
 }
 
 OpLine *OpLine::newInstance()
@@ -149,6 +198,10 @@ OperatorWorker *OpLine::newWorker()
                           m_diameter->value(),
                           m_keepBackgroundValue,
                           m_directionValue,
+                          m_period->value(),
+                          m_gap->value(),
+                          m_decay->value(),
+                          m_skip->value(),
                           m_thread, this);
 }
 

@@ -47,8 +47,8 @@ public:
     bool isBeta() const { return true; }
 
     typedef enum {
-        Horizontal,
-        Vertical
+        Horizontal = 0,
+        Vertical = 1,
     } DirectionType;
 private slots:
     void selectColor(int v);
@@ -63,6 +63,10 @@ private:
     bool m_keepBackgroundValue;
     OperatorParameterDropDown *m_direction;
     DirectionType m_directionValue;
+    OperatorParameterSlider *m_period;
+    OperatorParameterSlider *m_gap;
+    OperatorParameterSlider *m_decay;
+    OperatorParameterSlider *m_skip;
 };
 
 #endif // OPLINE_H

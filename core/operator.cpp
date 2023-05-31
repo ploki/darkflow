@@ -596,7 +596,11 @@ void Operator::load(QJsonObject &obj)
     }
     QJsonArray outputsEnabled = obj["outputsEnabled"].toArray();
     for (int i = 0 ; i < outputsEnabled.count() ; ++i ) {
-        m_outputStatus[i] = outputsEnabled[i].toBool() ? OutputEnabled : OutputDisabled;
+        if (i < m_outputStatus.size()) {
+            m_outputStatus[i] = outputsEnabled[i].toBool() ? OutputEnabled : OutputDisabled;
+        } else {
+            dflWarning("Inconsistent output in project file ");
+        }
     }
     emit stateChanged();
 }

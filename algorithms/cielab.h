@@ -30,7 +30,6 @@
  */
 #ifndef CIELAB_H
 #define CIELAB_H
-#include "cielab.h"
 #include "photo.h"
 #include <cmath>
 
@@ -216,5 +215,6 @@ do { \
         rgb[2] = ( tmpf<0?0:tmpf ) * 65535.0 + 0.5; \
 	if ( rgb[2] > QuantumRange ) rgb[2] = QuantumRange; \
 } while(0)
+
 
 #endif // CIELAB_H

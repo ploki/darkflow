@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2016, Guillaume Gimenez <guillaume@blackmilk.fr>
+ * Copyright (c) 2006-2021, Guillaume Gimenez <guillaume@blackmilk.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,37 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPERATOREXNIHILO_H
-#define OPERATOREXNIHILO_H
-
+#ifndef OP1STARBALANCE_H
 #include "operator.h"
 #include <QObject>
 
-class Process;
+class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
-class OpExNihilo : public Operator
+class Op1StarBalance : public Operator
 {
     Q_OBJECT
 public:
-    OpExNihilo(Process *parent);
-    ~OpExNihilo();
-    OpExNihilo *newInstance();
+    Op1StarBalance(Process *parent);
 
-    OperatorWorker* newWorker();
-
+    Op1StarBalance *newInstance();
+    OperatorWorker *newWorker();
+public slots:
+    void outputHDR(int v);
+private:
+    OperatorParameterSlider *m_bv;
+    OperatorParameterSlider *m_epsilonRed;
+    OperatorParameterSlider *m_epsilonGreen;
+    OperatorParameterSlider *m_epsilonBlue;
+    OperatorParameterSlider *m_targetTemperature;
+    OperatorParameterSlider *m_targetTint;
+    OperatorParameterDropDown *m_outputHDR;
+    bool m_outputHDRValue;
 };
 
-#endif // OPERATOREXNIHILO_H
+
+
+
+#define OP1STARBALANCE_H
+
+#endif // OP1STARBALANCE_H

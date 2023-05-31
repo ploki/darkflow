@@ -275,6 +275,11 @@ ProcessPort *ProcessNode::outPort(int idx)
     return m_outPorts[idx];
 }
 
+int ProcessNode::outPortCount()
+{
+    return m_outPorts.size();
+}
+
 void ProcessNode::operatorStateChanged()
 {
 

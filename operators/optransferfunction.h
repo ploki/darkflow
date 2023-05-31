@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2016, Guillaume Gimenez <guillaume@blackmilk.fr>
+ * Copyright (c) 2006-2021, Guillaume Gimenez <guillaume@blackmilk.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,43 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPERATOREXNIHILO_H
-#define OPERATOREXNIHILO_H
+#ifndef OPTRANSFERFUNCTION_H
+#define OPTRANSFERFUNCTION_H
 
 #include "operator.h"
-#include <QObject>
 
-class Process;
+class OperatorParameterSlider;
+class OperatorParameterDropDown;
+class WorkerTransferFunction;
 
-class OpExNihilo : public Operator
+class OpTransferFunction : public Operator
 {
     Q_OBJECT
 public:
-    OpExNihilo(Process *parent);
-    ~OpExNihilo();
-    OpExNihilo *newInstance();
+    OpTransferFunction(Process *parent);
 
-    OperatorWorker* newWorker();
+    OpTransferFunction *newInstance();
+    OperatorWorker *newWorker();
 
+public slots:
+    void selectEncoding(int v);
+    void selectScale(int v);
+    void selectGrid(int v);
+private:
+    friend WorkerTransferFunction;
+    typedef enum {
+        Identity,
+        Linear,
+        Gamma,
+        Log
+    } Encoding;
+    OperatorParameterSlider *m_widthDialog;
+    OperatorParameterDropDown *m_gridDialog;
+    bool m_grid;
+    OperatorParameterDropDown *m_encodingDialog;
+    Encoding m_encoding;
+    OperatorParameterDropDown *m_scaleDialog;
+    Encoding m_scale;
 };
 
-#endif // OPERATOREXNIHILO_H
+#endif // OPTRANSFERFUNCTION_H

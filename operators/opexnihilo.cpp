@@ -35,6 +35,7 @@
 #include "process.h"
 #include "photo.h"
 #include "console.h"
+#include "hdr.h"
 
 #include <Magick++.h>
 
@@ -71,13 +72,47 @@ private slots:
                     }
                     for (unsigned x = 0 ; x < w ; ++x ) {
                         using Magick::Quantum;
-                        pixels[x].red = qrand()%QuantumRange;
-                        pixels[x].green = qrand()%QuantumRange;
-                        pixels[x].blue = qrand()%QuantumRange;
+
+                        int qx = x/64; // 0-16
+                        int channel = (qx/2) % 4;
+                        qreal level = (8. * y) / 1024 + (qx / 8) * 8;
+                        qreal q = pow(2, 16.-level) - 1;
+                        switch (channel) {
+                        case 0:
+                            pixels[x].red = toHDR(q);
+                            break;
+                        case 1:
+                            pixels[x].green = toHDR(q);
+                            break;
+                        case 2:
+                            pixels[x].blue = toHDR(q);
+                            break;
+                        case 3:
+                            pixels[x].red = pixels[x].green = pixels[x].blue = toHDR(q);
+                            break;
+                        }
+                        if ( qx % 2) {
+                            if (((y%2) && (x%2)) || (((y+1)%2) && ((x+1)%2)))
+                                pixels[x].red = pixels[x].green = pixels[x].blue = 0;
+                        } else {
+                            if (pixels[x].red) pixels[x].red = clamp(pixels[x].red - 4096);//((pixels[x].red + 1)/2)-1;
+                            if (pixels[x].green) pixels[x].green = clamp(pixels[x].green - 4096);//((pixels[x].green + 1)/2)-1;
+                            if (pixels[x].blue) pixels[x].blue = clamp(pixels[x].blue - 4096);//((pixels[x].blue + 1)/2)-1;
+
+                        }
+                        if (x==512) {
+                            if ( (y+1) % (1024/8) == 0) {
+                                pixels[x-1].red = pixels[x-1].green = pixels[x-1].blue =
+                                        pixels[x].red = pixels[x].green = pixels[x].blue =
+                                        pixels[x+1].red = pixels[x+1].green = pixels[x+1].blue =
+                                        QuantumRange;
+                            }
+                        }
                     }
                     cache.sync();
                 }
-                photo.setTag(TAG_NAME, "Random Image");
+                photo.setTag(TAG_NAME, "Calibration chart");
+                photo.setScale(Photo::HDR);
                 outputPush(0, photo);
                 emitSuccess();
             }
@@ -93,9 +128,9 @@ private slots:
 };
 
 OpExNihilo::OpExNihilo(Process *parent) :
-    Operator(OP_SECTION_DEPRECATED, QT_TRANSLATE_NOOP("Operator", "Ex Nihilo"), Operator::NA, parent)
+    Operator(OP_SECTION_ANALYSIS, QT_TRANSLATE_NOOP("Operator", "Calibration chart"), Operator::NA, parent)
 {
-    addOutput(new OperatorOutput(tr("Random image"), this));
+    addOutput(new OperatorOutput(tr("Image"), this));
 }
 
 OpExNihilo::~OpExNihilo()
@@ -111,10 +146,5 @@ OpExNihilo *OpExNihilo::newInstance()
 OperatorWorker *OpExNihilo::newWorker()
 {
     return new ExNihilo(m_thread, this);
-}
-
-bool OpExNihilo::isDeprecated() const
-{
-    return true;
 }
 

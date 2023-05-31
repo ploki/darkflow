@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2016, Guillaume Gimenez <guillaume@blackmilk.fr>
+ * Copyright (c) 2006-2021, Guillaume Gimenez <guillaume@blackmilk.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,33 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPERATOREXNIHILO_H
-#define OPERATOREXNIHILO_H
+#ifndef OPCONTRASTSTRETCHING_H
+#define OPCONTRASTSTRETCHING_H
 
 #include "operator.h"
 #include <QObject>
 
-class Process;
+class OperatorParameterSlider;
 
-class OpExNihilo : public Operator
+class OpContrastStretching : public Operator
 {
     Q_OBJECT
 public:
-    OpExNihilo(Process *parent);
-    ~OpExNihilo();
-    OpExNihilo *newInstance();
+    OpContrastStretching(Process *parent);
+    OpContrastStretching *newInstance();
+    OperatorWorker *newWorker();
+    bool isBeta() const { return true; }
 
-    OperatorWorker* newWorker();
+signals:
 
+public slots:
+private:
+    OperatorParameterSlider *m_exposure;
+    OperatorParameterSlider *m_gamma;
+    OperatorParameterSlider *m_highlights;
+    OperatorParameterSlider *m_shadows;
+    OperatorParameterSlider *m_blackpoint;
 };
 
-#endif // OPERATOREXNIHILO_H
+
+#endif // OPCONTRASTSTRETCHING_H

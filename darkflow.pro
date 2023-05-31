@@ -32,7 +32,7 @@ contains(osx_openmp, 1) {
 unix {
 *-g++* | *clang* {
     !macx {
-        *-g++-64 | linux-clang {
+        linux-g++ | linux-clang {
             message("x64 build")
         } else {
             message("x86 build")
@@ -49,7 +49,8 @@ unix {
     QMAKE_CXXFLAGS_RELEASE += -O2
     QMAKE_CXXFLAGS_DEBUG += -ggdb3 -ftrapv
     QMAKE_CFLAGS += -Wall -D_REENTRANT
-    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations
+    #XXX no-ignored-qualifiers for ImageMagick
+    QMAKE_CXXFLAGS += -Werror -Wno-deprecated-declarations -Wno-ignored-qualifiers
     QMAKE_CFLAGS += -Werror -Wno-deprecated-declarations
 
     !macx | contains(osx_openmp, 1) {
@@ -88,7 +89,10 @@ unix {
     QMAKE_CFLAGS += -DHAVE_FFMPEG
     CONFIG += link_pkgconfig
     PKGCONFIG += Magick++ libavformat libavcodec libavutil fftw3
-    #PKGCONFIG += GraphicsMagick++ libavformat libavcodec libavutil
+    ## For some reason distribution ImageMagick can be broken
+    ## what follows can be used as a workaround
+    #PKG_CONFIG = PKG_CONFIG_PATH=/usr/local/ImageMagick-6.Q16/lib/pkgconfig pkg-config
+    #PKGCONFIG += Magick++-6.Q16 libavformat libavcodec libavutil fftw3
     LIBS += -lfftw3_threads
 }
 
@@ -137,6 +141,11 @@ TARGET = darkflow
 TEMPLATE = app
 
 SOURCES +=\
+    algorithms/contraststretching.cpp \
+    operators/op1starbalance.cpp \
+    operators/opcontraststretching.cpp \
+    operators/opmorphology.cpp \
+    operators/optransferfunction.cpp \
     ui/aboutdialog.cpp \
     ui/filesselection.cpp \
     ui/mainwindow.cpp \
@@ -291,6 +300,11 @@ SOURCES +=\
     algorithms/XYZtoCorColorTemp.c
 
 HEADERS  += \
+    algorithms/contraststretching.h \
+    operators/op1starbalance.h \
+    operators/opcontraststretching.h \
+    operators/opmorphology.h \
+    operators/optransferfunction.h \
     ui/aboutdialog.h \
     ui/filesselection.h \
     ui/mainwindow.h \

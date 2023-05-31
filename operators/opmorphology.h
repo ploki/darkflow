@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2016, Guillaume Gimenez <guillaume@blackmilk.fr>
+ * Copyright (c) 2006-2020, Guillaume Gimenez <guillaume@blackmilk.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,31 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPERATOREXNIHILO_H
-#define OPERATOREXNIHILO_H
-
+#ifndef OPMORPHOLOGY_H
+#define OPMORPHOLOGY_H
 #include "operator.h"
 #include <QObject>
 
-class Process;
+class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
-class OpExNihilo : public Operator
+class OpMorphology : public Operator
 {
     Q_OBJECT
 public:
-    OpExNihilo(Process *parent);
-    ~OpExNihilo();
-    OpExNihilo *newInstance();
-
-    OperatorWorker* newWorker();
-
+    OpMorphology(Process *parent);
+    OpMorphology *newInstance();
+    OperatorWorker *newWorker();
+    typedef enum {
+        Erode,
+        Dilate,
+    } Operation;
+private slots:
+    void selectOperation(int);
+private:
+    Operation m_operation;
+    OperatorParameterDropDown *m_operationDialog;
+    OperatorParameterSlider *m_luminosity;
 };
 
-#endif // OPERATOREXNIHILO_H
+#endif // OPMORPHOLOGY_H

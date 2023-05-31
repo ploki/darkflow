@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2016, Guillaume Gimenez <guillaume@blackmilk.fr>
+ * Copyright (c) 2006-2021, Guillaume Gimenez <guillaume@blackmilk.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,37 @@
  *     * Guillaume Gimenez <guillaume@blackmilk.fr>
  *
  */
-#ifndef OPERATOREXNIHILO_H
-#define OPERATOREXNIHILO_H
+#ifndef CONTRASTSTRETCHING_H
+#define CONTRASTSTRETCHING_H
 
-#include "operator.h"
-#include <QObject>
+#include "lutbased.h"
 
-class Process;
-
-class OpExNihilo : public Operator
+class ContrastStretching : public LutBased
 {
     Q_OBJECT
 public:
-    OpExNihilo(Process *parent);
-    ~OpExNihilo();
-    OpExNihilo *newInstance();
+    ContrastStretching(qreal bp,
+                       qreal xl, qreal yl,
+                       qreal xh, qreal yh,
+                       QObject *parent = nullptr);
+    //void applyOnImage(Magick::Image& image, bool hdr);
 
-    OperatorWorker* newWorker();
+private:
 
+    qreal heel(qreal x);
+    qreal shoulder(qreal x);
+    qreal curve(qreal x);
+
+    qreal m_bp;
+    qreal m_xl;
+    qreal m_yl;
+    qreal m_xh;
+    qreal m_yh;
+    bool m_onLuminance;
+    qreal m_slope;
+    qreal m_g_heel;
+    qreal m_g_shoulder;
+    qreal m_y0;
 };
 
-#endif // OPERATOREXNIHILO_H
+#endif // CONTRASTSTRETCHING_H

@@ -135,6 +135,10 @@
 #include "opbayercompose.h"
 #include "oprepair.h"
 #include "opline.h"
+#include "opmorphology.h"
+#include "opcontraststretching.h"
+#include "op1starbalance.h"
+#include "optransferfunction.h"
 #include "preferences.h"
 
 QString Process::uuid()
@@ -170,6 +174,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpSave(this));
 
     m_availableOperators.push_back(new OpExposure(this));
+    m_availableOperators.push_back(new OpContrastStretching(this));
     m_availableOperators.push_back(new OpShapeDynamicRange(this));
     m_availableOperators.push_back(new OpIGamma(this));
     m_availableOperators.push_back(new OpHDR(this));
@@ -179,6 +184,7 @@ Process::Process(ProcessScene *scene, QObject *parent) :
 
     m_availableOperators.push_back(new OpWhiteBalance(this));
     m_availableOperators.push_back(new OpBlackBody(this));
+    m_availableOperators.push_back(new Op1StarBalance(this));
     m_availableOperators.push_back(new OpColor(this));
     m_availableOperators.push_back(new OpDebayer(this));
     m_availableOperators.push_back(new OpRGBDecompose(this));
@@ -244,6 +250,8 @@ Process::Process(ProcessScene *scene, QObject *parent) :
     m_availableOperators.push_back(new OpStarFinder(this));
     m_availableOperators.push_back(new OpPixelExtrusionMapping(this));
     m_availableOperators.push_back(new OpColorMap(this));
+    m_availableOperators.push_back(new OpTransferFunction(this));
+    m_availableOperators.push_back(new OpMorphology(this));
 
     m_availableOperators.push_back(new OpSubtract(this));
     m_availableOperators.push_back(new OpExNihilo(this));
@@ -461,11 +469,14 @@ void Process::load(const QString& filename)
         }
         int inIdx = obj["inPortIdx"].toInt();
 
-        ProcessConnection *conn = new ProcessConnection(outNode->outPort(outIdx));
-        conn->setInputPort(inNode->inPort(inIdx));
-        m_scene->addItem(conn);
+        if (outIdx < outNode->outPortCount()) {
+            ProcessConnection *conn = new ProcessConnection(outNode->outPort(outIdx));
+            conn->setInputPort(inNode->inPort(inIdx));
+            m_scene->addItem(conn);
+        } else {
+            dflWarning("Inconsistent output in project file");
+        }
     }
-
 
 
     setDirty(false);

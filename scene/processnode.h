@@ -73,6 +73,7 @@ public:
 
     ProcessPort *inPort(int idx);
     ProcessPort *outPort(int idx);
+    int outPortCount();
 
 signals:
 

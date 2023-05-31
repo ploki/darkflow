@@ -75,9 +75,9 @@ void OpBlend::registerOptions(OperatorParameterDropDown *mode)
 {
     mode->addOption(DF_TR_AND_C(BlendModeStr[Multiply]), Multiply, true);
     mode->addOption(DF_TR_AND_C(BlendModeStr[Screen]), Screen);
-    mode->addOption(DF_TR_AND_C(BlendModeStr[Overlay]), Overlay);
-    mode->addOption(DF_TR_AND_C(BlendModeStr[HardLight]), HardLight);
-    mode->addOption(DF_TR_AND_C(BlendModeStr[SoftLight]), SoftLight);
+    //mode->addOption(DF_TR_AND_C(BlendModeStr[Overlay]), Overlay);
+    //mode->addOption(DF_TR_AND_C(BlendModeStr[HardLight]), HardLight);
+    //mode->addOption(DF_TR_AND_C(BlendModeStr[SoftLight]), SoftLight);
     mode->addOption(DF_TR_AND_C(BlendModeStr[DivideBrighten]), DivideBrighten);
     mode->addOption(DF_TR_AND_C(BlendModeStr[Divide]), Divide);
     mode->addOption(DF_TR_AND_C(BlendModeStr[DivideDarken]), DivideDarken);

@@ -155,6 +155,7 @@ public:
                         }
                         if ( tvLuminance ) {
                             Magick::PixelPacket pixel = tvLuminance->getPixel(x, y, 0);
+                                             /*
                             double lum = LUMINANCE((hdrLuminance?fromHDR(pixel.red):pixel.red),
                                                    (hdrLuminance?fromHDR(pixel.green):pixel.green),
                                                    (hdrLuminance?fromHDR(pixel.blue):pixel.blue));
@@ -165,6 +166,21 @@ public:
                             red = mul*red;
                             green =  mul*green;
                             blue = mul*blue;
+                                                         */
+                            double currgb[3] = {red, green, blue};
+                            double curlab[3] = {};
+                            RGB_to_LinearLab(currgb, curlab);
+                            double lumrgb[3] = {(hdrLuminance?fromHDR(pixel.red):pixel.red),
+                                                (hdrLuminance?fromHDR(pixel.green):pixel.green),
+                                                (hdrLuminance?fromHDR(pixel.blue):pixel.blue)};
+                                                double lumlab[3] = {};
+
+                            RGB_to_LinearLab(lumrgb, lumlab);
+                            curlab[0] = lumlab[0];
+                            LinearLab_to_RGB(curlab, currgb);
+                            red = currgb[0];
+                            green = currgb[1];
+                            blue = currgb[2];
                         }
                         if (m_outputHDR) {
                             pxl[y*w+x].red = toHDR(red);

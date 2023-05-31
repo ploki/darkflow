@@ -36,11 +36,12 @@
 
 using Magick::Quantum;
 
-iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
+iGamma::iGamma(qreal gamma, qreal x0, bool invert, bool isHDR, QObject *parent) :
     LutBased(parent),
     m_gamma(gamma),
     m_x0(x0),
-    m_invert(invert)
+    m_invert(invert),
+    m_isHDR(isHDR)
 {
     double a = - ( gamma - 1.L)*pow(x0,1.L/gamma)/((gamma-1.L)*pow(x0,1.L/gamma)-gamma);
     double p=0;
@@ -56,15 +57,23 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
     dfl_parallel_for(i, 0, int(QuantumRange+1), 1024, (), {
         double xx= double(i)/double(QuantumRange);
         if ( xx > x0 ) {
+            qreal t;
             if ( invert ) {
-                m_lut[i]=pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
+                t = pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
             }
             else {
-                m_lut[i]= ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
+                t = ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
+            }
+            if (m_isHDR) {
+                m_lut[i] = toHDR(t);
+            } else {
+                m_lut[i] = t;
             }
         }
         else {
-            m_lut[i]=p*xx*double(QuantumRange);
+            qreal t = p*xx*double(QuantumRange);;
+            if (m_isHDR) { m_lut[i] = toHDR(t); }
+            else { m_lut[i] = t; }
         }
     });
 // reverse and hdr are not compatible
@@ -72,15 +81,24 @@ iGamma::iGamma(qreal gamma, qreal x0, bool invert, QObject *parent) :
 
         double xx= double(fromHDR(i))/double(QuantumRange);
         if ( xx > x0 ) {
+            qreal t;
             if ( invert ) {
-                m_hdrLut[i]=pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
+                t = pow(((xx+a)/(a+1.L)),gamma)*QuantumRange;
             }
             else {
-                m_hdrLut[i]= ((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
+                t =((1.L+a)*pow(xx,(1.L/gamma))-a)*QuantumRange;
             }
+            if (m_isHDR) {
+                                 m_hdrLut[i]=toHDR(t);
+                             }
+                             else {
+                                 m_hdrLut[i]=t;
+                             }
         }
         else {
-            m_hdrLut[i]=p*xx*double(QuantumRange);
+            qreal t = p*xx*double(QuantumRange);
+                             if (m_isHDR) { m_hdrLut[i]=toHDR(t); }
+                             else { m_hdrLut[i]=t; }
         }
     });
 

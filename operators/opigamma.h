@@ -36,6 +36,7 @@
 
 class OperatorParameterSlider;
 class OperatorParameterDropDown;
+class WorkerIGamma;
 
 class OpIGamma : public Operator
 {
@@ -50,13 +51,21 @@ signals:
 
 public slots:
     void revert(int b);
+    void encoding(int b);
 
 private:
+    friend WorkerIGamma;
+    typedef enum {
+        Linear,
+        Gamma,
+        HDR,
+    } Encoding;
     OperatorParameterSlider *m_gamma;
     OperatorParameterSlider *m_dynamicRange;
     bool m_revert;
     OperatorParameterDropDown *m_revertDialog;
-
+    Encoding m_encoding;
+    OperatorParameterDropDown *m_encodingDialog;
 };
 
 #endif // OPIGAMMA_H

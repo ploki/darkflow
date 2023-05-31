@@ -41,7 +41,7 @@ class iGamma : public LutBased
 {
     Q_OBJECT
 public:
-    explicit iGamma(qreal gamma, qreal x0, bool invert = false, QObject *parent = 0);
+    explicit iGamma(qreal gamma, qreal x0, bool invert = false, bool isHDR = false, QObject *parent = 0);
     static iGamma& sRGB();
     static iGamma& BT709();
     static iGamma& Lab();
@@ -55,6 +55,7 @@ private:
     qreal m_gamma;
     qreal m_x0;
     bool m_invert;
+    bool m_isHDR;
 };
 
 #endif // IGAMMA_H

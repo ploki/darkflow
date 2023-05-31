@@ -66,6 +66,7 @@
 #include "cielab.h"
 #include "process.h"
 #include "igamma.h"
+#include "XYZtoCorColorTemp.h"
 
 Visualization::Visualization(Operator *op, QWidget *parent) :
     QMainWindow(parent),
@@ -510,7 +511,7 @@ void Visualization::updateColorLabels(const QPointF& pos)
     static iGamma& reverse_sRGB = iGamma::reverse_sRGB();
 
     using Magick::Quantum;
-    QVector<qreal> rgb(3);
+    QVector<double> rgb(3);
     bool clearStatus = true;
 
     if ( pos.x() >= 0 && pos.y() >= 0 && m_photo ) {
@@ -551,13 +552,32 @@ void Visualization::updateColorLabels(const QPointF& pos)
     if ( m_tool != ToolROI ) {
         if ( clearStatus )
             ui->statusBar->showMessage("");
-        else
-            ui->statusBar->showMessage(tr("x:%0, y:%1, R:%2%, G:%3%, B:%4%")
+        else {
+            double xyz[3] = { 0., 0., 0. };
+            xyz[0] += xyz_rgb[0][0] * (double(rgb[0])/65535.);\
+            xyz[1] += xyz_rgb[1][0] * (double(rgb[0])/65535.);\
+            xyz[2] += xyz_rgb[2][0] * (double(rgb[0])/65535.);\
+            xyz[0] += xyz_rgb[0][1] * (double(rgb[1])/65535.);\
+            xyz[1] += xyz_rgb[1][1] * (double(rgb[1])/65535.);\
+            xyz[2] += xyz_rgb[2][1] * (double(rgb[1])/65535.);\
+            xyz[0] += xyz_rgb[0][2] * (double(rgb[2])/65535.);\
+            xyz[1] += xyz_rgb[1][2] * (double(rgb[2])/65535.);\
+            xyz[2] += xyz_rgb[2][2] * (double(rgb[2])/65535.);\
+            double temp = 0;
+            double colorIndex = 0;
+            XYZtoCorColorTemp(xyz, &temp);
+            if (temp != 0)
+               colorIndex = (.586957*(sqrt(pow(temp,2)+72565157.8)-2.148158*(temp-3965.5172)))/temp;
+            ui->statusBar->showMessage(tr("x:%0, y:%1, R:%2%, G:%3%, B:%4%, L:%5EV, T:%6K, B-V:%7")
                                        .arg(int(pos.x()),5,10,QChar(' '))
                                        .arg(int(pos.y()),5,10,QChar(' '))
-                                       .arg(100.*rgb[0]/QuantumRange, 5, 'f', 2)
-                                       .arg(100.*rgb[1]/QuantumRange,5, 'f', 2)
-                                       .arg(100.*rgb[2]/QuantumRange, 5, 'f', 2));
+                                       .arg(100.*rgb[0]/QuantumRange, 8, 'f', 5)
+                                       .arg(100.*rgb[1]/QuantumRange, 8, 'f', 5)
+                                       .arg(100.*rgb[2]/QuantumRange, 8, 'f', 5)
+                                       .arg(log2(LUMINANCE(rgb[0], rgb[1], rgb[2])/QuantumRange), 4, 'f', 2)
+                                       .arg(temp, 5, 'f', 0)
+                                       .arg(colorIndex, 3, 'f', 2));
+        }
     }
 }
 

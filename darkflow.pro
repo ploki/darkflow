@@ -287,7 +287,8 @@ SOURCES +=\
     operators/opbayerdecompose.cpp \
     operators/opbayercompose.cpp \
     operators/oprepair.cpp \
-    operators/opline.cpp
+    operators/opline.cpp \
+    algorithms/XYZtoCorColorTemp.c
 
 HEADERS  += \
     ui/aboutdialog.h \
@@ -440,7 +441,8 @@ HEADERS  += \
     operators/opbayerdecompose.h \
     operators/opbayercompose.h \
     operators/oprepair.h \
-    operators/opline.h
+    operators/opline.h \
+    algorithms/XYZtoCorColorTemp.h
 
 
 FORMS    += \

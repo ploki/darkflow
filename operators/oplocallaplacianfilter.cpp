@@ -33,10 +33,17 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include "operatorparameterslider.h"
+#include "operatorparameterdropdown.h"
 #include <Magick++.h>
 
 using Magick::Quantum;
 
+static const char *LuminanceEncodingStr[] = {
+    QT_TRANSLATE_NOOP("OpLocalLaplacianFilter", "Identity"),
+    QT_TRANSLATE_NOOP("OpLocalLaplacianFilter", "Gamma"),
+    QT_TRANSLATE_NOOP("OpLocalLaplacianFilter", "Linear"),
+    QT_TRANSLATE_NOOP("OpLocalLaplacianFilter", "Logarithmic"),
+};
 
 OpLocalLaplacianFilter::OpLocalLaplacianFilter(Process *parent) :
     Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Local Laplacian Filter"),Operator::All, parent),
@@ -44,8 +51,15 @@ OpLocalLaplacianFilter::OpLocalLaplacianFilter(Process *parent) :
     m_beta(new OperatorParameterSlider("beta", tr("Beta"), tr("Local Laplacian Filter beta"), Slider::Value, Slider::Logarithmic, Slider::Real, 1./(1<<4), 1<<4, 1, 1./(QuantumRange), QuantumRange, Slider::FilterLogarithmic, this)),
     m_sigma(new OperatorParameterSlider("sigma", tr("Sigma"), tr("Local Laplacian Filter sigma"), Slider::Percent, Slider::Linear, Slider::Real, 0, 1, 0.5, 0, 1, Slider::FilterNothing, this)),
     m_startLevel(new OperatorParameterSlider("startLevel", tr("Start level"), tr("Local Laplacian Filter start level"), Slider::Value, Slider::Linear, Slider::Integer, 0, 5, 0, 0, 16, Slider::FilterNothing, this)),
-    m_levelsCount(new OperatorParameterSlider("levelsCount", tr("Levels count"), tr("Local Laplacian Filter levels count"), Slider::Value, Slider::Linear, Slider::Integer, 0, 10, 5, 0, 16, Slider::FilterNothing, this))
+    m_levelsCount(new OperatorParameterSlider("levelsCount", tr("Levels count"), tr("Local Laplacian Filter levels count"), Slider::Value, Slider::Linear, Slider::Integer, 0, 10, 5, 0, 16, Slider::FilterNothing, this)),
+    m_luminanceEncoding(new OperatorParameterDropDown("luminanceEncoding", tr("Luminance encoding"), this, SLOT(selectLuminanceEncoding(int)))),
+    m_luminanceEncodingValue(Identity)
 {
+    m_luminanceEncoding->addOption(DF_TR_AND_C(LuminanceEncodingStr[Identity]), Identity, true);
+    m_luminanceEncoding->addOption(DF_TR_AND_C(LuminanceEncodingStr[Gamma]), Gamma);
+    m_luminanceEncoding->addOption(DF_TR_AND_C(LuminanceEncodingStr[Linear]), Linear);
+    m_luminanceEncoding->addOption(DF_TR_AND_C(LuminanceEncodingStr[Logarithmic]), Logarithmic);
+
     addInput(new OperatorInput(tr("Images"), OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));
     addParameter(m_alpha);
@@ -53,6 +67,7 @@ OpLocalLaplacianFilter::OpLocalLaplacianFilter(Process *parent) :
     addParameter(m_sigma);
     addParameter(m_startLevel);
     addParameter(m_levelsCount);
+    addParameter(m_luminanceEncoding);
 }
 
 OpLocalLaplacianFilter *OpLocalLaplacianFilter::newInstance()
@@ -67,5 +82,14 @@ OperatorWorker *OpLocalLaplacianFilter::newWorker()
                                           m_sigma->value(),
                                           m_startLevel->value(),
                                           m_levelsCount->value(),
+                                          LuminanceEncoding(m_luminanceEncodingValue),
                                           m_thread, this);
+}
+
+void OpLocalLaplacianFilter::selectLuminanceEncoding(int v)
+{
+    if (m_luminanceEncodingValue != v) {
+        m_luminanceEncodingValue = v;
+        setOutOfDate();
+    }
 }

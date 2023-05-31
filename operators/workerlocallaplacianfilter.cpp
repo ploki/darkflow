@@ -44,10 +44,10 @@ using Magick::Quantum;
 
 static inline
 Pyramid::pFloat remap(qreal alpha,
-                               qreal beta,
-                               qreal sigma,
-                               Pyramid::pFloat g0,
-                               Pyramid::pFloat i) {
+                      qreal beta,
+                      qreal sigma,
+                      Pyramid::pFloat g0,
+                      Pyramid::pFloat i) {
     Pyramid::pFloat p;
     Pyramid::pFloat delta = fabs(i-g0);
     Pyramid::pFloat sign = fsign(i-g0);
@@ -61,23 +61,155 @@ Pyramid::pFloat remap(qreal alpha,
     }
     return p;
 }
+static qreal encodeValue(OpLocalLaplacianFilter::LuminanceEncoding encoding, qreal value)
+{
+    switch (encoding) {
+    case OpLocalLaplacianFilter::Identity:
+    case OpLocalLaplacianFilter::Linear:
+        return value;
+    case OpLocalLaplacianFilter::Gamma:
+        return pow(value, 1./2.2);
+    case OpLocalLaplacianFilter::Logarithmic:
+        return clamp<qreal>(1. + log(value) / log(QuantumRange), 0, 1);
+    }
+    Q_ASSERT(!"Impossible");
+    return 0;
+}
 
+static qreal decodeValue(OpLocalLaplacianFilter::LuminanceEncoding encoding, qreal value)
+{
+    switch (encoding) {
+    case OpLocalLaplacianFilter::Identity:
+    case OpLocalLaplacianFilter::Linear:
+        return value;
+    case OpLocalLaplacianFilter::Gamma:
+        return pow(value, 2.2);
+    case OpLocalLaplacianFilter::Logarithmic:
+        return pow(QuantumRange, value - 1.);
+    }
+    Q_ASSERT(!"Impossible");
+    return 0;
+}
 WorkerLocalLaplacianFilter::WorkerLocalLaplacianFilter(qreal alpha, qreal beta, qreal sigma,
                                                        int startLevel, int levelsCount,
+                                                       OpLocalLaplacianFilter::LuminanceEncoding luminanceEncoding,
                                                        QThread *thread, Operator *op) :
     OperatorWorker(thread, op),
     m_alpha(alpha),
     m_beta(beta),
-    m_sigma(sigma),
+    m_sigma(decodeValue(luminanceEncoding, sigma)),
+    //m_sigma(sigma),
     m_startLevel(startLevel),
-    m_levelsCount(levelsCount)
+    m_levelsCount(levelsCount),
+    m_luminanceEncoding(luminanceEncoding)
 {}
+
+static Pyramid::pFloat encodeLuminance(Photo::Gamma inputEncoding,
+                                       OpLocalLaplacianFilter::LuminanceEncoding luminanceEncoding,
+                                       const Magick::PixelPacket& pixel)
+{
+    Triplet<Pyramid::pFloat> input;
+    if (inputEncoding == Photo::HDR) {
+        input.red = fromHDR(pixel.red)/QuantumRange;
+        input.green = fromHDR(pixel.green)/QuantumRange;
+        input.blue = fromHDR(pixel.blue)/QuantumRange;
+    } else if (inputEncoding == Photo::Linear || luminanceEncoding == OpLocalLaplacianFilter::Identity) {
+        input.red = Pyramid::pFloat(pixel.red)/QuantumRange;
+        input.green = Pyramid::pFloat(pixel.green)/QuantumRange;
+        input.blue = Pyramid::pFloat(pixel.blue)/QuantumRange;
+    } else { //Non-linear, assume 2.2 target approximation, except for Identity
+        input.red = pow(Pyramid::pFloat(pixel.red)/QuantumRange, 2.2);
+        input.green = pow(Pyramid::pFloat(pixel.green)/QuantumRange, 2.2);
+        input.blue = pow(Pyramid::pFloat(pixel.blue)/QuantumRange, 2.2);
+    }
+    return encodeValue(luminanceEncoding, LUMINANCE(input.red, input.green, input.blue));
+/*
+    switch (luminanceEncoding) {
+    case OpLocalLaplacianFilter::Identity:
+    case OpLocalLaplacianFilter::Linear:
+        return LUMINANCE(input.red, input.green, input.blue);
+    case OpLocalLaplacianFilter::Gamma:
+        return pow(LUMINANCE(input.red, input.green, input.blue), 1./2.2);
+    case OpLocalLaplacianFilter::Logarithmic:
+        return clamp<qreal>(1. + log(LUMINANCE(input.red, input.green, input.blue)) / log(QuantumRange), 0, 1);
+    }
+    Q_ASSERT(!"Impossible");
+    return 0;
+*/
+}
+
+static Magick::PixelPacket
+mergeLuminance(Photo::Gamma inputEncoding,
+               OpLocalLaplacianFilter::LuminanceEncoding luminanceEncoding,
+               const Magick::PixelPacket& pixel,
+               Pyramid::pFloat luminance)
+{
+    Triplet<Pyramid::pFloat> input;
+    if (inputEncoding == Photo::HDR) {
+        input.red = fromHDR(pixel.red)/QuantumRange;
+        input.green = fromHDR(pixel.green)/QuantumRange;
+        input.blue = fromHDR(pixel.blue)/QuantumRange;
+    } else if (inputEncoding == Photo::Linear || luminanceEncoding == OpLocalLaplacianFilter::Identity) {
+        input.red = Pyramid::pFloat(pixel.red)/QuantumRange;
+        input.green = Pyramid::pFloat(pixel.green)/QuantumRange;
+        input.blue = Pyramid::pFloat(pixel.blue)/QuantumRange;
+    } else { //Non-linear, assume 2.2 target approximation, except for Identity
+        input.red = pow(Pyramid::pFloat(pixel.red)/QuantumRange, 2.2);
+        input.green = pow(Pyramid::pFloat(pixel.green)/QuantumRange, 2.2);
+        input.blue = pow(Pyramid::pFloat(pixel.blue)/QuantumRange, 2.2);
+    }
+    Pyramid::pFloat decodedLuminance = decodeValue(luminanceEncoding, luminance);
+    /*
+    switch (luminanceEncoding) {
+    case OpLocalLaplacianFilter::Identity:
+    case OpLocalLaplacianFilter::Linear:
+        decodedLuminance = luminance;
+        break;
+    case OpLocalLaplacianFilter::Gamma:
+        decodedLuminance = pow(luminance, 2.2);
+        break;
+    case OpLocalLaplacianFilter::Logarithmic:
+        decodedLuminance = pow(QuantumRange, luminance - 1.);
+        break;
+    }
+    */
+    Magick::PixelPacket output = {};
+    //input *= decodedLuminance/LUMINANCE_PIXEL(input);
+
+    {
+        double currgb[3] = {input.red * QuantumRange,
+                            input.green * QuantumRange,
+                            input.blue * QuantumRange};
+        double curlab[3] = {};
+        RGB_to_LinearLab(currgb, curlab);
+        curlab[0] = /* lab_gammaize */ (decodedLuminance);
+        LinearLab_to_RGB(curlab, currgb);
+        input.red = currgb[0]/QuantumRange;
+        input.green = currgb[1]/QuantumRange;
+        input.blue = currgb[2]/QuantumRange;
+    }
+
+    if (inputEncoding == Photo::HDR) {
+        output.red = toHDR(input.red * QuantumRange);
+        output.green = toHDR(input.green * QuantumRange);
+        output.blue = toHDR(input.blue * QuantumRange);
+    } else if (inputEncoding == Photo::Linear || luminanceEncoding == OpLocalLaplacianFilter::Identity) {
+        output.red = clamp<quantum_t>(input.red * QuantumRange);
+        output.green = clamp<quantum_t>(input.green * QuantumRange);
+        output.blue = clamp<quantum_t>(input.blue * QuantumRange);
+    } else {
+        output.red = clamp<quantum_t>(pow(input.red, 1./2.2)*QuantumRange);
+        output.green = clamp<quantum_t>(pow(input.green, 1./2.2)*QuantumRange);
+        output.blue = clamp<quantum_t>(pow(input.blue, 1./2.2)*QuantumRange);
+    }
+    return output;
+}
 
 Photo WorkerLocalLaplacianFilter::process(const Photo &photo, int p, int c) {
     Photo newPhoto(photo);
     Magick::Image& srcImage(const_cast<Magick::Image&>(photo.image()));
     Magick::Image& image(newPhoto.image());
-    bool hdr = photo.getScale() == Photo::HDR;
+    //bool hdr = photo.getScale() == Photo::HDR;
     int originH = image.rows(),
             originW = image.columns();
     Pyramid::pFloat* origin(new Pyramid::pFloat[originH*originW]);
@@ -92,17 +224,22 @@ Photo WorkerLocalLaplacianFilter::process(const Photo &photo, int p, int c) {
                              continue;
                          }
                          for (int x = 0 ; x < originW ; ++x) {
+                             /*
                              if (hdr) {
                                  origin[y*originW+x]=
-                                 LUMINANCE(fromHDR(pixels[x].red)/QuantumRange,
-                                           fromHDR(pixels[x].green)/QuantumRange,
-                                           fromHDR(pixels[x].blue)/QuantumRange);
+                                 LUMINANCE(fromHDR(pixels[x].red),
+                                           fromHDR(pixels[x].green),
+                                           fromHDR(pixels[x].blue))/QuantumRange;
                              } else {
                                  origin[y*originW+x] =
-                                 LUMINANCE(Pyramid::pFloat(pixels[x].red)/QuantumRange,
-                                           Pyramid::pFloat(pixels[x].green)/QuantumRange,
-                                           Pyramid::pFloat(pixels[x].blue)/QuantumRange);
+                                 LUMINANCE(Pyramid::pFloat(pixels[x].red),
+                                           Pyramid::pFloat(pixels[x].green),
+                                           Pyramid::pFloat(pixels[x].blue))/QuantumRange;
                              }
+                             */
+                             origin[y*originW+x] = encodeLuminance(photo.getScale(),
+                                                                   m_luminanceEncoding,
+                                                                   pixels[x]);
                          }
                      });
     GaussianPyramid gaussianPyramid(origin, originW, originH);
@@ -231,6 +368,12 @@ Photo WorkerLocalLaplacianFilter::process(const Photo &photo, int p, int c) {
                              }
                              for (int x = 0 ; x < originW ; ++x) {
                                  Triplet<Pyramid::pFloat> orig;
+                                 // pixels[x] = F(src_pixels[x], output[y*base+x])
+                                 // orig = F(src_pixels)
+                                 // cur = L(orig)
+                                 // lum = output
+                                 // pixels = LRGB(lum, orig)
+                                 /*
                                  if (hdr) {
                                      orig.red = fromHDR(src_pixels[x].red)/QuantumRange;
                                      orig.green = fromHDR(src_pixels[x].green)/QuantumRange;
@@ -253,6 +396,11 @@ Photo WorkerLocalLaplacianFilter::process(const Photo &photo, int p, int c) {
                                      pixels[x].green = clamp<quantum_t>(orig.green);
                                      pixels[x].blue = clamp<quantum_t>(orig.blue);
                                  }
+                                 */
+                                 pixels[x] = mergeLuminance(photo.getScale(),
+                                                            m_luminanceEncoding,
+                                                            src_pixels[x],
+                                                            output[y*base+x]);
                              }
                              dst_cache->sync();
                          });

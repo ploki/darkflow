@@ -32,6 +32,7 @@
 #define WORKERLOCALLAPLACIANFILTER_H
 
 #include "operatorworker.h"
+#include "oplocallaplacianfilter.h"
 
 class WorkerLocalLaplacianFilter : public OperatorWorker {
 public:
@@ -40,6 +41,7 @@ public:
                                qreal sigma,
                                int startLevel,
                                int levelsCount,
+                               OpLocalLaplacianFilter::LuminanceEncoding luminanceEncoding,
                                QThread *thread, Operator *op);
     Photo process(const Photo &photo, int, int);
 private:
@@ -48,6 +50,7 @@ private:
     qreal m_sigma;
     int m_startLevel;
     int m_levelsCount;
+    OpLocalLaplacianFilter::LuminanceEncoding m_luminanceEncoding;
 };
 
 

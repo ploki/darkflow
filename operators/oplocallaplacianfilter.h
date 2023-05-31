@@ -35,21 +35,32 @@
 #include <operator.h>
 
 class OperatorParameterSlider;
+class OperatorParameterDropDown;
 
 class OpLocalLaplacianFilter : public Operator
 {
     Q_OBJECT
 public:
+    typedef enum {
+        Identity,
+        Gamma,
+        Linear,
+        Logarithmic,
+    } LuminanceEncoding;
     OpLocalLaplacianFilter(Process *parent);
     OpLocalLaplacianFilter *newInstance();
     OperatorWorker *newWorker();
     bool isBeta() const { return true; }
+private slots:
+    void selectLuminanceEncoding(int v);
 private:
     OperatorParameterSlider *m_alpha;
     OperatorParameterSlider *m_beta;
     OperatorParameterSlider *m_sigma;
     OperatorParameterSlider *m_startLevel;
     OperatorParameterSlider *m_levelsCount;
+    OperatorParameterDropDown *m_luminanceEncoding;
+    int m_luminanceEncodingValue;
 };
 
 #endif // OPLOCALLAPLACIANFILTER_H

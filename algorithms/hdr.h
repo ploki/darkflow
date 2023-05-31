@@ -40,12 +40,12 @@ extern double *fromHDRLut;
 static inline
 quantum_t toHDR(double v)
 {
-#if 1
+#if 0
   if ( v <= 0 ) return 0;
   return clamp<quantum_t>(DF_ROUND(log2(1+v)*4096-1));
 #else
-    if ( v < 1 ) return 0;
-    return clamp<quantum_t>(DF_ROUND(log2(v)*4096));
+    //rounddown required for conversion to ADU
+    return v == 0 ? 0 : clamp<quantum_t>(log2(v) * 4096);
 #endif
 }
 

@@ -33,6 +33,8 @@
 #include "operatorinput.h"
 #include "operatoroutput.h"
 #include <Magick++.h>
+#include "cielab.h"
+#include "hdr.h"
 
 static void
 normalizeKernel(int order, double *kernel)
@@ -58,13 +60,83 @@ public:
                          -1.,  8., -1.,
                           0 , -1.,  0};
         normalizeKernel(3, kernel);
-        newPhoto.image().convolve(3, kernel);
+        Magick::Image& srcImage(const_cast<Magick::Image&>(photo.image()));
+        Magick::Image& image(newPhoto.image());
+        int w = image.columns(),
+            h = image.rows();
+        ResetImage(image);
+        std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
+        std::shared_ptr<Ordinary::Pixels> cache(new Ordinary::Pixels(image));
+        Photo::Gamma pixelEncoding = photo.getScale();
+        const qreal gammaCorrection = pow(QuantumRange, -1.2);
+        const qreal invGammaCorrection = pow(QuantumRange, 1.2/2.2);
+        dfl_parallel_for(y, 0, h, 4, (srcImage), {
+                             const Magick::PixelPacket *srcPixel[3] =
+                             { y > 0 ? src_cache->getConst(0, y-1, w, 1) : nullptr,
+                               src_cache->getConst(0, y, w, 1),
+                               y < h - 1 ? src_cache->getConst(0, y+1, w, 1) : nullptr };
+                             Magick::PixelPacket *pixel = cache->get(0, y, w, 1);
+                             for (int x = 0 ; x < w; ++x) {
+                                if ( y == 0 || y == h - 1 || x == 0 || x == w - 1) {
+                                    pixel[x] = srcPixel[1][x];
+                                 } else {
+                                     qreal currgb[3] = {};
+                                     //apply kernel to src pixel and its neighborhood on lum
+                                     qreal p = 0;
+                                     for (int j = 0; j < 3; ++j) {
+                                         for (int i = 0; i < 3; ++i) {
+                                             qreal linrgb[3] = {};
+                                             if (pixelEncoding == Photo::HDR) {
+                                                 linrgb[0] = fromHDR(srcPixel[j][x+i-1].red);
+                                                 linrgb[1] = fromHDR(srcPixel[j][x+i-1].green);
+                                                 linrgb[2] = fromHDR(srcPixel[j][x+i-1].blue);
+                                             } else if (pixelEncoding == Photo::Linear) {
+                                                 linrgb[0] = srcPixel[j][x+i-1].red;
+                                                 linrgb[1] = srcPixel[j][x+i-1].green;
+                                                 linrgb[2] = srcPixel[j][x+i-1].blue;
+                                             } else {
+                                                 linrgb[0] = gammaCorrection * pow(srcPixel[j][x+i-1].red, 2.2);
+                                                 linrgb[1] = gammaCorrection * pow(srcPixel[j][x+i-1].green, 2.2);
+                                                 linrgb[2] = gammaCorrection * pow(srcPixel[j][x+i-1].blue, 2.2);
+                                             }
+                                             p += kernel[j*3+i] * LUMINANCE(linrgb[0], linrgb[1], linrgb[2]);
+                                             if (i == 1 && j == 1) {
+                                                 currgb[0] = linrgb[0];
+                                                 currgb[1] = linrgb[1];
+                                                 currgb[2] = linrgb[2];
+                                             }
+                                         }
+                                     }
+                                     //merge computed lum with srcpixel
+                                     qreal curlab[3] = {};
+                                     RGB_to_LinearLab(currgb, curlab);
+                                     curlab[0] = p / qreal(QuantumRange);
+                                     LinearLab_to_RGB(curlab, currgb);
+                                     if (pixelEncoding == Photo::HDR) {
+                                         pixel[x].red = toHDR(currgb[0]);
+                                         pixel[x].green = toHDR(currgb[1]);
+                                         pixel[x].blue = toHDR(currgb[2]);
+                                     } else if (pixelEncoding == Photo::Linear) {
+                                         pixel[x].red = currgb[0];
+                                         pixel[x].green = currgb[1];
+                                         pixel[x].blue = currgb[2];
+                                     } else {
+                                         pixel[x].red = invGammaCorrection * pow(currgb[0],1./2.2);
+                                         pixel[x].green = invGammaCorrection * pow(currgb[1],1./2.2);
+                                         pixel[x].blue = invGammaCorrection * pow(currgb[2],1./2.2);
+                                     }
+                                 }
+
+                             }
+                             cache->sync();
+                         });
+
         return newPhoto;
     }
 };
 
 OpMicroContrasts::OpMicroContrasts(Process *parent) :
-    Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Micro Contrasts"), Operator::NonHDR, parent)
+    Operator(OP_SECTION_COSMETIC, QT_TRANSLATE_NOOP("Operator", "Micro Contrasts"), Operator::All, parent)
 {
     addInput(new OperatorInput(tr("Images"),OperatorInput::Set, this));
     addOutput(new OperatorOutput(tr("Images"), this));

@@ -89,7 +89,8 @@ public:
 
             qreal starLum = 0;
             qreal star[3] = {};
-            qreal background[3] = {};
+            qreal background_i[3] = {};
+            qreal *background = &background_i[0]; // indirectio for macos
             foreach(QPointF point, points) {
                 QVector<qreal> prgb = photo.pixelColor(point.x(), point.y());
                 qreal pl = LUMINANCE(prgb[0], prgb[1], prgb[2]);
@@ -117,7 +118,8 @@ public:
             qreal whitePoint[3];
             WhiteBalance::Temperature_to_RGB(m_temp, whitePoint);
 
-            qreal  epsilonColor[3] = {m_epsilonR, m_epsilonG, m_epsilonB};
+            qreal  epsilonColor_i[3] = {m_epsilonR, m_epsilonG, m_epsilonB};
+            qreal *epsilonColor = &epsilonColor_i[0]; // indirection for macos
 
             qDebug("S[%f,%f,%f",star[0],star[1],star[2]);
             normalizeRGB(idealStarRGB);
@@ -129,7 +131,8 @@ public:
                                            idealStarRGB[1],
                                            idealStarRGB[2]);
             // delta * (A-G) = $(A') * L(A-G)
-            qreal delta[3];
+            qreal delta_i[3];
+            qreal *delta = &delta_i[0]; //indirection for macos
             for (int c = 0; c < 3; ++c) {
                 delta[c] = (idealStarRGB[c]/star[c]) * starLum/idealStarLum
                           * whitePoint[c];
@@ -145,7 +148,7 @@ public:
                     w = image.columns();
             std::shared_ptr<Ordinary::Pixels> src_cache(new Ordinary::Pixels(srcImage));
             std::shared_ptr<Ordinary::Pixels> pixel_cache(new Ordinary::Pixels(image));
-            bool error = false;
+            dfl_block bool error = false;
             dfl_parallel_for(y, 0, h, 4, (srcImage, image), {
                                  Magick::PixelPacket *pixels = pixel_cache->get(0, y, w, 1);
                                  const Magick::PixelPacket *src = pixel_cache->getConst(0, y, w, 1);

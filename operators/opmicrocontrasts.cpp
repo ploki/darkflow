@@ -56,9 +56,10 @@ public:
     }
     Photo process(const Photo &photo, int, int) {
         Photo newPhoto(photo);
-        double kernel[]={ 0 , -1.,  0,
+        double kernel_i[]={ 0 , -1.,  0,
                          -1.,  8., -1.,
                           0 , -1.,  0};
+        double *kernel = &kernel_i[0]; //indirection for macos
         normalizeKernel(3, kernel);
         Magick::Image& srcImage(const_cast<Magick::Image&>(photo.image()));
         Magick::Image& image(newPhoto.image());

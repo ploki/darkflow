@@ -123,7 +123,6 @@ void Console::recvMessage(Console::Level level, QString message)
         break;
     case Console::Error:
         ui->textEdit->setTextColor(Qt::red);
-        message = message;
         break;
     default:
         message = tr("Unknown LogLevel!: %0").arg(message);
